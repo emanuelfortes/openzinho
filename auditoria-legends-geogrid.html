@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>legends-geogrid Auditoria e Plano</title>
+<style>
+  :root{--bg:#0d0d0d;--card:#171717;--line:#2a2a2a;--txt:#ececec;--mut:#9a9a9a;--red:#ff2a2a;--ok:#3ecf6e;--warn:#f5b13d;--bad:#ff5b5b}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  .wrap{max-width:860px;margin:0 auto;padding:40px 16px 64px}
+  h1{font-size:28px;margin:0 0 4px}
+  h1 span{color:var(--red)}
+  .sub{color:var(--mut);margin:0 0 32px}
+  h2{font-size:20px;margin:40px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--red)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin:12px 0}
+  .big{font-size:19px;line-height:1.5}
+  .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:16px 0}
+  .flow div{background:#222;border:1px solid var(--line);border-radius:8px;padding:10px 14px;flex:1 1 140px;text-align:center}
+  .flow b{display:block;color:var(--red);font-size:13px;letter-spacing:.04em;text-transform:uppercase}
+  .flow i{color:var(--mut);font-style:normal}
+  table{width:100%;border-collapse:collapse;font-size:15px}
+  td,th{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  th{color:var(--mut);font-weight:600;font-size:13px;text-transform:uppercase}
+  .tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:12px;font-weight:700}
+  .ok{background:#123d22;color:var(--ok)} .bad{background:#3d1212;color:var(--bad)} .warn{background:#3d2e12;color:var(--warn)}
+  ol{padding-left:22px} li{margin:10px 0}
+  code,pre{font-family:Consolas,"Cascadia Mono",monospace;font-size:14px}
+  pre{background:#000;border:1px solid var(--line);border-radius:8px;padding:12px 14px;overflow-x:auto;margin:8px 0;white-space:pre}
+  code{background:#000;padding:1px 6px;border-radius:4px}
+  .note{color:var(--mut);font-size:14px}
+  ul{padding-left:20px}
+  .tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin:0 0 8px;position:sticky;top:0;background:var(--bg);padding-top:8px;z-index:5}
+  .tabs a{padding:10px 16px;color:var(--mut);text-decoration:none;font-weight:600;border-bottom:3px solid transparent}
+  .tabs a.on{color:var(--txt);border-color:var(--red)}
+  .tab{display:none} .tab.on{display:block}
+  .keep{background:#123d22;color:var(--ok)} .evo{background:#12283d;color:#5ab0ff} .swap{background:#3d2e12;color:var(--warn)} .add{background:#2c123d;color:#c48bff}
+  .phase{border-left:4px solid var(--red)}
+  .phase h3{margin:0 0 4px;font-size:17px}
+  .phase .when{color:var(--mut);font-size:14px;margin:0 0 8px}
+  .chk{list-style:none;padding-left:0}
+  .chk li{margin:6px 0}
+  .chk label{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+  .chk input{margin-top:5px;accent-color:var(--red);width:16px;height:16px;flex:none}
+  .chk input:checked + span{color:var(--mut);text-decoration:line-through}
+  .progress{height:8px;background:#222;border-radius:99px;overflow:hidden;margin:8px 0 4px}
+  .progress div{height:100%;background:var(--red);width:0;transition:width .2s}
+  .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+  .grid2 .card{margin:0}
+  h3{font-size:17px}
+  @media print{.tabs{display:none}.tab{display:block!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1><span>legends</span>-geogrid · Auditoria e Plano</h1>
+<p class="sub">Projeto v0.1.0 · auditado em 12/10/2026 · nesta máquina (Windows 11)</p>
+
+<nav class="tabs">
+  <a href="#auditoria" data-tab="auditoria">Auditoria</a>
+  <a href="#plano" data-tab="plano">Plano SaaS</a>
+</nav>
+
+<section class="tab" id="tab-auditoria">
+
+<!-- ============ VISÃO 1 ============ -->
+<h2>Visão 1 · O que é, em poucas palavras</h2>
+
+<div class="card big">
+  Mostra <b>em que posição uma empresa aparece no Google Maps</b> quando alguém pesquisa
+  (ex.: “pizza”) <b>de vários pontos diferentes da cidade</b>, e transforma isso em um
+  <b>mapa colorido e um relatório PDF</b>.
+</div>
+
+<div class="flow">
+  <div><b>1. Você diz</b>a empresa e o serviço</div>
+  <div><b>2. Ele cria</b>uma grade de pontos no mapa <i>(ex.: 17×17)</i></div>
+  <div><b>3. Ele pergunta</b>ao Google “quem aparece aqui?” <i>(via DataForSEO, pago)</i></div>
+  <div><b>4. Você recebe</b>mapa de calor + PDF</div>
+</div>
+
+<div class="card">
+  <ul>
+    <li><b>Verde</b> = a empresa aparece no topo naquele ponto. <b>Vermelho</b> = não aparece.</li>
+    <li>Serve pra decidir: <i>em que bairros estou fraco? em qual serviço?</i></li>
+    <li>É uma alternativa gratuita ao Local Falcon: você só paga a pesquisa (≈ <b>US$ 0,17</b> por mapa 17×17).</li>
+    <li>Roda no seu computador. Sem assinatura, sem servidor, sem coleta de dados.</li>
+    <li>Ele <b>mede</b>; quem <b>interpreta</b> e recomenda é você (ou o agente de IA).</li>
+  </ul>
+</div>
+
+<div class="card">
+  <b>Três formas de usar</b>
+  <table>
+    <tr><th>Modo</th><th>O que faz</th><th>Custa?</th></tr>
+    <tr><td>Demo no navegador</td><td>Mapa interativo com uma pesquisa real já salva</td><td><span class="tag ok">grátis</span></td></tr>
+    <tr><td>Relatório de exemplo</td><td>Gera um PDF de amostra (dados fictícios)</td><td><span class="tag ok">grátis</span></td></tr>
+    <tr><td>Pesquisa real</td><td>Mede uma empresa de verdade</td><td><span class="tag warn">centavos de dólar</span></td></tr>
+  </table>
+</div>
+
+<!-- ============ VISÃO 2 ============ -->
+<h2>Visão 2 · O que fazer para funcionar</h2>
+
+<div class="card">
+  <b>Situação atual desta máquina</b>
+  <table>
+    <tr><th>Item</th><th>Status</th><th>Precisa pra</th></tr>
+    <tr><td>Node.js</td><td><span class="tag ok">v24 instalado</span></td><td>Demo no navegador</td></tr>
+    <tr><td>pnpm</td><td><span class="tag bad">não instalado</span></td><td>Demo no navegador</td></tr>
+    <tr><td>Dependências do site (node_modules)</td><td><span class="tag bad">não instaladas</span></td><td>Demo no navegador</td></tr>
+    <tr><td>Python 3.10+</td><td><span class="tag bad">não instalado</span></td><td>Relatórios e pesquisas reais</td></tr>
+    <tr><td>Conta DataForSEO (login/senha)</td><td><span class="tag bad">não configurada</span></td><td>Só pesquisas reais</td></tr>
+  </table>
+  <p class="note">Ou seja: hoje nada roda ainda. O código está completo; faltam só as ferramentas.</p>
+</div>
+
+<div class="card">
+  <b>Passo 1 · Ver a demo no navegador (5 min, grátis)</b>
+  <p class="note">Abra o PowerShell dentro da pasta do projeto.</p>
+<pre>corepack enable
+corepack prepare pnpm@10.33.0 --activate
+pnpm install --frozen-lockfile
+pnpm dev</pre>
+  Abra o endereço que aparecer (ex.: <code>http://127.0.0.1:5173</code>).
+</div>
+
+<div class="card">
+  <b>Passo 2 · Gerar um PDF de exemplo (10 min, grátis)</b>
+  <ol>
+    <li>Instale o Python 3.12 em <code>python.org/downloads</code> e marque <b>“Add python.exe to PATH”</b>.</li>
+    <li>Feche e reabra o PowerShell e rode:</li>
+  </ol>
+<pre>python -m pip install -r requirements-report.txt
+python tools/strategy_report.py --config examples/reports/urban-dentist.json --output-dir runs/first-report --proof --require-pdf-qa</pre>
+  Abra <code>runs/first-report/report.pdf</code>.
+  <p class="note">Se o Windows abrir a Microsoft Store ao digitar “python”: Configurações › Apps › Configurações avançadas › Aliases de execução › desligue “python.exe”.</p>
+</div>
+
+<div class="card">
+  <b>Passo 3 · Pesquisa real de uma empresa (pago, centavos)</b>
+  <ol>
+    <li>Crie conta em <code>dataforseo.com</code> e coloque créditos.</li>
+    <li>Copie <code>.env.example</code> para <code>.env</code> e preencha <code>DATAFORSEO_USERNAME</code> e <code>DATAFORSEO_PASSWORD</code>. Nunca compartilhe esse arquivo.</li>
+    <li>Instale o motor de pesquisa e os mapas de rua:</li>
+  </ol>
+<pre>python -m pip install -r requirements-dataforseo.txt
+python -m pip install -r requirements-basemaps.txt
+python -m playwright install chromium
+python tools/geogrid_doctor.py --dataforseo --reports --basemaps</pre>
+  <ol start="4">
+    <li>Rode primeiro <b>só a estimativa</b> (não gasta nada). Só depois execute com
+      <code>--execute</code> e <code>--confirm-cost-usd</code> (trava de segurança contra gasto).</li>
+  </ol>
+  <p class="note">Caminho mais fácil: peça ao agente de IA (Claude) “faça um estudo da empresa X” — ele segue o roteiro
+  <code>docs/STUDY-RECIPE.md</code>, escolhe 3 a 5 buscas, mostra o custo e pede sua confirmação antes de gastar.</p>
+</div>
+
+<div class="card">
+  <b>Pontos de atenção</b>
+  <ul>
+    <li>O demo do navegador só mostra dados de exemplo; ainda não abre suas próprias pesquisas (está no roadmap).</li>
+    <li>Estimativa de custo é do programa, não um limite garantido pelo DataForSEO. Confira o preço no site deles.</li>
+    <li>macOS não foi testado oficialmente; Windows e Linux sim (271 testes passando).</li>
+    <li>Mapas reais precisam de internet; se falharem, o relatório para em vez de entregar mapa vazio.</li>
+  </ul>
+</div>
+
+</section>
+
+<!-- ================= PLANO SAAS ================= -->
+<section class="tab" id="tab-plano">
+
+<h2>1 · A decisão</h2>
+<div class="card big">
+  Vamos pelo <b>Caminho B: SaaS</b>. O cliente entra num site com login, pede a pesquisa
+  sozinho e vê o mapa e o PDF. O motor atual (Python) <b>é reaproveitado</b>; construímos o
+  sistema web em volta dele.
+</div>
+<div class="grid2">
+  <div class="card"><b>Caminho A · você opera</b><p class="note">Você faz a pesquisa e envia o PDF. Começa hoje, mas não escala.</p></div>
+  <div class="card" style="border-color:var(--red)"><b>Caminho B · SaaS ✔ escolhido</b><p class="note">O cliente usa sozinho. Exige desenvolvimento, mas escala para muitos clientes.</p></div>
+</div>
+<p class="note">Dica: enquanto o SaaS é construído, dá para vender no modelo A, com link de assinatura do Mercado Pago, para gerar caixa e validar.</p>
+
+<h2>2 · Stack escolhida</h2>
+<div class="card">
+<table>
+  <tr><th>Camada</th><th>Tecnologia</th><th>Onde roda</th></tr>
+  <tr><td>Site + painel do cliente</td><td><b>Next.js + React + TypeScript</b> (substitui o Vite)</td><td>Vercel</td></tr>
+  <tr><td>Visual</td><td><b>Tailwind + shadcn/ui</b></td><td>Vercel</td></tr>
+  <tr><td>Mapa</td><td><b>Leaflet</b> (reaproveitado) + mapas <b>OpenFreeMap</b></td><td>Navegador</td></tr>
+  <tr><td>API + webhook do pagamento</td><td><b>Rotas de API do Next.js</b></td><td>Vercel</td></tr>
+  <tr><td>Banco de dados</td><td><b>Neon (PostgreSQL)</b> + Drizzle ou Prisma</td><td>Vercel Marketplace</td></tr>
+  <tr><td>Login</td><td><b>Clerk</b> (ou Better Auth)</td><td>Vercel Marketplace</td></tr>
+  <tr><td>PDFs e mapas</td><td><b>Vercel Blob</b></td><td>Vercel</td></tr>
+  <tr><td>Rotinas mensais</td><td><b>Vercel Cron</b></td><td>Vercel</td></tr>
+  <tr><td>Motor (pesquisa + mapa + PDF)</td><td><b>Python atual em Docker</b></td><td>Cloud Run Jobs → depois VPS alemã</td></tr>
+  <tr><td>Pesquisas no Google Maps</td><td><b>DataForSEO</b></td><td>Serviço externo (pago por uso)</td></tr>
+  <tr><td>Pagamento recorrente</td><td><b>Mercado Pago Assinaturas</b></td><td>Serviço externo</td></tr>
+</table>
+</div>
+
+<h2>3 · Como as peças conversam</h2>
+<pre>
+Cliente clica "pesquisar"
+   │
+   ▼
+Next.js (Vercel) ── confere login (Clerk) e créditos (Neon)
+   │  grava a tarefa na fila (Neon)
+   │  avisa o motor (chamada HTTP)
+   ▼
+Motor Python (Cloud Run Jobs / VPS)
+   │  DataForSEO → ranking → mapa → PDF
+   │  salva PDF no Vercel Blob e resultado no Neon
+   ▼
+Painel do cliente mostra mapa + PDF
+
+Mercado Pago ──webhook──► Next.js ──► Neon (libera/bloqueia créditos)
+</pre>
+<p class="note">Next.js não substitui o Python: o Next cuida de telas, login e pagamento; o Python faz o trabalho pesado.</p>
+
+<h2>4 · O que fazer com cada tecnologia atual</h2>
+<div class="card">
+<table>
+  <tr><th>Atual</th><th>Ação</th><th>Por quê</th></tr>
+  <tr><td>Motor Python (pesquisa, cálculo, PDF)</td><td><span class="tag keep">Manter</span></td><td>É o valor do projeto e tem mais de 270 testes</td></tr>
+  <tr><td>legends-dataforseo, ReportLab, Pillow, pypdf</td><td><span class="tag keep">Manter</span></td><td>Funcionam bem</td></tr>
+  <tr><td>Leaflet</td><td><span class="tag keep">Manter</span></td><td>Reaproveitar o mapa de calor (carregar só no navegador: <code>ssr:false</code>)</td></tr>
+  <tr><td>Testes + GitHub Actions</td><td><span class="tag keep">Manter</span></td><td>Base de qualidade</td></tr>
+  <tr><td>JavaScript puro + Vite</td><td><span class="tag evo">Evoluir</span></td><td>Vira Next.js + TypeScript</td></tr>
+  <tr><td>CSS puro</td><td><span class="tag evo">Evoluir</span></td><td>Vira Tailwind</td></tr>
+  <tr><td>Arquivos JSON/CSV na pasta <code>runs/</code></td><td><span class="tag evo">Evoluir</span></td><td>Vira Neon (dados) + Blob (arquivos)</td></tr>
+  <tr><td>Scripts de terminal</td><td><span class="tag evo">Evoluir</span></td><td>Vira comando <code>processar --job-id</code> em Docker</td></tr>
+  <tr><td>Mapas do tile.openstreetmap.org</td><td><span class="tag swap">Trocar</span></td><td>As regras do OpenStreetMap proíbem uso comercial pesado. Usar OpenFreeMap (<code>VITE_MAP_TILE_URL</code>).</td></tr>
+  <tr><td>—</td><td><span class="tag add">Adicionar</span></td><td>Login, banco, fila, painel, pagamento, controle de créditos</td></tr>
+</table>
+</div>
+
+<h2>5 · Pagamento: Mercado Pago Assinaturas</h2>
+<div class="card">
+  <ol>
+    <li>Criar os planos (ex.: Básico, Pro) com preço e frequência mensal.</li>
+    <li>O cliente assina pela página do Mercado Pago (API <code>preapproval</code>).</li>
+    <li>O webhook avisa o Next.js a cada cobrança aprovada, recusada ou cancelada.</li>
+    <li>O Next.js atualiza o Neon: pagou, recebe os créditos do mês; não pagou, acesso bloqueado.</li>
+  </ol>
+  <table>
+    <tr><th>Plano (exemplo)</th><th>Preço/mês</th><th>Inclui</th><th>Custo DataForSEO*</th></tr>
+    <tr><td>Básico</td><td>R$ 97</td><td>4 mapas 17×17</td><td>≈ US$ 0,70</td></tr>
+    <tr><td>Pro</td><td>R$ 197</td><td>12 mapas + PDF</td><td>≈ US$ 2,10</td></tr>
+  </table>
+  <p class="note">*Estimativa do projeto (≈ US$ 0,17 por mapa 17×17 na fila Standard). Os preços dos planos são só ilustração.
+  Cartão de crédito é garantido; Pix Automático e boleto devem ser confirmados no painel. Use o sandbox para testar.
+  O Mercado Pago não emite NF de serviço: usar NFE.io, eNotas ou o sistema da prefeitura.</p>
+</div>
+
+<h2>6 · Onde hospedar</h2>
+<div class="card">
+<table>
+  <tr><th>Fase</th><th>Site + banco</th><th>Motor Python</th></tr>
+  <tr><td><b>Teste</b></td><td>Vercel Hobby + Neon free</td><td><b>Google Cloud Run Jobs</b> (só cobra quando roda)</td></tr>
+  <tr><td><b>Lançamento</b></td><td><b>Vercel Pro</b> (o Hobby proíbe uso comercial) + Neon</td><td>Cloud Run Jobs</td></tr>
+  <tr><td><b>Depois</b></td><td>Vercel, ou VPS se quiser tudo junto</td><td><b>VPS alemã (ex.: Hetzner) + Coolify/Dokploy</b></td></tr>
+</table>
+</div>
+<div class="grid2">
+  <div class="card"><b>Descartados</b><ul class="note">
+    <li>Railway: o grátis é só teste; depois ~US$ 5/mês (boa opção paga).</li>
+    <li>Oracle Free: cadastro difícil, você administra tudo, risco de perder a máquina.</li>
+    <li>Render Free: pouca memória para o Chromium.</li>
+  </ul></div>
+  <div class="card"><b>Por que o motor fica fora da Vercel</b><ul class="note">
+    <li>Chromium é pesado demais para as funções da Vercel.</li>
+    <li>Uma pesquisa pode levar minutos, e as funções têm tempo máximo.</li>
+  </ul></div>
+</div>
+
+<h2>7 · Regra de ouro do motor (para migrar fácil)</h2>
+<div class="card">
+  <ul>
+    <li><b>Tudo em Docker</b>: a mesma imagem roda no Cloud Run e na VPS.</li>
+    <li><b>Um comando por tarefa</b>: <code>processar --job-id 123</code>, chamado direto pelo Cloud Run.</li>
+    <li><b>Modo espera para a VPS</b>: um loop que lê a fila no Neon e chama o mesmo comando.</li>
+    <li><b>Configuração só por variáveis de ambiente</b>: DataForSEO, Neon, Blob. Na migração, basta copiar.</li>
+    <li><b>Não consultar o Neon a cada segundo</b>: senão ele nunca desliga e gasta o plano grátis. O Next.js avisa o motor.</li>
+  </ul>
+</div>
+
+<h2>8 · Roteiro por fases</h2>
+<div class="card">
+  <b>Progresso geral</b>
+  <div class="progress"><div id="bar"></div></div>
+  <span class="note" id="pct">0%</span>
+  <span class="note"> · as marcações ficam salvas neste navegador</span>
+</div>
+
+<div class="card phase">
+  <h3>Fase 0 · Preparar o terreno</h3>
+  <p class="when">Antes de programar</p>
+  <ul class="chk">
+    <li><label><input type="checkbox" data-k="f0-1"><span>Instalar Python 3.12 e pnpm; rodar a demo e o PDF de exemplo (aba Auditoria)</span></label></li>
+    <li><label><input type="checkbox" data-k="f0-2"><span>Criar conta DataForSEO e fazer uma pesquisa real de teste</span></label></li>
+    <li><label><input type="checkbox" data-k="f0-3"><span>Criar contas: GitHub, Vercel, Neon, Clerk, Google Cloud, Mercado Pago (dev)</span></label></li>
+    <li><label><input type="checkbox" data-k="f0-4"><span>Google Cloud: criar alerta de orçamento (ex.: US$ 5)</span></label></li>
+    <li><label><input type="checkbox" data-k="f0-5"><span>Definir nome e marca própria (manter o aviso MIT original)</span></label></li>
+  </ul>
+</div>
+
+<div class="card phase">
+  <h3>Fase 1 · Motor em Docker</h3>
+  <p class="when">Base de tudo</p>
+  <ul class="chk">
+    <li><label><input type="checkbox" data-k="f1-1"><span>Criar Dockerfile com Python + Chromium + dependências</span></label></li>
+    <li><label><input type="checkbox" data-k="f1-2"><span>Criar comando <code>processar --job-id</code> (lê a tarefa no Neon, roda, salva o resultado)</span></label></li>
+    <li><label><input type="checkbox" data-k="f1-3"><span>Salvar PDF/mapas no Vercel Blob em vez da pasta <code>runs/</code></span></label></li>
+    <li><label><input type="checkbox" data-k="f1-4"><span>Publicar no Cloud Run Jobs e testar uma pesquisa de ponta a ponta</span></label></li>
+  </ul>
+</div>
+
+<div class="card phase">
+  <h3>Fase 2 · Banco e site (MVP)</h3>
+  <p class="when">Primeira versão usável</p>
+  <ul class="chk">
+    <li><label><input type="checkbox" data-k="f2-1"><span>Criar projeto Next.js + TypeScript + Tailwind + shadcn/ui</span></label></li>
+    <li><label><input type="checkbox" data-k="f2-2"><span>Conectar o Neon pelo Marketplace da Vercel; criar tabelas: clientes, empresas, pesquisas, créditos, fila</span></label></li>
+    <li><label><input type="checkbox" data-k="f2-3"><span>Login com Clerk; cada cliente vê só os próprios dados</span></label></li>
+    <li><label><input type="checkbox" data-k="f2-4"><span>Tela "nova pesquisa" → grava na fila → avisa o motor</span></label></li>
+    <li><label><input type="checkbox" data-k="f2-5"><span>Tela de resultado: mapa Leaflet (reaproveitado) + baixar PDF</span></label></li>
+    <li><label><input type="checkbox" data-k="f2-6"><span>Trocar mapas para OpenFreeMap</span></label></li>
+  </ul>
+</div>
+
+<div class="card phase">
+  <h3>Fase 3 · Cobrança</h3>
+  <p class="when">Começar a vender</p>
+  <ul class="chk">
+    <li><label><input type="checkbox" data-k="f3-1"><span>Criar planos no Mercado Pago (Assinaturas)</span></label></li>
+    <li><label><input type="checkbox" data-k="f3-2"><span>Rota de webhook no Next.js → libera/bloqueia créditos no Neon</span></label></li>
+    <li><label><input type="checkbox" data-k="f3-3"><span>Limite de gasto por cliente (créditos = pesquisas pagas)</span></label></li>
+    <li><label><input type="checkbox" data-k="f3-4"><span>Testar tudo no sandbox com cartões de teste</span></label></li>
+    <li><label><input type="checkbox" data-k="f3-5"><span>Vercel Cron: renovar créditos mensais</span></label></li>
+  </ul>
+</div>
+
+<div class="card phase">
+  <h3>Fase 4 · Lançamento</h3>
+  <p class="when">Clientes pagando</p>
+  <ul class="chk">
+    <li><label><input type="checkbox" data-k="f4-1"><span>Mudar para Vercel Pro (uso comercial)</span></label></li>
+    <li><label><input type="checkbox" data-k="f4-2"><span>Termos de uso + política de privacidade (LGPD, incluindo transferência internacional)</span></label></li>
+    <li><label><input type="checkbox" data-k="f4-3"><span>Conferir se os termos do DataForSEO permitem revenda dos dados</span></label></li>
+    <li><label><input type="checkbox" data-k="f4-4"><span>Emissão de nota fiscal (NFE.io / eNotas / prefeitura)</span></label></li>
+    <li><label><input type="checkbox" data-k="f4-5"><span>Domínio próprio + e-mail profissional</span></label></li>
+  </ul>
+</div>
+
+<div class="card phase">
+  <h3>Fase 5 · Migração para VPS alemã</h3>
+  <p class="when">Quando quiser custo fixo e controle</p>
+  <ul class="chk">
+    <li><label><input type="checkbox" data-k="f5-1"><span>Contratar VPS (ex.: Hetzner) e instalar Coolify ou Dokploy</span></label></li>
+    <li><label><input type="checkbox" data-k="f5-2"><span>Subir a mesma imagem Docker do motor em "modo espera"</span></label></li>
+    <li><label><input type="checkbox" data-k="f5-3"><span>Copiar variáveis de ambiente; desligar o Cloud Run</span></label></li>
+    <li><label><input type="checkbox" data-k="f5-4"><span>Ativar backups da VPS + backup diário do banco em outro lugar</span></label></li>
+    <li><label><input type="checkbox" data-k="f5-5"><span>Decidir se Next.js e Postgres também vão para a VPS (atenção: mais lento para clientes no Brasil)</span></label></li>
+  </ul>
+</div>
+
+<h2>9 · Cuidados que não podem ser esquecidos</h2>
+<div class="card">
+  <ul>
+    <li><b>Senha do DataForSEO</b> fica só no motor (variáveis de ambiente). Nunca no navegador nem no código.</li>
+    <li><b>Créditos por cliente:</b> ninguém gasta mais no seu DataForSEO do que pagou.</li>
+    <li><b>Leaflet no Next.js:</b> carregar só no navegador (<code>dynamic(..., {ssr:false})</code>).</li>
+    <li><b>Créditos dos mapas</b> (OpenStreetMap/OpenFreeMap) sempre visíveis nos mapas e PDFs.</li>
+    <li><b>Licença MIT:</b> manter o arquivo <code>LICENSE</code> original.</li>
+    <li><b>Preços e limites grátis</b> (Vercel, Neon, Cloud Run, Mercado Pago) mudam: conferir antes de decidir.</li>
+  </ul>
+</div>
+
+</section>
+
+</div>
+<script>
+(function(){
+  var links=document.querySelectorAll('.tabs a');
+  function show(name){
+    if(name!=='plano') name='auditoria';
+    document.querySelectorAll('.tab').forEach(function(s){s.classList.toggle('on',s.id==='tab-'+name)});
+    links.forEach(function(a){a.classList.toggle('on',a.dataset.tab===name)});
+  }
+  window.addEventListener('hashchange',function(){show(location.hash.slice(1))});
+  show(location.hash.slice(1));
+
+  var boxes=document.querySelectorAll('.chk input');
+  function store(){try{return JSON.parse(localStorage.getItem('geogrid-plano')||'{}')}catch(e){return {}}}
+  var st=store();
+  function update(){
+    var done=0;boxes.forEach(function(b){if(b.checked)done++});
+    var p=Math.round(done/boxes.length*100);
+    document.getElementById('bar').style.width=p+'%';
+    document.getElementById('pct').textContent=p+'% ('+done+' de '+boxes.length+')';
+  }
+  boxes.forEach(function(b){
+    b.checked=!!st[b.dataset.k];
+    b.addEventListener('change',function(){
+      st[b.dataset.k]=b.checked;
+      try{localStorage.setItem('geogrid-plano',JSON.stringify(st))}catch(e){}
+      update();
+    });
+  });
+  update();
+})();
+</script>
+</body>
+</html>
