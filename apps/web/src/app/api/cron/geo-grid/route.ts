@@ -7,6 +7,7 @@ import {
 } from '@/lib/db';
 import { runPromptChecks } from '@/lib/prompt-tracker';
 import { postGridTasksQueue } from '@/app/dashboard/local-finder/grid-api';
+import { getInactivePoints } from '@/modules/grade/inactive-points-db';
 import { collectGridProgress } from '@/lib/grid-progress';
 import { collectRankProgress } from '@/lib/rank-progress';
 import { queueStandardRankChecksForProject } from '@/lib/rank-queue';
@@ -70,6 +71,7 @@ async function runPass(credentials: { login: string; pass: string }) {
       const result = await postGridTasksQueue(
         schedule.keyword, schedule.center, schedule.grid_size, schedule.spacing_km, schedule.language,
         credentials.login, credentials.pass, schedule.queue_mode === 'priority' ? 'priority' : 'standard',
+        getInactivePoints(schedule, schedule.projectId),
       );
       if (result.error) failed.push({ seriesId: schedule.series_id, error: result.error });
       if (result.taskPoints.length === 0) {

@@ -7,6 +7,7 @@ import { spacingOptions, type DistanceUnit } from '@/lib/grid-preferences';
 import type { GridScheduleFrequency } from '@/lib/db';
 import { CAMPAIGN_GRID_SIZES, MAX_CAMPAIGN_KEYWORDS, normalizeKeywords, type GridCampaign } from './campaigns-shared';
 import { estimateCampaign } from './estimate';
+import { gridGeometryKey } from './inactive-points';
 
 const MapPicker = lazy(() => import('@/app/dashboard/local-finder/MapPicker'));
 
@@ -16,12 +17,14 @@ type Props = {
   campaign: GridCampaign | null;
   defaults: { center: string; language: string; target: string };
   distanceUnit: DistanceUnit;
+  /** Inactive points of the campaign's saved grid. */
+  inactivePoints: string[];
 };
 
 const field = 'w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white';
 const label = 'mb-1.5 block text-xs font-black uppercase tracking-widest text-slate-400';
 
-export default function CampaignForm({ campaign, defaults, distanceUnit }: Props) {
+export default function CampaignForm({ campaign, defaults, distanceUnit, inactivePoints }: Props) {
   const [state, formAction, pending] = useActionState(saveCampaignAction, undefined);
   const [center, setCenter] = useState(campaign?.center ?? defaults.center);
   const [target, setTarget] = useState(campaign?.target ?? defaults.target);
@@ -38,9 +41,13 @@ export default function CampaignForm({ campaign, defaults, distanceUnit }: Props
   }, [campaign]);
 
   const keywordCount = normalizeKeywords(keywords.split(/\r?\n/)).length;
+  // Inactive points belong to a grid; they stop applying once the center, size or spacing changes.
+  const sameGrid = campaign !== null
+    && gridGeometryKey({ center, grid_size: gridSize, spacing_km: spacingKm }) === gridGeometryKey(campaign);
+  const inactiveCount = sameGrid ? inactivePoints.length : 0;
   const estimate = useMemo(
-    () => estimateCampaign({ gridSize, keywordCount, frequency, queueMode }),
-    [gridSize, keywordCount, frequency, queueMode],
+    () => estimateCampaign({ gridSize, keywordCount, frequency, queueMode, inactivePoints: inactiveCount }),
+    [gridSize, keywordCount, frequency, queueMode, inactiveCount],
   );
   const usesWeekday = frequency === 'weekly' || frequency === 'biweekly';
 
@@ -151,10 +158,19 @@ export default function CampaignForm({ campaign, defaults, distanceUnit }: Props
           <b className="tabular-nums text-slate-900 dark:text-white">${estimate.perMonthUsd.toFixed(2)}/month</b>
           <span className="text-slate-400"> (${estimate.perRunUsd.toFixed(3)} per run)</span>
         </p>
-        <p className="mt-1 text-[10px] text-slate-400">Advisory estimate at list price; DataForSEO bills what it reports, and each run stores its real cost. {timeZone.replace(/_/g, ' ')} time.</p>
+        <p className="mt-1 text-[10px] text-slate-400">
+          {inactiveCount > 0 && <>{inactiveCount} point{inactiveCount === 1 ? ' is' : 's are'} off on this grid and not counted. </>}
+          {campaign ? 'Turn points off (sea, river, park) from the campaign card after saving. ' : 'After creating the campaign you can turn off points on the sea, a river or a park. '}
+          Advisory estimate at list price; DataForSEO bills what it reports, and each run stores its real cost. {timeZone.replace(/_/g, ' ')} time.
+        </p>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      {/* Stays at the bottom of the screen while the long form scrolls, so saving never needs a scroll. */}
+      {/* Above Leaflet's controls (z-index 1000), which would otherwise slide over the bar. */}
+      <div className="sticky bottom-0 z-[1100]-mx-5 -mb-5 flex flex-wrap items-center justify-between gap-3 rounded-b-2xl border-t border-slate-200 bg-white/95 px-5 py-3 backdrop-blur dark:border-slate-800 dark:bg-slate-900/95 sm:-mx-6 sm:-mb-6 sm:px-6">
+        <span className="text-xs text-slate-500 dark:text-slate-400">
+          {keywordCount} keyword{keywordCount === 1 ? '' : 's'} · ≈ <b className="tabular-nums text-slate-900 dark:text-white">${estimate.perMonthUsd.toFixed(2)}</b>/month
+        </span>
         <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-slate-300">
           <input type="checkbox" name="active" defaultChecked={campaign?.active ?? true} className="h-4 w-4 rounded border-slate-300" />
           Active (scheduled runs on)

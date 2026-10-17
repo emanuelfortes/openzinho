@@ -2,6 +2,7 @@ import type { BrandStyle } from '@/lib/brand';
 import type { GridPoint, GridSchedule, GridSearchEntry } from '@/lib/db';
 import { formatDistance, type DistanceUnit } from '@/lib/grid-preferences';
 import { computeGridSummary } from './grid-insights';
+import { gridPointsHref } from '@/modules/grade/inactive-points';
 import { GridSnapshotSelectionProvider, GridSelectedSnapshotExportButton } from './GridSnapshotSelection';
 import GridScheduleControl from './GridScheduleControl';
 import GridAnalysisPanel from './GridAnalysisPanel';
@@ -22,6 +23,8 @@ type Props = {
   brandStyle?: Partial<BrandStyle>;
   trend: GridPositionTrendPoint[];
   distanceUnit: DistanceUnit;
+  /** `row:col` keys switched off for this grid. */
+  inactivePoints?: string[];
 };
 
 function metricDelta(current: number | null, previous: number | null, inverse = false) {
@@ -33,7 +36,7 @@ function metricDelta(current: number | null, previous: number | null, inverse = 
   return `${value > 0 ? '+' : ''}${value}`;
 }
 
-export default function GridTimeline({ entry, results, previousResults, snapshots, schedule, brandName, brandLogoUrl, brandColor, brandFooter, brandStyle, trend, distanceUnit }: Props) {
+export default function GridTimeline({ entry, results, previousResults, snapshots, schedule, brandName, brandLogoUrl, brandColor, brandFooter, brandStyle, trend, distanceUnit, inactivePoints = [] }: Props) {
   const current = computeGridSummary(results);
   const previous = previousResults ? computeGridSummary(previousResults) : null;
   const mapId = `geo-grid-report-map-${entry.id}`;
@@ -57,6 +60,9 @@ export default function GridTimeline({ entry, results, previousResults, snapshot
           <div className="flex flex-wrap items-center gap-2">
             <a href={`/dashboard/geo-grid?keyword=${encodeURIComponent(entry.keyword)}&location_coordinate=${encodeURIComponent(entry.center)}&grid_size=${entry.grid_size}&spacing_km=${entry.spacing_km}&grid_target=${encodeURIComponent(entry.target)}&language=${encodeURIComponent(entry.language)}&queue_mode=${entry.queue_mode}&mode=grid`} className="inline-flex items-center rounded-xl border border-blue-200 bg-white px-3 py-2 text-[10px] font-black uppercase tracking-widest text-blue-700 transition-colors hover:bg-blue-50 dark:border-blue-900 dark:bg-slate-900 dark:text-blue-300 dark:hover:bg-blue-950">
               Run now
+            </a>
+            <a href={gridPointsHref(entry, `/dashboard/geo-grid?grid_history_id=${entry.id}#results`)} className="inline-flex items-center rounded-xl border border-slate-200 bg-white px-3 py-2 text-[10px] font-black uppercase tracking-widest text-slate-600 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800">
+              Edit points{inactivePoints.length > 0 ? ` · ${inactivePoints.length} off` : ''}
             </a>
             <GridSelectedSnapshotExportButton snapshots={snapshots} fallbackResults={results} fallbackTs={entry.ts} gridSize={entry.grid_size} spacingKm={entry.spacing_km} keyword={entry.keyword} target={entry.target} language={entry.language} brandName={brandName} brandLogoUrl={brandLogoUrl} brandColor={brandColor} brandFooter={brandFooter} brandStyle={brandStyle} mapElementId={mapId} />
             <DeleteMonitorButton runId={entry.id} />
@@ -93,6 +99,7 @@ export default function GridTimeline({ entry, results, previousResults, snapshot
             brandFooter={brandFooter} brandStyle={brandStyle}
             captureId={mapId}
             trend={trend}
+            inactivePoints={inactivePoints}
           />
         </div>
       </div>

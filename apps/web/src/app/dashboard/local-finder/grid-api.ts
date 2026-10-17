@@ -1,5 +1,6 @@
 import type { GridPoint, GridLocalItem, GridTaskPoint } from '@/lib/db';
 import { matchesGridTarget } from '@/lib/grid-target';
+import { pointKey } from '@/modules/grade/metrics';
 
 export interface LocalPackItem {
   type: string;
@@ -96,13 +97,15 @@ export async function fetchOneGridPoint(
 export async function fetchGridSearch(
   keyword: string, center: string, gridSize: number, spacingKm: number,
   language: string, target: string, login: string, pass: string,
+  inactivePoints: ReadonlySet<string> = new Set(),
 ): Promise<{ results: GridPoint[]; cost: number; error?: string }> {
   const parts = center.split(',').map(Number);
   if (parts.length < 2 || isNaN(parts[0]) || isNaN(parts[1])) {
     return { results: [], cost: 0, error: 'Invalid coordinates.' };
   }
   const [centerLat, centerLng] = parts;
-  const coords = generateGridCoords(centerLat, centerLng, gridSize, spacingKm);
+  // Inactive points (sea, river, park) are neither queried nor billed.
+  const coords = generateGridCoords(centerLat, centerLng, gridSize, spacingKm).filter((coord) => !inactivePoints.has(pointKey(coord)));
   const auth = btoa(`${login}:${pass}`);
 
   const pointResults = await mapWithConcurrency(
@@ -136,13 +139,15 @@ export async function fetchGridSearch(
 export async function postGridTasksQueue(
   keyword: string, center: string, gridSize: number, spacingKm: number,
   language: string, login: string, pass: string, priorityMode: 'priority' | 'standard' = 'standard',
+  inactivePoints: ReadonlySet<string> = new Set(),
 ): Promise<{ taskPoints: GridTaskPoint[]; cost: number; error?: string }> {
   const parts = center.split(',').map(Number);
   if (parts.length < 2 || isNaN(parts[0]) || isNaN(parts[1])) {
     return { taskPoints: [], cost: 0, error: 'Invalid coordinates.' };
   }
   const [centerLat, centerLng] = parts;
-  const coords = generateGridCoords(centerLat, centerLng, gridSize, spacingKm);
+  // Inactive points (sea, river, park) are neither queried nor billed.
+  const coords = generateGridCoords(centerLat, centerLng, gridSize, spacingKm).filter((coord) => !inactivePoints.has(pointKey(coord)));
   const auth = btoa(`${login}:${pass}`);
   // DataForSEO: priority=2 processes the task faster for a higher per-task cost; priority=1 is the default standard queue.
   const priority = priorityMode === 'priority' ? 2 : 1;
