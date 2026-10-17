@@ -1,0 +1,262 @@
+import { withProjectScope } from '@/lib/db';
+import {
+  getCredentials, getSetting,
+  getRelatedKwHistory, saveRelatedKwSearch, getRelatedKwResults,
+  type RelatedKwSearchEntry,
+} from '@/lib/db';
+import ExportCSVButton from '@/components/ExportCSVButton';
+import CopyMarkdownButton from '@/components/CopyMarkdownButton';
+import { toLabsCountry } from '@/lib/geo-options';
+import { stableSearchId } from '@/lib/dedupe';
+import { callDataForSeoFirst } from '@/lib/dataforseo';
+import LabsLocationLanguageFields from '@/components/LabsLocationLanguageFields';
+import SearchForm from '@/components/SearchForm';
+import RelatedKeywordsTable from './RelatedKeywordsTable';
+
+interface RelatedKeywordItem {
+  keyword_data?: {
+    keyword?: string;
+    search_volume?: number;
+    cpc?: number;
+    competition?: number;
+    competition_index?: number;
+    monthly_searches?: { year: number; month: number; search_volume: number }[];
+  };
+  related_keywords?: string[];
+  keyword_difficulty?: number;
+  avg_backlinks_info?: {
+    referring_domains?: number;
+  };
+}
+
+interface SearchParams {
+  keyword?: string;
+  location?: string;
+  language?: string;
+  depth?: string;
+  limit?: string;
+  history_id?: string;
+}
+
+async function fetchRelatedKeywords(
+  keyword: string,
+  location: string,
+  language: string,
+  depth: number,
+  limit: number,
+  login: string,
+  pass: string,
+): Promise<{ items: RelatedKeywordItem[]; cost?: number; error?: string }> {
+  const { result, cost, error } = await callDataForSeoFirst<{ items?: RelatedKeywordItem[] }>(
+    'dataforseo_labs/google/related_keywords/live',
+    { keyword, location_name: location, language_name: language, depth, limit, include_serp_info: true, include_clickstream_data: false },
+    { login, pass },
+  );
+  if (error) return { items: [], error };
+  return { items: result?.items ?? [], cost };
+}
+
+function formatDate(ts: number) {
+  return new Date(ts).toLocaleDateString("en-GB", { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+async function RelatedKeywordsPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
+  const creds = getCredentials();
+  const params = await searchParams;
+  const historyId = params.history_id;
+
+  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'France');
+  const defaultLanguage = getSetting('default_language') ?? 'French';
+
+  const keyword = params.keyword?.trim() ?? '';
+  const location = params.location ?? defaultLocation;
+  const language = params.language ?? defaultLanguage;
+  const depth = Math.min(Math.max(parseInt(params.depth ?? '1', 10) || 1, 1), 4);
+  const limit = Math.min(parseInt(params.limit ?? '100', 10) || 100, 1000);
+
+  let items: RelatedKeywordItem[] = [];
+  let cost: number | undefined;
+  let error: string | null = null;
+  let isFromHistory = false;
+  let activeEntry: RelatedKwSearchEntry | null = null;
+
+  if (historyId) {
+    const saved = getRelatedKwResults<RelatedKeywordItem>(historyId);
+    if (saved) {
+      items = saved;
+      isFromHistory = true;
+      const history = getRelatedKwHistory();
+      activeEntry = history.find((e) => e.id === historyId) ?? null;
+    } else {
+      error = 'This search is no longer available.';
+    }
+  }
+
+  const hasQuery = historyId || keyword;
+
+  if (!historyId && keyword) {
+    const dedupeId = stableSearchId(['related-keywords', keyword, location, language, depth, limit]);
+    const cached = getRelatedKwResults<RelatedKeywordItem>(dedupeId);
+
+    if (cached) {
+      items = cached;
+      const cachedEntry = getRelatedKwHistory().find((e) => e.id === dedupeId);
+      cost = cachedEntry?.cost;
+    } else if (!creds) {
+      error = 'DataForSEO credentials missing. Configure them in Settings.';
+    } else {
+      const result = await fetchRelatedKeywords(keyword, location, language, depth, limit, creds.login, creds.pass);
+      items = result.items;
+      cost = result.cost;
+      error = result.error ?? null;
+
+      if (!error && items.length > 0) {
+        const entry: RelatedKwSearchEntry = {
+          id: dedupeId,
+          ts: Date.now(),
+          keyword,
+          location,
+          language,
+          depth,
+          count: items.length,
+          cost,
+        };
+        saveRelatedKwSearch(entry, items);
+      }
+    }
+  }
+
+  const history = getRelatedKwHistory();
+  const displayKeyword = activeEntry?.keyword ?? keyword;
+  const displayLocation = activeEntry?.location ?? location;
+  const displayLanguage = activeEntry?.language ?? language;
+  const displayDepth = activeEntry?.depth ?? depth;
+
+  const csvData = items.map((item) => ({
+    keyword: item.keyword_data?.keyword ?? '',
+    search_volume: item.keyword_data?.search_volume ?? '',
+    difficulty: item.keyword_difficulty ?? '',
+    cpc: item.keyword_data?.cpc != null ? item.keyword_data.cpc.toFixed(2) : '',
+    competition_index: item.keyword_data?.competition_index ?? '',
+    ref_domains: item.avg_backlinks_info?.referring_domains ?? '',
+    related_count: item.related_keywords?.length ?? 0,
+  }));
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Related Keywords</h1>
+        <p className="text-sm text-slate-400 mt-1">Related keywords from a source keyword via DataForSEO Labs.</p>
+      </div>
+
+      <SearchForm className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4" btnLabel="Search" btnClassName="w-full bg-slate-900 dark:bg-slate-700 text-white font-black uppercase tracking-widest text-xs py-3 rounded-xl hover:bg-blue-600 transition-colors">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="sm:col-span-2">
+            <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Keyword source</label>
+            <input
+              type="text" name="keyword"
+              defaultValue={displayKeyword}
+              placeholder="e.g. plumber"
+              required
+              className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-300 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+            />
+          </div>
+          <LabsLocationLanguageFields
+            defaultLocation={displayLocation}
+            defaultLanguage={displayLanguage}
+            className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800"
+          />
+          <div>
+            <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Depth</label>
+            <select name="depth" defaultValue={String(displayDepth)}
+              className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800">
+              <option value="1">1 — Direct</option>
+              <option value="2">2 — Extended</option>
+              <option value="3">3 — Broad</option>
+              <option value="4">4 — Exhaustive</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Max results</label>
+            <select name="limit" defaultValue={String(limit)}
+              className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800">
+              <option value="50">50</option>
+              <option value="100">100</option>
+              <option value="200">200</option>
+              <option value="500">500</option>
+              <option value="1000">1000</option>
+            </select>
+          </div>
+        </div>
+      </SearchForm>
+
+      {error && <div className="bg-red-50 dark:bg-red-950 border border-red-100 dark:border-red-900 text-red-600 dark:text-red-400 text-sm rounded-xl px-4 py-3">{error}</div>}
+
+      {hasQuery && !error && (
+        <div id="results" className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">Results</h2>
+              {isFromHistory && <span className="text-[10px] font-black uppercase tracking-widest text-blue-500 bg-blue-50 dark:bg-blue-950 px-2 py-0.5 rounded-md">History</span>}
+            </div>
+            <div className="flex items-center gap-3">
+              {cost !== undefined && <span className="text-[10px] font-mono text-slate-400">cost: ${cost.toFixed(4)}</span>}
+              <span className="text-xs font-black text-slate-400">{items.length} result{items.length !== 1 ? 's' : ''}</span>
+              {items.length > 0 && (() => {
+                const csvColumns = [
+                  { key: 'keyword', label: 'Keyword' },
+                  { key: 'search_volume', label: 'Search Volume' },
+                  { key: 'difficulty', label: 'Difficulty' },
+                  { key: 'cpc', label: 'CPC' },
+                  { key: 'competition_index', label: 'Competition Index' },
+                  { key: 'ref_domains', label: 'Avg Referring Domains' },
+                  { key: 'related_count', label: 'Related Count' },
+                ];
+                return (
+                  <div className="flex items-center gap-2">
+                    <CopyMarkdownButton data={csvData} columns={csvColumns} />
+                    <ExportCSVButton data={csvData} filename={`related-keywords-${displayKeyword}.csv`} columns={csvColumns} />
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
+          {items.length === 0 ? (
+            <div className="px-6 py-12 text-center text-sm text-slate-400">No results found.</div>
+          ) : (
+            <RelatedKeywordsTable items={items} />
+          )}
+        </div>
+      )}
+
+      {history.length > 0 && (
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">
+            <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">History</h2>
+          </div>
+          <div className="divide-y divide-slate-50 dark:divide-slate-800">
+            {history.map((entry) => {
+              const isActive = entry.id === historyId;
+              return (
+                <a key={entry.id} href={`/dashboard/related-keywords?history_id=${entry.id}#results`}
+                  className={`flex items-center gap-4 px-6 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${isActive ? 'bg-blue-50 dark:bg-blue-950' : ''}`}>
+                  <div className="flex-1 min-w-0">
+                    <p className={`text-sm font-medium truncate ${isActive ? 'text-blue-700 dark:text-blue-400' : 'text-slate-800 dark:text-slate-200'}`}>{entry.keyword}</p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">
+                      {entry.count} result{entry.count !== 1 ? 's' : ''}
+                      {' · '}{entry.location} · depth {entry.depth}
+                      {entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}
+                    </p>
+                  </div>
+                  <span className="shrink-0 text-[11px] text-slate-400">{formatDate(entry.ts)}</span>
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default withProjectScope(RelatedKeywordsPage);
