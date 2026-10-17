@@ -11,7 +11,6 @@ import DeleteCampaignButton from '@/modules/grade/DeleteCampaignButton';
 import { getCampaign, getCampaignKeywordStatus, getCampaignSpend, listCampaigns, type GridCampaign } from '@/modules/grade/campaigns-db';
 import { estimateCampaign } from '@/modules/grade/estimate';
 import { computeGradeMetrics } from '@/modules/grade/metrics';
-import { getInactivePoints, gridPointsHref } from '@/modules/grade/inactive-points-db';
 import { runCampaignNowAction } from './actions';
 
 interface SearchParams {
@@ -45,11 +44,7 @@ function CampaignCard({ campaign, queued, distanceUnit }: { campaign: GridCampai
   const keywords = getCampaignKeywordStatus(campaign);
   const nextRuns = keywords.map((keyword) => keyword.next_run_at).filter((value): value is number => value !== null);
   const nextRun = nextRuns.length > 0 ? Math.min(...nextRuns) : null;
-  const inactive = getInactivePoints(campaign);
-  const estimate = estimateCampaign({
-    gridSize: campaign.grid_size, keywordCount: campaign.keywords.length, frequency: campaign.frequency,
-    queueMode: campaign.queue_mode, inactivePoints: inactive.size,
-  });
+  const estimate = estimateCampaign({ gridSize: campaign.grid_size, keywordCount: campaign.keywords.length, frequency: campaign.frequency, queueMode: campaign.queue_mode });
   const spent = getCampaignSpend(campaign, monthStart());
 
   return (
@@ -79,9 +74,6 @@ function CampaignCard({ campaign, queued, distanceUnit }: { campaign: GridCampai
               </button>
             </form>
           )}
-          <Link href={gridPointsHref(campaign, `/dashboard/campaigns#campaign-${campaign.id}`)} className="text-[10px] font-black uppercase tracking-widest text-blue-600 hover:text-blue-800 dark:text-blue-400">
-            Points{inactive.size > 0 ? ` · ${inactive.size} off` : ''}
-          </Link>
           <Link href={`/dashboard/campaigns?edit=${campaign.id}`} className="text-[10px] font-black uppercase tracking-widest text-blue-600 hover:text-blue-800 dark:text-blue-400">Edit</Link>
           <DeleteCampaignButton id={campaign.id} />
         </div>
@@ -107,7 +99,7 @@ function CampaignCard({ campaign, queued, distanceUnit }: { campaign: GridCampai
           <tbody>
             {keywords.map((keyword) => {
               const results = keyword.latestDoneRunId ? getGridResults(keyword.latestDoneRunId) : null;
-              const metrics = results ? computeGradeMetrics(results, inactive) : null;
+              const metrics = results ? computeGradeMetrics(results) : null;
               return (
                 <tr key={keyword.series_id} className="border-b border-slate-50 last:border-0 dark:border-slate-800/60">
                   <td className="py-2 pr-3 font-bold text-slate-800 dark:text-slate-100">
@@ -173,7 +165,7 @@ async function CampaignsPage({ searchParams }: { searchParams: Promise<SearchPar
       {showForm && (
         <section className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900 sm:p-6">
           <h2 className="mb-4 text-sm font-black text-slate-900 dark:text-white">{editing ? `Edit “${editing.name}”` : 'New campaign'}</h2>
-          <CampaignForm key={editing?.id ?? 'new'} campaign={editing} defaults={defaults} distanceUnit={distanceUnit} inactivePoints={editing ? [...getInactivePoints(editing)] : []} />
+          <CampaignForm key={editing?.id ?? 'new'} campaign={editing} defaults={defaults} distanceUnit={distanceUnit} />
         </section>
       )}
 

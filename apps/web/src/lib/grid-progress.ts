@@ -38,9 +38,8 @@ async function collectGridProgressOnce(
   entry: GridSearchEntry & { task_ids?: GridTaskPoint[] },
   credentials: { login: string; pass: string },
 ): Promise<{ status: 'done' | 'pending'; ready: number; total: number }> {
+  const total = entry.grid_size ** 2;
   const progress = getGridProgressForProject(projectId, entry.id);
-  // Points actually posted; inactive grid points are skipped and never become ready.
-  const total = (progress ? progress.results.length + progress.pendingTasks.length : 0) || entry.grid_size ** 2;
   if (!progress || progress.pendingTasks.length === 0) return { status: 'pending', ready: 0, total };
 
   const auth = btoa(`${credentials.login}:${credentials.pass}`);

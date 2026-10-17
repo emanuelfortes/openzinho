@@ -24,11 +24,9 @@ type Props = {
   brandStyle?: Partial<BrandStyle>;
   captureId: string;
   trend: GridPositionTrendPoint[];
-  inactivePoints?: string[];
 };
 
-export default function GridAnalysisPanel({ snapshots, selectedId, gridSize, spacingKm, keyword, target, language, brandName, brandLogoUrl, brandColor, brandFooter, brandStyle, captureId, trend, inactivePoints }: Props) {
-  const inactiveSet = useMemo(() => new Set(inactivePoints ?? []), [inactivePoints]);
+export default function GridAnalysisPanel({ snapshots, selectedId, gridSize, spacingKm, keyword, target, language, brandName, brandLogoUrl, brandColor, brandFooter, brandStyle, captureId, trend }: Props) {
   const selection = useGridSnapshotSelection();
   const [localId, setLocalId] = useState(selectedId);
   useEffect(() => setLocalId(selectedId), [selectedId]);
@@ -54,7 +52,7 @@ export default function GridAnalysisPanel({ snapshots, selectedId, gridSize, spa
         captureId={captureId}
         trend={trend}
       />
-      <GradeMetricsPanel results={activeSnapshot.results} previousResults={activeSnapshot.previousResults} inactivePoints={inactiveSet} />
+      <GradeMetricsPanel results={activeSnapshot.results} previousResults={activeSnapshot.previousResults} />
       <section className="mt-6 border-t border-slate-100 pt-6 dark:border-slate-800">
         <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
           <div>
