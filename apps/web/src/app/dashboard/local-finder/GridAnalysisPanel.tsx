@@ -7,6 +7,7 @@ import GridResults from './GridResults';
 import { useGridSnapshotSelection } from './GridSnapshotSelection';
 import GridSnapshotMapPanel, { type GridMapSnapshot } from './GridSnapshotMapPanel';
 import type { GridPositionTrendPoint } from './GridPositionTrend';
+import GradeMetricsPanel from '@/modules/grade/GradeMetricsPanel';
 
 type Props = {
   snapshots: GridMapSnapshot[];
@@ -51,6 +52,7 @@ export default function GridAnalysisPanel({ snapshots, selectedId, gridSize, spa
         captureId={captureId}
         trend={trend}
       />
+      <GradeMetricsPanel results={activeSnapshot.results} previousResults={activeSnapshot.previousResults} />
       <section className="mt-6 border-t border-slate-100 pt-6 dark:border-slate-800">
         <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
           <div>

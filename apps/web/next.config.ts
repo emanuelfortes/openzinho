@@ -7,6 +7,8 @@ const appVersion = process.env.APP_VERSION ?? packageJson.version;
 
 const nextConfig: NextConfig = {
   output: 'standalone',
+  // This app lives in apps/web of a larger repository; keep the standalone build rooted here.
+  outputFileTracingRoot: __dirname,
   serverExternalPackages: ['better-sqlite3'],
   devIndicators: false,
   env: {
