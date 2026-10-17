@@ -1,0 +1,13 @@
+.git
+.next
+node_modules
+*.db
+*.db-shm
+*.db-wal
+.env*
+.wrangler
+data/*
+!data/*.csv
+*.db.*
+*.db-*
+.dev.vars

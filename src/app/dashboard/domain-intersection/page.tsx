@@ -1,0 +1,181 @@
+import { withProjectScope } from '@/lib/db';
+export const dynamic = 'force-dynamic';
+
+import {
+  getCredentials, getDomainIntersectionHistory,
+  saveDomainIntersectionSearch, getDomainIntersectionResults, getSetting,
+} from '@/lib/db';
+import { toLabsCountry } from '@/lib/geo-options';
+import LabsLocationLanguageFields from '@/components/LabsLocationLanguageFields';
+import SearchForm from '@/components/SearchForm';
+import { stableSearchId } from '@/lib/dedupe';
+import { callDataForSeoFirst } from '@/lib/dataforseo';
+import IntersectionTable, { type IntersectionItem } from './IntersectionTable';
+
+interface SearchParams {
+  target1?: string;
+  target2?: string;
+  location?: string;
+  language?: string;
+  limit?: string;
+  history_id?: string;
+}
+
+async function fetchIntersection(target1: string, target2: string, location: string, language: string, limit: number, login: string, pass: string): Promise<{ items: IntersectionItem[]; total: number; cost: number; error?: string }> {
+  const { result, cost, error } = await callDataForSeoFirst<{ total_count?: number; items?: IntersectionItem[] }>(
+    'dataforseo_labs/google/domain_intersection/live',
+    {
+      target1,
+      target2,
+      location_name: location,
+      language_name: language,
+      limit,
+      order_by: ['keyword_data.keyword_info.search_volume,desc'],
+    },
+    { login, pass },
+  );
+  // This endpoint used to silently swallow any DataForSEO-level error (bad status_code, invalid
+  // field, etc.) as an empty result with cost 0 — never shown to the user. Now surfaced via `error`.
+  return { items: result?.items ?? [], total: result?.total_count ?? 0, cost: cost ?? 0, error };
+}
+
+async function DomainIntersectionPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
+  const creds = getCredentials();
+  const history = getDomainIntersectionHistory();
+  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'France');
+  const defaultLanguage = getSetting('default_language') ?? 'French';
+  const defaultDomain = getSetting('default_domain') ?? '';
+
+  const params = await searchParams;
+  const historyId = params.history_id;
+  const target1 = params.target1?.trim() ?? '';
+  const target2 = params.target2?.trim() ?? '';
+  const location = params.location ?? defaultLocation;
+  const language = params.language ?? defaultLanguage;
+  const limit = Math.min(Number(params.limit ?? 100), 1000);
+
+  let items: IntersectionItem[] = [];
+  let total = 0;
+  let error = '';
+  let cost = 0;
+
+  if (historyId) {
+    items = getDomainIntersectionResults<IntersectionItem>(historyId) ?? [];
+    const entry = history.find((h) => h.id === historyId);
+    total = entry?.totalCount ?? items.length;
+  } else if (target1 && target2 && creds) {
+    try {
+      const dedupeId = stableSearchId(['domain-intersection', target1, target2, location, language, limit]);
+      const cachedItems = getDomainIntersectionResults<IntersectionItem>(dedupeId);
+      if (cachedItems) {
+        items = cachedItems;
+        const cachedEntry = history.find((h) => h.id === dedupeId);
+        total = cachedEntry?.totalCount ?? items.length;
+        cost = cachedEntry?.cost ?? 0;
+      } else {
+        const result = await fetchIntersection(target1, target2, location, language, limit, creds.login, creds.pass);
+        if (result.error) {
+          error = result.error;
+        } else {
+          items = result.items;
+          total = result.total;
+          cost = result.cost;
+          saveDomainIntersectionSearch({
+            id: dedupeId, ts: Date.now(), target1, target2, location, language,
+            count: items.length, totalCount: total, cost,
+          }, items);
+        }
+      }
+    } catch (e) {
+      error = String(e);
+    }
+  }
+
+  return (
+    <div className="space-y-6 pb-12">
+      <div>
+        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Domain Intersection</h1>
+        <p className="text-slate-500 text-sm mt-1 font-medium">Keywords two domains rank for simultaneously</p>
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <div className="xl:col-span-2 space-y-5">
+          <SearchForm className="bg-white border border-slate-200 rounded-3xl p-6 space-y-4" btnLabel="Analyze" btnClassName="w-full bg-blue-600 text-white py-3 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-blue-700 shadow-lg shadow-blue-200 dark:shadow-none transition-all disabled:opacity-40" disabled={!creds}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Domain 1</label>
+                <input name="target1" type="text" defaultValue={target1 || defaultDomain} placeholder="example.com" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 text-sm font-medium text-slate-900 transition-all" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Domain 2</label>
+                <input name="target2" type="text" defaultValue={target2} placeholder="competitor.com" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 text-sm font-medium text-slate-900 transition-all" />
+              </div>
+              <LabsLocationLanguageFields
+                defaultLocation={location}
+                defaultLanguage={language}
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm font-medium text-slate-900"
+                wrapperClassName="space-y-1.5"
+                labelClassName="text-[10px] font-black text-slate-400 uppercase tracking-widest"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Limit</label>
+              <select name="limit" defaultValue={String(limit)} className="w-48 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm font-medium text-slate-900">
+                {[50, 100, 250, 500, 1000].map((n) => <option key={n} value={n}>{n}</option>)}
+              </select>
+            </div>
+            {!creds && <p className="text-xs text-amber-600 font-medium">Configure API credentials in Settings first.</p>}
+          </SearchForm>
+
+          {error && <div className="bg-red-50 border border-red-200 text-red-700 rounded-2xl px-5 py-3 text-sm">{error}</div>}
+
+          {items.length > 0 && (
+            <div className="space-y-3">
+              <p className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                {items.length} shown / {total.toLocaleString()} common keywords
+                {cost > 0 && <span className="ml-3 text-slate-300">· ${cost.toFixed(4)}</span>}
+              </p>
+
+              {/* Domain header */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-blue-50 border border-blue-100 rounded-2xl px-4 py-3 text-center">
+                  <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Domain 1</p>
+                  <p className="font-black text-blue-700 mt-0.5">{target1}</p>
+                </div>
+                <div className="bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-center">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Domain 2</p>
+                  <p className="font-black text-slate-700 mt-0.5">{target2}</p>
+                </div>
+              </div>
+
+              <IntersectionTable items={items} target1={target1} target2={target2} />
+            </div>
+          )}
+        </div>
+
+        {/* History */}
+        <div>
+          <div className="bg-white border border-slate-200 rounded-3xl p-5 sticky top-6">
+            <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">History</h2>
+            {history.length === 0 ? (
+              <p className="text-xs text-slate-400">No searches yet.</p>
+            ) : (
+              <div className="space-y-2">
+                {history.map((h) => (
+                  <a key={h.id} href={`?history_id=${h.id}`} className="block rounded-xl px-3 py-2.5 hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-200">
+                    <div className="font-bold text-xs text-slate-800">{h.target1} <span className="text-slate-300">vs</span> {h.target2}</div>
+                    <div className="text-[10px] text-slate-400 mt-0.5">
+                      {h.totalCount.toLocaleString()} common · {new Date(h.ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                    </div>
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default withProjectScope(DomainIntersectionPage);
