@@ -94,6 +94,7 @@ export const NAV_SECTIONS: NavSection[] = [
       { name: 'SERP Checker', href: '/dashboard/serp', icon: Globe, desc: 'Live Google organic results' },
       { name: 'Local Finder', href: '/dashboard/local-finder', icon: MapPin, desc: 'Local pack results for any location' },
       { name: 'Geo-Grid Ranking', href: '/dashboard/geo-grid', icon: Grid3X3, desc: 'Ranking heatmap across a grid of points' },
+      { name: 'Grid Campaigns', href: '/dashboard/campaigns', icon: CalendarCheck, desc: 'Several keywords on one scheduled grid' },
     ],
   },
   {

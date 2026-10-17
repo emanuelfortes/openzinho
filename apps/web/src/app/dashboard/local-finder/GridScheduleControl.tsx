@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { CalendarClock } from 'lucide-react';
-import type { GridSchedule } from '@/lib/db';
+import type { GridSchedule, GridScheduleFrequency } from '@/lib/db';
 import { updateGridSchedule } from '../geo-grid/actions';
 
 const days = [
@@ -10,7 +10,8 @@ const days = [
 ] as const;
 
 export default function GridScheduleControl({ runId, schedule }: { runId: string; schedule: GridSchedule | null }) {
-  const [frequency, setFrequency] = useState<'off' | 'daily' | 'weekly'>(schedule?.frequency ?? 'off');
+  const [frequency, setFrequency] = useState<'off' | GridScheduleFrequency>(schedule?.frequency ?? 'off');
+  const usesWeekday = frequency === 'weekly' || frequency === 'biweekly';
   const [timeZone, setTimeZone] = useState(schedule?.time_zone ?? 'UTC');
 
   useEffect(() => {
@@ -39,15 +40,23 @@ export default function GridScheduleControl({ runId, schedule }: { runId: string
       </div>
 
       <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
-        <select name="frequency" value={frequency} onChange={(event) => setFrequency(event.target.value as 'off' | 'daily' | 'weekly')} className="rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs font-semibold text-slate-700 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
+        <select name="frequency" value={frequency} onChange={(event) => setFrequency(event.target.value as 'off' | GridScheduleFrequency)} className="rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs font-semibold text-slate-700 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
           <option value="off">Not scheduled</option>
           <option value="daily">Every day</option>
           <option value="weekly">Every week</option>
+          <option value="biweekly">Every 2 weeks</option>
+          <option value="monthly">Every month</option>
         </select>
         <input name="time_of_day" type="time" defaultValue={schedule?.time_of_day ?? '08:00'} disabled={frequency === 'off'} className="rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs font-semibold text-slate-700 outline-none focus:border-blue-500 disabled:opacity-40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200" />
-        <select name="weekday" defaultValue={schedule?.weekday ?? 1} disabled={frequency !== 'weekly'} className="rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs font-semibold text-slate-700 outline-none focus:border-blue-500 disabled:opacity-40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
-          {days.map(([label, value]) => <option key={value} value={value}>{label}</option>)}
-        </select>
+        {frequency === 'monthly' ? (
+          <select name="month_day" defaultValue={schedule?.month_day ?? 1} className="rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs font-semibold text-slate-700 outline-none focus:border-blue-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
+            {Array.from({ length: 28 }, (_, index) => index + 1).map((day) => <option key={day} value={day}>Day {day}</option>)}
+          </select>
+        ) : (
+          <select name="weekday" defaultValue={schedule?.weekday ?? 1} disabled={!usesWeekday} className="rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs font-semibold text-slate-700 outline-none focus:border-blue-500 disabled:opacity-40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
+            {days.map(([label, value]) => <option key={value} value={value}>{label}</option>)}
+          </select>
+        )}
         <select name="queue_mode" defaultValue={schedule?.queue_mode ?? 'standard'} disabled={frequency === 'off'} className="rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs font-semibold text-slate-700 outline-none focus:border-blue-500 disabled:opacity-40 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200">
           <option value="standard">Standard queue</option>
           <option value="priority">Priority queue</option>

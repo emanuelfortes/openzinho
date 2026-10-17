@@ -2,7 +2,7 @@
 
 import { runWithCurrentProject } from '@/lib/db';
 
-import { deleteGridSchedule, deleteGridSeries, getGridEntry, saveGridSchedule, type GridQueueMode, type GridScheduleFrequency } from '@/lib/db';
+import { deleteGridSchedule, deleteGridSeries, getGridEntry, saveGridSchedule, GRID_SCHEDULE_FREQUENCIES, type GridQueueMode, type GridScheduleFrequency } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
@@ -25,7 +25,7 @@ export async function updateGridSchedule(formData: FormData) {
 
     if (frequency === 'off') {
       deleteGridSchedule(entry.series_id);
-    } else if (frequency === 'daily' || frequency === 'weekly') {
+    } else if (GRID_SCHEDULE_FREQUENCIES.includes(frequency)) {
       const queueMode = formData.get('queue_mode') as GridQueueMode;
       saveGridSchedule({
         series_id: entry.series_id,
@@ -37,7 +37,8 @@ export async function updateGridSchedule(formData: FormData) {
         language: entry.language,
         queue_mode: queueMode === 'priority' || queueMode === 'standard' ? queueMode : 'standard',
         frequency,
-        weekday: frequency === 'weekly' ? Number(formData.get('weekday')) : null,
+        weekday: frequency === 'weekly' || frequency === 'biweekly' ? Number(formData.get('weekday')) : null,
+        month_day: frequency === 'monthly' ? Number(formData.get('month_day')) : null,
         time_of_day: String(formData.get('time_of_day') ?? '08:00'),
         time_zone: safeTimeZone(formData.get('time_zone')),
       });

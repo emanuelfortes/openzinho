@@ -5,6 +5,7 @@ import { randomUUID } from 'crypto';
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { reconcileGridPoints } from './grid-target';
 import type { RankTopResult } from './rank-serp';
+import { clampMonthDay, nextCadenceRun } from '@/modules/grade/cadence';
 
 // Operation-local identity, never the mutable UI selection after an await.
 const projectScope = new AsyncLocalStorage<string>();
@@ -879,6 +880,8 @@ function initSchema(db: Database.Database) {
   addColumnIfMissing(db, 'grid_searches', 'ADD COLUMN task_ids TEXT');
   addColumnIfMissing(db, 'grid_searches', `ADD COLUMN queue_mode TEXT NOT NULL DEFAULT 'live'`);
   addColumnIfMissing(db, 'grid_searches', `ADD COLUMN series_id TEXT NOT NULL DEFAULT ''`);
+  addColumnIfMissing(db, 'grid_schedules', 'ADD COLUMN month_day INTEGER');
+  addColumnIfMissing(db, 'grid_schedules', `ADD COLUMN campaign_id TEXT NOT NULL DEFAULT ''`);
   addColumnIfMissing(db, 'reviews_tasks', 'ADD COLUMN meta TEXT');
   addColumnIfMissing(db, 'rank_checks', 'ADD COLUMN ai_overview INTEGER');
   addColumnIfMissing(db, 'rank_checks', 'ADD COLUMN top_results TEXT');
@@ -1917,7 +1920,9 @@ export interface GridSearchEntry {
   summary?: GridHistorySummary;
 }
 
-export type GridScheduleFrequency = 'daily' | 'weekly';
+export type GridScheduleFrequency = 'daily' | 'weekly' | 'biweekly' | 'monthly';
+
+export const GRID_SCHEDULE_FREQUENCIES: readonly GridScheduleFrequency[] = ['daily', 'weekly', 'biweekly', 'monthly'];
 
 export interface GridSchedule {
   series_id: string;
@@ -1930,6 +1935,10 @@ export interface GridSchedule {
   queue_mode: GridQueueMode;
   frequency: GridScheduleFrequency;
   weekday: number | null;
+  /** 1-28, monthly schedules only. */
+  month_day?: number | null;
+  /** Campaign grouping several keywords on one grid; empty for a single monitor. */
+  campaign_id?: string;
   time_of_day: string;
   time_zone: string;
   next_run_at: number;
@@ -2131,6 +2140,7 @@ export function getGridResults(id: string): GridPoint[] | null {
 function parseScheduleRow(row: {
   series_id: string; keyword: string; target: string; center: string; grid_size: number; spacing_km: number; language: string;
   queue_mode: string; frequency: string; weekday: number | null; time_of_day: string; time_zone: string; next_run_at: number;
+  month_day?: number | null; campaign_id?: string;
 }): GridSchedule {
   return {
     series_id: row.series_id, keyword: row.keyword, target: row.target, center: row.center,
@@ -2138,6 +2148,7 @@ function parseScheduleRow(row: {
     queue_mode: (row.queue_mode ?? 'standard') as GridQueueMode,
     frequency: row.frequency as GridScheduleFrequency,
     weekday: row.weekday, time_of_day: row.time_of_day, time_zone: row.time_zone, next_run_at: row.next_run_at,
+    month_day: row.month_day ?? null, campaign_id: row.campaign_id ?? '',
   };
 }
 
@@ -2188,7 +2199,15 @@ function nextDailyRun(timeOfDay: string, timeZone: string, after: number): numbe
   return after + 86_400_000;
 }
 
-function nextGridScheduleRun(schedule: Pick<GridSchedule, 'frequency' | 'weekday' | 'time_of_day' | 'time_zone'>, after: number): number {
+function nextGridScheduleRun(
+  schedule: Pick<GridSchedule, 'frequency' | 'weekday' | 'month_day' | 'time_of_day' | 'time_zone'>, after: number, previousSlot?: number,
+): number {
+  if (schedule.frequency === 'biweekly' || schedule.frequency === 'monthly') {
+    return nextCadenceRun({
+      frequency: schedule.frequency, weekday: schedule.weekday, month_day: schedule.month_day ?? null,
+      time_of_day: validTimeOfDay(schedule.time_of_day), time_zone: validTimeZone(schedule.time_zone),
+    }, after, previousSlot);
+  }
   const timeZone = validTimeZone(schedule.time_zone);
   const [hour, minute] = validTimeOfDay(schedule.time_of_day).split(':').map(Number);
   const local = zonedParts(after, timeZone);
@@ -2207,26 +2226,31 @@ function nextGridScheduleRun(schedule: Pick<GridSchedule, 'frequency' | 'weekday
 
 export function getGridSchedule(seriesId: string): GridSchedule | null {
   const row = getDb().prepare(`SELECT series_id, keyword, target, center, grid_size, spacing_km, language,
-    queue_mode, frequency, weekday, time_of_day, time_zone, next_run_at FROM grid_schedules WHERE series_id = ?`).get(seriesId) as Parameters<typeof parseScheduleRow>[0] | undefined;
+    queue_mode, frequency, weekday, month_day, campaign_id, time_of_day, time_zone, next_run_at FROM grid_schedules WHERE series_id = ?`).get(seriesId) as Parameters<typeof parseScheduleRow>[0] | undefined;
   return row ? parseScheduleRow(row) : null;
 }
 
 export function saveGridSchedule(input: Omit<GridSchedule, 'next_run_at'>): GridSchedule {
   const now = Date.now();
-  const frequency = input.frequency === 'weekly' ? 'weekly' : 'daily';
+  const frequency: GridScheduleFrequency = GRID_SCHEDULE_FREQUENCIES.includes(input.frequency) ? input.frequency : 'daily';
   const time_of_day = validTimeOfDay(input.time_of_day);
   const time_zone = validTimeZone(input.time_zone);
-  const weekday = frequency === 'weekly' && input.weekday != null && input.weekday >= 0 && input.weekday <= 6 ? input.weekday : null;
-  const next_run_at = nextGridScheduleRun({ frequency, weekday, time_of_day, time_zone }, now);
+  const usesWeekday = frequency === 'weekly' || frequency === 'biweekly';
+  const weekday = usesWeekday && input.weekday != null && input.weekday >= 0 && input.weekday <= 6 ? input.weekday : null;
+  const month_day = frequency === 'monthly' ? clampMonthDay(input.month_day) : null;
+  const campaign_id = input.campaign_id ?? '';
+  const next_run_at = nextGridScheduleRun({ frequency, weekday, month_day, time_of_day, time_zone }, now);
+  // An empty campaign_id keeps the existing grouping, so the per-monitor control cannot detach a campaign keyword.
   getDb().prepare(`INSERT INTO grid_schedules
-    (series_id, keyword, target, center, grid_size, spacing_km, language, queue_mode, frequency, weekday, time_of_day, time_zone, next_run_at, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    (series_id, keyword, target, center, grid_size, spacing_km, language, queue_mode, frequency, weekday, month_day, campaign_id, time_of_day, time_zone, next_run_at, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT(series_id) DO UPDATE SET
-      queue_mode = excluded.queue_mode, frequency = excluded.frequency, weekday = excluded.weekday,
+      queue_mode = excluded.queue_mode, frequency = excluded.frequency, weekday = excluded.weekday, month_day = excluded.month_day,
+      campaign_id = COALESCE(NULLIF(excluded.campaign_id, ''), grid_schedules.campaign_id),
       time_of_day = excluded.time_of_day, time_zone = excluded.time_zone, next_run_at = excluded.next_run_at, updated_at = excluded.updated_at`)
     .run(input.series_id, input.keyword, input.target, input.center, input.grid_size, input.spacing_km, input.language,
-      input.queue_mode, frequency, weekday, time_of_day, time_zone, next_run_at, now, now);
-  return { ...input, frequency, weekday, time_of_day, time_zone, next_run_at };
+      input.queue_mode, frequency, weekday, month_day, campaign_id, time_of_day, time_zone, next_run_at, now, now);
+  return { ...input, frequency, weekday, month_day, campaign_id, time_of_day, time_zone, next_run_at };
 }
 
 export function deleteGridSchedule(seriesId: string): void {
@@ -2248,11 +2272,11 @@ export function claimDueGridSchedules(now = Date.now()): DueGridSchedule[] {
   for (const project of getProjects()) {
     const db = getDbForProject(project.id);
     const rows = db.prepare(`SELECT series_id, keyword, target, center, grid_size, spacing_km, language,
-      queue_mode, frequency, weekday, time_of_day, time_zone, next_run_at FROM grid_schedules WHERE next_run_at <= ?`).all(now) as Parameters<typeof parseScheduleRow>[0][];
+      queue_mode, frequency, weekday, month_day, campaign_id, time_of_day, time_zone, next_run_at FROM grid_schedules WHERE next_run_at <= ?`).all(now) as Parameters<typeof parseScheduleRow>[0][];
     const claim = db.prepare('UPDATE grid_schedules SET next_run_at = ?, updated_at = ? WHERE series_id = ? AND next_run_at = ?');
     for (const row of rows) {
       const schedule = parseScheduleRow(row);
-      const next = nextGridScheduleRun(schedule, now);
+      const next = nextGridScheduleRun(schedule, now, schedule.next_run_at);
       if (claim.run(next, now, schedule.series_id, schedule.next_run_at).changes === 1) {
         due.push({ ...schedule, next_run_at: next, scheduled_at: schedule.next_run_at, projectId: project.id });
       }
