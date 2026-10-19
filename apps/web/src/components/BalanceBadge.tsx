@@ -19,10 +19,10 @@ export default function BalanceBadge() {
     <Link
       href="/dashboard/spending"
       title="See what you've spent"
-      className="flex items-center gap-2 px-3 py-1.5 bg-slate-900 dark:bg-slate-700 text-white rounded-lg shadow-sm hover:bg-blue-600 dark:hover:bg-blue-600 transition-colors"
+      className="flex items-center gap-2 rounded-nexo border border-[rgba(77,162,255,.35)] px-3 py-1.5 transition-colors hover:border-nexo-ice hover:bg-nexo-blue/10"
     >
-      <span className="text-[10px] font-black uppercase tracking-tighter text-slate-400 dark:text-slate-400">Balance</span>
-      <span className="text-sm font-mono font-bold">
+      <span className="nexo-label">Balance</span>
+      <span className="font-mono text-sm font-medium text-[#c2e0ff]">
         {balance === null ? '…' : `$${balance}`}
       </span>
     </Link>

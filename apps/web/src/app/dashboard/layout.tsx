@@ -26,12 +26,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const projects = getProjects();
 
   return (
-    <div className="flex h-dvh bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans">
+    <div className="relative flex h-dvh overflow-hidden bg-[var(--nexo-bg)] text-[var(--nexo-text)] font-sans">
+      <div className="nexo-beams" />
       <Sidebar initialCollapsed={collapsed} initialFavorites={favorites} projects={projects} activeProject={activeProject} />
       <ProjectSync projectId={activeProject.id} projectName={activeProject.name} />
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <div className="relative flex-1 flex flex-col min-w-0 overflow-hidden">
         <UpdateBanner />
-        <header className="h-14 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-end px-6 shrink-0 gap-3">
+        <header className="h-14 border-b border-[var(--nexo-border)] bg-[rgba(3,5,8,.5)] backdrop-blur-xl flex items-center justify-end px-6 shrink-0 gap-3">
           <GridTaskCenter />
           <BalanceBadge />
           {accountEmail && <AccountMenu email={accountEmail} />}

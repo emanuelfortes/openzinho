@@ -37,17 +37,9 @@ function NavLink({ item, active, favorite, onToggleFavorite }: {
         href={item.href}
         draggable={false}
         aria-current={active ? 'page' : undefined}
-        className={`group flex items-center px-3 py-2 text-sm rounded-lg transition-all duration-150 ${starrable ? 'pr-8' : ''} ${
-          active
-            ? 'bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-400 font-semibold'
-            : 'text-slate-500 dark:text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:text-slate-800 dark:hover:text-slate-200 font-medium'
-        }`}
+        className={`group nexo-nav-link transition-colors duration-150 ${starrable ? 'pr-8' : ''}`}
       >
-        <item.icon className={`mr-2.5 h-[15px] w-[15px] shrink-0 transition-colors ${
-          active
-            ? 'text-blue-500 dark:text-blue-400'
-            : 'text-slate-300 dark:text-slate-600 group-hover:text-slate-400 dark:group-hover:text-slate-400'
-        }`} />
+        <item.icon className={`h-[15px] w-[15px] shrink-0 transition-colors ${active ? 'text-nexo-ice' : 'text-nexo-faint group-hover:text-nexo-dim'}`} />
         <span className="truncate">{item.name}</span>
       </Link>
       {starrable && (
@@ -57,9 +49,9 @@ function NavLink({ item, active, favorite, onToggleFavorite }: {
           aria-pressed={favorite}
           aria-label={favorite ? `Remove ${item.name} from favorites` : `Add ${item.name} to favorites`}
           title={favorite ? 'Remove from favorites' : 'Add to favorites'}
-          className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1 rounded-md opacity-0 group-hover/item:opacity-100 focus-visible:opacity-100 text-slate-300 dark:text-slate-600 hover:text-amber-500 dark:hover:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-opacity"
+          className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1 rounded-nexo opacity-0 group-hover/item:opacity-100 focus-visible:opacity-100 text-nexo-faint hover:text-nexo-ice hover:bg-white/5 transition-opacity"
         >
-          <Star className={`h-3.5 w-3.5 ${favorite ? 'fill-amber-400 text-amber-400' : ''}`} />
+          <Star className={`h-3.5 w-3.5 ${favorite ? 'fill-nexo-ice text-nexo-ice' : ''}`} />
         </button>
       )}
     </div>
@@ -163,9 +155,9 @@ export default function Sidebar({ initialCollapsed = [], initialFavorites = [], 
   const allCollapsed = sections.every((s) => collapsed.has(s.key));
 
   return (
-    <div className="flex h-full w-60 flex-col border-r border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 select-none shrink-0">
+    <div className="relative flex h-full w-60 flex-col border-r border-nexo-border bg-[rgba(3,5,8,.6)] backdrop-blur-xl select-none shrink-0">
       {/* Logo */}
-      <div className="flex h-14 items-center px-5 border-b border-slate-100 dark:border-slate-800 shrink-0">
+      <div className="flex h-14 items-center px-5 border-b border-nexo-border shrink-0">
         <Link href="/dashboard" aria-label="Nexo" className="flex items-center">
           <NexoLogo />
         </Link>
@@ -176,7 +168,7 @@ export default function Sidebar({ initialCollapsed = [], initialFavorites = [], 
       {/* Filter */}
       <div className="px-3 pt-3 shrink-0">
         <div className="relative">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-300 dark:text-slate-600 pointer-events-none" />
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-nexo-faint pointer-events-none" />
           <input
             ref={inputRef}
             type="text"
@@ -194,19 +186,19 @@ export default function Sidebar({ initialCollapsed = [], initialFavorites = [], 
             }}
             placeholder="Filter tools"
             aria-label="Filter tools"
-            className="w-full pl-8 pr-8 py-1.5 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white dark:focus:bg-slate-800 select-text"
+            className="nexo-input min-w-0 w-full pl-8 pr-8 py-1.5 text-sm focus:outline-none focus:border-nexo-sky select-text"
           />
           {query ? (
             <button
               type="button"
               onClick={() => { setQuery(''); inputRef.current?.focus(); }}
               aria-label="Clear filter"
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 rounded text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 rounded-nexo text-nexo-faint hover:text-white"
             >
               <X className="h-3.5 w-3.5" />
             </button>
           ) : (
-            <kbd className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-mono text-slate-400 dark:text-slate-500 border border-slate-200 dark:border-slate-700 rounded px-1.5 leading-4 pointer-events-none">/</kbd>
+            <kbd className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-mono text-nexo-faint border border-nexo-border rounded-[3px] px-1.5 leading-4 pointer-events-none">/</kbd>
           )}
         </div>
         {!q && (
@@ -219,7 +211,7 @@ export default function Sidebar({ initialCollapsed = [], initialFavorites = [], 
                 writeCookie(SIDEBAR_COLLAPSED_COOKIE, next);
                 setCollapsed(next);
               }}
-              className="text-[10px] font-semibold text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 px-1 transition-colors"
+              className="nexo-label hover:text-white px-1 transition-colors"
             >
               {allCollapsed ? 'Expand all' : 'Collapse all'}
             </button>
@@ -229,7 +221,7 @@ export default function Sidebar({ initialCollapsed = [], initialFavorites = [], 
 
       <nav className="flex-1 min-h-0 overflow-y-auto scrollbar-thin px-3 py-3 space-y-1">
         {filtered.length === 0 && (
-          <p className="px-3 text-xs text-slate-400">No tool matches &ldquo;{query.trim()}&rdquo;.</p>
+          <p className="px-3 text-xs text-nexo-faint">No tool matches &ldquo;{query.trim()}&rdquo;.</p>
         )}
         {shown.map((section) => {
           const isFavorites = section.key === FAVORITES_SECTION_KEY;
@@ -237,20 +229,20 @@ export default function Sidebar({ initialCollapsed = [], initialFavorites = [], 
           const isOpen = q !== '' || !collapsed.has(section.key);
           const hasActive = section.items.some((i) => i.href === activeHref);
           return (
-            <div key={section.key} className={isFavorites ? 'pb-1 mb-1 border-b border-slate-100 dark:border-slate-800' : undefined}>
+            <div key={section.key} className={isFavorites ? 'pb-1 mb-1 border-b border-nexo-border' : undefined}>
               <button
                 type="button"
                 onClick={() => toggleSection(section.key)}
                 disabled={q !== ''}
                 aria-expanded={isOpen}
                 aria-controls={`nav-section-${section.key}`}
-                className="group w-full flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[10px] font-semibold uppercase tracking-[0.1em] text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 disabled:hover:text-slate-400 dark:disabled:hover:text-slate-500 transition-colors"
+                className="group nexo-section w-full flex items-center gap-1.5 px-3 py-1.5 rounded-nexo hover:text-white disabled:hover:text-nexo-sky transition-colors"
               >
-                {isFavorites && <Star className="h-3 w-3 shrink-0 fill-amber-400 text-amber-400" />}
+                {isFavorites && <Star className="h-3 w-3 shrink-0 fill-nexo-ice text-nexo-ice" />}
                 <span className="truncate">{section.label}</span>
-                {!isOpen && hasActive && <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0" aria-label="Contains the current page" />}
+                {!isOpen && hasActive && <span className="w-1.5 h-1.5 rounded-full bg-nexo-ice shrink-0" aria-label="Contains the current page" />}
                 {!isOpen && (
-                  <span className="ml-auto text-[10px] font-mono tracking-normal text-slate-300 dark:text-slate-600">{section.items.length}</span>
+                  <span className="ml-auto text-[10px] font-mono tracking-normal text-nexo-faint">{section.items.length}</span>
                 )}
                 <ChevronRight className={`h-3 w-3 shrink-0 transition-transform duration-150 ${isOpen ? 'rotate-90 ml-auto' : ''} ${q ? 'invisible' : ''}`} />
               </button>
@@ -297,7 +289,7 @@ export default function Sidebar({ initialCollapsed = [], initialFavorites = [], 
         })}
       </nav>
 
-      <div className="shrink-0 border-t border-slate-100 dark:border-slate-800 px-3 py-3 space-y-px">
+      <div className="shrink-0 border-t border-nexo-border px-3 py-3 space-y-px">
         {footerItems.map((item) => (
           <NavLink key={item.href} item={item} active={item.href === activeHref} />
         ))}
