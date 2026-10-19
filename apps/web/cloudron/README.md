@@ -1,6 +1,6 @@
 # Cloudron package
 
-Files for running SEO Playground as a [Cloudron](https://cloudron.io) community app. Nothing here is used by the
+Files for running Nexo as a [Cloudron](https://cloudron.io) community app. Nothing here is used by the
 regular `Dockerfile`, `docker-compose*.yml` or the GHCR release image.
 
 | File | Purpose |

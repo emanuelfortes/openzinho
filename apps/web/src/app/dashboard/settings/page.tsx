@@ -94,7 +94,7 @@ async function SettingsPage() {
                   <p className="text-xs font-bold text-slate-800 dark:text-slate-100">New to DataForSEO?</p>
                   <p className="mt-1 text-xs leading-relaxed text-slate-600 dark:text-slate-300">
                     <a href="https://try.dataforseo.com/nrjev32kinaz" target="_blank" rel="noreferrer" className="font-bold text-blue-700 underline decoration-blue-300 underline-offset-2 transition-colors hover:text-blue-900 dark:text-blue-300 dark:decoration-blue-700 dark:hover:text-blue-100">Create an account through this link ↗</a>
-                    {' '}to support the continued development of SEO Playground, at no extra cost to you.
+                    {' '}to support the continued development of SEO Playground, the open-source project Nexo is built on, at no extra cost to you.
                   </p>
                   <p className="mt-1.5 text-[10px] font-medium text-slate-500 dark:text-slate-400">Affiliate link — I may earn a commission if you become a customer.</p>
                 </aside>
@@ -117,7 +117,7 @@ async function SettingsPage() {
             {/* White-label report identity */}
             <div>
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">White-label reports</p>
-              <p className="text-xs text-slate-400 mb-6">Applied to every PDF you export. Leave the name blank to use SEO Playground.</p>
+              <p className="text-xs text-slate-400 mb-6">Applied to every PDF you export. Leave the name blank to use Nexo.</p>
               <BrandIdentityFields
                 initialName={brandName}
                 initialColor={brandColor}

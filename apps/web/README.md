@@ -1,10 +1,12 @@
-# SEO Playground — SEO and Local SEO Dashboard
+# Nexo — SEO and Local SEO Dashboard
 
-![SEO Playground — the free, open-source, self-hosted SEO & Local SEO dashboard](public/readme/hero.png)
+![Nexo — the free, open-source, self-hosted SEO & Local SEO dashboard](public/readme/hero.png)
+
+> Nexo is built on [SEO Playground](https://github.com/paulmassen/seo-playground) by Paul Massen (MIT License).
 
 ## ✨ What's new
 
-SEO Playground is actively evolving. Highlights of the latest releases:
+Nexo is actively evolving. Highlights of the latest releases:
 
 ### v0.6.0 — 2026-10-10
 
@@ -32,14 +34,14 @@ See the full [changelog](#changelog) for every improvement, fix, and release not
 
 > **Work in progress** — new DataForSEO endpoints are being added progressively.
 
-SEO Playground is a self-hosted dashboard that lets you run SEO and local SEO queries directly against the [DataForSEO API](https://dataforseo.com/). Every search is saved locally in a SQLite database, so you can browse your history and revisit results without making additional API calls. There is no cloud infrastructure involved — everything runs on your machine.
+Nexo is a self-hosted dashboard that lets you run SEO and local SEO queries directly against the [DataForSEO API](https://dataforseo.com/). Every search is saved locally in a SQLite database, so you can browse your history and revisit results without making additional API calls. There is no cloud infrastructure involved — everything runs on your machine.
 
 If you find this useful, consider supporting the project:
 
 [![Buy Me A Coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/paulmassendari)
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/paulmassendari)
 
-New to DataForSEO? [Create an account through my affiliate link](https://try.dataforseo.com/nrjev32kinaz). It also supports the continued development of SEO Playground, at no extra cost to you. I may earn a commission if you become a customer.
+New to DataForSEO? [Create an account through my affiliate link](https://try.dataforseo.com/nrjev32kinaz). It also supports the continued development of SEO Playground, the project Nexo is built on, at no extra cost to you. I may earn a commission if you become a customer.
 
 ## Screenshots
 
@@ -99,7 +101,7 @@ https://github.com/user-attachments/assets/fb506723-0996-4704-a6a5-b12b1115b805
 
 - Docker with Docker Compose
 - Or Node.js 18+
-- A DataForSEO account (API key). Don't have one yet? [Sign up through my affiliate link](https://try.dataforseo.com/nrjev32kinaz): it supports SEO Playground at no extra cost to you (I may earn a commission).
+- A DataForSEO account (API key). Don't have one yet? [Sign up through my affiliate link](https://try.dataforseo.com/nrjev32kinaz): it supports SEO Playground, the project Nexo is built on, at no extra cost to you (I may earn a commission).
 
 ## Getting Started
 
@@ -134,7 +136,7 @@ docker compose -f docker-compose.production.yml logs -f
 docker compose -f docker-compose.production.yml down
 ```
 
-**Network access:** both Compose files publish the dashboard on `127.0.0.1` only. By default SEO Playground has no login, and anyone who can reach it can spend your DataForSEO credit. To reach it from another machine, either turn on the built-in [login](#login-optional) (`AUTH_ENABLED=true`, optional and off by default) or put a reverse proxy with authentication in front of it (Coolify, Caddy, Traefik…). On a trusted private network only, you can listen on every interface with `SEO_PLAYGROUND_BIND=0.0.0.0`.
+**Network access:** both Compose files publish the dashboard on `127.0.0.1` only. By default Nexo has no login, and anyone who can reach it can spend your DataForSEO credit. To reach it from another machine, either turn on the built-in [login](#login-optional) (`AUTH_ENABLED=true`, optional and off by default) or put a reverse proxy with authentication in front of it (Coolify, Caddy, Traefik…). On a trusted private network only, you can listen on every interface with `SEO_PLAYGROUND_BIND=0.0.0.0`.
 
 **Coolify, Yunohost and other hosts:** deploy the same Compose file, or use the image `ghcr.io/paulmassen/seo-playground` with an exact version tag (for example `0.6.0`). **Cloudron:** a community app package is available, see [cloudron/README.md](cloudron/README.md).
 

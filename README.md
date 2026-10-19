@@ -1,13 +1,15 @@
 <a name="banner"></a>
 <a name="legends-geogrid"></a>
 
-# ![legends-geogrid](assets/banner.webp)
+# Nexo
+
+> Nexo une o rank checker de grade geográfica [legends-geogrid](https://github.com/avalonreset/legends-geogrid) (Avalon Reset, MIT) e o painel [SEO Playground](https://github.com/paulmassen/seo-playground) (Paul Massen, MIT), que fica em [`apps/web`](apps/web). O restante deste documento descreve as ferramentas de grade em Python.
 
 [![release](https://img.shields.io/github/v/release/avalonreset/legends-geogrid?label=release&sort=date&style=flat-square&labelColor=000000&color=ff0000)](https://github.com/avalonreset/legends-geogrid/releases/latest)
 [![checks](https://img.shields.io/github/actions/workflow/status/avalonreset/legends-geogrid/ci.yml?branch=main&label=checks&style=flat-square&labelColor=000000)](https://github.com/avalonreset/legends-geogrid/actions/workflows/ci.yml)
 [![license](https://img.shields.io/github/license/avalonreset/legends-geogrid?label=license&style=flat-square&labelColor=000000&color=666666)](LICENSE)
 
-legends-geogrid is an **open-source google maps rank checker** for local SEO. See where a business ranks across a geographic grid, compare visibility across services, and turn the evidence into readable PDF reports. Run it locally with your own DataForSEO account, without a rank-tracking subscription.
+Nexo is an **open-source google maps rank checker** for local SEO. See where a business ranks across a geographic grid, compare visibility across services, and turn the evidence into readable PDF reports. Run it locally with your own DataForSEO account, without a rank-tracking subscription.
 
 Explore a saved real-world 17 × 17 pizza-shop scan in the browser, or generate a sample strategy report without credentials or API spend. Fresh scans use [legends-dataforseo](https://github.com/avalonreset/legends-dataforseo), with explicit execution, cost estimates, and reusable cached results.
 

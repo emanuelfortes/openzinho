@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * SEO Playground — API Smoke Test
+ * Nexo — API Smoke Test
  *
  * Calls every live DataForSEO endpoint used in the app with limit:1,
  * validates that the fields the UI reads are actually present in the response,
@@ -133,7 +133,7 @@ async function test(name, endpoint, body, { extract, fields = [] } = {}) {
 
 // ─── Test suite ───────────────────────────────────────────────────────────────
 
-console.log(`\n${B}SEO Playground — API Smoke Test${X}`);
+console.log(`\n${B}Nexo — API Smoke Test${X}`);
 console.log(`${D}Domain: ${domain}  ·  Location: ${location}  ·  Language: ${language}${X}\n`);
 
 // ── DataForSEO Labs ───────────────────────────────────────────────────────────

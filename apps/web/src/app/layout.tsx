@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SEO Playground",
+  title: "Nexo",
   description: "Local SEO dashboard powered by DataForSEO",
 };
 

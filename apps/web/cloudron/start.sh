@@ -15,5 +15,5 @@ unset AUTH_ENABLED BETTER_AUTH_URL BETTER_AUTH_SECRET
 CRON_SECRET="$(head -c 48 /dev/urandom | base64 | tr -d '\n=+/')"
 export CRON_SECRET
 
-echo "==> Starting SEO Playground ${APP_VERSION:-}"
+echo "==> Starting Nexo ${APP_VERSION:-}"
 exec /usr/local/bin/gosu cloudron:cloudron node /app/code/launcher.mjs

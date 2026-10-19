@@ -649,12 +649,12 @@ def render_pdf(model, assets, output):
         canv.line(MARGIN, 43, PAGE_W-MARGIN, 43)
         canv.setFillColor(HexColor(MUTED))
         canv.setFont('ReportBody', 8.5)
-        label(canv, MARGIN, 761, 'legends-geogrid / local search observations')
+        label(canv, MARGIN, 761, 'Nexo / local search observations')
         label(canv, MARGIN, 28, 'SYNTHETIC DEMONSTRATION' if model['synthetic'] else 'SUPPLIED OBSERVATIONAL EVIDENCE')
         label(canv, PAGE_W/2, 28, str(doc.page), right=True)
 
     doc = BaseDocTemplate(str(output / 'report.pdf'), pagesize=(PAGE_W, PAGE_H),
-                          title=display_text(model['business']['name'])+' | legends-geogrid report', author='legends-geogrid',
+                          title=display_text(model['business']['name'])+' | Nexo report', author='Nexo',
                           leftMargin=MARGIN, rightMargin=MARGIN, topMargin=65, bottomMargin=58,
                           allowSplitting=1)
     doc.addPageTemplates(PageTemplate(id='dark', frames=[Frame(MARGIN, 58, COLUMN, 669, leftPadding=0,
@@ -786,9 +786,9 @@ def render_html(model, assets, output):
     from report_design import prepare_banner
     prepare_banner(output, THEME)
     parts = ['<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width">',
-             '<title>'+escape(model['business']['name'])+' | legends-geogrid</title>',
+             '<title>'+escape(model['business']['name'])+' | Nexo</title>',
              '<style>'+html_styles(THEME)+'</style><main data-design="'+DESIGN_VERSION+'" data-stage="findings">'+BRAND_TOP+'<header class="report-cover">',
-             ('<img class="banner" src="banner.png" alt="legends-geogrid"><p class="eyebrow">study findings</p>'),
+             ('<img class="banner" src="banner.png" alt="Nexo"><p class="eyebrow">study findings</p>'),
              h(model['business']['name'],1), p(model['business']['location'])]
     if model['business'].get('website'):
         website = escape(model['business']['website'], quote=True)

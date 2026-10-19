@@ -2,8 +2,10 @@
 // This module is client-safe (no database access): server code reads the stored
 // values through brand-server.ts and passes them down as plain props.
 
-export const DEFAULT_BRAND_NAME = 'SEO Playground';
-export const DEFAULT_BRAND_COLOR = '#0f172a';
+export const DEFAULT_BRAND_NAME = 'Nexo';
+export const DEFAULT_BRAND_COLOR = '#1f6bff';
+/** Dark report text, used to pick readable header text over light brand colours. */
+const REPORT_INK = '#0f172a';
 export const BRAND_FOOTER_MAX_LENGTH = 160;
 export const BRAND_NAME_MAX_LENGTH = 80;
 export const LOGO_MAX_BYTES = 256 * 1024;
@@ -75,7 +77,7 @@ export function brandPalette(color: string | null | undefined): BrandPalette {
   const hex = normalizeHexColor(color) ?? DEFAULT_BRAND_COLOR;
   const luminance = relativeLuminance(hex);
   const whiteContrast = 1.05 / (luminance + 0.05);
-  const inkLuminance = relativeLuminance(DEFAULT_BRAND_COLOR);
+  const inkLuminance = relativeLuminance(REPORT_INK);
   const inkContrast = (luminance + 0.05) / (inkLuminance + 0.05);
   const fill = hexToRgb(hex);
   return whiteContrast >= inkContrast

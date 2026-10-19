@@ -8,6 +8,7 @@ import { SIDEBAR_COLLAPSED_COOKIE, SIDEBAR_FAVORITES_COOKIE, FAVORITES_SECTION_K
 import { NAV_SECTIONS as sections, NAV_FOOTER as footerItems, type NavItem, type NavSection } from '@/lib/nav';
 import type { Project } from '@/lib/db';
 import ProjectSwitcher from './ProjectSwitcher';
+import NexoLogo from './NexoLogo';
 
 const itemsByHref = new Map(sections.flatMap((s) => s.items).map((i) => [i.href, i]));
 
@@ -165,13 +166,8 @@ export default function Sidebar({ initialCollapsed = [], initialFavorites = [], 
     <div className="flex h-full w-60 flex-col border-r border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 select-none shrink-0">
       {/* Logo */}
       <div className="flex h-14 items-center px-5 border-b border-slate-100 dark:border-slate-800 shrink-0">
-        <Link href="/dashboard" className="flex items-center gap-2.5">
-          <div className="w-6 h-6 rounded-md bg-blue-600 flex items-center justify-center shrink-0">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <path d="M2 10 L5 4 L8 8 L10 5 L13 10" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
-          <span className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">SEO Playground</span>
+        <Link href="/dashboard" aria-label="Nexo" className="flex items-center">
+          <NexoLogo />
         </Link>
       </div>
 

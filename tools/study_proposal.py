@@ -65,7 +65,7 @@ def render_proposal(plan_path, output_dir, theme='geogrid'):
         parts = ['<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">',
             '<title>'+escape(title)+' | study proposal</title><style>'+html_styles(theme)+'</style></head>',
             '<body><main data-design="'+DESIGN_VERSION+'" data-stage="proposal">'+BRAND_TOP+'<header class="report-cover">',
-            '<img class="banner" src="banner.png" alt="legends-geogrid"><p class="eyebrow">proposed study</p><h1>'+escape(title)+'</h1></header>']
+            '<img class="banner" src="banner.png" alt="Nexo"><p class="eyebrow">proposed study</p><h1>'+escape(title)+'</h1></header>']
         selected=[q for q in plan['queries'] if q['selected']]
         points=plan['settings']['grid_size']**2
         parts += ['<section class="report-section"><h2>the proposed study</h2><p>'+escape(plan['settings']['decision'])+'</p>',
@@ -129,12 +129,12 @@ def render_proposal(plan_path, output_dir, theme='geogrid'):
                 canvas.rect(0,0,PAGE_W,PAGE_H,stroke=0,fill=1)
                 canvas.setFillColor(HexColor(t['MUTED']))
                 canvas.setFont('ReportBody',8.5)
-                canvas.drawString(MARGIN,761,'legends-geogrid / proposed study')
+                canvas.drawString(MARGIN,761,'Nexo / proposed study')
                 canvas.drawString(MARGIN,28,'PROPOSAL / NOT COMPLETED GRID FINDINGS')
                 canvas.drawRightString(PAGE_W/2,28,str(doc.page))
             doc = SimpleDocTemplate(str(stage/'proposal.pdf'),pagesize=(PAGE_W,PAGE_H),
                 leftMargin=MARGIN,rightMargin=MARGIN,topMargin=65,bottomMargin=58,
-                title=title+' | proposed study',author='legends-geogrid')
+                title=title+' | proposed study',author='Nexo')
             doc.build(story,onFirstPage=page,onLaterPages=page)
             add_pdf_brand_links(stage/'proposal.pdf')
             qa = report.pdf_qa(stage/'proposal.pdf',proof=True,required=True)

@@ -297,7 +297,7 @@ class RenderTests(unittest.TestCase):
                 for state in ('error','empty','unmeasured'):
                     self.assertEqual('#FFFFFF',strategy_report.marker_style(state,None)[1])
                 self.assertNotIn('checked with jev', html.lower())
-                self.assertIn('legends-geogrid', html)
+                self.assertIn('Nexo', html)
                 if PDFIUM:
                     import pypdfium2
                     pdf=pypdfium2.PdfDocument(str(Path(folder)/'output/report.pdf'))

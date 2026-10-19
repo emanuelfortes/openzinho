@@ -1,7 +1,9 @@
-# legends-geogrid agent instructions
+# Nexo agent instructions
 
-legends-geogrid is an open-source google maps rank checker. Preserve that
-lowercase positioning and the approved Legends banner style.
+Nexo is an open-source google maps rank checker plus the SEO dashboard in
+`apps/web`. Follow the Nexo visual identity (dark-only, monochrome blue, Geist
+300/400/500, interface in Brazilian Portuguese). Keep the MIT attribution to
+legends-geogrid and SEO Playground in LICENSE and THIRD_PARTY_NOTICES.md.
 
 ## Setup and dependencies
 

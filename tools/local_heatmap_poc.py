@@ -777,7 +777,7 @@ def render_html(args: argparse.Namespace, results: list[PointResult], markdown_p
     weak_summary = weak_zone_summary(results, args.grid_size)
     from report_street_html import street_map_panel
     street_panel = street_map_panel(args, results)
-    title = f"legends-geogrid - {args.target_name}"
+    title = f"Nexo - {args.target_name}"
     grid_size = args.grid_size
     compact = grid_size > 7
     wide = grid_size > 9
