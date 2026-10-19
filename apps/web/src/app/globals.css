@@ -1,102 +1,210 @@
 @import "tailwindcss";
 
-/* Class-based dark mode */
+/* Nexo is dark-only; the variant stays so existing dark: classes keep compiling. */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Smooth scroll */
-html { scroll-behavior: smooth; }
+/* ─── Nexo tokens ─────────────────────────────────────────────────────────────
+   Each colour becomes a Tailwind utility: bg-nexo-surface, text-nexo-dim,
+   border-nexo-border, text-nexo-ice, bg-nexo-blue/15, rounded-nexo-lg …
+   ─────────────────────────────────────────────────────────────────────────── */
+@theme {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 
-/* Better focus rings */
-:focus-visible {
-  outline: 2px solid rgb(59 130 246);
-  outline-offset: 2px;
-  border-radius: 4px;
+  --color-nexo-bg: #030508;
+  --color-nexo-surface: rgba(255, 255, 255, 0.03);
+  --color-nexo-surface-2: #06090f;
+  --color-nexo-border: rgba(77, 162, 255, 0.2);
+  --color-nexo-border-strong: rgba(77, 162, 255, 0.35);
+  --color-nexo-text: #eaf2ff;
+  --color-nexo-dim: rgba(234, 242, 255, 0.6);
+  --color-nexo-faint: rgba(234, 242, 255, 0.45);
+  --color-nexo-blue: #1f6bff;
+  --color-nexo-sky: #4da2ff;
+  --color-nexo-ice: #c2e0ff;
+  --color-nexo-navy: #1246b8;
+  --color-nexo-danger: #e5484d;
+  --color-nexo-danger-text: #fca5a5;
+  --color-nexo-warn: #f5a524;
+  --color-nexo-warn-text: #fcd38d;
+
+  --radius-nexo: 4px;
+  --radius-nexo-lg: 6px;
 }
 
+/* Short aliases for arbitrary values, e.g. bg-[var(--nexo-bg)]. */
 :root {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --nexo-bg: var(--color-nexo-bg);
+  --nexo-surface: var(--color-nexo-surface);
+  --nexo-surface-2: var(--color-nexo-surface-2);
+  --nexo-border: var(--color-nexo-border);
+  --nexo-border-strong: var(--color-nexo-border-strong);
+  --nexo-text: var(--color-nexo-text);
+  --nexo-text-dim: var(--color-nexo-dim);
+  --nexo-text-faint: var(--color-nexo-faint);
+  --nexo-blue: var(--color-nexo-blue);
+  --nexo-sky: var(--color-nexo-sky);
+  --nexo-ice: var(--color-nexo-ice);
+  --nexo-navy: var(--color-nexo-navy);
+  --nexo-danger: var(--color-nexo-danger);
+  --nexo-warn: var(--color-nexo-warn);
+  --nexo-radius: var(--radius-nexo);
+  --nexo-radius-lg: var(--radius-nexo-lg);
 }
 
-/* ─── Global dark mode overrides ─────────────────────────────────────────────
-   These cover every page without modifying individual page files.
-   Specificity (.dark .class = 0,2,0) beats Tailwind utilities (0,1,0).
-   ─────────────────────────────────────────────────────────────────────────── */
+@layer base {
+  html { scroll-behavior: smooth; color-scheme: dark; }
+  body { background: var(--color-nexo-bg); color: var(--color-nexo-text); }
 
-/* Backgrounds */
-.dark .bg-white   { background-color: rgb(15 23 42);   }   /* slate-900 */
-.dark .bg-slate-50  { background-color: rgb(2 6 23);   }   /* slate-950 */
-.dark .bg-slate-100 { background-color: rgb(30 41 59 / 0.6); } /* slate-800/60 */
+  :focus-visible { outline: 2px solid var(--color-nexo-sky); outline-offset: 2px; border-radius: var(--radius-nexo); }
 
-/* Borders */
-.dark .border-slate-200 { border-color: rgb(51 65 85);  }  /* slate-600 */
-.dark .border-slate-100 { border-color: rgb(30 41 59);  }  /* slate-800 */
+  /* Form controls default to the Nexo field look; utilities still override it. */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+  textarea,
+  select {
+    background-color: var(--color-nexo-surface-2);
+    color: var(--color-nexo-text);
+    border-color: var(--color-nexo-border-strong);
+  }
+  input[type="checkbox"], input[type="radio"] { accent-color: var(--color-nexo-blue); }
+  ::placeholder { color: rgba(234, 242, 255, 0.3); opacity: 1; }
 
-/* Text */
-.dark .text-slate-900 { color: rgb(248 250 252); }  /* slate-50   */
-.dark .text-slate-800 { color: rgb(226 232 240); }  /* slate-200  */
-.dark .text-slate-700 { color: rgb(203 213 225); }  /* slate-300  */
-.dark .text-slate-600 { color: rgb(148 163 184); }  /* slate-400  */
-
-/* Hover rows & links */
-.dark .hover\:bg-slate-50:hover { background-color: rgb(30 41 59 / 0.6); }
-
-/* Dividers (divide-y) */
-.dark .divide-slate-50  > :not([hidden]) ~ :not([hidden]) { border-color: rgb(30 41 59); }
-.dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]) { border-color: rgb(30 41 59); }
-
-/* Table header stripe */
-.dark thead tr { background-color: rgb(2 6 23); }
-
-/* Form elements */
-.dark input:not([type="checkbox"]):not([type="radio"]),
-.dark textarea,
-.dark select {
-  background-color: rgb(2 6 23);
-  color: rgb(248 250 252);
-  border-color: rgb(51 65 85);
+  thead tr { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(234, 242, 255, 0.5); }
+  tbody tr { border-top: 1px solid rgba(77, 162, 255, 0.1); }
 }
 
-.dark ::placeholder { color: rgb(71 85 105); opacity: 1; } /* slate-600 */
-
-/* CTA buttons (bg-slate-900 on <button>) become blue in dark mode */
-.dark button.bg-slate-900 {
-  background-color: rgb(37 99 235);  /* blue-600 */
-  box-shadow: none;
+/* ─── Light beams (login, app shell top, Studio hero) ────────────────────── */
+@utility nexo-beams {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 420px;
+  pointer-events: none;
+  background: repeating-linear-gradient(90deg,
+    rgba(31, 107, 255, 0) 0px, rgba(31, 107, 255, 0) 9px, rgba(77, 162, 255, 0.35) 10px, rgba(31, 107, 255, 0) 13px,
+    rgba(31, 107, 255, 0) 31px, rgba(31, 107, 255, 0.5) 32px, rgba(31, 107, 255, 0) 36px,
+    rgba(31, 107, 255, 0) 58px, rgba(194, 224, 255, 0.3) 59px, rgba(31, 107, 255, 0) 61px);
+  -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0));
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(3, 5, 8, 0.95) 0%, rgba(3, 5, 8, 0.3) 30%, rgba(3, 5, 8, 0.9) 55%, rgba(3, 5, 8, 0.3) 80%, rgba(3, 5, 8, 0.95) 100%);
+  }
 }
-.dark button.hover\:bg-blue-600:hover { background-color: rgb(29 78 216); } /* blue-700 */
 
-/* Shadows — soften in dark */
-.dark .shadow-sm  { box-shadow: 0 1px 3px rgb(0 0 0 / 0.4); }
-.dark .shadow-xl  { box-shadow: 0 4px 24px rgb(0 0 0 / 0.5); }
+/* ─── Glass panel ─────────────────────────────────────────────────────────── */
+@utility nexo-panel {
+  background: var(--color-nexo-surface);
+  border: 1px solid var(--color-nexo-border);
+  border-radius: var(--radius-nexo-lg);
+  backdrop-filter: blur(12px);
+}
 
-/* ─── Slim scrollbar ─────────────────────────────────────────────────────────
-   Applied to the sidebar and any element with .scrollbar-thin.
-   ─────────────────────────────────────────────────────────────────────────── */
-.scrollbar-thin {
+/* ─── Type ────────────────────────────────────────────────────────────────── */
+@utility nexo-h1 {
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  font-size: 2.5rem;
+  line-height: 1.1;
+  color: var(--color-nexo-text);
+  text-shadow: 0 0 40px rgba(77, 162, 255, 0.4);
+}
+@utility nexo-label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-nexo-faint);
+}
+@utility nexo-section {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-nexo-sky);
+}
+@utility nexo-metric {
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  color: var(--color-nexo-ice);
+}
+
+/* ─── Controls ────────────────────────────────────────────────────────────── */
+@utility nexo-input {
+  background-color: var(--color-nexo-surface-2);
+  color: var(--color-nexo-text);
+  border: 1px solid var(--color-nexo-border-strong);
+  border-radius: var(--radius-nexo);
+}
+
+@utility nexo-btn-primary {
+  background: #fff;
+  color: var(--color-nexo-bg);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: var(--radius-nexo);
+  &:hover { background: var(--color-nexo-ice); }
+}
+@utility nexo-btn-accent {
+  background: var(--color-nexo-blue);
+  color: #fff;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: var(--radius-nexo);
+  &:hover { background: var(--color-nexo-sky); }
+}
+@utility nexo-btn-ghost {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: var(--radius-nexo);
+  &:hover { border-color: var(--color-nexo-ice); }
+}
+
+/* Segmented control: children with aria-selected="true" (or .active) are highlighted. */
+@utility nexo-seg {
+  display: inline-flex;
+  border: 1px solid var(--color-nexo-border-strong);
+  border-radius: var(--radius-nexo);
+  overflow: hidden;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  & > * { padding: 6px 12px; color: rgba(234, 242, 255, 0.7); }
+  & > * + * { border-left: 1px solid var(--color-nexo-border-strong); }
+  & > [aria-selected="true"], & > .active { background: var(--color-nexo-blue); color: #fff; }
+}
+
+/* ─── Rank pins (monochrome blue scale) ───────────────────────────────────── */
+@utility nexo-pin { border-radius: 999px; display: grid; place-items: center; font-family: var(--font-mono); }
+@utility nexo-pin-top { background: var(--color-nexo-ice); color: var(--color-nexo-bg); box-shadow: 0 0 18px rgba(194, 224, 255, 0.6); }
+@utility nexo-pin-mid { background: var(--color-nexo-sky); color: #fff; }
+@utility nexo-pin-low { background: var(--color-nexo-navy); color: #fff; }
+@utility nexo-pin-none { background: rgba(77, 162, 255, 0.1); color: rgba(194, 224, 255, 0.45); border: 1px solid rgba(77, 162, 255, 0.4); }
+
+/* ─── Sidebar nav ─────────────────────────────────────────────────────────── */
+@utility nexo-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--radius-nexo);
+  font-size: 13px;
+  color: rgba(234, 242, 255, 0.65);
+  border-left: 2px solid transparent;
+  &:hover { color: #fff; background: rgba(255, 255, 255, 0.04); }
+  &[aria-current="page"] { color: #fff; background: rgba(31, 107, 255, 0.18); border-left-color: var(--color-nexo-ice); }
+}
+
+/* ─── Slim scrollbar ──────────────────────────────────────────────────────── */
+@utility scrollbar-thin {
   scrollbar-width: thin;
-  scrollbar-color: rgb(203 213 225) transparent; /* slate-300 thumb, no track */
-}
-.scrollbar-thin::-webkit-scrollbar {
-  width: 4px;
-}
-.scrollbar-thin::-webkit-scrollbar-track {
-  background: transparent;
-}
-.scrollbar-thin::-webkit-scrollbar-thumb {
-  background-color: rgb(203 213 225); /* slate-300 */
-  border-radius: 99px;
-}
-.scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background-color: rgb(148 163 184); /* slate-400 */
-}
-
-.dark .scrollbar-thin {
-  scrollbar-color: rgb(51 65 85) transparent; /* slate-700 thumb */
-}
-.dark .scrollbar-thin::-webkit-scrollbar-thumb {
-  background-color: rgb(51 65 85); /* slate-700 */
-}
-.dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background-color: rgb(71 85 105); /* slate-600 */
+  scrollbar-color: rgba(77, 162, 255, 0.3) transparent;
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background-color: rgba(77, 162, 255, 0.3); border-radius: 99px; }
 }

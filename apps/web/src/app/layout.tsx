@@ -5,6 +5,7 @@ import "./globals.css";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
 });
 
 const geistMono = Geist_Mono({
@@ -23,23 +24,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    // Nexo is dark-only: the class is fixed instead of following a stored theme.
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`dark ${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <head>
-        {/* Anti-FOUC: apply theme before first paint */}
-        <script dangerouslySetInnerHTML={{ __html: `
-          try {
-            const t = localStorage.getItem('theme');
-            if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-              document.documentElement.classList.add('dark');
-            }
-          } catch {}
-        `}} />
-      </head>
-      <body suppressHydrationWarning className="min-h-full flex flex-col bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+      <body suppressHydrationWarning className="min-h-full flex flex-col bg-nexo-bg text-nexo-text font-sans">
         {children}
       </body>
     </html>

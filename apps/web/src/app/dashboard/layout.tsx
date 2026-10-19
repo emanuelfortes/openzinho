@@ -3,7 +3,6 @@ import { redirect } from 'next/navigation';
 import Sidebar from '@/components/Sidebar';
 import { SIDEBAR_COLLAPSED_COOKIE, SIDEBAR_FAVORITES_COOKIE, parseCollapsedSections, parseFavorites } from '@/lib/sidebar';
 import BalanceBadge from '@/components/BalanceBadge';
-import ThemeToggle from '@/components/ThemeToggle';
 import UpdateBanner from '@/components/UpdateBanner';
 import GridTaskCenter from '@/components/GridTaskCenter';
 import ProjectSync from '@/components/ProjectSync';
@@ -34,7 +33,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <UpdateBanner />
         <header className="h-14 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-end px-6 shrink-0 gap-3">
           <GridTaskCenter />
-          <ThemeToggle />
           <BalanceBadge />
           {accountEmail && <AccountMenu email={accountEmail} />}
         </header>
