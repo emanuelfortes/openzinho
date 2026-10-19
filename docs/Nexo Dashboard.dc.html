@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#030508;color:#eaf2ff;font-family:Geist,ui-sans-serif,system-ui,sans-serif;color-scheme:dark;}
+a{color:#4da2ff;text-decoration:none;cursor:pointer;} a:hover{color:#fff;}
+select,input,button,textarea{font-family:inherit;}
+input::placeholder,textarea::placeholder{color:rgba(234,242,255,0.3);}
+</style>
+</helmet>
+
+<!-- LOGIN -->
+<sc-if value="{{ isLogin }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="Login" style="min-height:100vh;background:#030508;position:relative;overflow:hidden;display:grid;place-items:center;font-size:15px;">
+  <div style="position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(31,107,255,0) 0px,rgba(31,107,255,0) 9px,rgba(77,162,255,0.55) 10px,rgba(31,107,255,0) 13px,rgba(31,107,255,0) 31px,rgba(31,107,255,0.75) 32px,rgba(31,107,255,0) 36px,rgba(31,107,255,0) 58px,rgba(194,224,255,0.5) 59px,rgba(31,107,255,0) 61px);mask-image:linear-gradient(180deg,rgba(0,0,0,0.9) 0%,rgba(0,0,0,0.3) 50%,rgba(0,0,0,0) 90%);-webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,0.9) 0%,rgba(0,0,0,0.3) 50%,rgba(0,0,0,0) 90%);"></div>
+  <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(3,5,8,0.95) 0%,rgba(3,5,8,0.2) 25%,rgba(3,5,8,0.9) 50%,rgba(3,5,8,0.2) 75%,rgba(3,5,8,0.95) 100%);"></div>
+  <div style="position:relative;width:100%;max-width:400px;padding:24px;display:grid;gap:28px;">
+    <div style="display:flex;align-items:center;gap:10px;font-weight:500;font-size:20px;letter-spacing:0.1em;justify-content:center;"><span style="width:10px;height:24px;border-radius:2px;background:linear-gradient(180deg,#c2e0ff,#1f6bff);display:inline-block;"></span>NEXO</div>
+    <div style="padding:28px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid rgba(77,162,255,0.3);backdrop-filter:blur(20px);box-shadow:0 30px 80px rgba(0,0,0,0.6);display:grid;gap:18px;">
+      <div><h1 style="margin:0 0 6px;font-size:28px;font-weight:300;letter-spacing:-0.02em;">Entrar</h1><p style="margin:0;color:rgba(234,242,255,0.6);font-size:14px;line-height:1.5;">Informe seu e-mail e senha para abrir o painel.</p></div>
+      <label style="display:grid;gap:6px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.55);">E-mail<input type="email" placeholder="voce@exemplo.com" style="font-size:14px;color:#fff;padding:11px 12px;border-radius:4px;background:#06090f;border:1px solid rgba(77,162,255,0.3);text-transform:none;letter-spacing:0;"></label>
+      <label style="display:grid;gap:6px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.55);">Senha<input type="password" value="••••••••••" style="font-size:14px;color:#fff;padding:11px 12px;border-radius:4px;background:#06090f;border:1px solid rgba(77,162,255,0.3);"></label>
+      <button onClick="{{ goHome }}" style="border:0;background:#fff;color:#030508;font-weight:500;padding:13px;border-radius:4px;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">Entrar</button>
+    </div>
+    <p style="margin:0;text-align:center;color:rgba(234,242,255,0.4);font-size:12px;">Login opcional · ative com AUTH_ENABLED=true</p>
+  </div>
+</div>
+</sc-if>
+
+<!-- APP SHELL -->
+<sc-if value="{{ isApp }}" hint-placeholder-val="{{ true }}">
+<div data-screen-label="Nexo Dashboard" style="display:grid;grid-template-columns:248px minmax(0,1fr);height:100vh;background:#030508;font-size:14px;position:relative;overflow:hidden;">
+  <div style="position:absolute;inset:0 0 auto 0;height:420px;pointer-events:none;background:repeating-linear-gradient(90deg,rgba(31,107,255,0) 0px,rgba(31,107,255,0) 9px,rgba(77,162,255,0.35) 10px,rgba(31,107,255,0) 13px,rgba(31,107,255,0) 31px,rgba(31,107,255,0.5) 32px,rgba(31,107,255,0) 36px,rgba(31,107,255,0) 58px,rgba(194,224,255,0.3) 59px,rgba(31,107,255,0) 61px);mask-image:linear-gradient(180deg,rgba(0,0,0,0.7) 0%,rgba(0,0,0,0) 100%);-webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,0.7) 0%,rgba(0,0,0,0) 100%);"></div>
+  <div style="position:absolute;inset:0 0 auto 0;height:420px;pointer-events:none;background:linear-gradient(90deg,rgba(3,5,8,0.95) 0%,rgba(3,5,8,0.3) 30%,rgba(3,5,8,0.9) 55%,rgba(3,5,8,0.3) 80%,rgba(3,5,8,0.95) 100%);"></div>
+
+  <aside style="position:relative;display:flex;flex-direction:column;border-right:1px solid rgba(77,162,255,0.18);background:rgba(3,5,8,0.6);backdrop-filter:blur(20px);min-height:0;">
+    <div style="height:56px;display:flex;align-items:center;padding:0 20px;border-bottom:1px solid rgba(77,162,255,0.18);gap:10px;font-weight:500;font-size:16px;letter-spacing:0.1em;cursor:pointer;" onClick="{{ goHome }}"><span style="width:8px;height:20px;border-radius:2px;background:linear-gradient(180deg,#c2e0ff,#1f6bff);display:inline-block;"></span>NEXO</div>
+    <div style="padding:12px 12px 0;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;border-radius:4px;border:1px solid rgba(77,162,255,0.25);background:rgba(255,255,255,0.03);cursor:pointer;"><div style="display:flex;align-items:center;gap:8px;min-width:0;"><span style="width:18px;height:18px;border-radius:3px;background:#1f6bff;display:grid;place-items:center;font-size:10px;font-weight:600;">H</span><span style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Home Slice Pizza</span></div><span style="color:rgba(234,242,255,0.45);font-size:11px;">⌄</span></div>
+      <div style="position:relative;margin-top:10px;"><input type="text" placeholder="Filtrar ferramentas" style="width:100%;box-sizing:border-box;font-size:13px;color:#fff;padding:8px 30px 8px 12px;border-radius:4px;background:#06090f;border:1px solid rgba(77,162,255,0.2);"><kbd style="position:absolute;right:8px;top:50%;transform:translateY(-50%);font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(234,242,255,0.4);border:1px solid rgba(77,162,255,0.25);border-radius:3px;padding:1px 5px;">/</kbd></div>
+    </div>
+    <nav style="flex:1;min-height:0;overflow-y:auto;padding:10px 12px;display:grid;gap:14px;align-content:start;">
+      <sc-for list="{{ navSections }}" as="s" hint-placeholder-count="8">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;padding:4px 10px 6px;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#4da2ff;"><span>{{ s.label }}</span><span style="flex:1;height:1px;background:rgba(77,162,255,0.15);"></span></div>
+          <sc-for list="{{ s.items }}" as="it" hint-placeholder-count="3">
+            <a onClick="{{ it.go }}" style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:4px;font-size:13px;color:{{ it.fg }};background:{{ it.bg }};border-left:2px solid {{ it.bar }};">{{ it.name }}</a>
+          </sc-for>
+        </div>
+      </sc-for>
+    </nav>
+    <div style="padding:10px 12px;border-top:1px solid rgba(77,162,255,0.18);display:grid;gap:2px;">
+      <a onClick="{{ goSpending }}" style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:4px;font-size:13px;color:{{ spendFg }};background:{{ spendBg }};border-left:2px solid {{ spendBar }};">Gastos</a>
+      <a onClick="{{ goSettings }}" style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:4px;font-size:13px;color:{{ settingsFg }};background:{{ settingsBg }};border-left:2px solid {{ settingsBar }};">Configurações</a>
+    </div>
+  </aside>
+
+  <div style="position:relative;display:flex;flex-direction:column;min-width:0;min-height:0;">
+    <header style="height:56px;display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:0 24px;border-bottom:1px solid rgba(77,162,255,0.18);background:rgba(3,5,8,0.5);backdrop-filter:blur(20px);">
+      <span style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.55);padding:6px 10px;border:1px solid rgba(77,162,255,0.25);border-radius:4px;">3 tarefas na fila</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#c2e0ff;padding:6px 10px;border:1px solid rgba(77,162,255,0.35);border-radius:4px;background:rgba(31,107,255,0.12);">$ 142,37</span>
+      <span onClick="{{ goLogin }}" style="width:30px;height:30px;border-radius:999px;background:linear-gradient(135deg,#4da2ff,#1f6bff);display:grid;place-items:center;font-size:12px;font-weight:600;cursor:pointer;">A</span>
+    </header>
+
+    <main style="flex:1;min-height:0;overflow-y:auto;padding:32px;">
+      <div style="max-width:1200px;margin:0 auto;display:grid;gap:24px;">
+
+        <!-- HOME -->
+        <sc-if value="{{ pg.home }}" hint-placeholder-val="{{ true }}">
+          <div data-screen-label="Home"><h1 style="margin:0 0 6px;font-size:40px;font-weight:300;letter-spacing:-0.03em;text-shadow:0 0 40px rgba(77,162,255,0.4);">Painel</h1><p style="margin:0;color:rgba(234,242,255,0.6);">Escolha uma ferramenta para começar.</p></div>
+          <sc-for list="{{ navSections }}" as="s" hint-placeholder-count="8">
+            <section style="display:grid;gap:12px;">
+              <div style="display:flex;align-items:center;gap:12px;"><span style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:#4da2ff;padding:5px 10px;border:1px solid rgba(77,162,255,0.35);border-radius:4px;">{{ s.label }}</span><span style="flex:1;height:1px;background:rgba(77,162,255,0.15);"></span></div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;">
+                <sc-for list="{{ s.items }}" as="it" hint-placeholder-count="4">
+                  <a onClick="{{ it.go }}" style="display:grid;gap:6px;padding:16px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(77,162,255,0.2);backdrop-filter:blur(12px);color:#eaf2ff;" style-hover="border-color:rgba(194,224,255,0.6);background:rgba(31,107,255,0.1);"><span style="font-size:12px;letter-spacing:0.06em;text-transform:uppercase;font-weight:500;">{{ it.name }}</span><span style="font-size:12px;color:rgba(234,242,255,0.55);line-height:1.45;">{{ it.desc }}</span></a>
+                </sc-for>
+              </div>
+            </section>
+          </sc-for>
+        </sc-if>
+
+        <!-- RANK TRACKER -->
+        <sc-if value="{{ pg.rank }}" hint-placeholder-val="{{ false }}">
+          <div data-screen-label="Rank Tracker" style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;">
+            <div><h1 style="margin:0 0 6px;font-size:40px;font-weight:300;letter-spacing:-0.03em;text-shadow:0 0 40px rgba(77,162,255,0.4);">Rank Tracker</h1><p style="margin:0;color:rgba(234,242,255,0.6);">12 palavras-chave em 2 domínios</p></div>
+            <div style="display:flex;gap:8px;align-items:center;"><span style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.55);">Top</span><select style="font-size:13px;color:#fff;padding:8px 10px;border-radius:4px;background:#06090f;border:1px solid rgba(77,162,255,0.3);"><option>20</option><option>50</option><option>100</option></select><button style="border:0;background:#fff;color:#030508;font-weight:500;padding:10px 16px;border-radius:4px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">Enfileirar tudo (12)</button></div>
+          </div>
+          <div style="display:flex;gap:14px;align-items:center;padding:12px 16px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(77,162,255,0.2);flex-wrap:wrap;"><span style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#4da2ff;">Agendamento</span><span style="color:rgba(234,242,255,0.75);font-size:13px;">Verificação diária às 06:00 · próxima em 14h</span><div style="margin-left:auto;display:flex;gap:4px;border:1px solid rgba(77,162,255,0.3);border-radius:4px;overflow:hidden;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;"><span style="padding:6px 12px;color:rgba(234,242,255,0.7);">Desligado</span><span style="padding:6px 12px;background:#1f6bff;color:#fff;">Diário</span><span style="padding:6px 12px;color:rgba(234,242,255,0.7);">Semanal</span></div></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <span style="display:flex;gap:8px;align-items:center;padding:8px 14px;border-radius:4px;background:#fff;color:#030508;font-size:13px;font-weight:500;">homeslicepizza.com <b style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;background:rgba(3,5,8,0.12);padding:1px 6px;border-radius:3px;">8</b></span>
+            <span style="display:flex;gap:8px;align-items:center;padding:8px 14px;border-radius:4px;border:1px solid rgba(77,162,255,0.3);color:rgba(234,242,255,0.8);font-size:13px;">viacampi.com <b style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;color:#4da2ff;">4</b></span>
+            <input placeholder="novodominio.com" style="font-size:13px;color:#fff;padding:8px 12px;border-radius:4px;background:transparent;border:1px dashed rgba(77,162,255,0.4);width:160px;"><button style="border:1px solid rgba(255,255,255,0.3);background:transparent;color:#fff;padding:8px 12px;border-radius:4px;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;">+ Adicionar</button>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:18px;align-items:start;">
+            <div style="border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(77,162,255,0.2);backdrop-filter:blur(12px);overflow:hidden;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 18px;border-bottom:1px solid rgba(77,162,255,0.2);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.55);"><span>homeslicepizza.com — 8 palavras-chave</span><div style="display:flex;gap:8px;"><button style="border:1px solid rgba(255,255,255,0.25);background:transparent;color:#fff;padding:6px 10px;border-radius:4px;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;">Copiar MD</button><button style="border:0;background:#1f6bff;color:#fff;padding:6px 10px;border-radius:4px;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;">Enfileirar 8</button></div></div>
+              <div style="overflow-x:auto;"><table style="width:100%;min-width:560px;border-collapse:collapse;font-size:13px;">
+                <thead><tr style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.5);"><th style="text-align:left;padding:10px 18px;font-weight:500;">Palavra-chave</th><th style="padding:10px;font-weight:500;">Pos.</th><th style="padding:10px;font-weight:500;">Tendência</th><th style="padding:10px;font-weight:500;">14d</th><th style="text-align:left;padding:10px;font-weight:500;">Verificado</th><th></th></tr></thead>
+                <tbody>
+                  <sc-for list="{{ rankRows }}" as="r" hint-placeholder-count="8">
+                    <tr style="border-top:1px solid rgba(77,162,255,0.1);">
+                      <td style="padding:12px 18px;"><div style="font-weight:500;">{{ r.kw }}</div><div style="font-size:11px;color:rgba(234,242,255,0.45);margin-top:2px;">{{ r.loc }}</div></td>
+                      <td style="padding:12px 10px;text-align:center;"><span style="display:inline-grid;place-items:center;min-width:30px;height:28px;padding:0 8px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:13px;background:{{ r.posBg }};color:{{ r.posFg }};">{{ r.pos }}</span></td>
+                      <td style="padding:12px 10px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;color:{{ r.trendFg }};">{{ r.trend }}</td>
+                      <td style="padding:12px 10px;"><div style="display:flex;gap:2px;align-items:flex-end;height:22px;justify-content:center;"><sc-for list="{{ r.spark }}" as="h" hint-placeholder-count="14"><i style="width:4px;border-radius:1px;background:#4da2ff;display:block;height:{{ h }};"></i></sc-for></div></td>
+                      <td style="padding:12px 10px;color:rgba(234,242,255,0.55);font-size:12px;">{{ r.checked }}</td>
+                      <td style="padding:12px 18px 12px 10px;text-align:right;"><button style="border:1px solid rgba(255,255,255,0.25);background:transparent;color:#fff;padding:5px 10px;border-radius:4px;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;">Checar</button></td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table></div>
+            </div>
+            <aside style="padding:20px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(77,162,255,0.2);backdrop-filter:blur(12px);display:grid;gap:14px;">
+              <div><h2 style="margin:0 0 4px;font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:#4da2ff;">Adicionar palavras-chave</h2><p style="margin:0;font-size:12px;color:rgba(234,242,255,0.5);">para homeslicepizza.com</p></div>
+              <label style="display:grid;gap:6px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.55);">Palavras-chave <span style="text-transform:none;letter-spacing:0;color:rgba(234,242,255,0.4);">(uma por linha, máx. 50)</span><textarea rows="5" placeholder="pizza austin&#10;pizza perto de mim&#10;melhor pizza south congress" style="min-width:0;width:100%;box-sizing:border-box;font-size:13px;color:#fff;padding:10px 12px;border-radius:4px;background:#06090f;border:1px solid rgba(77,162,255,0.3);font-family:'JetBrains Mono',monospace;resize:vertical;text-transform:none;letter-spacing:0;"></textarea></label>
+              <label style="display:grid;gap:6px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.55);">Localização<input value="Austin, Texas, United States" style="min-width:0;width:100%;box-sizing:border-box;font-size:13px;color:#fff;padding:10px 12px;border-radius:4px;background:#06090f;border:1px solid rgba(77,162,255,0.3);text-transform:none;letter-spacing:0;"></label>
+              <label style="display:grid;gap:6px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.55);">Idioma<select style="min-width:0;width:100%;box-sizing:border-box;font-size:13px;color:#fff;padding:10px 12px;border-radius:4px;background:#06090f;border:1px solid rgba(77,162,255,0.3);text-transform:none;letter-spacing:0;"><option>Inglês</option><option>Português</option></select></label>
+              <button style="border:0;background:#fff;color:#030508;font-weight:500;padding:12px;border-radius:4px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">Adicionar</button>
+            </aside>
+          </div>
+        </sc-if>
+
+        <!-- SERP -->
+        <sc-if value="{{ pg.serp }}" hint-placeholder-val="{{ false }}">
+          <div data-screen-label="SERP Checker"><h1 style="margin:0 0 6px;font-size:40px;font-weight:300;letter-spacing:-0.03em;text-shadow:0 0 40px rgba(77,162,255,0.4);">SERP Checker</h1><p style="margin:0;color:rgba(234,242,255,0.6);">Analisa resultados do Google em tempo real via DataForSEO.</p></div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;align-items:start;">
+            <div style="display:grid;gap:18px;">
+              <form style="padding:20px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(77,162,255,0.2);backdrop-filter:blur(12px);display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;">
+                <label style="grid-column:1/-1;display:grid;gap:6px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.55);">Palavra-chave<input value="pizza austin" style="min-width:0;width:100%;box-sizing:border-box;font-size:14px;color:#fff;padding:10px 12px;border-radius:4px;background:#06090f;border:1px solid rgba(77,162,255,0.3);text-transform:none;letter-spacing:0;"></label>
+                <label style="display:grid;gap:6px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.55);">Localização<input value="Austin, Texas, United States" style="min-width:0;width:100%;box-sizing:border-box;font-size:13px;color:#fff;padding:10px 12px;border-radius:4px;background:#06090f;border:1px solid rgba(77,162,255,0.3);text-transform:none;letter-spacing:0;"></label>
+                <label style="display:grid;gap:6px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.55);">Idioma<select style="min-width:0;width:100%;box-sizing:border-box;font-size:13px;color:#fff;padding:10px 12px;border-radius:4px;background:#06090f;border:1px solid rgba(77,162,255,0.3);text-transform:none;letter-spacing:0;"><option>Inglês</option></select></label>
+                <label style="display:grid;gap:6px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.55);">Dispositivo<select style="min-width:0;width:100%;box-sizing:border-box;font-size:13px;color:#fff;padding:10px 12px;border-radius:4px;background:#06090f;border:1px solid rgba(77,162,255,0.3);text-transform:none;letter-spacing:0;"><option>Desktop</option><option>Mobile</option></select></label>
+                <label style="display:grid;gap:6px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.55);">Nº de resultados<select style="min-width:0;width:100%;box-sizing:border-box;font-size:13px;color:#fff;padding:10px 12px;border-radius:4px;background:#06090f;border:1px solid rgba(77,162,255,0.3);text-transform:none;letter-spacing:0;"><option>10</option><option>20</option><option>50</option></select></label>
+                <button type="button" style="grid-column:1/-1;border:0;background:#fff;color:#030508;font-weight:500;padding:12px;border-radius:4px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">Analisar</button>
+              </form>
+              <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px 16px;border-radius:6px;background:linear-gradient(90deg,rgba(31,107,255,0.22),rgba(31,107,255,0.03));border:1px solid rgba(77,162,255,0.35);"><span style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#4da2ff;">Domínios-alvo</span><span style="display:flex;gap:8px;align-items:center;padding:5px 10px;border-radius:4px;border:1px solid rgba(194,224,255,0.4);font-size:12px;">homeslicepizza.com <b style="font-family:'JetBrains Mono',monospace;font-weight:500;background:#c2e0ff;color:#030508;padding:1px 6px;border-radius:3px;font-size:11px;">#2</b></span></div>
+              <div style="border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(77,162,255,0.2);backdrop-filter:blur(12px);overflow:hidden;">
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:1px solid rgba(77,162,255,0.2);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.55);"><span>Resultados orgânicos <b style="font-weight:500;color:#4da2ff;margin-left:8px;">Histórico</b></span><span style="font-family:'JetBrains Mono',monospace;letter-spacing:0;text-transform:none;">custo: $0.0020 · 10 resultados</span></div>
+                <sc-for list="{{ serpRows }}" as="r" hint-placeholder-count="6">
+                  <div style="display:flex;gap:14px;padding:14px 18px;border-top:1px solid rgba(77,162,255,0.1);background:{{ r.bg }};">
+                    <span style="width:28px;height:28px;flex-shrink:0;border-radius:4px;display:grid;place-items:center;font-family:'JetBrains Mono',monospace;font-size:12px;background:{{ r.nBg }};color:{{ r.nFg }};">{{ r.n }}</span>
+                    <div style="min-width:0;display:grid;gap:3px;"><div style="display:flex;gap:8px;align-items:center;"><a style="font-weight:500;color:#9ecbff;">{{ r.title }}</a><sc-if value="{{ r.target }}" hint-placeholder-val="{{ false }}"><span style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;padding:2px 6px;border-radius:3px;background:#c2e0ff;color:#030508;">alvo</span></sc-if></div><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(234,242,255,0.45);">{{ r.url }}</div><p style="margin:0;font-size:12px;color:rgba(234,242,255,0.65);line-height:1.5;">{{ r.desc }}</p></div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display:grid;gap:14px;">
+              <aside style="border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(77,162,255,0.2);backdrop-filter:blur(12px);overflow:hidden;">
+                <div style="padding:12px 16px;border-bottom:1px solid rgba(77,162,255,0.2);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#4da2ff;">Domínios-alvo</div>
+                <div style="padding:14px 16px;display:grid;gap:8px;"><div style="display:flex;gap:6px;"><input placeholder="exemplo.com" style="flex:1;min-width:0;font-size:12px;color:#fff;padding:8px 10px;border-radius:4px;background:#06090f;border:1px solid rgba(77,162,255,0.3);"><button style="border:0;background:#fff;color:#030508;padding:0 12px;border-radius:4px;font-weight:500;cursor:pointer;">+</button></div><div style="display:flex;justify-content:space-between;padding:7px 10px;border-radius:4px;background:rgba(255,255,255,0.04);font-family:'JetBrains Mono',monospace;font-size:12px;">homeslicepizza.com<span style="color:rgba(234,242,255,0.4);cursor:pointer;">✕</span></div><div style="display:flex;justify-content:space-between;padding:7px 10px;border-radius:4px;background:rgba(255,255,255,0.04);font-family:'JetBrains Mono',monospace;font-size:12px;">viacampi.com<span style="color:rgba(234,242,255,0.4);cursor:pointer;">✕</span></div></div>
+              </aside>
+              <aside style="border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(77,162,255,0.2);backdrop-filter:blur(12px);overflow:hidden;">
+                <div style="padding:12px 16px;border-bottom:1px solid rgba(77,162,255,0.2);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#4da2ff;">Histórico</div>
+                <sc-for list="{{ serpHistory }}" as="h" hint-placeholder-count="4"><a style="display:grid;gap:3px;padding:11px 16px;border-top:1px solid rgba(77,162,255,0.1);color:#eaf2ff;background:{{ h.bg }};"><div style="display:flex;justify-content:space-between;gap:8px;font-size:13px;"><span style="font-weight:500;">{{ h.kw }}</span><span style="color:rgba(234,242,255,0.45);font-size:11px;">{{ h.date }}</span></div><span style="font-size:11px;color:rgba(234,242,255,0.5);">{{ h.meta }}</span></a></sc-for>
+              </aside>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- LOCAL FINDER -->
+        <sc-if value="{{ pg.local }}" hint-placeholder-val="{{ false }}">
+          <div data-screen-label="Local Finder"><h1 style="margin:0 0 6px;font-size:40px;font-weight:300;letter-spacing:-0.03em;text-shadow:0 0 40px rgba(77,162,255,0.4);">Local Finder</h1><p style="margin:0;color:rgba(234,242,255,0.6);">Resultados do pacote local do Google para qualquer palavra-chave e local.</p></div>
+          <form style="padding:20px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(77,162,255,0.2);backdrop-filter:blur(12px);display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;align-items:end;">
+            <label style="display:grid;gap:6px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.55);">Palavra-chave<input value="pizza" style="min-width:0;width:100%;box-sizing:border-box;font-size:13px;color:#fff;padding:10px 12px;border-radius:4px;background:#06090f;border:1px solid rgba(77,162,255,0.3);text-transform:none;letter-spacing:0;"></label>
+            <label style="display:grid;gap:6px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.55);">Local / coordenada<input value="30.2500,-97.7500,14z" style="min-width:0;width:100%;box-sizing:border-box;font-size:13px;color:#fff;padding:10px 12px;border-radius:4px;background:#06090f;border:1px solid rgba(77,162,255,0.3);text-transform:none;letter-spacing:0;font-family:'JetBrains Mono',monospace;"></label>
+            <label style="display:grid;gap:6px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.55);">Idioma<select style="min-width:0;width:100%;box-sizing:border-box;font-size:13px;color:#fff;padding:10px 12px;border-radius:4px;background:#06090f;border:1px solid rgba(77,162,255,0.3);text-transform:none;letter-spacing:0;"><option>Inglês</option></select></label>
+            <label style="display:grid;gap:6px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.55);">Dispositivo<select style="min-width:0;width:100%;box-sizing:border-box;font-size:13px;color:#fff;padding:10px 12px;border-radius:4px;background:#06090f;border:1px solid rgba(77,162,255,0.3);text-transform:none;letter-spacing:0;"><option>Desktop</option></select></label>
+            <label style="display:grid;gap:6px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.55);">Nota mín.<select style="min-width:0;width:100%;box-sizing:border-box;font-size:13px;color:#fff;padding:10px 12px;border-radius:4px;background:#06090f;border:1px solid rgba(77,162,255,0.3);text-transform:none;letter-spacing:0;"><option>—</option><option>4.0</option><option>4.5</option></select></label>
+            <button type="button" style="border:0;background:#fff;color:#030508;font-weight:500;padding:11px 18px;border-radius:4px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">Buscar</button>
+          </form>
+          <div style="border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(77,162,255,0.2);backdrop-filter:blur(12px);overflow:hidden;">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:1px solid rgba(77,162,255,0.2);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.55);"><span>Resultados <b style="font-weight:500;color:#4da2ff;margin-left:8px;">Histórico</b></span><span style="font-family:'JetBrains Mono',monospace;letter-spacing:0;text-transform:none;">custo: $0.0020 · <a>Verificar ↗</a> · 6 resultados</span></div>
+            <sc-for list="{{ localRows }}" as="r" hint-placeholder-count="6">
+              <div style="display:flex;gap:14px;padding:16px 18px;border-top:1px solid rgba(77,162,255,0.1);">
+                <span style="width:30px;height:30px;flex-shrink:0;border-radius:4px;display:grid;place-items:center;font-family:'JetBrains Mono',monospace;font-size:12px;background:rgba(77,162,255,0.12);color:#c2e0ff;">{{ r.n }}</span>
+                <div style="flex:1;min-width:0;display:grid;gap:4px;">
+                  <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;"><div style="display:flex;gap:8px;align-items:center;"><strong style="font-weight:500;font-size:14px;">{{ r.name }}</strong><sc-if value="{{ r.paid }}" hint-placeholder-val="{{ false }}"><span style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;padding:2px 6px;border-radius:3px;border:1px solid rgba(245,165,36,0.5);color:#fcd38d;">Patrocinado</span></sc-if></div><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#4da2ff;">{{ r.phone }}</span></div>
+                  <div style="display:flex;gap:8px;align-items:center;font-size:12px;"><span style="color:#c2e0ff;letter-spacing:-1px;">★★★★★</span><b style="font-weight:500;">{{ r.rating }}</b><span style="color:rgba(234,242,255,0.45);">({{ r.votes }})</span></div>
+                  <p style="margin:0;font-size:12px;color:rgba(234,242,255,0.6);line-height:1.5;">{{ r.desc }}</p>
+                  <div style="display:flex;gap:14px;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;"><a style="font-family:'JetBrains Mono',monospace;text-transform:none;letter-spacing:0;color:rgba(234,242,255,0.45);">{{ r.domain }}</a><a>Maps ↗</a></div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <!-- GEO-GRID -->
+        <sc-if value="{{ pg.geo }}" hint-placeholder-val="{{ false }}">
+          <div data-screen-label="Geo-Grid" style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;">
+            <div><h1 style="margin:0 0 6px;font-size:40px;font-weight:300;letter-spacing:-0.03em;text-shadow:0 0 40px rgba(77,162,255,0.4);">Geo-Grid</h1><p style="margin:0;color:rgba(234,242,255,0.6);">Mapa de calor de ranking em uma malha de pontos.</p></div>
+            <div style="display:flex;gap:8px;"><button style="border:1px solid rgba(255,255,255,0.3);background:transparent;color:#fff;padding:10px 14px;border-radius:4px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">Exportar PDF</button><button style="border:0;background:#fff;color:#030508;font-weight:500;padding:10px 16px;border-radius:4px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">Novo scan</button></div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;">
+            <sc-for list="{{ geoStats }}" as="x" hint-placeholder-count="4"><article style="padding:18px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(77,162,255,0.2);backdrop-filter:blur(12px);"><strong style="display:block;font-size:32px;line-height:1;font-weight:300;letter-spacing:-0.03em;color:#c2e0ff;">{{ x.v }}</strong><span style="display:block;margin-top:8px;color:rgba(234,242,255,0.55);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;">{{ x.l }}</span></article></sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;align-items:start;">
+            <div style="padding:16px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(77,162,255,0.2);backdrop-filter:blur(12px);">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;"><span style="font-size:13px;font-weight:500;">Home Slice Pizza · "pizza" · 7 × 7 · 1 mi</span><div style="margin-left:auto;display:flex;border:1px solid rgba(77,162,255,0.3);border-radius:4px;overflow:hidden;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;"><span style="padding:6px 12px;background:#1f6bff;color:#fff;">Hoje</span><span style="padding:6px 12px;color:rgba(234,242,255,0.7);border-left:1px solid rgba(77,162,255,0.3);">Comparar</span></div></div>
+              <div style="aspect-ratio:1/1;border-radius:4px;overflow:hidden;position:relative;background:#06090f;border:1px solid rgba(77,162,255,0.2);">
+                <div style="position:absolute;inset:0;background:linear-gradient(rgba(77,162,255,0.1) 1px,transparent 1px) 0 0/44px 44px,linear-gradient(90deg,rgba(77,162,255,0.1) 1px,transparent 1px) 0 0/44px 44px;"></div>
+                <div style="position:absolute;inset:24px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;align-content:center;"><sc-for list="{{ geoPins }}" as="p" hint-placeholder-count="49"><div style="aspect-ratio:1;width:100%;border-radius:999px;display:grid;place-items:center;font-family:'JetBrains Mono',monospace;font-size:clamp(9px,1.6vw,14px);background:{{ p.bg }};color:{{ p.fg }};box-shadow:{{ p.glow }};">{{ p.label }}</div></sc-for></div>
+              </div>
+              <div style="display:flex;gap:18px;flex-wrap:wrap;margin-top:12px;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:rgba(234,242,255,0.55);"><span style="display:flex;align-items:center;gap:6px;"><i style="width:10px;height:10px;border-radius:999px;background:#c2e0ff;display:inline-block;"></i>1–3</span><span style="display:flex;align-items:center;gap:6px;"><i style="width:10px;height:10px;border-radius:999px;background:#4da2ff;display:inline-block;"></i>4–10</span><span style="display:flex;align-items:center;gap:6px;"><i style="width:10px;height:10px;border-radius:999px;background:#1246b8;display:inline-block;"></i>11–20</span><span style="display:flex;align-items:center;gap:6px;"><i style="width:10px;height:10px;border-radius:999px;background:rgba(77,162,255,0.15);border:1px solid rgba(77,162,255,0.4);display:inline-block;"></i>20+</span></div>
+            </div>
+            <div style="display:grid;gap:14px;">
+              <aside style="padding:18px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(77,162,255,0.2);backdrop-filter:blur(12px);">
+                <h2 style="margin:0 0 10px;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:#4da2ff;">Linha do tempo</h2>
+                <sc-for list="{{ geoTimeline }}" as="t" hint-placeholder-count="5"><div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(77,162,255,0.12);font-size:13px;"><span style="color:{{ t.fg }};">{{ t.date }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#c2e0ff;">{{ t.avg }}</span></div></sc-for>
+              </aside>
+              <aside style="padding:18px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(77,162,255,0.2);backdrop-filter:blur(12px);">
+                <h2 style="margin:0 0 10px;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:#4da2ff;">Agendamento</h2>
+                <p style="margin:0 0 10px;font-size:13px;color:rgba(234,242,255,0.7);">Semanal · segunda 06:00</p>
+                <div style="display:flex;border:1px solid rgba(77,162,255,0.3);border-radius:4px;overflow:hidden;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;"><span style="flex:1;text-align:center;padding:7px;color:rgba(234,242,255,0.7);">Off</span><span style="flex:1;text-align:center;padding:7px;color:rgba(234,242,255,0.7);border-left:1px solid rgba(77,162,255,0.3);">Diário</span><span style="flex:1;text-align:center;padding:7px;background:#1f6bff;color:#fff;">Semanal</span></div>
+              </aside>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- SPENDING -->
+        <sc-if value="{{ pg.spending }}" hint-placeholder-val="{{ false }}">
+          <div data-screen-label="Gastos"><h1 style="margin:0 0 6px;font-size:40px;font-weight:300;letter-spacing:-0.03em;text-shadow:0 0 40px rgba(77,162,255,0.4);">Gastos</h1><p style="margin:0;color:rgba(234,242,255,0.6);">Quanto suas chamadas DataForSEO custam, por ferramenta.</p></div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+            <span style="padding:7px 12px;border-radius:4px;background:#fff;color:#030508;font-size:12px;font-weight:500;">30 dias</span><span style="padding:7px 12px;border-radius:4px;border:1px solid rgba(77,162,255,0.3);font-size:12px;color:rgba(234,242,255,0.75);">Este mês</span><span style="padding:7px 12px;border-radius:4px;border:1px solid rgba(77,162,255,0.3);font-size:12px;color:rgba(234,242,255,0.75);">90 dias</span><span style="padding:7px 12px;border-radius:4px;border:1px solid rgba(77,162,255,0.3);font-size:12px;color:rgba(234,242,255,0.75);">Tudo</span>
+            <div style="margin-left:auto;display:flex;gap:8px;align-items:center;font-size:12px;color:rgba(234,242,255,0.5);"><input type="date" value="2026-09-19" style="font-size:12px;color:#fff;padding:7px 10px;border-radius:4px;background:#06090f;border:1px solid rgba(77,162,255,0.3);">até<input type="date" value="2026-10-19" style="font-size:12px;color:#fff;padding:7px 10px;border-radius:4px;background:#06090f;border:1px solid rgba(77,162,255,0.3);"><button style="border:0;background:#1f6bff;color:#fff;padding:8px 12px;border-radius:4px;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;">Aplicar</button></div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;">
+            <article style="padding:20px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(77,162,255,0.2);backdrop-filter:blur(12px);"><span style="display:block;color:rgba(234,242,255,0.55);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;">Gasto conhecido</span><strong style="display:block;margin-top:8px;font-size:36px;line-height:1;font-weight:300;letter-spacing:-0.03em;color:#c2e0ff;font-family:'JetBrains Mono',monospace;">$18.42</strong><span style="display:block;margin-top:8px;font-size:12px;color:rgba(234,242,255,0.5);">No mínimo isso — exclui chamadas sem custo registrado</span></article>
+            <article style="padding:20px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(77,162,255,0.2);backdrop-filter:blur(12px);"><span style="display:block;color:rgba(234,242,255,0.55);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;">Chamadas</span><strong style="display:block;margin-top:8px;font-size:36px;line-height:1;font-weight:300;letter-spacing:-0.03em;color:#c2e0ff;font-family:'JetBrains Mono',monospace;">1.284</strong><span style="display:block;margin-top:8px;font-size:12px;color:rgba(234,242,255,0.5);">37 com custo desconhecido</span></article>
+            <article style="padding:20px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(77,162,255,0.2);backdrop-filter:blur(12px);"><span style="display:block;color:rgba(234,242,255,0.55);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;">Total estimado</span><strong style="display:block;margin-top:8px;font-size:36px;line-height:1;font-weight:300;letter-spacing:-0.03em;color:#c2e0ff;font-family:'JetBrains Mono',monospace;">~$19.10</strong><span style="display:block;margin-top:8px;font-size:12px;color:rgba(234,242,255,0.5);">Chamadas desconhecidas na média da ferramenta</span></article>
+          </div>
+          <div style="padding:20px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(77,162,255,0.2);backdrop-filter:blur(12px);">
+            <h2 style="margin:0 0 18px;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:#4da2ff;">Gasto ao longo do tempo</h2>
+            <div style="display:flex;gap:12px;"><div style="display:flex;flex-direction:column;justify-content:space-between;height:180px;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(234,242,255,0.45);text-align:right;width:44px;"><span>$1.40</span><span>$0</span></div><div style="flex:1;height:180px;border-bottom:1px solid rgba(77,162,255,0.3);display:flex;align-items:flex-end;gap:3px;"><sc-for list="{{ spendBars }}" as="b" hint-placeholder-count="30"><div style="flex:1;border-radius:2px 2px 0 0;background:linear-gradient(180deg,#c2e0ff,#1f6bff);height:{{ b }};"></div></sc-for></div></div>
+            <div style="display:flex;justify-content:space-between;margin:6px 0 0 56px;font-size:10px;color:rgba(234,242,255,0.45);"><span>19 set</span><span>29 set</span><span>9 out</span><span>19 out</span></div>
+          </div>
+          <div style="border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(77,162,255,0.2);backdrop-filter:blur(12px);overflow:hidden;">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:1px solid rgba(77,162,255,0.2);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#4da2ff;"><span>Por ferramenta</span><div style="display:flex;gap:8px;"><button style="border:1px solid rgba(255,255,255,0.25);background:transparent;color:#fff;padding:6px 10px;border-radius:4px;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;">Copiar MD</button><button style="border:1px solid rgba(255,255,255,0.25);background:transparent;color:#fff;padding:6px 10px;border-radius:4px;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;">Exportar CSV</button></div></div>
+            <table style="width:100%;border-collapse:collapse;font-size:13px;">
+              <thead><tr style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.5);"><th style="text-align:left;padding:10px 18px;font-weight:500;">Ferramenta</th><th style="text-align:right;padding:10px;font-weight:500;">Chamadas</th><th style="text-align:right;padding:10px;font-weight:500;">Custo</th><th style="text-align:left;padding:10px;font-weight:500;width:180px;">Participação</th><th style="text-align:right;padding:10px 18px;font-weight:500;">Média/chamada</th></tr></thead>
+              <tbody><sc-for list="{{ spendTools }}" as="t" hint-placeholder-count="6"><tr style="border-top:1px solid rgba(77,162,255,0.1);"><td style="padding:11px 18px;font-weight:500;">{{ t.name }}</td><td style="padding:11px 10px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:12px;color:rgba(234,242,255,0.7);">{{ t.calls }}</td><td style="padding:11px 10px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:12px;color:#c2e0ff;">{{ t.cost }}</td><td style="padding:11px 10px;"><div style="display:flex;align-items:center;gap:8px;"><div style="flex:1;height:4px;border-radius:999px;background:rgba(77,162,255,0.12);overflow:hidden;"><div style="height:100%;background:linear-gradient(90deg,#1f6bff,#c2e0ff);width:{{ t.share }};"></div></div><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(234,242,255,0.5);width:34px;text-align:right;">{{ t.share }}</span></div></td><td style="padding:11px 18px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:12px;color:rgba(234,242,255,0.55);">{{ t.avg }}</td></tr></sc-for></tbody>
+            </table>
+          </div>
+        </sc-if>
+
+        <!-- SETTINGS -->
+        <sc-if value="{{ pg.settings }}" hint-placeholder-val="{{ false }}">
+          <div data-screen-label="Configurações" style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;"><div><h1 style="margin:0 0 6px;font-size:40px;font-weight:300;letter-spacing:-0.03em;text-shadow:0 0 40px rgba(77,162,255,0.4);">Configurações</h1><p style="margin:0;color:rgba(234,242,255,0.6);">Gerenciamento da API DataForSEO</p></div><span style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;padding:6px 12px;border-radius:4px;border:1px solid rgba(194,224,255,0.5);color:#c2e0ff;display:flex;align-items:center;gap:8px;"><i style="width:6px;height:6px;border-radius:999px;background:#c2e0ff;box-shadow:0 0 10px #c2e0ff;display:inline-block;"></i>Conectado</span></div>
+          <div style="max-width:760px;display:grid;gap:18px;">
+            <div style="padding:36px;border-radius:6px;position:relative;overflow:hidden;background:linear-gradient(135deg,#0b1a3a 0%,#1246b8 60%,#4da2ff 100%);border:1px solid rgba(194,224,255,0.3);">
+              <div style="position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,0) 0px,rgba(255,255,255,0) 22px,rgba(255,255,255,0.12) 23px,rgba(255,255,255,0) 25px);mask-image:linear-gradient(180deg,rgba(0,0,0,0.8),rgba(0,0,0,0));-webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,0.8),rgba(0,0,0,0));"></div>
+              <div style="position:relative;"><span style="font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:rgba(255,255,255,0.75);">Créditos disponíveis</span><div style="display:flex;align-items:center;gap:16px;margin-top:14px;"><span style="font-family:'JetBrains Mono',monospace;font-size:60px;line-height:1;font-weight:400;letter-spacing:-0.04em;">$142.37</span><span style="width:1px;height:40px;background:rgba(255,255,255,0.4);"></span><span style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.8);line-height:1.5;">USD<br>Saldo</span></div></div>
+            </div>
+            <form style="padding:28px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(77,162,255,0.2);backdrop-filter:blur(12px);display:grid;gap:26px;">
+              <div style="display:grid;gap:14px;"><span style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#4da2ff;">Credenciais da API</span><div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;"><label style="display:grid;gap:6px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.55);">Usuário da API<input value="ops@homeslicepizza.com" style="min-width:0;width:100%;box-sizing:border-box;font-size:14px;color:#fff;padding:12px 14px;border-radius:4px;background:#06090f;border:1px solid rgba(77,162,255,0.3);text-transform:none;letter-spacing:0;"></label><label style="display:grid;gap:6px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.55);">Senha da API<input type="password" placeholder="••••••••" style="min-width:0;width:100%;box-sizing:border-box;font-size:14px;color:#fff;padding:12px 14px;border-radius:4px;background:#06090f;border:1px solid rgba(77,162,255,0.3);"><span style="font-size:11px;text-transform:none;letter-spacing:0;color:#9ecbff;">Senha salva. Deixe em branco para manter.</span></label></div></div>
+              <div style="height:1px;background:rgba(77,162,255,0.15);"></div>
+              <div style="display:grid;gap:14px;"><div><span style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#4da2ff;display:block;">Relatórios white-label</span><span style="font-size:12px;color:rgba(234,242,255,0.5);display:block;margin-top:4px;">Aplicado a todo PDF exportado. Deixe o nome em branco para usar Nexo.</span></div><div style="display:grid;grid-template-columns:2fr 1fr;gap:14px;"><label style="display:grid;gap:6px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.55);">Nome<input placeholder="Nexo" style="min-width:0;width:100%;box-sizing:border-box;font-size:14px;color:#fff;padding:12px 14px;border-radius:4px;background:#06090f;border:1px solid rgba(77,162,255,0.3);text-transform:none;letter-spacing:0;"></label><label style="display:grid;gap:6px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.55);">Cor<div style="display:flex;gap:8px;align-items:center;padding:8px 12px;border-radius:4px;background:#06090f;border:1px solid rgba(77,162,255,0.3);"><i style="width:20px;height:20px;border-radius:3px;background:#1f6bff;display:inline-block;"></i><span style="font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:none;letter-spacing:0;color:#fff;">#1F6BFF</span></div></label></div><label style="display:grid;gap:6px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.55);">Rodapé<input placeholder="Relatório preparado por Nexo · nexo.app" style="min-width:0;width:100%;box-sizing:border-box;font-size:14px;color:#fff;padding:12px 14px;border-radius:4px;background:#06090f;border:1px solid rgba(77,162,255,0.3);text-transform:none;letter-spacing:0;"></label></div>
+              <div style="height:1px;background:rgba(77,162,255,0.15);"></div>
+              <div style="display:grid;gap:14px;"><div><span style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#4da2ff;display:block;">Geo-grid</span><span style="font-size:12px;color:rgba(234,242,255,0.5);display:block;margin-top:4px;">Como o rastreador mostra distâncias e pins.</span></div><div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;"><label style="display:grid;gap:6px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.55);">Unidade<div style="display:flex;border:1px solid rgba(77,162,255,0.3);border-radius:4px;overflow:hidden;text-transform:none;letter-spacing:0;font-size:13px;"><span style="flex:1;text-align:center;padding:10px;background:#1f6bff;color:#fff;">km</span><span style="flex:1;text-align:center;padding:10px;color:rgba(234,242,255,0.7);">mi</span></div></label><label style="display:grid;gap:6px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.55);">Pins<div style="display:flex;border:1px solid rgba(77,162,255,0.3);border-radius:4px;overflow:hidden;text-transform:none;letter-spacing:0;font-size:13px;"><span style="flex:1;text-align:center;padding:10px;color:rgba(234,242,255,0.7);">Quadrado</span><span style="flex:1;text-align:center;padding:10px;background:#1f6bff;color:#fff;border-left:1px solid rgba(77,162,255,0.3);">Círculo</span><span style="flex:1;text-align:center;padding:10px;color:rgba(234,242,255,0.7);border-left:1px solid rgba(77,162,255,0.3);">Ponto</span></div></label></div></div>
+              <button type="button" style="border:0;background:#fff;color:#030508;font-weight:500;padding:14px;border-radius:4px;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;">Salvar configurações</button>
+            </form>
+            <div style="padding:22px 28px;border-radius:6px;border:1px solid rgba(229,72,77,0.4);background:rgba(229,72,77,0.06);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;"><div><span style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#fca5a5;display:block;">Zona de perigo</span><span style="font-size:12px;color:rgba(252,165,165,0.7);display:block;margin-top:4px;">Remove suas credenciais armazenadas localmente.</span></div><button style="border:1px solid rgba(229,72,77,0.5);background:transparent;color:#fca5a5;padding:10px 16px;border-radius:4px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">Desconectar</button></div>
+          </div>
+        </sc-if>
+
+        <!-- GENERIC TOOL -->
+        <sc-if value="{{ pg.generic }}" hint-placeholder-val="{{ false }}">
+          <div data-screen-label="Ferramenta"><h1 style="margin:0 0 6px;font-size:40px;font-weight:300;letter-spacing:-0.03em;text-shadow:0 0 40px rgba(77,162,255,0.4);">{{ toolName }}</h1><p style="margin:0;color:rgba(234,242,255,0.6);">{{ toolDesc }}</p></div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;align-items:start;">
+            <div style="display:grid;gap:18px;">
+              <form style="padding:20px;border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(77,162,255,0.2);backdrop-filter:blur(12px);display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;align-items:end;">
+                <label style="display:grid;gap:6px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.55);">{{ toolInput }}<input placeholder="{{ toolPlaceholder }}" style="min-width:0;width:100%;box-sizing:border-box;font-size:13px;color:#fff;padding:10px 12px;border-radius:4px;background:#06090f;border:1px solid rgba(77,162,255,0.3);text-transform:none;letter-spacing:0;"></label>
+                <label style="display:grid;gap:6px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(234,242,255,0.55);">Localização<select style="min-width:0;width:100%;box-sizing:border-box;font-size:13px;color:#fff;padding:10px 12px;border-radius:4px;background:#06090f;border:1px solid rgba(77,162,255,0.3);text-transform:none;letter-spacing:0;"><option>United States</option><option>Brasil</option></select></label>
+                <button type="button" style="border:0;background:#fff;color:#030508;font-weight:500;padding:11px 18px;border-radius:4px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;">Analisar</button>
+              </form>
+              <div style="padding:60px 20px;border-radius:6px;border:1px dashed rgba(77,162,255,0.35);text-align:center;display:grid;gap:8px;justify-items:center;"><span style="width:40px;height:40px;border-radius:999px;border:1px solid rgba(77,162,255,0.4);display:grid;place-items:center;color:#4da2ff;font-size:18px;">◌</span><strong style="font-weight:500;">Nenhuma busca ainda</strong><span style="font-size:13px;color:rgba(234,242,255,0.5);max-width:360px;line-height:1.5;">Preencha o formulário acima. Cada resultado fica salvo localmente e aparece no histórico ao lado.</span></div>
+            </div>
+            <aside style="border-radius:6px;background:rgba(255,255,255,0.03);border:1px solid rgba(77,162,255,0.2);backdrop-filter:blur(12px);overflow:hidden;"><div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(77,162,255,0.2);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#4da2ff;"><span>Histórico</span><span style="font-family:'JetBrains Mono',monospace;color:rgba(234,242,255,0.5);">0</span></div><p style="margin:0;padding:20px 16px;font-size:12px;color:rgba(234,242,255,0.45);">Nenhuma busca salva para esta ferramenta.</p></aside>
+          </div>
+        </sc-if>
+
+      </div>
+    </main>
+  </div>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { page: 'home', tool: null };
+  NAV = [
+    ['Visão geral', [['Painel', 'home', 'Todas as ferramentas em um só lugar'], ['Rank Tracker', 'rank', 'Acompanhe posições de palavras-chave ao longo do tempo']]],
+    ['Palavras-chave', [['Visão de palavras-chave', 'g', 'Volume e métricas por palavra-chave'], ['Ideias de palavras-chave', 'g', 'Ideias a partir de uma semente, com intenção'], ['Palavras relacionadas', 'g', 'Sugestões relacionadas'], ['Dados de palavras-chave', 'g', 'Volume e CPC do Google Ads e Bing'], ['Dificuldade', 'g', 'Scores de dificuldade em lote'], ['Intenção de busca', 'g', 'Classifique por intenção'], ['Mais buscadas', 'g', 'Palavras mais buscadas em um mercado']]],
+    ['Domínios e concorrentes', [['Palavras ranqueadas', 'g', 'Palavras para as quais um domínio ranqueia'], ['Concorrentes', 'g', 'Domínios que disputam as mesmas SERPs'], ['Interseção de domínios', 'g', 'Palavras em comum entre dois domínios'], ['Interseção de páginas', 'g', 'Palavras em comum entre várias páginas'], ['Rank histórico', 'g', 'Histórico de ranking'], ['Subdomínios', 'g', 'Subdomínios por tráfego orgânico'], ['Estimativa de tráfego', 'g', 'Tráfego orgânico em lote'], ['Tecnologias', 'g', 'Stack usada pelos domínios'], ['Whois', 'g', 'Registro do domínio'], ['Categorias', 'g', 'Categorias temáticas']]],
+    ['Backlinks', [['Backlinks', 'g', 'Lista de links recebidos'], ['Domínios de referência', 'g', 'Domínios que linkam para você'], ['Backlinks quebrados', 'g', 'Links para páginas 4xx/5xx a recuperar'], ['Âncoras', 'g', 'Textos-âncora em uso'], ['Redes de referência', 'g', 'Sub-redes IP que enviam links'], ['Histórico', 'g', 'Evolução de backlinks'], ['Backlinks em lote', 'g', 'Resumo para uma lista de domínios']]],
+    ['SERP e Local', [['SERP Checker', 'serp', 'Resultados orgânicos do Google ao vivo'], ['Local Finder', 'local', 'Pacote local para qualquer localização'], ['Geo-Grid', 'geo', 'Mapa de calor de ranking em uma malha'], ['Campanhas de grid', 'g', 'Várias palavras em um grid agendado']]],
+    ['IA', [['Otimização para IA', 'g', 'Visibilidade em respostas geradas por IA'], ['Visibilidade em IA', 'g', 'Com que frequência LLMs citam um domínio'], ['Teste de prompt', 'g', 'O que ChatGPT, Claude e Gemini respondem'], ['Dados de palavras em IA', 'g', 'Volume de palavras em ferramentas de IA'], ['Query Fan-Out', 'g', 'Sub-consultas por trás das respostas de IA'], ['Prompt Tracker', 'g', 'Reexecute prompts e acompanhe menções']]],
+    ['Negócio', [['Google Reviews', 'g', 'Avaliações e metas de nota'], ['Velocidade de avaliações', 'g', 'Ritmo de avaliações vs. concorrentes locais'], ['Menções na web', 'g', 'Menções à marca e sentimento']]],
+    ['Auditoria', [['On Page', 'g', 'Crawl do site, auditoria instantânea, microdados'], ['Parsing de conteúdo', 'g', 'Extraia e estruture o conteúdo de uma página']]],
+  ];
+  go(page, tool) { return () => { this.setState({ page, tool: tool || null }); const m = document.querySelector('main'); if (m) m.scrollTop = 0; }; }
+  renderVals() {
+    const { page, tool } = this.state;
+    const act = (on) => ({ fg: on ? '#fff' : 'rgba(234,242,255,0.65)', bg: on ? 'rgba(31,107,255,0.18)' : 'transparent', bar: on ? '#c2e0ff' : 'transparent' });
+    const navSections = this.NAV.map(([label, items]) => ({ label, items: items.map(([name, key, desc]) => {
+      const isGeneric = key === 'g'; const on = isGeneric ? (page === 'generic' && tool && tool.name === name) : page === key;
+      return { name, desc, go: isGeneric ? this.go('generic', { name, desc }) : this.go(key), ...act(on) };
+    }) }));
+    const pg = { home: page === 'home', rank: page === 'rank', serp: page === 'serp', local: page === 'local', geo: page === 'geo', spending: page === 'spending', settings: page === 'settings', generic: page === 'generic' };
+    const sp = act(page === 'spending'), st = act(page === 'settings');
+    const posStyle = p => p == null ? ['rgba(229,72,77,0.15)', '#fca5a5'] : p <= 3 ? ['#c2e0ff', '#030508'] : p <= 10 ? ['rgba(77,162,255,0.25)', '#c2e0ff'] : ['rgba(77,162,255,0.1)', 'rgba(234,242,255,0.7)'];
+    const rk = [['pizza austin', 2, 3], ['pizza south congress', 1, 1], ['melhor pizza austin', 4, 6], ['pizza perto de mim', 7, 5], ['pizza delivery austin', 9, 12], ['pizza fatia austin', 3, 3], ['pizzaria aberta agora', 14, 11], ['pizza estilo nova york', null, 18]];
+    const rankRows = rk.map(([kw, pos, prev], i) => { const s = posStyle(pos); const d = pos == null || prev == null ? null : prev - pos;
+      return { kw, loc: 'Austin, TX · Inglês', pos: pos == null ? 'NR' : pos, posBg: s[0], posFg: s[1], trend: d == null ? '—' : d > 0 ? '▲ ' + d : d < 0 ? '▼ ' + (-d) : '=', trendFg: d == null ? 'rgba(234,242,255,0.4)' : d > 0 ? '#c2e0ff' : d < 0 ? '#fca5a5' : 'rgba(234,242,255,0.5)', checked: 'hoje 06:0' + (i % 6),
+        spark: Array.from({ length: 14 }, (_, j) => (40 + 50 * Math.abs(Math.sin(j * 1.3 + i))) + '%') }; });
+    const sr = [['Home Slice Pizza – South Congress', 'homeslicepizza.com › menu', false], ['Via 313 Pizza', 'via313.com', false], ['Home Slice Pizza', 'homeslicepizza.com', true], ['The 15 Best Pizza Places in Austin', 'austin.eater.com › maps', false], ['Pinthouse Pizza', 'pinthouse.com', false], ['Bufalina', 'bufalinapizza.com', false]];
+    const serpRows = sr.map(([title, url, target], i) => ({ n: i + 1, title, url, target, desc: 'Pizza estilo Nova York em Austin desde 2005. Fatias, pizzas inteiras, delivery e retirada.', bg: target ? 'rgba(31,107,255,0.08)' : 'transparent', nBg: target ? '#c2e0ff' : 'rgba(77,162,255,0.12)', nFg: target ? '#030508' : '#c2e0ff' }));
+    const serpHistory = [['pizza austin', '19 out', 'Austin, TX · 10 resultados · $0.0020', true], ['pizza delivery', '18 out', 'Austin, TX · 20 resultados · $0.0020', false], ['best pizza', '15 out', 'Austin, TX · 10 resultados · $0.0020', false], ['pizza near me', '12 out', 'Austin, TX · 10 resultados · $0.0020', false]].map(([kw, date, meta, on]) => ({ kw, date, meta, bg: on ? 'rgba(31,107,255,0.12)' : 'transparent' }));
+    const lr = [['Home Slice Pizza', '4.7', '6.812', 'homeslicepizza.com', false], ['Via 313 Pizza', '4.6', '4.102', 'via313.com', true], ['Bufalina', '4.5', '1.904', 'bufalinapizza.com', false], ['Pinthouse Pizza', '4.6', '3.377', 'pinthouse.com', false], ['Little Deli & Pizzeria', '4.7', '1.288', 'littledeliandpizza.com', false], ['East Side Pies', '4.4', '1.560', 'eastsidepies.com', false]];
+    const localRows = lr.map(([name, rating, votes, domain, paid], i) => ({ n: i + 1, name, rating, votes, domain, paid, phone: '(512) 444-' + (7437 + i * 13), desc: 'Pizzaria descontraída com fatias generosas, massa fina e pátio ao ar livre.' }));
+    const geoPins = Array.from({ length: 49 }, (_, i) => { const r = Math.floor(i / 7), c = i % 7; const d = Math.hypot(r - 3, c - 3); const rank = Math.round(1 + d * 2.2 + ((i * 7) % 3)); const rr = rank > 20 ? null : rank;
+      return { label: rr == null ? '20+' : rr, bg: rr == null ? 'rgba(77,162,255,0.1)' : rr <= 3 ? '#c2e0ff' : rr <= 10 ? '#4da2ff' : '#1246b8', fg: rr == null ? 'rgba(194,224,255,0.45)' : rr <= 3 ? '#030508' : '#fff', glow: rr != null && rr <= 3 ? '0 0 18px rgba(194,224,255,0.6)' : 'none' }; });
+    const geoStats = [{ v: '7 × 7', l: 'Grid · 1 mi' }, { v: '6.8', l: 'Rank médio' }, { v: '38.8%', l: 'Cobertura top 3' }, { v: '71.4%', l: 'Cobertura top 10' }];
+    const geoTimeline = [['19 out · hoje', '6.8', true], ['12 out', '7.4', false], ['5 out', '7.9', false], ['28 set', '8.6', false], ['21 set', '9.1', false]].map(([date, avg, on]) => ({ date, avg, fg: on ? '#fff' : 'rgba(234,242,255,0.65)' }));
+    const spendBars = Array.from({ length: 30 }, (_, i) => (10 + 85 * Math.abs(Math.sin(i * 0.9) * Math.cos(i * 0.31))).toFixed(0) + '%');
+    const spendTools = [['Geo-Grid', '612', '$9.18', '50%', '$0.0150'], ['Rank Tracker', '318', '$4.77', '26%', '$0.0150'], ['SERP Checker', '142', '$2.13', '12%', '$0.0150'], ['Local Finder', '96', '$1.44', '8%', '$0.0150'], ['Google Reviews', '71', '$0.57', '3%', '$0.0080'], ['Visibilidade em IA', '45', '$0.33', '2%', '$0.0073']].map(([name, calls, cost, share, avg]) => ({ name, calls, cost, share, avg }));
+    return {
+      isLogin: page === 'login', isApp: page !== 'login', pg, navSections,
+      goHome: this.go('home'), goLogin: this.go('login'), goSpending: this.go('spending'), goSettings: this.go('settings'),
+      spendFg: sp.fg, spendBg: sp.bg, spendBar: sp.bar, settingsFg: st.fg, settingsBg: st.bg, settingsBar: st.bar,
+      rankRows, serpRows, serpHistory, localRows, geoPins, geoStats, geoTimeline, spendBars, spendTools,
+      toolName: tool?.name || '', toolDesc: tool?.desc || '', toolInput: 'Alvo', toolPlaceholder: 'exemplo.com ou palavra-chave',
+    };
+  }
+}
+</script>
+</body>
+</html>
