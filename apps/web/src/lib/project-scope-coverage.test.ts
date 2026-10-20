@@ -13,18 +13,18 @@ function filesUnder(directory: string): string[] {
 // Deliberate global-only entry points; new pages/actions require a scope by default.
 const globalPages = new Set(['projects/page.tsx', 'on-page/page.tsx']);
 const globalActions = new Set(['actions.ts', 'projects/actions.ts']);
-const entries = filesUnder(root).filter(file => /\/(page\.tsx|actions\.ts)$/.test(file));
+const entries = filesUnder(root).filter(file => /[\\/](page\.tsx|actions\.ts)$/.test(file));
 const hasModifier = (node: ts.FunctionDeclaration, kind: ts.SyntaxKind) => node.modifiers?.some(m => m.kind === kind);
 
 describe('project scope entry-point coverage', () => {
   for (const file of entries) {
-    const relative = path.relative(root, file);
+    const relative = path.relative(root, file).split(path.sep).join('/');
     if (globalPages.has(relative) || globalActions.has(relative)) continue;
     it(`${relative} establishes a scope before doing work`, () => {
       const text = fs.readFileSync(file, 'utf8');
       const source = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true);
       expect(text).not.toMatch(/\bgetActiveProject\b/);
-      if (file.endsWith('/page.tsx')) {
+      if (relative.endsWith('page.tsx')) {
         const exported = source.statements.find(ts.isExportAssignment);
         expect(exported).toBeDefined();
         const expression = exported!.expression;
