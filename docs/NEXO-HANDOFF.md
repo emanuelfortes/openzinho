@@ -1,6 +1,6 @@
 # Nexo: estado do trabalho e próximos passos
 
-Documento de passagem para continuar o rebranding em outra máquina. Atualizado em 19/10/2026 (passos 4 a 6 concluídos).
+Documento de passagem para continuar o rebranding em outra máquina. Atualizado em 19/10/2026 (passos 4 a 7 concluídos).
 
 ## Como começar na máquina nova
 
@@ -25,7 +25,7 @@ Referências visuais: `docs/Nexo Dashboard.dc.html`, `docs/Nexo Studio.dc.html` 
 | 4. Páginas | Feito | ver git log |
 | 5. Pins do Geo-grid | Feito | ver git log |
 | 6. Tradução pt-BR | Feito | ver git log |
-| 7. Studio (`src/` + `index.html` na raiz) | **Falta** | – |
+| 7. Studio | Feito, em Next.js | ver git log |
 
 O pedido é um commit por passo, nesta ordem, e no fim rodar `npm run lint` e `npm run build` em `apps/web`.
 
@@ -104,15 +104,13 @@ Regra do projeto: tudo em Next.js e toda a interface em português do Brasil. Te
 - Menu com nomes curtos dentro de cada seção (Visão geral, Ideias, Volume e CPC…); títulos das páginas e Gastos mantêm o nome completo.
 - Pendente: o `seo-playground.db` e textos de lib que vêm crus da API (mensagens de status da DataForSEO) continuam em inglês.
 
-### Passo 7: Studio
+### Passo 7: Studio (feito, em Next.js)
 
-Arquivos: `index.html`, `src/main.js` e `src/styles.css` na raiz (Vite, sem React).
-- Navegação superior, sem sidebar.
-- Hero centralizado com o `h1` "Domine o grid." em peso 300, cerca de 120px, com `text-shadow: 0 0 60px rgba(77,162,255,.6)`.
-- Feixes de luz no fundo, painéis de vidro e pins na escala azul do passo 5.
-- Textos em pt-BR e nome Nexo.
-- Os links para o GitHub do legends-geogrid ficam só como atribuição.
-- Referência visual: `docs/Nexo Studio.dc.html`.
+Decisão: o Studio virou uma ferramenta do painel (`/dashboard/studio`, seção SERP e local), não uma página pública. O Vite da raiz (`index.html`, `src/main.js`, `src/styles.css`) ficou como estava e não faz parte do produto.
+- Código em [apps/web/src/modules/studio/](../apps/web/src/modules/studio/): `data.ts` (prova salva 17 x 17 e 5 x 5 em JSON enxuto, demo modelada, métricas, custo), `StudioMap.tsx` (Leaflet com pins, mapa de calor e evidências na escala azul) e `Studio.tsx`. Testes em `data.test.ts` conferem as métricas registradas da prova (64 fora do top 20, 34,6% no top 3, média 4,97).
+- O planejador em lote não mostra mais o comando Python: calcula verificações e custo e leva a "Criar campanha" (`/dashboard/campaigns`).
+- A campanha modelada da lista de palavras-chave usa exemplos brasileiros e é marcada como não real.
+- Pendente: no celular a barra lateral do painel fica sempre aberta e cobre o conteúdo (vem do layout original, vale para todas as páginas).
 
 ## Avisos sobre o ambiente
 

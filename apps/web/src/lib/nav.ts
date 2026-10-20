@@ -4,7 +4,7 @@ import {
   TrendingUp, Link2, Users, BarChart2, Activity, GitMerge, Clock, FolderKanban, Anchor,
   Gauge, Lightbulb, BrainCircuit, Star, Flame, Cpu, ShieldCheck, Grid3X3,
   Sparkles, Target, Layers, Network, LineChart, Tag, ScanText,
-  History, Copy, BarChart3, BookOpen, Server, Bot, Radar, Eye, Waypoints, Megaphone, Wallet, CalendarCheck, Unlink, Trophy,
+  History, Copy, BarChart3, BookOpen, Server, Bot, Radar, Eye, Waypoints, Megaphone, Wallet, CalendarCheck, Unlink, Trophy, Telescope,
 } from 'lucide-react';
 
 // Single source of truth for the tool list: the Sidebar and the Dashboard home both render from it.
@@ -91,6 +91,7 @@ export const NAV_SECTIONS: NavSection[] = [
     label: 'SERP e local',
     color: 'orange',
     items: [
+      { name: 'Studio', href: '/dashboard/studio', icon: Telescope, desc: 'Demonstração interativa com uma varredura real salva' },
       { name: 'Verificador de SERP', href: '/dashboard/serp', icon: Globe, desc: 'Resultados orgânicos do Google em tempo real' },
       { name: 'Local Finder', href: '/dashboard/local-finder', icon: MapPin, desc: 'Resultados do pacote local em qualquer local' },
       { name: 'Ranking Geo-Grid', href: '/dashboard/geo-grid', icon: Grid3X3, desc: 'Mapa de calor do ranking em uma grade de pontos' },
