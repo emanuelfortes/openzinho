@@ -5,7 +5,7 @@ import { Download, LoaderCircle } from 'lucide-react';
 import type { GridPoint } from '@/lib/db';
 import { computeCompetitors, computeGridSummary } from './grid-insights';
 import { brandPalette, fitBox, footerPalette, imageSize, resolveBrandStyle, type BrandStyle } from '@/lib/brand';
-import { drawFooter, drawHeaderBand } from '@/lib/brand-pdf';
+import { drawFooter, drawHeaderBand, pdfSafeText } from '@/lib/brand-pdf';
 import { formatDistance } from '@/lib/grid-preferences';
 import { RANK_TIER_ORDER, RANK_TIERS, rankStyle } from '@/lib/rank-scale';
 import { MAP_CAPTURE_FETCH_OPTIONS } from '@/lib/map-capture';
@@ -39,9 +39,8 @@ const palette = {
 };
 
 function pdfText(value: string, max = 90): string {
-  // Standard PDF fonts are WinAnsi-based. This keeps the report robust when a
-  // project name or listing contains characters outside that character set.
-  return value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[^\x20-\x7E]/g, '?').slice(0, max);
+  // Standard PDF fonts are WinAnsi-based; pdfSafeText keeps the Latin-1 accents Portuguese needs.
+  return pdfSafeText(value).slice(0, max);
 }
 
 async function logoDataUrl(url: string): Promise<string | null> {

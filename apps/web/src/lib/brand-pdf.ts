@@ -3,12 +3,21 @@
 import type { jsPDF } from 'jspdf';
 import { footerPalette, footerSegments, headerPolygon, type BrandHeaderStyle, type BrandStyle, type Rgb } from './brand';
 
-/** Standard PDF fonts only cover WinAnsi, so anything else is replaced before drawing. */
+/**
+ * Standard PDF fonts only cover WinAnsi. Latin-1 letters (á, ç, ã, õ...) are part of it and are
+ * kept, so Portuguese prints with its accents; anything else loses its accent or becomes "?".
+ */
 export function pdfSafeText(value: string): string {
   return value
-    .replace(/\s?★/g, ' stars')
+    .replace(/\s?★/g, ' estrelas')
     .replace(/[·•]/g, '|')
     .replace(/[–—]/g, '-')
+    .normalize('NFC')
+    .replace(/[^\x20-\x7E\xA0-\xFF]/gu, stripToWinAnsi);
+}
+
+function stripToWinAnsi(char: string): string {
+  return char
     .normalize('NFKD')
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/[^\x20-\x7E]/g, '?');
