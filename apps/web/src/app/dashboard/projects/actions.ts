@@ -39,7 +39,7 @@ export async function createProjectAction(formData: FormData) {
 
 export async function updateProjectAction(formData: FormData) {
   const id = String(formData.get('id') ?? '');
-  if (!id) throw new Error('Project not found.');
+  if (!id) throw new Error('Projeto não encontrado.');
   updateProject(id, projectInput(formData));
   refreshProjects();
 }

@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import { hasNewerStableVersion, normalizeVersion, releaseSummary } from '@/lib/release';
 
-const GITHUB_REPO = 'paulmassen/seo-playground';
-const LATEST_RELEASE_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`;
+// Nexo has its own releases: the notice stays off until UPDATE_CHECK_REPO names that repository
+// (owner/name). It never points at the upstream SEO Playground, whose versions are not Nexo's.
+const REPO_PATTERN = /^[\w.-]+\/[\w.-]+$/;
 const CHECK_INTERVAL_SECONDS = 60 * 60 * 12;
 
 // Next.js requires the exported route config to be statically analyzable.
@@ -21,13 +22,14 @@ export async function GET() {
   const current = normalizeVersion(process.env.APP_VERSION ?? process.env.NEXT_PUBLIC_APP_VERSION);
 
   // Platforms that ship their own updates (e.g. the Cloudron package) turn the in-app notice off.
-  if (process.env.UPDATE_CHECK_DISABLED?.trim().toLowerCase() === 'true') {
+  const repo = process.env.UPDATE_CHECK_REPO?.trim() ?? '';
+  if (process.env.UPDATE_CHECK_DISABLED?.trim().toLowerCase() === 'true' || !REPO_PATTERN.test(repo)) {
     return NextResponse.json({ current, latest: null, hasUpdate: false });
   }
 
   try {
     const res = await fetch(
-      LATEST_RELEASE_URL,
+      `https://api.github.com/repos/${repo}/releases/latest`,
       {
         headers: {
           Accept: 'application/vnd.github+json',

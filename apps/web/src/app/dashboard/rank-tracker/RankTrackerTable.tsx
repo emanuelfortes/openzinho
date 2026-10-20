@@ -80,11 +80,11 @@ export default function RankTrackerTable({ rows, hasCreds, pendingKeywordIds, ch
     <table className="w-full text-xs">
       <thead>
         <tr className="border-b border-nexo-border">
-          <Header label="Keyword" sortK="keyword" align="left" className="!px-5" />
+          <Header label="Palavra-chave" sortK="keyword" align="left" className="!px-5" />
           <Header label="Pos." sortK="position" align="center" />
-          <Header label="Trend" sortK="trend" align="center" />
-          <th className="nexo-label text-center px-3 py-3">14d</th>
-          <Header label="Checked" sortK="checked" align="left" />
+          <Header label="Tendência" sortK="trend" align="center" />
+          <th className="nexo-label text-center px-3 py-3">14 dias</th>
+          <Header label="Verificado" sortK="checked" align="left" />
           <th className="px-3 py-3"></th>
         </tr>
       </thead>

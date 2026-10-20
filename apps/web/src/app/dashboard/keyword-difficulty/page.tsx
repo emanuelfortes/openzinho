@@ -53,7 +53,7 @@ async function fetchDifficulty(
 }
 
 function formatDate(ts: number) {
-  return new Date(ts).toLocaleDateString("en-GB", { day: 'numeric', month: 'short', year: 'numeric' });
+  return new Date(ts).toLocaleDateString("pt-BR", { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 async function KeywordDifficultyPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
@@ -61,8 +61,8 @@ async function KeywordDifficultyPage({ searchParams }: { searchParams: Promise<S
   const params = await searchParams;
   const historyId = params.history_id;
 
-  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'France');
-  const defaultLanguage = getSetting('default_language') ?? 'French';
+  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'Brazil');
+  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
 
   const keywords = params.keywords?.trim() ?? '';
   const location = params.location ?? defaultLocation;
@@ -82,7 +82,7 @@ async function KeywordDifficultyPage({ searchParams }: { searchParams: Promise<S
       const history = getKwDifficultyHistory();
       activeEntry = history.find((e) => e.id === historyId) ?? null;
     } else {
-      error = 'Search no longer available.';
+      error = 'Esta busca não está mais disponível.';
     }
   }
 
@@ -97,7 +97,7 @@ async function KeywordDifficultyPage({ searchParams }: { searchParams: Promise<S
       items = cachedItems;
       cost = getKwDifficultyHistory().find((e) => e.id === dedupeId)?.cost;
     } else if (!creds) {
-      error = 'DataForSEO credentials missing. Configure them in Settings.';
+      error = 'Credenciais da DataForSEO ausentes. Configure-as em Configurações.';
     } else {
       const result = await fetchDifficulty(kwList, location, language, creds.login, creds.pass);
       items = result.items;
@@ -127,19 +127,19 @@ async function KeywordDifficultyPage({ searchParams }: { searchParams: Promise<S
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="nexo-h1">Keyword Difficulty</h1>
-        <p className="text-sm text-nexo-faint mt-1">Bulk keyword difficulty scores via DataForSEO Labs.</p>
+        <h1 className="nexo-h1">Dificuldade de palavras-chave</h1>
+        <p className="text-sm text-nexo-faint mt-1">Pontuações de dificuldade de palavras-chave em massa via DataForSEO Labs.</p>
       </div>
 
-      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Analyze" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
+      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Analisar" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="sm:col-span-2">
-            <label className="nexo-label block mb-1.5">Keywords <span className="text-nexo-faint font-normal normal-case tracking-normal">(one per line, max 1000)</span></label>
+            <label className="nexo-label block mb-1.5">Palavras-chave <span className="text-nexo-faint font-normal normal-case tracking-normal">(uma por linha, máx. 1000)</span></label>
             <textarea
               name="keywords"
               defaultValue={activeEntry ? '' : keywords}
               rows={6}
-              placeholder={"plumber paris\nemergency plumber\nplumbing repair"}
+              placeholder={"encanador são paulo\nencanador 24 horas\nconserto hidráulico"}
               required
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky transition-all font-mono resize-y"
             />
@@ -158,16 +158,16 @@ async function KeywordDifficultyPage({ searchParams }: { searchParams: Promise<S
         <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <h2 className="nexo-label">Results</h2>
-              {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>}
+              <h2 className="nexo-label">Resultados</h2>
+              {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">Histórico</span>}
             </div>
             <div className="flex items-center gap-3">
-              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">cost: ${cost.toFixed(4)}</span>}
-              <span className="text-xs font-medium text-nexo-faint">{items.length} keyword{items.length !== 1 ? 's' : ''}</span>
+              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">custo: US$ {cost.toFixed(4).replace('.', ',')}</span>}
+              <span className="text-xs font-medium text-nexo-faint">{items.length} {items.length !== 1 ? 'palavras-chave' : 'palavra-chave'}</span>
             </div>
           </div>
           {items.length === 0 ? (
-            <div className="px-6 py-12 text-center text-sm text-nexo-faint">No results found.</div>
+            <div className="px-6 py-12 text-center text-sm text-nexo-faint">Nenhum resultado encontrado.</div>
           ) : (
             <KeywordDifficultyTable items={items} />
           )}
@@ -177,7 +177,7 @@ async function KeywordDifficultyPage({ searchParams }: { searchParams: Promise<S
       {history.length > 0 && (
         <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border">
-            <h2 className="nexo-label">History</h2>
+            <h2 className="nexo-label">Histórico</h2>
           </div>
           <div className="divide-y divide-nexo-border">
             {history.map((entry) => {
@@ -188,9 +188,9 @@ async function KeywordDifficultyPage({ searchParams }: { searchParams: Promise<S
                   <div className="flex-1 min-w-0">
                     <p className={`text-sm font-medium truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.keywords}</p>
                     <p className="text-[11px] text-nexo-faint mt-0.5">
-                      {entry.count} keyword{entry.count !== 1 ? 's' : ''}
+                      {entry.count} {entry.count !== 1 ? 'palavras-chave' : 'palavra-chave'}
                       {' · '}{entry.location}
-                      {entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}
+                      {entry.cost !== undefined ? ` · US$ ${entry.cost.toFixed(4).replace('.', ',')}` : ''}
                     </p>
                   </div>
                   <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>

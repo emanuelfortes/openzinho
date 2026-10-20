@@ -7,7 +7,7 @@ import type { PdfCalendar, PdfStatus, StatusItem } from '@/lib/report-pdf-blocks
 
 export type CheckStatus = 'cited' | 'not-cited' | 'error';
 
-export const STATUS_LABEL: Record<CheckStatus, string> = { cited: 'Cited', 'not-cited': 'Not cited', error: 'Error' };
+export const STATUS_LABEL: Record<CheckStatus, string> = { cited: 'Citado', 'not-cited': 'Não citado', error: 'Erro' };
 export const STATUS_EMOJI: Record<CheckStatus | 'none', string> = { cited: '🟢', 'not-cited': '⚪', error: '🔴', none: '⬜' };
 
 export function checkStatus(check: Pick<PromptCheck, 'error' | 'mentioned'>): CheckStatus {
@@ -21,7 +21,7 @@ export function formatRate(total: number, mentioned: number): string {
 }
 
 export function formatCost(cost: number | null): string {
-  return cost === null ? '—' : `$${cost.toFixed(4)}`;
+  return cost === null ? '—' : `US$ ${cost.toLocaleString('pt-BR', { minimumFractionDigits: 4, maximumFractionDigits: 4 })}`;
 }
 
 function cell(value: string): string {
@@ -91,8 +91,8 @@ export function calendarWeeks(checks: PromptCheck[]): CalendarWeek[] {
 
 /** Weekly calendar grid in markdown: one row per week, one cell per day. */
 export function calendarMarkdown(checks: PromptCheck[]): string {
-  if (checks.length === 0) return '_No checks yet._';
-  const header = '| Week | Mon | Tue | Wed | Thu | Fri | Sat | Sun |';
+  if (checks.length === 0) return '_Nenhuma verificação ainda._';
+  const header = '| Semana | Seg | Ter | Qua | Qui | Sex | Sáb | Dom |';
   const divider = '|---|---|---|---|---|---|---|---|';
   const rows = calendarWeeks(checks).map((week) => {
     const cells = [week.monday, ...week.days.map((d) => {
@@ -112,7 +112,7 @@ export function recentStrip(checks: PromptCheck[], count = 14): string {
 }
 
 export function legendMarkdown(): string {
-  return `${STATUS_EMOJI.cited} cited · ${STATUS_EMOJI['not-cited']} not cited · ${STATUS_EMOJI.error} error · ${STATUS_EMOJI.none} no check`;
+  return `${STATUS_EMOJI.cited} citado · ${STATUS_EMOJI['not-cited']} não citado · ${STATUS_EMOJI.error} erro · ${STATUS_EMOJI.none} sem verificação`;
 }
 
 export interface PromptReportInput {
@@ -124,40 +124,40 @@ export interface PromptReportInput {
 }
 
 function generatedLine(ts: number): string {
-  return `_Generated ${new Date(ts).toISOString().replace('T', ' ').slice(0, 16)} UTC_`;
+  return `_Gerado em ${new Date(ts).toISOString().replace('T', ' ').slice(0, 16)} UTC_`;
 }
 
 /** Markdown report for one prompt: settings, calendar of mentions and check history. */
 export function promptMarkdown(input: PromptReportInput): string {
   const { prompt, checks, total, mentioned, generatedAt } = input;
-  const target = [prompt.brand && `brand "${prompt.brand}"`, prompt.domain && `domain ${prompt.domain}`].filter(Boolean).join(' and ');
+  const target = [prompt.brand && `marca "${prompt.brand}"`, prompt.domain && `domínio ${prompt.domain}`].filter(Boolean).join(' e ');
   const history = [...checks].sort((a, b) => b.checkedAt - a.checkedAt);
 
   const lines = [
-    `# Prompt report`,
+    `# Relatório do prompt`,
     '',
     `> ${prompt.prompt}`,
     '',
-    `- **Platform:** ${PLATFORM_LABELS[prompt.platform] ?? prompt.platform} · ${prompt.model}${prompt.webSearch ? ' · web search on' : ''}${prompt.countryCode ? ` · ${prompt.countryCode}` : ''}`,
-    `- **Looking for:** ${target || '—'}`,
-    `- **Mention rate:** ${formatRate(total, mentioned)}`,
-    `- **Checks:** ${total} successful${checks.length > total ? `, ${checks.length - total} failed` : ''}`,
+    `- **Plataforma:** ${PLATFORM_LABELS[prompt.platform] ?? prompt.platform} · ${prompt.model}${prompt.webSearch ? ' · busca na web ativada' : ''}${prompt.countryCode ? ` · ${prompt.countryCode}` : ''}`,
+    `- **Procurando:** ${target || '—'}`,
+    `- **Taxa de menção:** ${formatRate(total, mentioned)}`,
+    `- **Verificações:** ${total} com sucesso${checks.length > total ? `, ${checks.length - total} com falha` : ''}`,
     '',
     generatedLine(generatedAt),
     '',
-    '## Calendar',
+    '## Calendário',
     '',
     legendMarkdown(),
     '',
     calendarMarkdown(checks),
     '',
-    '## History',
+    '## Histórico',
     '',
-    '| Date | Status | Brand mentions | Domain cited | Cost | Answer |',
+    '| Data | Status | Menções à marca | Domínio citado | Custo | Resposta |',
     '|---|---|---|---|---|---|',
     ...history.map((c) => {
-      const status = `${STATUS_EMOJI[checkStatus(c)]} ${c.error ? 'Error' : c.mentioned ? 'Cited' : 'Not cited'}`;
-      return `| ${cell(c.date)} | ${cell(status)} | ${c.error ? '—' : c.brandMentions} | ${c.error ? '—' : c.domainCited ? 'yes' : 'no'} | ${formatCost(c.cost)} | ${cell(c.error ?? excerpt(c.answer))} |`;
+      const status = `${STATUS_EMOJI[checkStatus(c)]} ${c.error ? 'Erro' : c.mentioned ? 'Citado' : 'Não citado'}`;
+      return `| ${cell(c.date)} | ${cell(status)} | ${c.error ? '—' : c.brandMentions} | ${c.error ? '—' : c.domainCited ? 'sim' : 'não'} | ${formatCost(c.cost)} | ${cell(c.error ?? excerpt(c.answer))} |`;
     }),
     '',
   ];
@@ -175,17 +175,17 @@ export interface OverviewItem {
 /** Markdown overview of every tracked prompt: latest status, rate and a dot strip of recent checks. */
 export function overviewMarkdown(items: OverviewItem[], generatedAt: number): string {
   const lines = [
-    '# Prompt Tracker overview',
+    '# Visão geral do Monitor de prompts',
     '',
-    `${items.length} prompt${items.length === 1 ? '' : 's'} tracked · ${generatedLine(generatedAt).slice(1, -1)}`,
+    `${items.length} ${items.length === 1 ? 'prompt monitorado' : 'prompts monitorados'} · ${generatedLine(generatedAt).slice(1, -1)}`,
     '',
     legendMarkdown(),
     '',
-    '| Prompt | Model | Looking for | Latest | Mention rate | Recent checks |',
+    '| Prompt | Modelo | Procurando | Último | Taxa de menção | Verificações recentes |',
     '|---|---|---|---|---|---|',
     ...items.map(({ prompt, checks, total, mentioned, latest }) => {
       const target = [prompt.brand, prompt.domain].filter(Boolean).join(' · ');
-      const latestLabel = latest ? `${STATUS_EMOJI[checkStatus(latest)]} ${latest.error ? 'Error' : latest.mentioned ? 'Cited' : 'Not cited'}` : `${STATUS_EMOJI.none} Not checked`;
+      const latestLabel = latest ? `${STATUS_EMOJI[checkStatus(latest)]} ${latest.error ? 'Erro' : latest.mentioned ? 'Citado' : 'Não citado'}` : `${STATUS_EMOJI.none} Não verificado`;
       return `| ${cell(prompt.prompt)} | ${cell(`${PLATFORM_LABELS[prompt.platform] ?? prompt.platform} ${prompt.model}`)} | ${cell(target)} | ${cell(latestLabel)} | ${cell(formatRate(total, mentioned))} | ${recentStrip(checks) || '—'} |`;
     }),
     '',
@@ -198,10 +198,10 @@ export function overviewMarkdown(items: OverviewItem[], generatedAt: number): st
 export interface PdfMetric { label: string; value: string; detail?: string; status?: PdfStatus }
 export interface PdfSection { title: string; rows: Array<[string, string]>; statusItems?: StatusItem[]; calendar?: PdfCalendar }
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const WEEKDAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const MONTHS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+const WEEKDAY_NAMES = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
-/** "2026-10-08" -> "8 Oct 2026", or "Thu 8 Oct 2026" with the weekday. Pure UTC, no locale. */
+/** "2026-10-08" -> "8 out 2026", or "Qui 8 out 2026" with the weekday. Pure UTC, no locale. */
 export function formatDay(date: string, withWeekday = false): string {
   const d = utcDate(date);
   const label = `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
@@ -213,13 +213,13 @@ function pdfStatus(check: PromptCheck | undefined): PdfStatus {
 }
 
 function pdfBadge(check: PromptCheck | undefined): string {
-  if (!check) return 'Not checked';
-  if (check.error) return 'Error';
-  return check.mentioned ? 'Cited' : 'Not cited';
+  if (!check) return 'Não verificado';
+  if (check.error) return 'Erro';
+  return check.mentioned ? 'Citado' : 'Não citado';
 }
 
-function plural(count: number, noun: string): string {
-  return `${count} ${noun}${count === 1 ? '' : 's'}`;
+function plural(count: number, singular: string, pluralForm: string): string {
+  return `${count} ${count === 1 ? singular : pluralForm}`;
 }
 
 function modelLabel(prompt: TrackedPrompt): string {
@@ -233,15 +233,15 @@ function targetText(prompt: TrackedPrompt): string {
 /** One-line result of a check, shown under its date in the history. */
 function checkDetail(check: PromptCheck): string {
   if (check.error) return check.error;
-  const mentions = check.brandMentions > 0 ? plural(check.brandMentions, 'brand mention') : 'no brand mention';
-  return `${mentions} - domain ${check.domainCited ? 'cited' : 'not cited'}`;
+  const mentions = check.brandMentions > 0 ? plural(check.brandMentions, 'menção à marca', 'menções à marca') : 'nenhuma menção à marca';
+  return `${mentions} - domínio ${check.domainCited ? 'citado' : 'não citado'}`;
 }
 
 /** Weekly heat-map rows, Monday first, one coloured day per check (the latest of each day). */
 function pdfCalendar(checks: PromptCheck[]): PdfCalendar {
   return {
     weeks: calendarWeeks(checks).map((week) => ({
-      label: `Week of ${formatDay(week.monday).replace(/ \d{4}$/, '')}`,
+      label: `Semana de ${formatDay(week.monday).replace(/ \d{4}$/, '')}`,
       days: week.days.map((d) => (d.inRange ? { day: Number(d.date.slice(8)), status: d.status } : null)),
     })),
   };
@@ -253,16 +253,16 @@ export function promptPdf(input: PromptReportInput): { metrics: PdfMetric[]; sec
   const history = [...checks].sort((a, b) => b.checkedAt - a.checkedAt);
   const latest = history[0];
   const settings: Array<[string, string]> = [
-    ['Looking for', targetText(prompt) || '-'],
-    ['Web search', prompt.webSearch ? 'On' : 'Off'],
+    ['Procurando', targetText(prompt) || '-'],
+    ['Busca na web', prompt.webSearch ? 'Ativada' : 'Desativada'],
   ];
-  if (prompt.countryCode) settings.push(['Country', prompt.countryCode]);
+  if (prompt.countryCode) settings.push(['País', prompt.countryCode]);
 
-  const sections: PdfSection[] = [{ title: 'Settings', rows: settings }];
+  const sections: PdfSection[] = [{ title: 'Configurações', rows: settings }];
   if (checks.length > 0) {
-    sections.push({ title: 'Calendar', rows: [], calendar: pdfCalendar(checks) });
+    sections.push({ title: 'Calendário', rows: [], calendar: pdfCalendar(checks) });
     sections.push({
-      title: 'Check history',
+      title: 'Histórico de verificações',
       rows: [],
       statusItems: history.map((c): StatusItem => ({
         status: pdfStatus(c),
@@ -275,10 +275,10 @@ export function promptPdf(input: PromptReportInput): { metrics: PdfMetric[]; sec
 
   return {
     metrics: [
-      { label: 'Latest result', value: pdfBadge(latest), detail: latest ? formatDay(latest.date) : 'No check yet', status: pdfStatus(latest) },
-      { label: 'Mention rate', value: total ? `${Math.round((mentioned / total) * 100)}%` : '-', detail: `${mentioned} of ${plural(total, 'check')}` },
-      { label: 'Checks', value: String(total), detail: checks.length > total ? `${checks.length - total} failed` : 'None failed' },
-      { label: 'Model', value: PLATFORM_LABELS[prompt.platform] ?? prompt.platform, detail: prompt.model },
+      { label: 'Último resultado', value: pdfBadge(latest), detail: latest ? formatDay(latest.date) : 'Nenhuma verificação ainda', status: pdfStatus(latest) },
+      { label: 'Taxa de menção', value: total ? `${Math.round((mentioned / total) * 100)}%` : '-', detail: `${mentioned} de ${plural(total, 'verificação', 'verificações')}` },
+      { label: 'Verificações', value: String(total), detail: checks.length > total ? `${checks.length - total} com falha` : 'Nenhuma falhou' },
+      { label: 'Modelo', value: PLATFORM_LABELS[prompt.platform] ?? prompt.platform, detail: prompt.model },
     ],
     sections,
   };
@@ -291,18 +291,18 @@ export function overviewPdf(items: OverviewItem[]): { metrics: PdfMetric[]; sect
   const other = items.length - cited - notCited;
   return {
     metrics: [
-      { label: 'Prompts tracked', value: String(items.length) },
-      { label: 'Cited', value: `${cited} / ${items.length}`, detail: 'in the latest check', status: 'cited' },
-      { label: 'Not cited', value: `${notCited} / ${items.length}`, detail: other > 0 ? `${other} error or unchecked` : 'in the latest check', status: 'not-cited' },
+      { label: 'Prompts monitorados', value: String(items.length) },
+      { label: 'Citado', value: `${cited} / ${items.length}`, detail: 'na última verificação', status: 'cited' },
+      { label: 'Não citado', value: `${notCited} / ${items.length}`, detail: other > 0 ? `${other} com erro ou sem verificação` : 'na última verificação', status: 'not-cited' },
     ],
     sections: [
       {
-        title: 'Latest results',
+        title: 'Últimos resultados',
         rows: [],
         statusItems: items.map(({ prompt, latest }): StatusItem => ({
           status: pdfStatus(latest),
           title: prompt.prompt,
-          subtitle: [modelLabel(prompt), targetText(prompt) && `Looking for ${targetText(prompt)}`].filter(Boolean).join(' - '),
+          subtitle: [modelLabel(prompt), targetText(prompt) && `Procurando ${targetText(prompt)}`].filter(Boolean).join(' - '),
           badge: pdfBadge(latest),
           note: latest ? formatDay(latest.date) : undefined,
         })),

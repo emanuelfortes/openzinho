@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
   if (rawId !== null) {
     const id = Number(rawId);
     const prompt = Number.isInteger(id) && id > 0 ? getTrackedPrompt(id) : null;
-    if (!prompt) return NextResponse.json({ error: 'Prompt not found.' }, { status: 404 });
+    if (!prompt) return NextResponse.json({ error: 'Prompt não encontrado.' }, { status: 404 });
     const totals = getPromptCheckTotals().get(prompt.id) ?? { total: 0, mentioned: 0 };
     const body = promptMarkdown({
       prompt, checks: getPromptChecks(prompt.id, HISTORY_LIMIT), total: totals.total, mentioned: totals.mentioned, generatedAt,

@@ -37,7 +37,7 @@ export default function LlmResponseForm({ defaults, disabled = false }: Props) {
     >
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="nexo-label block mb-1.5">Platform</label>
+          <label className="nexo-label block mb-1.5">Plataforma</label>
           <select
             name="platform"
             value={platform}
@@ -48,7 +48,7 @@ export default function LlmResponseForm({ defaults, disabled = false }: Props) {
           </select>
         </div>
         <div>
-          <label className="nexo-label block mb-1.5">Model</label>
+          <label className="nexo-label block mb-1.5">Modelo</label>
           <input
             type="text"
             name="model"
@@ -66,14 +66,14 @@ export default function LlmResponseForm({ defaults, disabled = false }: Props) {
 
       <div>
         <label className="nexo-label block mb-1.5">
-          Prompt <span className="text-nexo-faint font-normal normal-case tracking-normal">(max 500 chars)</span>
+          Prompt <span className="text-nexo-faint font-normal normal-case tracking-normal">(máx. 500 caracteres)</span>
         </label>
         <textarea
           name="user_prompt"
           defaultValue={defaults.prompt}
           rows={4}
           maxLength={500}
-          placeholder="e.g. What's the best plumber in Paris for emergency repairs?"
+          placeholder="ex.: Qual é o melhor encanador de São Paulo para emergências?"
           required
           className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky transition-all resize-y"
         />
@@ -81,14 +81,14 @@ export default function LlmResponseForm({ defaults, disabled = false }: Props) {
 
       <div>
         <label className="nexo-label block mb-1.5">
-          System message <span className="text-nexo-faint font-normal normal-case tracking-normal">(optional, max 500 chars)</span>
+          Mensagem de sistema <span className="text-nexo-faint font-normal normal-case tracking-normal">(opcional, máx. 500 caracteres)</span>
         </label>
         <input
           type="text"
           name="system_message"
           defaultValue={defaults.systemMessage}
           maxLength={500}
-          placeholder="e.g. Answer as a local SEO expert."
+          placeholder="ex.: Responda como especialista em SEO local."
           className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
         />
       </div>
@@ -96,7 +96,7 @@ export default function LlmResponseForm({ defaults, disabled = false }: Props) {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
         <div>
           {isPerplexity ? (
-            <p className="text-[11px] text-nexo-faint pb-2.5">Perplexity always searches the live web.</p>
+            <p className="text-[11px] text-nexo-faint pb-2.5">O Perplexity sempre pesquisa na web em tempo real.</p>
           ) : (
             <label className="relative flex items-center gap-2.5 cursor-pointer w-fit">
               <input
@@ -109,20 +109,20 @@ export default function LlmResponseForm({ defaults, disabled = false }: Props) {
               <div className="w-9 h-5 bg-white/10 rounded-full peer-checked:bg-nexo-blue transition-colors relative">
                 <div className="absolute top-0.5 left-0.5 w-4 h-4 bg-nexo-surface rounded-full transition-transform peer-checked:translate-x-4" />
               </div>
-              <span className="nexo-label">Web search</span>
+              <span className="nexo-label">Pesquisa na web</span>
             </label>
           )}
         </div>
         <div>
           <label className="nexo-label block mb-1.5">
-            Web search country <span className="text-nexo-faint font-normal normal-case tracking-normal">(optional, ISO code)</span>
+            País da pesquisa na web <span className="text-nexo-faint font-normal normal-case tracking-normal">(opcional, código ISO)</span>
           </label>
           <input
             type="text"
             name="country_code"
             defaultValue={defaults.countryCode}
             maxLength={2}
-            placeholder="e.g. FR, US"
+            placeholder="ex.: BR, US"
             className="nexo-input min-w-0 w-full px-4 py-2 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-nexo-sky"
           />
         </div>
@@ -139,9 +139,9 @@ export default function LlmResponseForm({ defaults, disabled = false }: Props) {
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
             </svg>
-            Asking {PLATFORMS.find((p) => p.value === platform)?.label}…
+            Perguntando ao {PLATFORMS.find((p) => p.value === platform)?.label}…
           </span>
-        ) : 'Ask'}
+        ) : 'Perguntar'}
       </button>
     </form>
   );

@@ -286,7 +286,7 @@ export function deleteBenchmark(id: string, projectId?: string): void {
     }
     db.prepare('DELETE FROM rv_listings WHERE benchmark_id = ?').run(id);
     // Paid tasks are kept for the Spending page; in-flight ones are closed so their results are ignored.
-    db.prepare(`UPDATE rv_tasks SET status = 'error', error_message = 'Benchmark deleted', completed_at = ? WHERE benchmark_id = ? AND status IN ('posting', 'pending')`).run(Date.now(), id);
+    db.prepare(`UPDATE rv_tasks SET status = 'error', error_message = 'Comparativo excluído', completed_at = ? WHERE benchmark_id = ? AND status IN ('posting', 'pending')`).run(Date.now(), id);
     db.prepare('DELETE FROM rv_benchmarks WHERE id = ?').run(id);
   })();
 }
@@ -384,7 +384,7 @@ export function getTasks(benchmarkId: string, limit = 100, projectId?: string): 
 
 /** Reservations left behind by a crash between reserving and posting; they block the listing otherwise. */
 export function expireStaleReservations(olderThanMs: number, projectId?: string): void {
-  rvDb(projectId).prepare(`UPDATE rv_tasks SET status = 'error', error_message = 'Posting did not complete', completed_at = ?
+  rvDb(projectId).prepare(`UPDATE rv_tasks SET status = 'error', error_message = 'O envio não foi concluído', completed_at = ?
     WHERE status = 'posting' AND created_at < ?`).run(Date.now(), Date.now() - olderThanMs);
 }
 

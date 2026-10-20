@@ -35,7 +35,7 @@ export default function CopyMarkdownButton({
       className="nexo-label flex items-center gap-2 px-4 py-2 rounded-nexo-lg border border-nexo-border hover:bg-white/[0.04] hover:text-white transition-all"
     >
       {copied ? <Check className="h-3.5 w-3.5 text-nexo-ice" /> : <ClipboardCopy className="h-3.5 w-3.5" />}
-      {copied ? 'Copied' : 'Copy as Markdown'}
+      {copied ? 'Copiado' : 'Copiar Markdown'}
     </button>
   );
 }

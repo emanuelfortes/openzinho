@@ -29,13 +29,13 @@ async function fetchIdeas(keyword: string, location: string, language: string, l
   return { items: result?.items ?? [], cost };
 }
 
-function formatDate(ts: number) { return new Date(ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); }
+function formatDate(ts: number) { return new Date(ts).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' }); }
 
 async function KeywordIdeasPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const creds = getCredentials();
   const params = await searchParams;
-  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'France');
-  const defaultLanguage = getSetting('default_language') ?? 'French';
+  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'Brazil');
+  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
 
   const keyword = params.keyword?.trim() ?? '';
   const location = params.location ?? defaultLocation;
@@ -51,7 +51,7 @@ async function KeywordIdeasPage({ searchParams }: { searchParams: Promise<Search
   if (historyId) {
     const saved = getKeywordIdeasResults<IdeaItem>(historyId);
     if (saved) { items = saved; activeEntry = getKeywordIdeasHistory().find((e) => e.id === historyId) ?? null; }
-    else error = 'Search no longer available.';
+    else error = 'Esta busca não está mais disponível.';
   } else if (keyword) {
     const dedupeId = stableSearchId(['keyword-ideas', keyword, location, language, limit]);
     const cached = getKeywordIdeasResults<IdeaItem>(dedupeId);
@@ -60,7 +60,7 @@ async function KeywordIdeasPage({ searchParams }: { searchParams: Promise<Search
       items = cached;
       cost = getKeywordIdeasHistory().find((e) => e.id === dedupeId)?.cost;
     } else if (!creds) {
-      error = 'DataForSEO credentials missing. Configure them in Settings.';
+      error = 'Credenciais da DataForSEO ausentes. Configure-as em Configurações.';
     } else {
       const result = await fetchIdeas(keyword, location, language, limit, creds.login, creds.pass);
       items = result.items; cost = result.cost; error = result.error ?? null;
@@ -89,15 +89,15 @@ async function KeywordIdeasPage({ searchParams }: { searchParams: Promise<Search
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="nexo-h1">Keyword Ideas</h1>
-        <p className="text-sm text-nexo-faint mt-1">Discover keyword ideas from a seed keyword with volume, difficulty and intent.</p>
+        <h1 className="nexo-h1">Ideias de palavras-chave</h1>
+        <p className="text-sm text-nexo-faint mt-1">Descubra ideias de palavras-chave a partir de uma palavra-chave semente, com volume, dificuldade e intenção.</p>
       </div>
 
-      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Find ideas" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
+      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Buscar ideias" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="sm:col-span-2">
-            <label className="nexo-label block mb-1.5">Seed keyword</label>
-            <input type="text" name="keyword" defaultValue={displayKeyword} placeholder="plumber" required
+            <label className="nexo-label block mb-1.5">Palavra-chave semente</label>
+            <input type="text" name="keyword" defaultValue={displayKeyword} placeholder="encanador" required
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky" />
           </div>
           <LabsLocationLanguageFields
@@ -106,7 +106,7 @@ async function KeywordIdeasPage({ searchParams }: { searchParams: Promise<Search
             className="w-full px-4 py-2.5 border border-nexo-border rounded-nexo-lg text-sm text-nexo-text focus:outline-none focus:ring-2 focus:ring-nexo-sky bg-nexo-surface"
           />
           <div>
-            <label className="nexo-label block mb-1.5">Max results</label>
+            <label className="nexo-label block mb-1.5">Máx. de resultados</label>
             <select name="limit" defaultValue={String(limit)} className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
               {['50','100','200','500','1000'].map((v) => <option key={v} value={v}>{v}</option>)}
             </select>
@@ -120,18 +120,18 @@ async function KeywordIdeasPage({ searchParams }: { searchParams: Promise<Search
         <div id="results" className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="nexo-label">{items.length} ideas</span>
-              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">cost: ${cost.toFixed(4)}</span>}
+              <span className="nexo-label">{items.length} {items.length !== 1 ? 'ideias' : 'ideia'}</span>
+              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">custo: US$ {cost.toFixed(4).replace('.', ',')}</span>}
             </div>
             {items.length > 0 && (
               <div className="flex items-center gap-2">
-                <CopyMarkdownButton data={csvData} columns={[{key:'keyword',label:'Keyword'},{key:'search_volume',label:'Volume'},{key:'kd',label:'KD'},{key:'cpc',label:'CPC'},{key:'competition_level',label:'Competition'},{key:'intent',label:'Intent'},{key:'ref_domains',label:'Avg Ref. Domains'}]} />
-                <ExportCSVButton data={csvData} filename={`keyword-ideas-${displayKeyword}.csv`} columns={[{key:'keyword',label:'Keyword'},{key:'search_volume',label:'Volume'},{key:'kd',label:'KD'},{key:'cpc',label:'CPC'},{key:'competition_level',label:'Competition'},{key:'intent',label:'Intent'},{key:'ref_domains',label:'Avg Ref. Domains'}]} />
+                <CopyMarkdownButton data={csvData} columns={[{key:'keyword',label:'Palavra-chave'},{key:'search_volume',label:'Volume'},{key:'kd',label:'KD'},{key:'cpc',label:'CPC'},{key:'competition_level',label:'Concorrência'},{key:'intent',label:'Intenção'},{key:'ref_domains',label:'Média de domínios de referência'}]} />
+                <ExportCSVButton data={csvData} filename={`keyword-ideas-${displayKeyword}.csv`} columns={[{key:'keyword',label:'Palavra-chave'},{key:'search_volume',label:'Volume'},{key:'kd',label:'KD'},{key:'cpc',label:'CPC'},{key:'competition_level',label:'Concorrência'},{key:'intent',label:'Intenção'},{key:'ref_domains',label:'Média de domínios de referência'}]} />
               </div>
             )}
           </div>
           {items.length === 0 ? (
-            <div className="px-6 py-12 text-center text-sm text-nexo-faint">No results found.</div>
+            <div className="px-6 py-12 text-center text-sm text-nexo-faint">Nenhum resultado encontrado.</div>
           ) : (
             <KeywordIdeasTable items={items} />
           )}
@@ -141,7 +141,7 @@ async function KeywordIdeasPage({ searchParams }: { searchParams: Promise<Search
       {history.length > 0 && (
         <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border">
-            <h2 className="nexo-label">History</h2>
+            <h2 className="nexo-label">Histórico</h2>
           </div>
           <div className="divide-y divide-nexo-border">
             {history.map((entry) => {
@@ -151,7 +151,7 @@ async function KeywordIdeasPage({ searchParams }: { searchParams: Promise<Search
                   className={`flex items-center gap-4 px-6 py-3.5 hover:bg-white/[0.04] transition-colors ${isActive ? 'bg-nexo-blue/10' : ''}`}>
                   <div className="flex-1 min-w-0">
                     <p className={`text-sm font-medium truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.keyword}</p>
-                    <p className="text-[11px] text-nexo-faint mt-0.5">{entry.count} ideas · {entry.location}{entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}</p>
+                    <p className="text-[11px] text-nexo-faint mt-0.5">{entry.count} {entry.count !== 1 ? 'ideias' : 'ideia'} · {entry.location}{entry.cost !== undefined ? ` · US$ ${entry.cost.toFixed(4).replace('.', ',')}` : ''}</p>
                   </div>
                   <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>
                 </a>

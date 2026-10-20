@@ -33,9 +33,9 @@ interface Props {
 type QueueMode = 'live' | 'priority' | 'standard';
 
 const QUEUE_MODES: { value: QueueMode; label: string; costPerPoint: number; wait: string }[] = [
-  { value: 'live', label: 'Live', costPerPoint: 0.002, wait: 'Blocks the page' },
-  { value: 'priority', label: 'Priority', costPerPoint: 0.0012, wait: '~1 min avg, background' },
-  { value: 'standard', label: 'Standard', costPerPoint: 0.0006, wait: '5–45 min, background' },
+  { value: 'live', label: 'Live', costPerPoint: 0.002, wait: 'Trava a página' },
+  { value: 'priority', label: 'Prioritária', costPerPoint: 0.0012, wait: '~1 min em média, em segundo plano' },
+  { value: 'standard', label: 'Padrão', costPerPoint: 0.0006, wait: '5–45 min, em segundo plano' },
 ];
 
 // Live requests are throttled to 6 in flight; each point currently takes ~8-10s on DataForSEO's side.
@@ -43,7 +43,7 @@ const LIVE_SECONDS_PER_BATCH = 9;
 const LIVE_CONCURRENCY = 6;
 
 function formatCost(n: number) {
-  return `$${n.toFixed(4)}`;
+  return `US$ ${n.toFixed(4).replace('.', ',')}`;
 }
 
 function formatLiveDuration(totalPoints: number) {
@@ -74,7 +74,7 @@ function GridPreview({ size, spacingKm, unit }: { size: number; spacingKm: numbe
         })}
       </div>
       <p className="text-[10px] text-nexo-faint font-medium">
-        {size}×{size} points · {formatDistance(spacingKm, unit)} spacing · ~{formatDistance((size - 1) * spacingKm, unit, 1)} coverage
+        {size}×{size} pontos · espaçamento de {formatDistance(spacingKm, unit)} · cobertura de ~{formatDistance((size - 1) * spacingKm, unit, 1)}
       </p>
     </div>
   );
@@ -89,7 +89,7 @@ export default function LocalFinderForm({ defaults }: Props) {
   const [gridSize, setGridSize] = useState(parseInt(defaults.gridSize ?? '5', 10));
   const [spacingKm, setSpacingKm] = useState(parseFloat(defaults.spacingKm ?? '1'));
   const [queueMode, setQueueMode] = useState<QueueMode>((defaults.queueMode as QueueMode) || 'live');
-  const [language, setLanguage] = useState(defaults.language || 'English');
+  const [language, setLanguage] = useState(defaults.language || 'Portuguese');
   const [gridTarget, setGridTarget] = useState(defaults.gridTarget ?? '');
   const { distanceUnit } = useGridPreferences();
   const spacingChoices = spacingOptions(distanceUnit, spacingKm);
@@ -106,13 +106,13 @@ export default function LocalFinderForm({ defaults }: Props) {
       {/* Keyword */}
       <div>
         <label className="nexo-label block mb-1.5">
-          Keyword to monitor <span className="text-nexo-danger-text">*</span>
+          Palavra-chave a monitorar <span className="text-nexo-danger-text">*</span>
         </label>
         <input
           type="text"
           name="keyword"
           defaultValue={defaults.keyword}
-          placeholder="e.g. plumber, italian restaurant, dentist…"
+          placeholder="ex.: encanador, restaurante italiano, dentista…"
           required
           className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky transition-all"
         />
@@ -121,7 +121,7 @@ export default function LocalFinderForm({ defaults }: Props) {
       {/* Language */}
       <div>
         <label className="nexo-label block mb-1.5">
-          Language <span className="text-nexo-danger-text">*</span>
+          Idioma <span className="text-nexo-danger-text">*</span>
         </label>
         <select
           name="language"
@@ -137,7 +137,7 @@ export default function LocalFinderForm({ defaults }: Props) {
       <div>
         <div className="flex items-center justify-between mb-1.5">
           <label className="nexo-label block">
-            {isGrid ? 'Location to monitor (map)' : 'Location (map)'} <span className="text-nexo-danger-text">*</span>
+            {isGrid ? 'Local a monitorar (mapa)' : 'Local (mapa)'} <span className="text-nexo-danger-text">*</span>
           </label>
           {coordinate && (
             <button
@@ -145,7 +145,7 @@ export default function LocalFinderForm({ defaults }: Props) {
               onClick={() => setCoordinate('')}
               className="nexo-label hover:text-nexo-danger-text transition-colors"
             >
-              Clear
+              Limpar
             </button>
           )}
         </div>
@@ -167,12 +167,12 @@ export default function LocalFinderForm({ defaults }: Props) {
             name="location_coordinate"
             value={coordinate}
             onChange={(e) => setCoordinate(e.target.value)}
-            placeholder="Click on the map to set a point — or type lat,lng"
+            placeholder="Clique no mapa para marcar um ponto — ou digite lat,lng"
             className="nexo-input min-w-0 w-full px-4 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-nexo-sky"
           />
           {coordinate && (
             <p className="text-[11px] text-nexo-sky">
-              {isGrid ? 'Grid will be centered on this point.' : 'Coordinates active — search will be centered on this point.'}
+              {isGrid ? 'A grade será centralizada neste ponto.' : 'Coordenadas ativas — a busca será centralizada neste ponto.'}
             </p>
           )}
         </div>
@@ -184,39 +184,39 @@ export default function LocalFinderForm({ defaults }: Props) {
           {/* Target business */}
           <div>
             <label className="nexo-label block mb-1.5">
-              Target domain or business <span className="text-nexo-danger-text">*</span>
+              Domínio ou empresa alvo <span className="text-nexo-danger-text">*</span>
             </label>
             <input
               type="text"
               name="grid_target"
               value={gridTarget}
               onChange={(e) => setGridTarget(e.target.value)}
-              placeholder="Pick a Google listing above, or enter a domain / business name"
+              placeholder="Escolha um perfil do Google acima ou digite um domínio / nome da empresa"
               required
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky transition-all"
             />
-            <p className="text-[11px] text-nexo-faint mt-1">Picking a listing from the map search matches that exact Google listing. A domain matches with or without https:// and www; a name matches partially.</p>
+            <p className="text-[11px] text-nexo-faint mt-1">Escolher um perfil na busca do mapa corresponde exatamente a esse perfil do Google. Um domínio corresponde com ou sem https:// e www; um nome corresponde parcialmente.</p>
           </div>
 
           {/* Grid size + spacing */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="nexo-label block mb-1.5">Grid size</label>
+              <label className="nexo-label block mb-1.5">Tamanho da grade</label>
               <select
                 name="grid_size"
                 value={gridSize}
                 onChange={(e) => setGridSize(parseInt(e.target.value, 10))}
                 className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
               >
-                <option value="3">3×3 (9 points)</option>
-                <option value="5">5×5 (25 points)</option>
-                <option value="7">7×7 (49 points)</option>
-                <option value="9">9×9 (81 points)</option>
-                <option value="11">11×11 (121 points)</option>
+                <option value="3">3×3 (9 pontos)</option>
+                <option value="5">5×5 (25 pontos)</option>
+                <option value="7">7×7 (49 pontos)</option>
+                <option value="9">9×9 (81 pontos)</option>
+                <option value="11">11×11 (121 pontos)</option>
               </select>
             </div>
             <div>
-              <label className="nexo-label block mb-1.5">Spacing ({distanceUnit})</label>
+              <label className="nexo-label block mb-1.5">Espaçamento ({distanceUnit})</label>
               {/* Values are always kilometres; only the labels follow the Settings distance unit. */}
               <select
                 name="spacing_km"
@@ -231,13 +231,13 @@ export default function LocalFinderForm({ defaults }: Props) {
 
           {/* Grid preview */}
           <div className="bg-white/[0.02] rounded-nexo-lg border border-nexo-border p-4">
-            <p className="nexo-label mb-2 text-center">Grid preview</p>
+            <p className="nexo-label mb-2 text-center">Prévia da grade</p>
             <GridPreview size={gridSize} spacingKm={spacingKm} unit={distanceUnit} />
           </div>
 
           {/* Queue mode */}
           <div>
-            <label className="nexo-label block mb-2">API mode</label>
+            <label className="nexo-label block mb-2">Modo da API</label>
             <input type="hidden" name="queue_mode" value={queueMode} />
             <div className="grid grid-cols-3 gap-2">
               {QUEUE_MODES.map((mode) => {
@@ -266,11 +266,11 @@ export default function LocalFinderForm({ defaults }: Props) {
             </div>
             <p className="text-[11px] text-nexo-faint mt-2">
               {queueMode === 'live' ? (
-                <>Blocks the page for {formatLiveDuration(gridSize * gridSize)} — DataForSEO’s live endpoint has slowed down, so large grids can take several minutes.</>
+                <>Trava a página por {formatLiveDuration(gridSize * gridSize)} — o endpoint live do DataForSEO ficou mais lento, então grades grandes podem levar vários minutos.</>
               ) : queueMode === 'priority' ? (
-                <>Tasks are queued with DataForSEO’s high-priority flag. The page will auto-refresh every 10 seconds until results are ready.</>
+                <>As tarefas entram na fila do DataForSEO com prioridade alta. A página se atualiza sozinha a cada 10 segundos até os resultados ficarem prontos.</>
               ) : (
-                <>Tasks are queued for standard background processing. The page will check every 30 seconds — or you can come back later.</>
+                <>As tarefas entram na fila de processamento padrão em segundo plano. A página verifica a cada 30 segundos — ou você pode voltar mais tarde.</>
               )}
             </p>
           </div>
@@ -281,7 +281,7 @@ export default function LocalFinderForm({ defaults }: Props) {
           {/* Device / OS / Depth */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="nexo-label block mb-1.5">Device</label>
+              <label className="nexo-label block mb-1.5">Dispositivo</label>
               <select
                 name="device"
                 value={device}
@@ -289,11 +289,11 @@ export default function LocalFinderForm({ defaults }: Props) {
                 className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
               >
                 <option value="desktop">Desktop</option>
-                <option value="mobile">Mobile</option>
+                <option value="mobile">Celular</option>
               </select>
             </div>
             <div>
-              <label className="nexo-label block mb-1.5">OS</label>
+              <label className="nexo-label block mb-1.5">Sistema</label>
               <select
                 name="os"
                 defaultValue={defaultOs}
@@ -303,7 +303,7 @@ export default function LocalFinderForm({ defaults }: Props) {
               </select>
             </div>
             <div>
-              <label className="nexo-label block mb-1.5">Depth</label>
+              <label className="nexo-label block mb-1.5">Profundidade</label>
               <select
                 name="depth"
                 defaultValue={defaults.depth || '20'}
@@ -321,28 +321,28 @@ export default function LocalFinderForm({ defaults }: Props) {
           {/* Filters */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="nexo-label block mb-1.5">Minimum rating</label>
+              <label className="nexo-label block mb-1.5">Nota mínima</label>
               <select
                 name="min_rating"
                 defaultValue={defaults.minRating || ''}
                 className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
               >
-                <option value="">No filter</option>
+                <option value="">Sem filtro</option>
                 <option value="3.5">3.5+</option>
                 <option value="4">4.0+</option>
                 <option value="4.5">4.5+</option>
               </select>
             </div>
             <div>
-              <label className="nexo-label block mb-1.5">Hours filter</label>
+              <label className="nexo-label block mb-1.5">Filtro de horário</label>
               <select
                 name="time_filter"
                 defaultValue={defaults.timeFilter || ''}
                 className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
               >
-                <option value="">None</option>
-                <option value="open_now">Open now</option>
-                <option value="24_hours">Open 24/7</option>
+                <option value="">Nenhum</option>
+                <option value="open_now">Aberto agora</option>
+                <option value="24_hours">Aberto 24 horas</option>
               </select>
             </div>
           </div>
@@ -360,9 +360,9 @@ export default function LocalFinderForm({ defaults }: Props) {
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
             </svg>
-            {isGrid ? 'Running grid…' : 'Searching…'}
+            {isGrid ? 'Executando a grade…' : 'Buscando…'}
           </span>
-        ) : (isGrid ? 'Create monitor & run' : 'Search')}
+        ) : (isGrid ? 'Criar monitor e executar' : 'Buscar')}
       </button>
     </form>
   );

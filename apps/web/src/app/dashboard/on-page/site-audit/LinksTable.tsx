@@ -80,22 +80,22 @@ export default function LinksTable({ links }: { links: LinkItem[] }) {
     anchor: link.anchor ?? '',
   }));
   const columns = [
-    { key: 'from', label: 'From' },
-    { key: 'to', label: 'To' },
-    { key: 'type', label: 'Type' },
-    { key: 'broken', label: 'Broken' },
+    { key: 'from', label: 'Origem' },
+    { key: 'to', label: 'Destino' },
+    { key: 'type', label: 'Tipo' },
+    { key: 'broken', label: 'Quebrado' },
     { key: 'nofollow', label: 'Nofollow' },
-    { key: 'anchor', label: 'Anchor' },
+    { key: 'anchor', label: 'Âncora' },
   ];
 
   return (
     <div>
       <div className="px-6 py-3 border-b border-nexo-border flex items-center justify-between flex-wrap gap-2">
         <div className="flex gap-3 flex-wrap text-[11px] font-medium">
-          <span className="text-nexo-dim">{links.length} links total</span>
-          <span className="text-nexo-danger-text">{links.filter((l) => l.is_broken).length} broken</span>
+          <span className="text-nexo-dim">{links.length} links no total</span>
+          <span className="text-nexo-danger-text">{links.filter((l) => l.is_broken).length} quebrados</span>
           <span className="text-nexo-faint">{links.filter((l) => l.is_nofollowed).length} nofollow</span>
-          <span className="text-nexo-sky">{links.filter((l) => l.direction === 'external').length} external</span>
+          <span className="text-nexo-sky">{links.filter((l) => l.direction === 'external').length} externos</span>
         </div>
         <div className="flex items-center gap-2">
           <CopyMarkdownButton data={csvData} columns={columns} />
@@ -106,11 +106,11 @@ export default function LinksTable({ links }: { links: LinkItem[] }) {
         <table className="w-full text-xs">
           <thead>
             <tr className="border-b border-nexo-border bg-white/[0.02]">
-              <Header label="From" sortK="from" align="left" />
-              <Header label="To" sortK="to" align="left" />
-              <Header label="Type" sortK="type" align="center" />
+              <Header label="Origem" sortK="from" align="left" />
+              <Header label="Destino" sortK="to" align="left" />
+              <Header label="Tipo" sortK="type" align="center" />
               <Header label="Status" sortK="status" align="center" />
-              <Header label="Anchor" sortK="anchor" align="left" className="hidden lg:table-cell" />
+              <Header label="Âncora" sortK="anchor" align="left" className="hidden lg:table-cell" />
             </tr>
           </thead>
           <tbody className="divide-y divide-nexo-border">
@@ -135,13 +135,13 @@ export default function LinksTable({ links }: { links: LinkItem[] }) {
                   </td>
                   <td className="px-4 py-2.5 text-center">
                     <div className="flex justify-center gap-1">
-                      {link.is_broken && <span className="text-[9px] font-medium px-1.5 py-0.5 rounded bg-nexo-danger/10 text-nexo-danger-text border border-nexo-danger/40">broken</span>}
+                      {link.is_broken && <span className="text-[9px] font-medium px-1.5 py-0.5 rounded bg-nexo-danger/10 text-nexo-danger-text border border-nexo-danger/40">quebrado</span>}
                       {link.is_nofollowed && <span className="text-[9px] font-medium px-1.5 py-0.5 rounded bg-nexo-surface-2 text-nexo-faint">nofollow</span>}
                       {!link.is_broken && !link.is_nofollowed && <span className="text-nexo-ice text-xs">✓</span>}
                     </div>
                   </td>
                   <td className="px-4 py-2.5 hidden lg:table-cell max-w-[160px]">
-                    <span className="text-nexo-dim truncate block">{link.anchor || <span className="text-nexo-faint italic">no anchor</span>}</span>
+                    <span className="text-nexo-dim truncate block">{link.anchor || <span className="text-nexo-faint italic">sem âncora</span>}</span>
                   </td>
                 </tr>
               );

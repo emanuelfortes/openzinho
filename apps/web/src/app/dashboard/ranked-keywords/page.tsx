@@ -107,7 +107,7 @@ async function fetchRankedKeywords(
 // ---- UI helpers ----
 
 function formatDate(ts: number) {
-  return new Date(ts).toLocaleDateString("en-GB", { day: 'numeric', month: 'short', year: 'numeric' });
+  return new Date(ts).toLocaleDateString("pt-BR", { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 // ---- Page ----
@@ -118,8 +118,8 @@ async function RankedKeywordsPage({ searchParams }: { searchParams: Promise<Sear
   const historyId = params.history_id;
 
   const target = params.target?.trim() ?? '';
-  const location = params.location ?? toLabsCountry(getSetting('default_location') ?? 'France');
-  const language = params.language ?? getSetting('default_language') ?? 'French';
+  const location = params.location ?? toLabsCountry(getSetting('default_location') ?? 'Brazil');
+  const language = params.language ?? getSetting('default_language') ?? 'Portuguese';
   const limit = Math.min(parseInt(params.limit ?? '100', 10) || 100, 1000);
   const orderBy = params.order_by ?? 'ranked_serp_element.serp_item.rank_group,asc';
   const maxPosition = params.max_position ? parseInt(params.max_position, 10) : null;
@@ -140,7 +140,7 @@ async function RankedKeywordsPage({ searchParams }: { searchParams: Promise<Sear
       activeEntry = history.find((e) => e.id === historyId) ?? null;
       totalCount = activeEntry?.totalCount ?? items.length;
     } else {
-      error = 'This search is no longer available.';
+      error = 'Esta busca não está mais disponível.';
     }
   }
 
@@ -154,7 +154,7 @@ async function RankedKeywordsPage({ searchParams }: { searchParams: Promise<Sear
       totalCount = cachedEntry?.totalCount ?? items.length;
       cost = cachedEntry?.cost;
     } else if (!creds) {
-      error = 'DataForSEO credentials missing. Configure them in Settings.';
+      error = 'Credenciais do DataForSEO ausentes. Configure-as em Configurações.';
     } else {
       const result = await fetchRankedKeywords(target, location, language, limit, orderBy, maxPosition, creds.login, creds.pass);
       items = result.items;
@@ -194,50 +194,50 @@ async function RankedKeywordsPage({ searchParams }: { searchParams: Promise<Sear
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="nexo-h1">Ranked Keywords</h1>
-        <p className="text-sm text-nexo-faint mt-1">Keywords a domain ranks for in Google.</p>
+        <h1 className="nexo-h1">Palavras-chave ranqueadas</h1>
+        <p className="text-sm text-nexo-faint mt-1">Palavras-chave em que um domínio ranqueia no Google.</p>
       </div>
 
       {/* Form */}
-      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Analyze" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
+      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Analisar" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="sm:col-span-2">
-            <label className="nexo-label block mb-1.5">Target domain</label>
+            <label className="nexo-label block mb-1.5">Domínio alvo</label>
             <input
               type="text" name="target"
               defaultValue={activeEntry?.target ?? target}
-              placeholder="e.g. example.com"
+              placeholder="ex.: exemplo.com.br"
               required
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky font-mono transition-all"
             />
           </div>
           <div>
-            <label className="nexo-label block mb-1.5">Location</label>
+            <label className="nexo-label block mb-1.5">Local</label>
             <LocationPicker name="location" defaultValue={activeEntry?.location ?? location} className="w-full px-4 py-2.5 border border-nexo-border rounded-nexo-lg text-sm text-nexo-text focus:outline-none focus:ring-2 focus:ring-nexo-sky bg-nexo-surface" scope="labs" />
           </div>
           <div>
-            <label className="nexo-label block mb-1.5">Language</label>
+            <label className="nexo-label block mb-1.5">Idioma</label>
             <select name="language" defaultValue={activeEntry?.language ?? language}
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
               {LANGUAGES.map((l) => <option key={l.value} value={l.value}>{l.label}</option>)}
             </select>
           </div>
           <div>
-            <label className="nexo-label block mb-1.5">Sort by</label>
+            <label className="nexo-label block mb-1.5">Ordenar por</label>
             <select name="order_by" defaultValue={orderBy}
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
-              <option value="ranked_serp_element.serp_item.rank_group,asc">Position (best first)</option>
-              <option value="keyword_data.keyword_info.search_volume,desc">Search volume</option>
-              <option value="keyword_data.keyword_properties.keyword_difficulty,desc">Difficulty (highest first)</option>
-              <option value="keyword_data.keyword_properties.keyword_difficulty,asc">Difficulty (lowest first)</option>
+              <option value="ranked_serp_element.serp_item.rank_group,asc">Posição (melhores primeiro)</option>
+              <option value="keyword_data.keyword_info.search_volume,desc">Volume de buscas</option>
+              <option value="keyword_data.keyword_properties.keyword_difficulty,desc">Dificuldade (maior primeiro)</option>
+              <option value="keyword_data.keyword_properties.keyword_difficulty,asc">Dificuldade (menor primeiro)</option>
               <option value="keyword_data.keyword_info.cpc,desc">CPC</option>
             </select>
           </div>
           <div>
-            <label className="nexo-label block mb-1.5">Max position filter</label>
+            <label className="nexo-label block mb-1.5">Filtro de posição máxima</label>
             <select name="max_position" defaultValue={params.max_position ?? ''}
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
-              <option value="">All positions</option>
+              <option value="">Todas as posições</option>
               <option value="3">Top 3</option>
               <option value="10">Top 10</option>
               <option value="20">Top 20</option>
@@ -246,7 +246,7 @@ async function RankedKeywordsPage({ searchParams }: { searchParams: Promise<Sear
             </select>
           </div>
           <div>
-            <label className="nexo-label block mb-1.5">Number of results</label>
+            <label className="nexo-label block mb-1.5">Número de resultados</label>
             <select name="limit" defaultValue={String(limit)}
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
               <option value="50">50</option>
@@ -265,10 +265,10 @@ async function RankedKeywordsPage({ searchParams }: { searchParams: Promise<Sear
       {hasQuery && !error && items.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: 'Total indexed', value: totalCount.toLocaleString("en-GB"), sub: `${items.length} shown` },
-            { label: 'Avg position', value: avgPosition ?? '—', sub: 'of results' },
+            { label: 'Total indexado', value: totalCount.toLocaleString("pt-BR"), sub: `${items.length} exibidas` },
+            { label: 'Posição média', value: avgPosition ?? '—', sub: 'dos resultados' },
             { label: 'Top 10', value: top10, sub: `incl. top 3: ${top3}` },
-            { label: 'Top 20', value: top20, sub: `positions 11–20 : ${top20 - top10}` },
+            { label: 'Top 20', value: top20, sub: `posições 11–20: ${top20 - top10}` },
           ].map((stat) => (
             <div key={stat.label} className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
               <p className="nexo-label">{stat.label}</p>
@@ -285,13 +285,13 @@ async function RankedKeywordsPage({ searchParams }: { searchParams: Promise<Sear
           <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between">
             <div className="flex items-center gap-3">
               <h2 className="nexo-label">
-                {displayTarget ? <><span className="text-nexo-text">{displayTarget}</span> — ranked keywords</> : 'Ranked keywords'}
+                {displayTarget ? <><span className="text-nexo-text">{displayTarget}</span> — palavras-chave ranqueadas</> : 'Palavras-chave ranqueadas'}
               </h2>
-              {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>}
+              {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">Histórico</span>}
             </div>
             <div className="flex items-center gap-3">
-              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">cost: ${cost.toFixed(4)}</span>}
-              <span className="text-xs font-medium text-nexo-faint">{items.length} keyword{items.length !== 1 ? 's' : ''}</span>
+              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">custo: US$ {cost.toFixed(4).replace('.', ',')}</span>}
+              <span className="text-xs font-medium text-nexo-faint">{items.length} {items.length === 1 ? 'palavra-chave' : 'palavras-chave'}</span>
               {items.length > 0 && (() => {
                 const csvData = items.map((i) => ({
                   keyword: i.keyword_data?.keyword ?? '',
@@ -302,8 +302,8 @@ async function RankedKeywordsPage({ searchParams }: { searchParams: Promise<Sear
                   url: i.ranked_serp_element?.serp_item?.url ?? '',
                 }));
                 const csvColumns = [
-                  { key: 'keyword', label: 'Keyword' },
-                  { key: 'position', label: 'Position' },
+                  { key: 'keyword', label: 'Palavra-chave' },
+                  { key: 'position', label: 'Posição' },
                   { key: 'volume', label: 'Volume' },
                   { key: 'kd', label: 'KD' },
                   { key: 'cpc', label: 'CPC' },
@@ -320,7 +320,7 @@ async function RankedKeywordsPage({ searchParams }: { searchParams: Promise<Sear
           </div>
 
           {items.length === 0 ? (
-            <div className="px-6 py-12 text-center text-sm text-nexo-faint">No keywords found.</div>
+            <div className="px-6 py-12 text-center text-sm text-nexo-faint">Nenhuma palavra-chave encontrada.</div>
           ) : (
             <RankedKeywordsTable items={items} />
           )}
@@ -331,7 +331,7 @@ async function RankedKeywordsPage({ searchParams }: { searchParams: Promise<Sear
       {history.length > 0 && (
         <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border">
-            <h2 className="nexo-label">History</h2>
+            <h2 className="nexo-label">Histórico</h2>
           </div>
           <div className="divide-y divide-nexo-border">
             {history.map((entry) => {
@@ -342,8 +342,8 @@ async function RankedKeywordsPage({ searchParams }: { searchParams: Promise<Sear
                   <div className="flex-1 min-w-0">
                     <p className={`text-sm font-medium truncate font-mono ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.target}</p>
                     <p className="text-[11px] text-nexo-faint mt-0.5">
-                      {entry.location} · {entry.count} shown / {entry.totalCount.toLocaleString("en-GB")} total
-                      {entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}
+                      {entry.location} · {entry.count} exibidas / {entry.totalCount.toLocaleString("pt-BR")} no total
+                      {entry.cost !== undefined ? ` · US$ ${entry.cost.toFixed(4).replace('.', ',')}` : ''}
                     </p>
                   </div>
                   <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>

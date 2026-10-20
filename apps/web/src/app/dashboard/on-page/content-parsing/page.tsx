@@ -61,9 +61,9 @@ function StatCard({ label, value, sub, accent }: { label: string; value: string 
 
 function scoreLabel(score?: number) {
   if (score == null) return null;
-  if (score >= 80) return { label: 'Good', cls: 'text-nexo-ice' };
-  if (score >= 50) return { label: 'Average', cls: 'text-nexo-warn-text' };
-  return { label: 'Poor', cls: 'text-nexo-danger-text' };
+  if (score >= 80) return { label: 'Boa', cls: 'text-nexo-ice' };
+  if (score >= 50) return { label: 'Média', cls: 'text-nexo-warn-text' };
+  return { label: 'Fraca', cls: 'text-nexo-danger-text' };
 }
 
 async function ContentParsingPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
@@ -77,7 +77,7 @@ async function ContentParsingPage({ searchParams }: { searchParams: Promise<Sear
   if (rawUrl) {
     const url = rawUrl.startsWith('http') ? rawUrl : `https://${rawUrl}`;
     if (!creds) {
-      error = 'DataForSEO credentials missing. Configure them in Settings.';
+      error = 'Credenciais da DataForSEO ausentes. Configure-as em Configurações.';
     } else {
       const r = await fetchContentParsing(url, creds.login, creds.pass);
       if (r.error) error = r.error;
@@ -93,22 +93,22 @@ async function ContentParsingPage({ searchParams }: { searchParams: Promise<Sear
     <div className="space-y-6">
       <div>
         <div className="nexo-label flex items-center gap-2 mb-1">
-          <a href="/dashboard/on-page" className="hover:text-white transition-colors">On Page</a>
+          <a href="/dashboard/on-page" className="hover:text-white transition-colors">On-page</a>
           <span className="text-nexo-text">/</span>
-          <span className="text-nexo-dim">Content Parsing</span>
+          <span className="text-nexo-dim">Análise de conteúdo</span>
         </div>
-        <h1 className="nexo-h1">Content Parsing</h1>
-        <p className="text-sm text-nexo-faint mt-1">Extract and structure all content from a URL — headings, paragraphs, readability, categories.</p>
+        <h1 className="nexo-h1">Análise de conteúdo</h1>
+        <p className="text-sm text-nexo-faint mt-1">Extraia e estruture todo o conteúdo de uma URL: títulos, parágrafos, legibilidade e categorias.</p>
       </div>
 
-      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Parse page" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors" disabled={!creds}>
+      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Analisar página" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors" disabled={!creds}>
         <div>
-          <label className="nexo-label block mb-1.5">Page URL</label>
-          <input type="text" name="url" defaultValue={rawUrl} placeholder="https://example.com/page" required
+          <label className="nexo-label block mb-1.5">URL da página</label>
+          <input type="text" name="url" defaultValue={rawUrl} placeholder="https://exemplo.com.br/pagina" required
             className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky font-mono" />
         </div>
         {!creds && (
-          <p className="text-xs text-nexo-warn-text">Configure DataForSEO credentials in Settings to use this tool.</p>
+          <p className="text-xs text-nexo-warn-text">Configure as credenciais da DataForSEO em Configurações para usar esta ferramenta.</p>
         )}
       </SearchForm>
 
@@ -119,17 +119,17 @@ async function ContentParsingPage({ searchParams }: { searchParams: Promise<Sear
 
           {/* Stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {info?.word_count != null && <StatCard label="Words" value={info.word_count.toLocaleString('en-GB')} />}
-            {info?.sentence_count != null && <StatCard label="Sentences" value={info.sentence_count} />}
+            {info?.word_count != null && <StatCard label="Palavras" value={info.word_count.toLocaleString('pt-BR')} />}
+            {info?.sentence_count != null && <StatCard label="Frases" value={info.sentence_count} />}
             {info?.content_quality_score != null && (
               <StatCard
-                label="Quality score"
+                label="Nota de qualidade"
                 value={`${info.content_quality_score.toFixed(0)} ${sc?.label ?? ''}`}
                 accent={info.content_quality_score >= 80 ? 'bg-nexo-ice/10 border-nexo-ice/30' : info.content_quality_score >= 50 ? 'bg-nexo-warn/10 border-nexo-warn/40' : 'bg-nexo-danger/10 border-nexo-danger/40'}
               />
             )}
             {info?.automated_readability_index != null && (
-              <StatCard label="Readability (ARI)" value={info.automated_readability_index.toFixed(1)} sub="grade level" />
+              <StatCard label="Legibilidade (ARI)" value={info.automated_readability_index.toFixed(1)} sub="nível escolar" />
             )}
           </div>
 
@@ -137,18 +137,18 @@ async function ContentParsingPage({ searchParams }: { searchParams: Promise<Sear
           {result.meta && (
             <div id="results" className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
               <div className="px-6 py-4 border-b border-nexo-border">
-                <h2 className="nexo-label">Meta</h2>
+                <h2 className="nexo-label">Metadados</h2>
               </div>
               <div className="p-6 space-y-3 text-sm">
                 {result.meta.title && (
                   <div>
-                    <span className="nexo-label block mb-1">Title</span>
+                    <span className="nexo-label block mb-1">Título</span>
                     <p className="text-nexo-text font-medium">{result.meta.title}</p>
                   </div>
                 )}
                 {result.meta.description && (
                   <div>
-                    <span className="nexo-label block mb-1">Description</span>
+                    <span className="nexo-label block mb-1">Descrição</span>
                     <p className="text-nexo-dim">{result.meta.description}</p>
                   </div>
                 )}
@@ -174,7 +174,7 @@ async function ContentParsingPage({ searchParams }: { searchParams: Promise<Sear
           {/* Categories */}
           {result.page_category && result.page_category.length > 0 && (
             <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6">
-              <h2 className="nexo-label mb-3">Page categories</h2>
+              <h2 className="nexo-label mb-3">Categorias da página</h2>
               <div className="flex gap-2 flex-wrap">
                 {result.page_category.map((cat, i) => (
                   <span key={i} className="text-[11px] font-semibold px-3 py-1 rounded-full bg-nexo-blue/10 text-nexo-sky border border-nexo-border-strong">
@@ -190,8 +190,8 @@ async function ContentParsingPage({ searchParams }: { searchParams: Promise<Sear
           {blocks.length > 0 && (
             <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
               <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between">
-                <h2 className="nexo-label">Content structure</h2>
-                <span className="text-[11px] text-nexo-faint">{blocks.length} blocks</span>
+                <h2 className="nexo-label">Estrutura do conteúdo</h2>
+                <span className="text-[11px] text-nexo-faint">{blocks.length} {blocks.length === 1 ? 'bloco' : 'blocos'}</span>
               </div>
               <div className="p-6 max-h-[600px] overflow-y-auto scrollbar-thin">
                 {blocks.map((block, i) => {

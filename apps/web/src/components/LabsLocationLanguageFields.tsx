@@ -35,11 +35,11 @@ export default function LabsLocationLanguageFields({
   return (
     <>
       <div className={wrapperClassName}>
-        <label className={labelClassName}>Location</label>
+        <label className={labelClassName}>Local</label>
         <LocationPicker name={locationName} defaultValue={defaultLocation} onChange={setLocation} className={className} scope="labs" />
       </div>
       <div className={wrapperClassName}>
-        <label className={labelClassName}>Language</label>
+        <label className={labelClassName}>Idioma</label>
         <select name={languageName} value={selected} onChange={(e) => setLanguage(e.target.value)} className={className}>
           {options.map((l) => <option key={l.value} value={l.value}>{l.label}</option>)}
         </select>

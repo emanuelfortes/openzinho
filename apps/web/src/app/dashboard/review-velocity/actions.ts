@@ -16,7 +16,7 @@ const DISCOVERY_DEPTHS = [20, 40, 100];
 
 function cleanLanguage(value: unknown): string {
   const requested = typeof value === 'string' ? value.trim().toLowerCase() : '';
-  return LANGUAGES.find((l) => l.value.toLowerCase() === requested)?.value ?? 'English';
+  return LANGUAGES.find((l) => l.value.toLowerCase() === requested)?.value ?? 'Portuguese';
 }
 
 function cleanRadius(value: unknown): number {
@@ -32,10 +32,10 @@ export async function discoverListingsAction(input: DiscoverInput): Promise<Disc
   return runWithCurrentProject(async () => {
     const keyword = String(input.keyword ?? '').trim().slice(0, 200);
     const center = parseLatLng(String(input.center ?? ''));
-    if (!keyword) return { results: [], cost: null, error: 'Enter a keyword.' };
-    if (!center) return { results: [], cost: null, error: 'Click the map to choose the centre of the area.' };
+    if (!keyword) return { results: [], cost: null, error: 'Informe uma palavra-chave.' };
+    if (!center) return { results: [], cost: null, error: 'Clique no mapa para escolher o centro da área.' };
     const credentials = getCredentials();
-    if (!credentials) return { results: [], cost: null, error: 'DataForSEO credentials are missing. Configure them in Settings.' };
+    if (!credentials) return { results: [], cost: null, error: 'Credenciais da DataForSEO ausentes. Configure-as em Configurações.' };
     const radiusKm = cleanRadius(input.radiusKm);
     const language = cleanLanguage(input.language);
     const depth = DISCOVERY_DEPTHS.includes(Number(input.depth)) ? Number(input.depth) : 40;
@@ -61,9 +61,9 @@ export async function createBenchmarkAction(input: CreateBenchmarkInput): Promis
   return runWithCurrentProject(async () => {
     const keyword = String(input.keyword ?? '').trim().slice(0, 200);
     const center = parseLatLng(String(input.center ?? ''));
-    if (!keyword || !center) return { error: 'A keyword and an area are required.' };
+    if (!keyword || !center) return { error: 'Informe uma palavra-chave e uma área.' };
     const credentials = getCredentials();
-    if (!credentials) return { error: 'DataForSEO credentials are missing. Configure them in Settings.' };
+    if (!credentials) return { error: 'Credenciais da DataForSEO ausentes. Configure-as em Configurações.' };
 
     const seen = new Set<string>();
     const listings: NewListing[] = [];
@@ -75,7 +75,7 @@ export async function createBenchmarkAction(input: CreateBenchmarkInput): Promis
       listings.push({
         cid,
         placeId: typeof raw.placeId === 'string' ? raw.placeId : null,
-        title: String(raw.title ?? 'Unnamed business').slice(0, 200),
+        title: String(raw.title ?? 'Empresa sem nome').slice(0, 200),
         address: typeof raw.address === 'string' ? raw.address.slice(0, 300) : null,
         category: typeof raw.category === 'string' ? raw.category.slice(0, 120) : null,
         lat: num(raw.lat), lng: num(raw.lng), mapsRank: num(raw.mapsRank),
@@ -83,9 +83,9 @@ export async function createBenchmarkAction(input: CreateBenchmarkInput): Promis
         isSelf: raw.isSelf === true,
       });
     }
-    if (listings.length === 0) return { error: 'Select at least one listing.' };
-    if (listings.length > MAX_LISTINGS) return { error: `Select at most ${MAX_LISTINGS} listings.` };
-    if (listings.filter((l) => l.isSelf).length > 1) return { error: 'Only one listing can be marked as yours.' };
+    if (listings.length === 0) return { error: 'Selecione pelo menos um perfil.' };
+    if (listings.length > MAX_LISTINGS) return { error: `Selecione no máximo ${MAX_LISTINGS} perfis.` };
+    if (listings.filter((l) => l.isSelf).length > 1) return { error: 'Só um perfil pode ser marcado como seu.' };
 
     const projectId = getCurrentProject().id;
     const timeZone = isValidTimeZone(String(input.timeZone ?? '')) ? String(input.timeZone) : 'UTC';

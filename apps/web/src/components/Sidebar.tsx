@@ -47,8 +47,8 @@ function NavLink({ item, active, favorite, onToggleFavorite }: {
           type="button"
           onClick={onToggleFavorite}
           aria-pressed={favorite}
-          aria-label={favorite ? `Remove ${item.name} from favorites` : `Add ${item.name} to favorites`}
-          title={favorite ? 'Remove from favorites' : 'Add to favorites'}
+          aria-label={favorite ? `Remover ${item.name} dos favoritos` : `Adicionar ${item.name} aos favoritos`}
+          title={favorite ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
           className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1 rounded-nexo opacity-0 group-hover/item:opacity-100 focus-visible:opacity-100 text-nexo-faint hover:text-nexo-ice hover:bg-nexo-bg/5 transition-opacity"
         >
           <Star className={`h-3.5 w-3.5 ${favorite ? 'fill-nexo-ice text-nexo-ice' : ''}`} />
@@ -148,7 +148,7 @@ export default function Sidebar({ initialCollapsed = [], initialFavorites = [], 
     : sections;
 
   const favoritesSection: NavSection | null = !q && favorites.length > 0
-    ? { key: FAVORITES_SECTION_KEY, label: 'Favorites', color: 'yellow', items: favorites.map((h) => itemsByHref.get(h)!).filter(Boolean) }
+    ? { key: FAVORITES_SECTION_KEY, label: 'Favoritos', color: 'yellow', items: favorites.map((h) => itemsByHref.get(h)!).filter(Boolean) }
     : null;
   const shown = favoritesSection ? [favoritesSection, ...filtered] : filtered;
   // "Collapse all" shrinks the tool groups but leaves Favorites alone: that's the point of starring.
@@ -184,15 +184,15 @@ export default function Sidebar({ initialCollapsed = [], initialFavorites = [], 
                 e.currentTarget.blur();
               }
             }}
-            placeholder="Filter tools"
-            aria-label="Filter tools"
+            placeholder="Filtrar ferramentas"
+            aria-label="Filtrar ferramentas"
             className="nexo-input min-w-0 w-full pl-8 pr-8 py-1.5 text-sm focus:outline-none select-text"
           />
           {query ? (
             <button
               type="button"
               onClick={() => { setQuery(''); inputRef.current?.focus(); }}
-              aria-label="Clear filter"
+              aria-label="Limpar filtro"
               className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 rounded-nexo text-nexo-faint hover:text-white"
             >
               <X className="h-3.5 w-3.5" />
@@ -213,7 +213,7 @@ export default function Sidebar({ initialCollapsed = [], initialFavorites = [], 
               }}
               className="nexo-label hover:text-white px-1 transition-colors"
             >
-              {allCollapsed ? 'Expand all' : 'Collapse all'}
+              {allCollapsed ? 'Expandir tudo' : 'Recolher tudo'}
             </button>
           </div>
         )}
@@ -221,7 +221,7 @@ export default function Sidebar({ initialCollapsed = [], initialFavorites = [], 
 
       <nav className="flex-1 min-h-0 overflow-y-auto scrollbar-thin px-3 py-3 space-y-1">
         {filtered.length === 0 && (
-          <p className="px-3 text-xs text-nexo-faint">No tool matches &ldquo;{query.trim()}&rdquo;.</p>
+          <p className="px-3 text-xs text-nexo-faint">Nenhuma ferramenta corresponde a &ldquo;{query.trim()}&rdquo;.</p>
         )}
         {shown.map((section) => {
           const isFavorites = section.key === FAVORITES_SECTION_KEY;
@@ -240,7 +240,7 @@ export default function Sidebar({ initialCollapsed = [], initialFavorites = [], 
               >
                 {isFavorites && <Star className="h-3 w-3 shrink-0 fill-nexo-ice text-nexo-ice" />}
                 <span className="truncate">{section.label}</span>
-                {!isOpen && hasActive && <span className="w-1.5 h-1.5 rounded-full bg-nexo-ice shrink-0" aria-label="Contains the current page" />}
+                {!isOpen && hasActive && <span className="w-1.5 h-1.5 rounded-full bg-nexo-ice shrink-0" aria-label="Contém a página atual" />}
                 {!isOpen && (
                   <span className="ml-auto text-[10px] font-mono tracking-normal text-nexo-faint">{section.items.length}</span>
                 )}

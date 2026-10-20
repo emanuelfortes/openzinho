@@ -5,14 +5,14 @@ import {
   CRITERIA, CRITERION_GROUPS, formatCriterion, rankColor, seriesColors, type ComparisonReport, type CriterionId, type ListingResult,
 } from './review-report';
 
-const MUTED_CELL: PdfCell = { text: 'n/a', color: [148, 163, 184] };
+const MUTED_CELL: PdfCell = { text: 'n/d', color: [148, 163, 184] };
 
 function formatDay(ms: number, timeZone: string): string {
-  return new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone }).format(new Date(ms));
+  return new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'short', year: 'numeric', timeZone }).format(new Date(ms));
 }
 
 function listingLabel(listing: ListingResult): string {
-  return `${listing.title}${listing.isSelf ? ' (you)' : ''}${listing.partial ? ' *' : ''}`;
+  return `${listing.title}${listing.isSelf ? ' (você)' : ''}${listing.partial ? ' *' : ''}`;
 }
 
 function rankCell(rank: number | null, count: number): PdfCell {
@@ -36,21 +36,21 @@ export function comparisonReportSections(report: ComparisonReport, context: { ke
   const n = report.listings.length;
   const colors = seriesColors(report.listings);
   const partialNote = report.listings.some((l) => l.partial)
-    ? '* The data for this listing does not reach back to the start of the period (more than 4,490 recent reviews or a fetch still in progress).'
+    ? '* Os dados deste perfil não alcançam o início do período (mais de 4.490 avaliações recentes ou uma coleta ainda em andamento).'
     : undefined;
   const sections: ReportSection[] = [];
 
-  sections.push({ title: 'Summary', rows: [], paragraphs: report.summary.headline });
-  if (report.summary.targets.length) sections.push({ title: 'Targets and gaps', rows: [], paragraphs: report.summary.targets });
+  sections.push({ title: 'Resumo', rows: [], paragraphs: report.summary.headline });
+  if (report.summary.targets.length) sections.push({ title: 'Metas e diferenças', rows: [], paragraphs: report.summary.targets });
   // Five of each keeps the first page self-contained; the web view lists them all.
   const strengths = report.summary.strengths.slice(0, 5);
   const weaknesses = report.summary.weaknesses.slice(0, 5);
   if (strengths.length || weaknesses.length) {
     sections.push({
-      title: 'Strengths and weaknesses',
+      title: 'Pontos fortes e fracos',
       rows: [],
       table: {
-        columns: [{ label: 'Strengths: top third of the market' }, { label: 'Weaknesses: bottom third of the market' }],
+        columns: [{ label: 'Pontos fortes: terço superior do mercado' }, { label: 'Pontos fracos: terço inferior do mercado' }],
         rows: Array.from({ length: Math.max(strengths.length, weaknesses.length) }, (_, i) => ({
           cells: [
             strengths[i] ? { text: strengths[i], color: [21, 128, 61] as [number, number, number] } : '',
@@ -62,38 +62,38 @@ export function comparisonReportSections(report: ComparisonReport, context: { ke
   }
 
   sections.push({
-    title: 'Overall ranking',
+    title: 'Ranking geral',
     rows: [],
     pageBreakBefore: true,
     table: {
       columns: [
-        { label: '#', width: 0.5, align: 'center' }, { label: 'Listing', width: 4 }, { label: 'Score', width: 1, align: 'right' },
-        { label: 'Reviews / week', width: 1.3, align: 'right' }, { label: 'Per month', width: 1.1, align: 'right' },
-        { label: 'Momentum', width: 1.1, align: 'right' }, { label: 'Recent rating', width: 1.2, align: 'right' },
-        { label: 'Reply rate', width: 1.1, align: 'right' }, { label: 'Google total', width: 1.1, align: 'right' },
+        { label: '#', width: 0.5, align: 'center' }, { label: 'Perfil', width: 4 }, { label: 'Pontuação', width: 1, align: 'right' },
+        { label: 'Avaliações / semana', width: 1.3, align: 'right' }, { label: 'Por mês', width: 1.1, align: 'right' },
+        { label: 'Aceleração', width: 1.1, align: 'right' }, { label: 'Nota recente', width: 1.2, align: 'right' },
+        { label: 'Taxa de resp.', width: 1.1, align: 'right' }, { label: 'Total no Google', width: 1.1, align: 'right' },
       ],
       rows: report.listings.map((l) => ({
         highlight: l.isSelf,
         cells: [
-          rankCell(l.overallRank, n), listingLabel(l), l.score === null ? 'n/a' : `${Math.round(l.score)}/100`,
+          rankCell(l.overallRank, n), listingLabel(l), l.score === null ? 'n/d' : `${Math.round(l.score)}/100`,
           formatCriterion('perWeek4', l.metrics.perWeek4), formatCriterion('perMonth', l.metrics.perMonth),
           formatCriterion('momentum', l.metrics.momentum), formatCriterion('recentRating', l.metrics.recentRating),
           formatCriterion('replyRate', l.metrics.replyRate), formatCriterion('googleTotal', l.metrics.googleTotal),
         ],
       })),
       note: [
-        'Score: weighted average of min-max scores (0 = worst, 100 = best in this market). Weights: ' +
-          CRITERIA.filter((c) => c.weight > 0).map((c) => `${c.short} ${c.weight}%`).join(', ') + '. Missing values are left out and their weight redistributed.',
+        'Pontuação: média ponderada das notas min-max (0 = pior, 100 = melhor deste mercado). Pesos: ' +
+          CRITERIA.filter((c) => c.weight > 0).map((c) => `${c.short} ${c.weight}%`).join(', ') + '. Valores ausentes ficam de fora e o peso deles é redistribuído.',
         partialNote,
       ].filter(Boolean).join(' '),
     },
   });
 
   sections.push({
-    title: 'Rank matrix (1 = best)',
+    title: 'Matriz de posições (1 = melhor)',
     rows: [],
     table: {
-      columns: [{ label: 'Listing', width: 2.6 }, ...CRITERIA.map((c) => ({ label: c.short, width: 1, align: 'center' as const }))],
+      columns: [{ label: 'Perfil', width: 2.6 }, ...CRITERIA.map((c) => ({ label: c.short, width: 1, align: 'center' as const }))],
       rows: report.listings.map((l) => ({ highlight: l.isSelf, cells: [listingLabel(l), ...CRITERIA.map((c) => rankCell(l.ranks[c.id], n))] })),
     },
   });
@@ -104,7 +104,7 @@ export function comparisonReportSections(report: ComparisonReport, context: { ke
       title: group,
       rows: [],
       table: {
-        columns: [{ label: 'Listing', width: 2.6 }, ...criteria.map((c) => ({ label: c.label, width: 1.4, align: 'right' as const }))],
+        columns: [{ label: 'Perfil', width: 2.6 }, ...criteria.map((c) => ({ label: c.label, width: 1.4, align: 'right' as const }))],
         rows: report.listings.map((l) => ({ highlight: l.isSelf, cells: [listingLabel(l), ...criteria.map((c) => valueWithRank(l, c.id))] })),
         note: criteria.map((c) => `${c.label}: ${c.description}`).join(' '),
       },
@@ -113,7 +113,7 @@ export function comparisonReportSections(report: ComparisonReport, context: { ke
 
   const completeWeeks = report.weeks.slice(0, -1);
   sections.push({
-    title: 'New reviews per week',
+    title: 'Novas avaliações por semana',
     rows: [],
     chart: {
       kind: 'line',
@@ -123,7 +123,7 @@ export function comparisonReportSections(report: ComparisonReport, context: { ke
     },
   });
   sections.push({
-    title: 'Average reviews per week, last 4 complete weeks',
+    title: 'Média de avaliações por semana, últimas 4 semanas completas',
     rows: [],
     chart: {
       kind: 'bar',
@@ -134,16 +134,16 @@ export function comparisonReportSections(report: ComparisonReport, context: { ke
   });
 
   sections.push({
-    title: 'Methodology',
+    title: 'Metodologia',
     rows: [
-      ['Market', `${context.keyword} · ${context.area}`],
-      ['Period analysed', `${formatDay(report.periodStart, report.timeZone)} – ${formatDay(report.periodEnd, report.timeZone)} (${report.timeZone})`],
-      ['Listings compared', String(n)],
-      ['Reviews analysed', report.listings.map((l) => `${l.title}: ${l.reviewsInPeriod}`).join(' · ')],
-      ['Source', 'Google reviews via DataForSEO, newest first, dated by publication time'],
-      ['Weeks', 'ISO weeks (Monday to Sunday); the current week and month are excluded from averages'],
-      ['Reply rate', 'Counts reviews older than 7 days only, so recent reviews are not held against the owner'],
-      ['Minimum sample', 'Ratings and shares need at least 5 reviews in the period (3 negative reviews for the negative reply rate)'],
+      ['Mercado', `${context.keyword} · ${context.area}`],
+      ['Período analisado', `${formatDay(report.periodStart, report.timeZone)} – ${formatDay(report.periodEnd, report.timeZone)} (${report.timeZone})`],
+      ['Perfis comparados', String(n)],
+      ['Avaliações analisadas', report.listings.map((l) => `${l.title}: ${l.reviewsInPeriod}`).join(' · ')],
+      ['Fonte', 'Avaliações do Google via DataForSEO, das mais recentes para as mais antigas, datadas pela publicação'],
+      ['Semanas', 'Semanas ISO (de segunda a domingo); a semana e o mês atuais ficam fora das médias'],
+      ['Taxa de resposta', 'Conta só avaliações com mais de 7 dias, para que as recentes não pesem contra o proprietário'],
+      ['Amostra mínima', 'Notas e frações exigem pelo menos 5 avaliações no período (3 avaliações negativas para a taxa de resposta em negativas)'],
     ],
   });
   return sections;

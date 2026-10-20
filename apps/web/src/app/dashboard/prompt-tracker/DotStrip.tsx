@@ -7,7 +7,7 @@ export default function DotStrip({ checks, slots = 30 }: { checks: PromptCheck[]
   const recent = [...checks].sort((a, b) => a.checkedAt - b.checkedAt).slice(-slots);
   const empty = Array.from({ length: Math.max(0, slots - recent.length) });
   return (
-    <div className="flex items-center gap-1 flex-wrap" aria-label="Recent checks">
+    <div className="flex items-center gap-1 flex-wrap" aria-label="Verificações recentes">
       {empty.map((_, i) => <StatusDot key={`empty-${i}`} status={null} size="sm" />)}
       {recent.map((c) => {
         const status = checkStatus(c);

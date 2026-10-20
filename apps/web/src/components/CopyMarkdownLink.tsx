@@ -27,7 +27,7 @@ async function writeClipboard(text: string) {
   if (!copied) throw new Error('Copy failed');
 }
 
-export default function CopyMarkdownLink({ href, label = 'Copy as Markdown' }: { href: string; label?: string }) {
+export default function CopyMarkdownLink({ href, label = 'Copiar Markdown' }: { href: string; label?: string }) {
   const [state, setState] = useState<'idle' | 'loading' | 'copied' | 'error'>('idle');
 
   async function copy() {
@@ -43,7 +43,7 @@ export default function CopyMarkdownLink({ href, label = 'Copy as Markdown' }: {
     setTimeout(() => setState('idle'), 1800);
   }
 
-  const text = state === 'loading' ? 'Copying…' : state === 'copied' ? 'Copied' : state === 'error' ? 'Copy failed' : label;
+  const text = state === 'loading' ? 'Copiando…' : state === 'copied' ? 'Copiado' : state === 'error' ? 'Falha ao copiar' : label;
   return (
     <button
       type="button"

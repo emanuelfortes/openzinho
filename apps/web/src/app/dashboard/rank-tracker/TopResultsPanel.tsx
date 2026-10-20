@@ -6,12 +6,12 @@ import { Check, ClipboardCopy } from 'lucide-react';
 import { diffTopResults, rankHost } from '@/lib/rank-serp';
 
 function formatDay(date: string) {
-  return new Date(`${date}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' });
+  return new Date(`${date}T00:00:00Z`).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', timeZone: 'UTC' });
 }
 
 function Change({ position, previous }: { position: number; previous: number | null }) {
   if (previous === null)
-    return <span className="text-[9px] font-medium uppercase tracking-wider text-nexo-sky">New</span>;
+    return <span className="text-[9px] font-medium uppercase tracking-wider text-nexo-sky">Novo</span>;
   const diff = previous - position;
   if (diff === 0) return <span className="text-[11px] text-nexo-faint">—</span>;
   return diff > 0
@@ -24,13 +24,13 @@ const escapeCell = (value: string) => value.replace(/\|/g, '\\|').replace(/\r?\n
 /** The top 10 of one check as a Markdown table, with the move against the previous check when there is one. */
 function topResultsMarkdown(date: string, rows: Array<{ position: number; domain: string; url: string; title: string | null; previousPosition: number | null }>, hasPrevious: boolean) {
   const change = (position: number, previous: number | null) => {
-    if (previous === null) return 'new';
+    if (previous === null) return 'novo';
     const diff = previous - position;
     return diff === 0 ? '=' : diff > 0 ? `+${diff}` : `${diff}`;
   };
-  const header = hasPrevious ? ['#', 'Domain', 'Title', 'URL', 'Change'] : ['#', 'Domain', 'Title', 'URL'];
+  const header = hasPrevious ? ['#', 'Domínio', 'Título', 'URL', 'Variação'] : ['#', 'Domínio', 'Título', 'URL'];
   return [
-    `Top 10 on ${date}`,
+    `Top 10 em ${date}`,
     '',
     `| ${header.join(' | ')} |`,
     `| ${header.map(() => '---').join(' | ')} |`,
@@ -55,7 +55,7 @@ function CopyTopButton({ getMarkdown }: { getMarkdown: () => string }) {
       className="flex items-center gap-1.5 text-[10px] font-medium text-nexo-dim border border-nexo-border rounded-nexo px-2 py-1 mb-2 hover:bg-white/[0.04] hover:text-white transition-colors"
     >
       {copied ? <Check className="h-3 w-3 text-nexo-ice" /> : <ClipboardCopy className="h-3 w-3" />}
-      {copied ? 'Copied' : 'Copy as Markdown'}
+      {copied ? 'Copiado' : 'Copiar Markdown'}
     </button>
   );
 }
@@ -72,16 +72,16 @@ interface Props {
 
 export default function TopResultsPanel({ checks, failed, trackedDomain, selectedDate, onSelect }: Props) {
   const title = (
-    <div className="nexo-label mb-2">Top 10 results</div>
+    <div className="nexo-label mb-2">Top 10 resultados</div>
   );
 
-  if (failed) return <div className="mt-5">{title}<p className="text-xs text-nexo-faint">Could not load the top 10.</p></div>;
-  if (checks === null) return <div className="mt-5">{title}<p className="text-xs text-nexo-faint">Loading…</p></div>;
+  if (failed) return <div className="mt-5">{title}<p className="text-xs text-nexo-faint">Não foi possível carregar o top 10.</p></div>;
+  if (checks === null) return <div className="mt-5">{title}<p className="text-xs text-nexo-faint">Carregando…</p></div>;
   if (checks.length === 0) {
     return (
       <div className="mt-5">
         {title}
-        <p className="text-xs text-nexo-faint">The top 10 is saved with each check. Run a check to see who ranks around you.</p>
+        <p className="text-xs text-nexo-faint">O top 10 é salvo a cada verificação. Faça uma verificação para ver quem ranqueia perto de você.</p>
       </div>
     );
   }
@@ -104,7 +104,7 @@ export default function TopResultsPanel({ checks, failed, trackedDomain, selecte
           <select
             value={current.date}
             onChange={(e) => onSelect(e.target.value)}
-            aria-label="Check date"
+            aria-label="Data da verificação"
             className="nexo-input min-w-0 w-full text-[10px] font-medium px-2 py-1 mb-2"
           >
             {checks.map((check) => <option key={check.date} value={check.date}>{formatDay(check.date)}</option>)}
@@ -142,15 +142,15 @@ export default function TopResultsPanel({ checks, failed, trackedDomain, selecte
 
       {previous ? (
         <div className="mt-2 text-[10px] text-nexo-faint">
-          <span className="font-semibold">vs {formatDay(previous.date)}.</span>
+          <span className="font-semibold">vs. {formatDay(previous.date)}.</span>
           {diff.dropped.length > 0 ? (
-            <> Left the top 10: {diff.dropped.map((d, i) => (
-              <span key={d.domain}>{i > 0 && ', '}<span className="font-medium text-nexo-dim">{d.domain}</span> (was #{d.position})</span>
+            <> Saíram do top 10: {diff.dropped.map((d, i) => (
+              <span key={d.domain}>{i > 0 && ', '}<span className="font-medium text-nexo-dim">{d.domain}</span> (era #{d.position})</span>
             ))}</>
-          ) : ' No domain left the top 10.'}
+          ) : ' Nenhum domínio saiu do top 10.'}
         </div>
       ) : (
-        <div className="mt-2 text-[10px] text-nexo-faint">Changes appear from the next check.</div>
+        <div className="mt-2 text-[10px] text-nexo-faint">As variações aparecem a partir da próxima verificação.</div>
       )}
     </div>
   );

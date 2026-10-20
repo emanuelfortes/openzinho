@@ -43,11 +43,11 @@ type Props = {
   sections: ReportSection[];
   /** Landscape suits wide comparison tables. Defaults to portrait. */
   orientation?: 'portrait' | 'landscape';
-  /** Small caption above the title in the header. Defaults to "SEO REPORT". */
+  /** Small caption above the title in the header. Defaults to "RELATÓRIO DE SEO". */
   kicker?: string;
   /** Button label. Defaults to "PDF". */
   label?: string;
-  /** Locale of the generation date in the header. Defaults to the browser locale. */
+  /** Locale of the generation date in the header. Defaults to 'pt-BR'. */
   locale?: string;
   /** 'link' (default): discreet text button. 'solid': the dark export button used by the Geo-grid report. */
   variant?: 'link' | 'solid';
@@ -92,7 +92,7 @@ export default function ReportPdfExportButton(props: Props) {
       const palette = brandPalette(props.brandColor);
       const style = resolveBrandStyle(props.brandStyle);
       const footerText = props.brandFooter?.trim() || `${props.brandName} · ${props.title}`;
-      const date = new Intl.DateTimeFormat(props.locale, { dateStyle: 'long', timeStyle: 'short' }).format(new Date(props.generatedAt ?? Date.now()));
+      const date = new Intl.DateTimeFormat(props.locale ?? 'pt-BR', { dateStyle: 'long', timeStyle: 'short' }).format(new Date(props.generatedAt ?? Date.now()));
       const contentWidth = width - margin * 2;
       const write = (value: string, x: number, y: number, options?: Parameters<typeof pdf.text>[3]) => pdf.text(textForPdf(value, 1000), x, y, options);
       const pageHeader = () => {
@@ -104,7 +104,7 @@ export default function ReportPdfExportButton(props: Props) {
           try { pdf.addImage(logo, margin, 8 + (18 - box.height) / 2, box.width, box.height); imageAdded = true; } catch { /* fall back to the configured name */ }
         }
         if (!imageAdded) { pdf.setFont('helvetica', 'bold'); pdf.setFontSize(14); pdf.setTextColor(...palette.text); write(props.brandName, margin, 20); }
-        pdf.setFont('helvetica', 'bold'); pdf.setFontSize(7); pdf.setTextColor(...palette.subtle); write((props.kicker ?? 'SEO REPORT').toUpperCase(), width - margin, 13, { align: 'right' });
+        pdf.setFont('helvetica', 'bold'); pdf.setFontSize(7); pdf.setTextColor(...palette.subtle); write((props.kicker ?? 'RELATÓRIO DE SEO').toUpperCase(), width - margin, 13, { align: 'right' });
         pdf.setFontSize(14); pdf.setTextColor(...palette.text); write(props.title, width - margin, 21, { align: 'right' });
         pdf.setFont('helvetica', 'normal'); pdf.setFontSize(7); pdf.setTextColor(...palette.subtle); write(date, width - margin, 27, { align: 'right' });
       };
@@ -180,9 +180,9 @@ export default function ReportPdfExportButton(props: Props) {
       className={props.variant === 'solid'
         ? 'nexo-label inline-flex items-center gap-2 rounded-nexo-lg bg-white px-3 py-2 text-nexo-bg transition-colors hover:bg-nexo-ice disabled:cursor-wait disabled:opacity-70'
         : 'nexo-label inline-flex items-center gap-1.5 hover:text-nexo-danger-text disabled:opacity-50 transition-colors'}
-      title="Export PDF report">
+      title="Exportar relatório em PDF">
       {exporting ? <LoaderCircle className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
-      {exporting ? (props.variant === 'solid' ? 'Preparing PDF…' : 'PDF…') : props.label ?? 'PDF'}
+      {exporting ? (props.variant === 'solid' ? 'Preparando PDF…' : 'PDF…') : props.label ?? 'PDF'}
     </button>
   );
 }

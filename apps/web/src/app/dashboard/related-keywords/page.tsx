@@ -57,7 +57,7 @@ async function fetchRelatedKeywords(
 }
 
 function formatDate(ts: number) {
-  return new Date(ts).toLocaleDateString("en-GB", { day: 'numeric', month: 'short', year: 'numeric' });
+  return new Date(ts).toLocaleDateString("pt-BR", { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 async function RelatedKeywordsPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
@@ -65,8 +65,8 @@ async function RelatedKeywordsPage({ searchParams }: { searchParams: Promise<Sea
   const params = await searchParams;
   const historyId = params.history_id;
 
-  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'France');
-  const defaultLanguage = getSetting('default_language') ?? 'French';
+  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'Brazil');
+  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
 
   const keyword = params.keyword?.trim() ?? '';
   const location = params.location ?? defaultLocation;
@@ -88,7 +88,7 @@ async function RelatedKeywordsPage({ searchParams }: { searchParams: Promise<Sea
       const history = getRelatedKwHistory();
       activeEntry = history.find((e) => e.id === historyId) ?? null;
     } else {
-      error = 'This search is no longer available.';
+      error = 'Esta busca não está mais disponível.';
     }
   }
 
@@ -103,7 +103,7 @@ async function RelatedKeywordsPage({ searchParams }: { searchParams: Promise<Sea
       const cachedEntry = getRelatedKwHistory().find((e) => e.id === dedupeId);
       cost = cachedEntry?.cost;
     } else if (!creds) {
-      error = 'DataForSEO credentials missing. Configure them in Settings.';
+      error = 'Credenciais da DataForSEO ausentes. Configure-as em Configurações.';
     } else {
       const result = await fetchRelatedKeywords(keyword, location, language, depth, limit, creds.login, creds.pass);
       items = result.items;
@@ -145,18 +145,18 @@ async function RelatedKeywordsPage({ searchParams }: { searchParams: Promise<Sea
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="nexo-h1">Related Keywords</h1>
-        <p className="text-sm text-nexo-faint mt-1">Related keywords from a source keyword via DataForSEO Labs.</p>
+        <h1 className="nexo-h1">Palavras-chave relacionadas</h1>
+        <p className="text-sm text-nexo-faint mt-1">Palavras-chave relacionadas a uma palavra-chave de origem via DataForSEO Labs.</p>
       </div>
 
-      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Search" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
+      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Buscar" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="sm:col-span-2">
-            <label className="nexo-label block mb-1.5">Keyword source</label>
+            <label className="nexo-label block mb-1.5">Palavra-chave de origem</label>
             <input
               type="text" name="keyword"
               defaultValue={displayKeyword}
-              placeholder="e.g. plumber"
+              placeholder="ex.: encanador"
               required
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky transition-all"
             />
@@ -167,17 +167,17 @@ async function RelatedKeywordsPage({ searchParams }: { searchParams: Promise<Sea
             className="w-full px-4 py-2.5 border border-nexo-border rounded-nexo-lg text-sm text-nexo-text focus:outline-none focus:ring-2 focus:ring-nexo-sky bg-nexo-surface"
           />
           <div>
-            <label className="nexo-label block mb-1.5">Depth</label>
+            <label className="nexo-label block mb-1.5">Profundidade</label>
             <select name="depth" defaultValue={String(displayDepth)}
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
-              <option value="1">1 — Direct</option>
-              <option value="2">2 — Extended</option>
-              <option value="3">3 — Broad</option>
-              <option value="4">4 — Exhaustive</option>
+              <option value="1">1 — Direta</option>
+              <option value="2">2 — Estendida</option>
+              <option value="3">3 — Ampla</option>
+              <option value="4">4 — Exaustiva</option>
             </select>
           </div>
           <div>
-            <label className="nexo-label block mb-1.5">Max results</label>
+            <label className="nexo-label block mb-1.5">Máx. de resultados</label>
             <select name="limit" defaultValue={String(limit)}
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
               <option value="50">50</option>
@@ -196,21 +196,21 @@ async function RelatedKeywordsPage({ searchParams }: { searchParams: Promise<Sea
         <div id="results" className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <h2 className="nexo-label">Results</h2>
-              {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>}
+              <h2 className="nexo-label">Resultados</h2>
+              {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">Histórico</span>}
             </div>
             <div className="flex items-center gap-3">
-              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">cost: ${cost.toFixed(4)}</span>}
-              <span className="text-xs font-medium text-nexo-faint">{items.length} result{items.length !== 1 ? 's' : ''}</span>
+              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">custo: US$ {cost.toFixed(4).replace('.', ',')}</span>}
+              <span className="text-xs font-medium text-nexo-faint">{items.length} {items.length !== 1 ? 'resultados' : 'resultado'}</span>
               {items.length > 0 && (() => {
                 const csvColumns = [
-                  { key: 'keyword', label: 'Keyword' },
-                  { key: 'search_volume', label: 'Search Volume' },
-                  { key: 'difficulty', label: 'Difficulty' },
+                  { key: 'keyword', label: 'Palavra-chave' },
+                  { key: 'search_volume', label: 'Volume de buscas' },
+                  { key: 'difficulty', label: 'Dificuldade' },
                   { key: 'cpc', label: 'CPC' },
-                  { key: 'competition_index', label: 'Competition Index' },
-                  { key: 'ref_domains', label: 'Avg Referring Domains' },
-                  { key: 'related_count', label: 'Related Count' },
+                  { key: 'competition_index', label: 'Índice de concorrência' },
+                  { key: 'ref_domains', label: 'Média de domínios de referência' },
+                  { key: 'related_count', label: 'Qtd. relacionadas' },
                 ];
                 return (
                   <div className="flex items-center gap-2">
@@ -222,7 +222,7 @@ async function RelatedKeywordsPage({ searchParams }: { searchParams: Promise<Sea
             </div>
           </div>
           {items.length === 0 ? (
-            <div className="px-6 py-12 text-center text-sm text-nexo-faint">No results found.</div>
+            <div className="px-6 py-12 text-center text-sm text-nexo-faint">Nenhum resultado encontrado.</div>
           ) : (
             <RelatedKeywordsTable items={items} />
           )}
@@ -232,7 +232,7 @@ async function RelatedKeywordsPage({ searchParams }: { searchParams: Promise<Sea
       {history.length > 0 && (
         <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border">
-            <h2 className="nexo-label">History</h2>
+            <h2 className="nexo-label">Histórico</h2>
           </div>
           <div className="divide-y divide-nexo-border">
             {history.map((entry) => {
@@ -243,9 +243,9 @@ async function RelatedKeywordsPage({ searchParams }: { searchParams: Promise<Sea
                   <div className="flex-1 min-w-0">
                     <p className={`text-sm font-medium truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.keyword}</p>
                     <p className="text-[11px] text-nexo-faint mt-0.5">
-                      {entry.count} result{entry.count !== 1 ? 's' : ''}
-                      {' · '}{entry.location} · depth {entry.depth}
-                      {entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}
+                      {entry.count} {entry.count !== 1 ? 'resultados' : 'resultado'}
+                      {' · '}{entry.location} · profundidade {entry.depth}
+                      {entry.cost !== undefined ? ` · US$ ${entry.cost.toFixed(4).replace('.', ',')}` : ''}
                     </p>
                   </div>
                   <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>

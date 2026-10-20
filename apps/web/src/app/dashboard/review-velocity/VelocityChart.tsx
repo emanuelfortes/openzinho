@@ -65,19 +65,19 @@ export default function VelocityChart({ weekLabels, monthLabels, series }: Props
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between gap-3">
-        <div className="nexo-seg" role="group" aria-label="Granularity">
+        <div className="nexo-seg" role="group" aria-label="Granularidade">
           {(['week', 'month'] as const).map((g) => (
             <button key={g} type="button" onClick={() => { setGranularity(g); setHover(null); }} aria-pressed={granularity === g}
               className={`transition-colors hover:text-white ${granularity === g ? 'active' : ''}`}>
-              Per {g}
+              {g === 'week' ? 'Por semana' : 'Por mês'}
             </button>
           ))}
         </div>
-        <span className="text-[11px] text-nexo-faint">Complete {granularity}s only · gaps = not covered by the data</span>
+        <span className="text-[11px] text-nexo-faint">{granularity === 'week' ? 'Só semanas completas' : 'Só meses completos'} · lacunas = períodos sem dados</span>
       </div>
 
       <div className="relative">
-        <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" role="img" aria-label={`New reviews per ${granularity}`} onMouseLeave={() => setHover(null)}>
+        <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" role="img" aria-label={granularity === 'week' ? 'Novas avaliações por semana' : 'Novas avaliações por mês'} onMouseLeave={() => setHover(null)}>
           {[0, 0.25, 0.5, 0.75, 1].map((f) => (
             <g key={f}>
               <line x1={PAD.left} x2={W - PAD.right} y1={y(max * f)} y2={y(max * f)} stroke="currentColor" className="text-nexo-text" />
@@ -101,7 +101,7 @@ export default function VelocityChart({ weekLabels, monthLabels, series }: Props
         {hover !== null && (
           <div className="pointer-events-none absolute top-2 z-10 min-w-48 rounded-nexo-lg border border-nexo-border bg-nexo-bg/95 px-3 py-2"
             style={{ left: `${(x(hover) / W) * 100}%`, transform: x(hover) > W * 0.6 ? 'translateX(calc(-100% - 12px))' : 'translateX(12px)' }}>
-            <p className="nexo-label mb-1">{granularity === 'week' ? `Week of ${labels[hover]}` : labels[hover]}</p>
+            <p className="nexo-label mb-1">{granularity === 'week' ? `Semana de ${labels[hover]}` : labels[hover]}</p>
             {hoverRows.map(({ s, v }) => (
               <p key={s.id} className={`flex items-center justify-between gap-4 text-xs ${s.isSelf ? 'font-medium' : ''}`}>
                 <span className="flex items-center gap-1.5 min-w-0"><span className="w-2 h-2 rounded-full shrink-0" style={{ background: s.color }} /><span className="truncate max-w-40">{s.title}</span></span>
@@ -121,7 +121,7 @@ export default function VelocityChart({ weekLabels, monthLabels, series }: Props
                 onClick={() => setHidden((current) => { const next = new Set(current); if (next.has(s.id)) next.delete(s.id); else next.add(s.id); return next; })}
                 className={`inline-flex items-center gap-1.5 text-xs transition-opacity ${off ? 'opacity-35' : ''} ${s.isSelf ? 'font-medium text-nexo-text' : 'text-nexo-dim'}`}>
                 <span className="w-3 h-1 rounded-full" style={{ background: s.color }} />
-                {s.title}{s.isSelf ? ' (you)' : ''}
+                {s.title}{s.isSelf ? ' (você)' : ''}
               </button>
             </li>
           );

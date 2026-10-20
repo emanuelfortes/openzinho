@@ -2,14 +2,14 @@ import type { DistanceUnit, GridPreferences, PinStyle } from '@/lib/grid-prefere
 import { rankStyle } from '@/lib/rank-scale';
 
 const UNIT_OPTIONS: { value: DistanceUnit; label: string; detail: string }[] = [
-  { value: 'km', label: 'Kilometres', detail: '0.5 · 1 · 2 · 3 · 5 · 10 km' },
-  { value: 'mi', label: 'Miles', detail: '0.25 · 0.5 · 1 · 2 · 3 · 5 mi' },
+  { value: 'km', label: 'Quilômetros', detail: '0,5 · 1 · 2 · 3 · 5 · 10 km' },
+  { value: 'mi', label: 'Milhas', detail: '0,25 · 0,5 · 1 · 2 · 3 · 5 mi' },
 ];
 
 const PIN_OPTIONS: { value: PinStyle; label: string; detail: string }[] = [
-  { value: 'square', label: 'Squares', detail: 'Classic, largest labels' },
-  { value: 'circle', label: 'Circles', detail: 'Rounded, more map visible' },
-  { value: 'dot', label: 'Small dots', detail: 'Compact, most map visible' },
+  { value: 'square', label: 'Quadrados', detail: 'Clássico, rótulos maiores' },
+  { value: 'circle', label: 'Círculos', detail: 'Arredondados, mais mapa visível' },
+  { value: 'dot', label: 'Pontos pequenos', detail: 'Compactos, máximo de mapa visível' },
 ];
 
 // Sample ranks for the 3×3 preview; the middle one is the grid center.
@@ -61,7 +61,7 @@ export default function GridPreferenceFields({ initial }: { initial: GridPrefere
   return (
     <div className="space-y-6">
       <fieldset>
-        <legend className="nexo-label ml-1 mb-2">Distance unit</legend>
+        <legend className="nexo-label ml-1 mb-2">Unidade de distância</legend>
         <div className="grid grid-cols-2 gap-3">
           {UNIT_OPTIONS.map((option) => (
             <label key={option.value} className="relative">
@@ -76,11 +76,11 @@ export default function GridPreferenceFields({ initial }: { initial: GridPrefere
             </label>
           ))}
         </div>
-        <p className="mt-2 ml-1 text-[11px] text-nexo-faint">Spacing choices, distances and PDF reports use this unit. Existing monitors keep their exact grid.</p>
+        <p className="mt-2 ml-1 text-[11px] text-nexo-faint">As opções de espaçamento, as distâncias e os relatórios em PDF usam esta unidade. Os monitores existentes mantêm a grade exata.</p>
       </fieldset>
 
       <fieldset>
-        <legend className="nexo-label ml-1 mb-2">Map pin style</legend>
+        <legend className="nexo-label ml-1 mb-2">Estilo dos pinos no mapa</legend>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {PIN_OPTIONS.map((option) => (
             <label key={option.value} className="relative">
@@ -93,7 +93,7 @@ export default function GridPreferenceFields({ initial }: { initial: GridPrefere
             </label>
           ))}
         </div>
-        <p className="mt-2 ml-1 text-[11px] text-nexo-faint">The #1 rank keeps its star in every style.</p>
+        <p className="mt-2 ml-1 text-[11px] text-nexo-faint">A posição #1 mantém a estrela em todos os estilos.</p>
       </fieldset>
     </div>
   );

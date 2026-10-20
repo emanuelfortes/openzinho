@@ -25,7 +25,7 @@ export default function PromptTrackerForm({ action }: { action: (formData: FormD
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     if (!brand.trim() && !domain.trim()) {
       event.preventDefault();
-      setError('Enter a brand name, a domain, or both to look for in the answers.');
+      setError('Informe um nome de marca, um domínio ou ambos para procurar nas respostas.');
       return;
     }
     setError(null);
@@ -39,27 +39,27 @@ export default function PromptTrackerForm({ action }: { action: (formData: FormD
     >
       <div>
         <label className={LABEL}>
-          Prompt <span className="text-nexo-faint font-normal normal-case tracking-normal">(max 500 chars)</span>
+          Prompt <span className="text-nexo-faint font-normal normal-case tracking-normal">(máx. 500 caracteres)</span>
         </label>
         <textarea
           name="user_prompt"
           rows={3}
           maxLength={500}
           required
-          placeholder="e.g. What is the best plumber in Paris for emergency repairs?"
+          placeholder="ex.: Qual é o melhor encanador de São Paulo para emergências?"
           className={`${FIELD} resize-y`}
         />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className={LABEL}>Platform</label>
+          <label className={LABEL}>Plataforma</label>
           <select name="platform" value={platform} onChange={(e) => handlePlatformChange(e.target.value as LlmPlatform)} className={FIELD}>
             {PLATFORMS.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
           </select>
         </div>
         <div>
-          <label className={LABEL}>Model</label>
+          <label className={LABEL}>Modelo</label>
           <input
             type="text"
             name="model"
@@ -77,24 +77,24 @@ export default function PromptTrackerForm({ action }: { action: (formData: FormD
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className={LABEL}>Brand to look for</label>
+          <label className={LABEL}>Marca a procurar</label>
           <input
             type="text"
             name="brand"
             value={brand}
             onChange={(e) => setBrand(e.target.value)}
-            placeholder="e.g. Acme Plumbing"
+            placeholder="ex.: Encanadora Acme"
             className={FIELD}
           />
         </div>
         <div>
-          <label className={LABEL}>Domain to look for</label>
+          <label className={LABEL}>Domínio a procurar</label>
           <input
             type="text"
             name="domain"
             value={domain}
             onChange={(e) => setDomain(e.target.value)}
-            placeholder="e.g. acme-plumbing.com"
+            placeholder="ex.: encanadora-acme.com.br"
             className={FIELD}
           />
         </div>
@@ -103,7 +103,7 @@ export default function PromptTrackerForm({ action }: { action: (formData: FormD
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
         <div>
           {isPerplexity ? (
-            <p className="text-[11px] text-nexo-faint pb-2.5">Perplexity always searches the live web.</p>
+            <p className="text-[11px] text-nexo-faint pb-2.5">O Perplexity sempre pesquisa na web em tempo real.</p>
           ) : (
             <label className="relative flex items-center gap-2.5 cursor-pointer w-fit">
               <input
@@ -116,15 +116,15 @@ export default function PromptTrackerForm({ action }: { action: (formData: FormD
               <div className="w-9 h-5 bg-white/10 rounded-full peer-checked:bg-nexo-blue transition-colors relative">
                 <div className="absolute top-0.5 left-0.5 w-4 h-4 bg-nexo-surface rounded-full transition-transform peer-checked:translate-x-4" />
               </div>
-              <span className="nexo-label">Web search</span>
+              <span className="nexo-label">Pesquisa na web</span>
             </label>
           )}
         </div>
         <div>
           <label className={LABEL}>
-            Web search country <span className="text-nexo-faint font-normal normal-case tracking-normal">(optional, ISO code)</span>
+            País da pesquisa na web <span className="text-nexo-faint font-normal normal-case tracking-normal">(opcional, código ISO)</span>
           </label>
-          <input type="text" name="country_code" maxLength={2} placeholder="e.g. FR, US" className={`${FIELD} uppercase`} />
+          <input type="text" name="country_code" maxLength={2} placeholder="ex.: BR, US" className={`${FIELD} uppercase`} />
         </div>
       </div>
 
@@ -133,9 +133,9 @@ export default function PromptTrackerForm({ action }: { action: (formData: FormD
       <PendingButton
         type="submit"
         className="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-sky transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-        pendingChildren="Saving…"
+        pendingChildren="Salvando…"
       >
-        Track this prompt
+        Monitorar este prompt
       </PendingButton>
     </form>
   );

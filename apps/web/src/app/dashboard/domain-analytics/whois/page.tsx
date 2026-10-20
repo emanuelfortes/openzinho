@@ -93,16 +93,16 @@ const PRICE_WHOIS = 0.001;
 
 function fmt(n?: number) {
   if (n === undefined || n === null) return '—';
-  return n.toLocaleString('en-GB');
+  return n.toLocaleString('pt-BR');
 }
 
 function fmtDate(s?: string) {
   if (!s) return '—';
-  return new Date(s).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  return new Date(s).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 function formatDate(ts: number) {
-  return new Date(ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  return new Date(ts).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 function StatCard({ label, value }: { label: string; value: string | number | undefined }) {
@@ -141,7 +141,7 @@ async function WhoisPage({ searchParams }: { searchParams: Promise<SearchParams>
       const history = getDomainWhoisHistory();
       activeEntry = history.find((e) => e.id === historyId) ?? null;
     } else {
-      error = "This search is no longer available.";
+      error = "Esta busca não está mais disponível.";
     }
   }
 
@@ -152,7 +152,7 @@ async function WhoisPage({ searchParams }: { searchParams: Promise<SearchParams>
       result = cachedResult;
       cost = getDomainWhoisHistory().find((e) => e.id === dedupeId)?.cost;
     } else if (!creds) {
-      error = 'DataForSEO credentials missing. Configure them in Settings.';
+      error = 'Credenciais do DataForSEO ausentes. Configure-as em Configurações.';
     } else {
       const res = await fetchWhois(domain, creds.login, creds.pass);
       if (res.error) {
@@ -168,7 +168,7 @@ async function WhoisPage({ searchParams }: { searchParams: Promise<SearchParams>
         };
         saveDomainWhoisSearch(entry, result);
       } else {
-        error = 'No Whois data found for this domain.';
+        error = 'Nenhum dado de Whois encontrado para este domínio.';
       }
     }
   }
@@ -190,21 +190,21 @@ async function WhoisPage({ searchParams }: { searchParams: Promise<SearchParams>
     <div className="space-y-6">
       <div>
         <h1 className="nexo-h1">Whois</h1>
-        <p className="text-sm text-nexo-faint mt-1">Domain registration data with traffic and backlink metrics.</p>
+        <p className="text-sm text-nexo-faint mt-1">Dados de registro do domínio com métricas de tráfego e backlinks.</p>
       </div>
 
       {/* Form */}
       <SearchForm
         className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4"
-        btnLabel={<>Lookup<span className="font-mono text-[10px] opacity-50 ml-1.5">~${PRICE_WHOIS.toFixed(3)}</span></>}
+        btnLabel={<>Consultar<span className="font-mono text-[10px] opacity-50 ml-1.5">~US$ {PRICE_WHOIS.toFixed(3).replace('.', ',')}</span></>}
         btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors"
       >
         <div>
-          <label className="nexo-label block mb-1.5">Domain</label>
+          <label className="nexo-label block mb-1.5">Domínio</label>
           <input
             type="text" name="domain"
             defaultValue={displayDomain}
-            placeholder="e.g. example.com"
+            placeholder="ex.: exemplo.com.br"
             required
             className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky font-mono transition-all"
           />
@@ -220,51 +220,51 @@ async function WhoisPage({ searchParams }: { searchParams: Promise<SearchParams>
           {/* Header */}
           <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-2">
-              <span className="nexo-label">Domain</span>
+              <span className="nexo-label">Domínio</span>
               <span className="font-mono font-medium text-nexo-text">{result.domain ?? displayDomain}</span>
               {isFromHistory && (
-                <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>
+                <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">Histórico</span>
               )}
             </div>
             {result.registered !== undefined && (
               <span className={`text-[10px] font-medium uppercase tracking-widest px-2 py-0.5 rounded-md ${result.registered ? 'text-nexo-ice bg-nexo-ice/10' : 'text-nexo-faint bg-nexo-surface-2'}`}>
-                {result.registered ? 'Registered' : 'Not registered'}
+                {result.registered ? 'Registrado' : 'Não registrado'}
               </span>
             )}
             {cost !== undefined && (
-              <span className="text-[10px] font-mono text-nexo-faint ml-auto">cost: ${cost.toFixed(4)}</span>
+              <span className="text-[10px] font-mono text-nexo-faint ml-auto">custo: US$ {cost.toFixed(4).replace('.', ',')}</span>
             )}
           </div>
 
           {/* Registration info */}
           <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-5 space-y-4">
-            <h2 className="nexo-label">Registration</h2>
+            <h2 className="nexo-label">Registro</h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div>
-                <p className="nexo-label">Registrar</p>
+                <p className="nexo-label">Registrador</p>
                 <p className="text-sm font-medium text-nexo-text mt-0.5">{result.registrar ?? '—'}</p>
               </div>
               <div>
-                <p className="nexo-label">Created</p>
+                <p className="nexo-label">Criado em</p>
                 <p className="text-sm font-medium text-nexo-text mt-0.5">{fmtDate(result.created_datetime)}</p>
               </div>
               <div>
-                <p className="nexo-label">Updated</p>
+                <p className="nexo-label">Atualizado em</p>
                 <p className="text-sm font-medium text-nexo-text mt-0.5">{fmtDate(result.updated_datetime)}</p>
               </div>
               <div>
-                <p className="nexo-label">Expires</p>
+                <p className="nexo-label">Expira em</p>
                 <p className={`text-sm font-medium mt-0.5 ${expiresColor}`}>{fmtDate(result.expiration_datetime)}</p>
                 {expiresIn !== null && (
                   <p className={`text-[10px] font-medium mt-0.5 ${expiresColor}`}>
-                    {expiresIn > 0 ? `${expiresIn}d remaining` : `Expired ${Math.abs(expiresIn)}d ago`}
+                    {expiresIn > 0 ? `${expiresIn} ${expiresIn === 1 ? 'dia restante' : 'dias restantes'}` : `Expirou há ${Math.abs(expiresIn)} ${Math.abs(expiresIn) === 1 ? 'dia' : 'dias'}`}
                   </p>
                 )}
               </div>
             </div>
             {result.epp_status_codes && result.epp_status_codes.length > 0 && (
               <div>
-                <p className="nexo-label mb-1.5">EPP Status</p>
+                <p className="nexo-label mb-1.5">Status EPP</p>
                 <div className="flex flex-wrap gap-1.5">
                   {result.epp_status_codes.map((s, i) => (
                     <span key={i} className="text-[10px] font-mono bg-white/[0.02] border border-nexo-border text-nexo-dim px-2 py-0.5 rounded-md">{s}</span>
@@ -274,7 +274,7 @@ async function WhoisPage({ searchParams }: { searchParams: Promise<SearchParams>
             )}
             {result.nameservers && result.nameservers.length > 0 && (
               <div>
-                <p className="nexo-label mb-1.5">Nameservers</p>
+                <p className="nexo-label mb-1.5">Servidores de nomes</p>
                 <div className="flex flex-wrap gap-1.5">
                   {result.nameservers.map((ns, i) => (
                     <span key={i} className="text-[10px] font-mono bg-white/[0.02] border border-nexo-border text-nexo-dim px-2 py-0.5 rounded-md">{ns}</span>
@@ -290,11 +290,11 @@ async function WhoisPage({ searchParams }: { searchParams: Promise<SearchParams>
               <h2 className="nexo-label mb-3">Backlinks</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 <StatCard label="Backlinks" value={fmt(bl.backlinks)} />
-                <StatCard label="Referring Domains" value={fmt(bl.referring_domains)} />
-                <StatCard label="Referring Main Domains" value={fmt(bl.referring_main_domains)} />
-                <StatCard label="Referring Pages" value={fmt(bl.referring_pages)} />
+                <StatCard label="Domínios de referência" value={fmt(bl.referring_domains)} />
+                <StatCard label="Domínios principais de referência" value={fmt(bl.referring_main_domains)} />
+                <StatCard label="Páginas de referência" value={fmt(bl.referring_pages)} />
                 <StatCard label="Domain Rank" value={fmt(bl.rank)} />
-                <StatCard label="Main Domain Rank" value={fmt(bl.main_domain_rank)} />
+                <StatCard label="Domain Rank do domínio principal" value={fmt(bl.main_domain_rank)} />
               </div>
             </div>
           )}
@@ -302,11 +302,11 @@ async function WhoisPage({ searchParams }: { searchParams: Promise<SearchParams>
           {/* Organic traffic */}
           {org && (
             <div>
-              <h2 className="nexo-label mb-3">Organic Search</h2>
+              <h2 className="nexo-label mb-3">Busca orgânica</h2>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <StatCard label="Keywords" value={fmt(org.count)} />
-                <StatCard label="Traffic (ETV)" value={fmt(org.etv)} />
-                <StatCard label="Traffic Value" value={org.estimated_paid_traffic_cost !== undefined ? `$${org.estimated_paid_traffic_cost.toFixed(0)}` : '—'} />
+                <StatCard label="Palavras-chave" value={fmt(org.count)} />
+                <StatCard label="Tráfego (ETV)" value={fmt(org.etv)} />
+                <StatCard label="Valor do tráfego" value={org.estimated_paid_traffic_cost !== undefined ? `US$ ${fmt(Math.round(org.estimated_paid_traffic_cost))}` : '—'} />
                 <StatCard label="Top 3" value={fmt((org.pos_1 ?? 0) + (org.pos_2_3 ?? 0))} />
               </div>
               {/* Position distribution */}
@@ -319,7 +319,7 @@ async function WhoisPage({ searchParams }: { searchParams: Promise<SearchParams>
                 { label: '#31–100', value: (org.pos_31_40 ?? 0) + (org.pos_41_50 ?? 0) + (org.pos_51_60 ?? 0) + (org.pos_61_70 ?? 0) + (org.pos_71_80 ?? 0) + (org.pos_81_90 ?? 0) + (org.pos_91_100 ?? 0) },
               ].some(({ value }) => value) && (
                 <div className="mt-3 bg-nexo-surface rounded-nexo-lg border border-nexo-border p-5">
-                  <h3 className="nexo-label mb-4">Position Distribution</h3>
+                  <h3 className="nexo-label mb-4">Distribuição de posições</h3>
                   <div className="space-y-2">
                     {[
                       { label: '#1', value: org.pos_1 },
@@ -352,11 +352,11 @@ async function WhoisPage({ searchParams }: { searchParams: Promise<SearchParams>
           {/* Paid */}
           {paid && (paid.count ?? 0) > 0 && (
             <div>
-              <h2 className="nexo-label mb-3">Paid Search</h2>
+              <h2 className="nexo-label mb-3">Busca paga</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                <StatCard label="Paid Keywords" value={fmt(paid.count)} />
-                <StatCard label="Paid Traffic (ETV)" value={fmt(paid.etv)} />
-                <StatCard label="Top Position" value={fmt(paid.pos_1)} />
+                <StatCard label="Palavras-chave pagas" value={fmt(paid.count)} />
+                <StatCard label="Tráfego pago (ETV)" value={fmt(paid.etv)} />
+                <StatCard label="Primeira posição" value={fmt(paid.pos_1)} />
               </div>
             </div>
           )}
@@ -367,7 +367,7 @@ async function WhoisPage({ searchParams }: { searchParams: Promise<SearchParams>
       {history.length > 0 && (
         <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border">
-            <h2 className="nexo-label">History</h2>
+            <h2 className="nexo-label">Histórico</h2>
           </div>
           <div className="divide-y divide-nexo-border">
             {history.map((entry) => {
@@ -381,7 +381,7 @@ async function WhoisPage({ searchParams }: { searchParams: Promise<SearchParams>
                   <div className="flex-1 min-w-0">
                     <p className={`text-sm font-medium font-mono truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.domain}</p>
                     <p className="text-[11px] text-nexo-faint mt-0.5">
-                      {entry.cost !== undefined ? `$${entry.cost.toFixed(4)}` : ''}
+                      {entry.cost !== undefined ? `US$ ${entry.cost.toFixed(4).replace('.', ',')}` : ''}
                     </p>
                   </div>
                   <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>

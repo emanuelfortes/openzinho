@@ -60,14 +60,14 @@ describe('callDataForSeo', () => {
     mockFetchOnce(() => new Response('', { status: 502, statusText: 'Bad Gateway' }));
 
     const res = await callDataForSeo('some/endpoint/live', {}, creds);
-    expect(res.error).toBe('API error 502: Bad Gateway');
+    expect(res.error).toBe('Erro da API 502: Bad Gateway');
   });
 
   it('returns an error instead of throwing when fetch itself rejects (network failure)', async () => {
     vi.stubGlobal('fetch', vi.fn(() => Promise.reject(new Error('getaddrinfo ENOTFOUND'))));
 
     const res = await callDataForSeo('some/endpoint/live', {}, creds);
-    expect(res.error).toBe('Network error: getaddrinfo ENOTFOUND');
+    expect(res.error).toBe('Erro de rede: getaddrinfo ENOTFOUND');
   });
 
   it('returns a clear timeout error instead of throwing when the request exceeds timeoutMs', async () => {
@@ -78,7 +78,7 @@ describe('callDataForSeo', () => {
     }));
 
     const res = await callDataForSeo('some/endpoint/live', {}, creds, 20_000);
-    expect(res.error).toBe('Request timed out after 20000ms.');
+    expect(res.error).toBe('A requisição expirou após 20000 ms.');
   });
 
   it('passes an AbortSignal.timeout(timeoutMs) through to fetch when timeoutMs is given', async () => {
@@ -109,14 +109,14 @@ describe('callDataForSeo', () => {
     mockFetchOnce(() => new Response('<html>not json</html>', { status: 200 }));
 
     const res = await callDataForSeo('some/endpoint/live', {}, creds);
-    expect(res.error).toBe('Invalid API response (not JSON).');
+    expect(res.error).toBe('Resposta inválida da API (não é JSON).');
   });
 
   it('returns an error when the response has no tasks', async () => {
     mockFetchOnce(() => new Response(JSON.stringify({ tasks: [] }), { status: 200 }));
 
     const res = await callDataForSeo('some/endpoint/live', {}, creds);
-    expect(res.error).toBe('Empty API response.');
+    expect(res.error).toBe('Resposta vazia da API.');
   });
 
   it('surfaces the top-level status message when the whole request is rejected', async () => {

@@ -9,6 +9,7 @@ type SortDir = 'asc' | 'desc';
 
 const MONTHS = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
 const COMPETITION_RANK: Record<string, number> = { LOW: 0, MEDIUM: 1, HIGH: 2 };
+const COMPETITION_LABELS: Record<string, string> = { LOW: 'Baixa', MEDIUM: 'Média', HIGH: 'Alta' };
 
 function DifficultyBar({ value }: { value?: number }) {
   if (value === undefined) return <span className="text-nexo-faint">—</span>;
@@ -33,10 +34,10 @@ function IntentBadge({ value }: { value?: string }) {
     commercial: 'text-nexo-warn-text bg-nexo-warn/10 border-nexo-warn/40',
   };
   const labels: Record<string, string> = {
-    informational: 'Info',
-    navigational: 'Nav',
-    transactional: 'Transac',
-    commercial: 'Commercial',
+    informational: 'Informacional',
+    navigational: 'Navegacional',
+    transactional: 'Transacional',
+    commercial: 'Comercial',
   };
   return (
     <span className={`px-2 py-0.5 rounded-md text-[10px] font-medium border ${map[value] ?? 'text-nexo-dim bg-nexo-surface-2 border-nexo-border'}`}>
@@ -52,7 +53,7 @@ function CompetitionBadge({ level }: { level?: string }) {
     MEDIUM: 'text-nexo-warn-text bg-nexo-warn/10',
     LOW: 'text-nexo-ice bg-nexo-ice/10',
   };
-  return <span className={`px-2 py-0.5 rounded-md text-[10px] font-medium uppercase ${map[level] ?? 'text-nexo-dim bg-nexo-surface-2'}`}>{level}</span>;
+  return <span className={`px-2 py-0.5 rounded-md text-[10px] font-medium uppercase ${map[level] ?? 'text-nexo-dim bg-nexo-surface-2'}`}>{COMPETITION_LABELS[level] ?? level}</span>;
 }
 
 interface MonthlySearch { year: number; month: number; search_volume: number }
@@ -62,7 +63,7 @@ function Sparkline({ monthly }: { monthly?: MonthlySearch[] }) {
   if (data.length === 0) return <span className="text-nexo-faint text-xs">—</span>;
   const max = Math.max(...data.map((m) => m.search_volume ?? 0), 1);
   return (
-    <div className="flex items-end gap-0.5 h-7" title={data.map((m) => `${MONTHS[m.month - 1]}: ${m.search_volume?.toLocaleString('en-GB')}`).join(' · ')}>
+    <div className="flex items-end gap-0.5 h-7" title={data.map((m) => `${MONTHS[m.month - 1]}: ${m.search_volume?.toLocaleString('pt-BR')}`).join(' · ')}>
       {data.map((m, i) => (
         <div
           key={i}
@@ -129,13 +130,13 @@ export default function KeywordOverviewTable({ items }: { items: KwOverviewItem[
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-nexo-border bg-white/[0.02]">
-            <Header label="Keyword" sortK="keyword" align="left" className="!px-6" />
+            <Header label="Palavra-chave" sortK="keyword" align="left" className="!px-6" />
             <Header label="Vol." sortK="volume" align="right" />
-            <Header label="Difficulty KD" sortK="kd" align="left" />
-            <Header label="Intent" sortK="intent" align="center" />
-            <Header label="Competition" sortK="competition" align="center" className="hidden sm:table-cell" />
+            <Header label="Dificuldade (KD)" sortK="kd" align="left" />
+            <Header label="Intenção" sortK="intent" align="center" />
+            <Header label="Concorrência" sortK="competition" align="center" className="hidden sm:table-cell" />
             <Header label="CPC" sortK="cpc" align="right" className="hidden md:table-cell" />
-            <th className="nexo-label px-4 py-3 text-left hidden xl:table-cell">Trend</th>
+            <th className="nexo-label px-4 py-3 text-left hidden xl:table-cell">Tendência</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-nexo-border">
@@ -143,7 +144,7 @@ export default function KeywordOverviewTable({ items }: { items: KwOverviewItem[
             <tr key={i} className="hover:bg-white/[0.04] transition-colors">
               <td className="px-6 py-3 font-medium text-nexo-text max-w-xs">{item.keyword ?? '—'}</td>
               <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">
-                {item.keyword_info?.search_volume?.toLocaleString('en-GB') ?? '—'}
+                {item.keyword_info?.search_volume?.toLocaleString('pt-BR') ?? '—'}
               </td>
               <td className="px-4 py-3">
                 <DifficultyBar value={item.keyword_properties?.keyword_difficulty} />
@@ -155,7 +156,7 @@ export default function KeywordOverviewTable({ items }: { items: KwOverviewItem[
                 <CompetitionBadge level={item.keyword_info?.competition_level} />
               </td>
               <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums hidden md:table-cell">
-                {item.keyword_info?.cpc != null ? `$${item.keyword_info.cpc.toFixed(2)}` : '—'}
+                {item.keyword_info?.cpc != null ? `US$ ${item.keyword_info.cpc.toFixed(2).replace('.', ',')}` : '—'}
               </td>
               <td className="px-4 py-3 hidden xl:table-cell">
                 <Sparkline monthly={item.keyword_info?.monthly_searches} />

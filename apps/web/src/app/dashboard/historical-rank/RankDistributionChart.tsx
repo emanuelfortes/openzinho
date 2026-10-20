@@ -37,15 +37,15 @@ const bands: Band[] = [
 ];
 
 function formatMonth(year: number, month: number) {
-  return new Date(Date.UTC(year, month - 1, 1)).toLocaleDateString('en-GB', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+  return new Date(Date.UTC(year, month - 1, 1)).toLocaleDateString('pt-BR', { month: 'short', year: 'numeric', timeZone: 'UTC' });
 }
 
 function displayPercent(value: number) {
-  return `${value >= 10 ? Math.round(value) : value.toFixed(1)}%`;
+  return `${value >= 10 ? Math.round(value) : value.toFixed(1).replace('.', ',')}%`;
 }
 
 function displayVolume(value: number) {
-  return new Intl.NumberFormat('en-GB', { notation: 'compact', maximumFractionDigits: 1 }).format(value);
+  return new Intl.NumberFormat('pt-BR', { notation: 'compact', maximumFractionDigits: 1 }).format(value);
 }
 
 export default function RankDistributionChart({ points }: { points: Point[] }) {
@@ -85,18 +85,18 @@ export default function RankDistributionChart({ points }: { points: Point[] }) {
     <section className="bg-nexo-surface border border-nexo-border rounded-nexo-lg p-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="nexo-section">SERP mix</p>
-          <h2 className="mt-1 text-base font-medium tracking-tight text-nexo-text">Position distribution over time</h2>
-          <p className="mt-1 text-xs text-nexo-dim">The coloured areas show the position mix; the blue line tracks the total number of ranked keywords.</p>
+          <p className="nexo-section">Composição da SERP</p>
+          <h2 className="mt-1 text-base font-medium tracking-tight text-nexo-text">Distribuição de posições ao longo do tempo</h2>
+          <p className="mt-1 text-xs text-nexo-dim">As áreas coloridas mostram a distribuição de posições; a linha azul acompanha o total de palavras-chave ranqueadas.</p>
         </div>
         <div className="flex max-w-md flex-wrap justify-end gap-x-3 gap-y-1.5 text-[10px] font-medium text-nexo-dim">
-          <span className="inline-flex items-center gap-1.5 text-nexo-sky"><i className="h-0.5 w-3 bg-nexo-blue" />Ranked keywords</span>
+          <span className="inline-flex items-center gap-1.5 text-nexo-sky"><i className="h-0.5 w-3 bg-nexo-blue" />Palavras-chave ranqueadas</span>
           {bands.map((band) => <span key={band.key} className="inline-flex items-center gap-1.5"><i className="h-2 w-2 rounded-sm" style={{ backgroundColor: band.color }} />{band.label}</span>)}
         </div>
       </div>
 
       <div className="mt-5 overflow-x-auto rounded-nexo-lg bg-white/[0.02] p-2">
-        <svg viewBox={`0 0 ${width} ${height}`} className="min-w-[620px] h-auto w-full" role="img" aria-label="Monthly position distribution and total ranked keywords">
+        <svg viewBox={`0 0 ${width} ${height}`} className="min-w-[620px] h-auto w-full" role="img" aria-label="Distribuição mensal de posições e total de palavras-chave ranqueadas">
           {[0, 25, 50, 75, 100].map((tick) => (
             <g key={tick}>
               <line x1={left} x2={width - right} y1={y(tick)} y2={y(tick)} stroke="currentColor" strokeOpacity="0.10" />
@@ -116,7 +116,7 @@ export default function RankDistributionChart({ points }: { points: Point[] }) {
             const step = points.length > 1 ? plotWidth / (points.length - 1) : 68;
             const leftEdge = Math.max(left, x(index) - step / 2);
             const rightEdge = Math.min(width - right, x(index) + step / 2);
-            const tooltip = `${displayVolume(totals[index])} ranked keywords; ${bands.map((band, bandIndex) => `${band.label}: ${displayPercent(values[index][bandIndex])}`).join('; ')}`;
+            const tooltip = `${displayVolume(totals[index])} palavras-chave ranqueadas; ${bands.map((band, bandIndex) => `${band.label}: ${displayPercent(values[index][bandIndex])}`).join('; ')}`;
             return (
               <g key={`${point.year}-${point.month}`}>
                 <line x1={x(index)} x2={x(index)} y1={top} y2={height - bottom} stroke="currentColor" strokeOpacity="0.08" />
@@ -128,7 +128,7 @@ export default function RankDistributionChart({ points }: { points: Point[] }) {
           {tickIndexes.map((index) => <text key={index} x={x(index)} y={height - 11} textAnchor={index === 0 ? 'start' : index === points.length - 1 ? 'end' : 'middle'} fontSize="9" fill="currentColor" opacity="0.58">{formatMonth(points[index].year, points[index].month)}</text>)}
         </svg>
       </div>
-      <div className="mt-3 flex flex-wrap justify-between gap-x-4 gap-y-1 text-[10px] text-nexo-faint"><span>Left scale: position share.</span><span>Right scale: ranked keywords.</span><span>Hover a month for the detailed mix and volume.</span></div>
+      <div className="mt-3 flex flex-wrap justify-between gap-x-4 gap-y-1 text-[10px] text-nexo-faint"><span>Escala à esquerda: participação por posição.</span><span>Escala à direita: palavras-chave ranqueadas.</span><span>Passe o mouse sobre um mês para ver a distribuição detalhada e o volume.</span></div>
     </section>
   );
 }

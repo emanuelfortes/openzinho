@@ -13,9 +13,9 @@ export default function StatusDot({ status, title, size = 'md' }: { status: Chec
   const dimension = size === 'sm' ? 'h-2.5 w-2.5' : 'h-3 w-3';
   return (
     <span
-      title={title ?? (status ? STATUS_LABEL[status] : 'No check')}
+      title={title ?? (status ? STATUS_LABEL[status] : 'Sem verificação')}
       className={`inline-block shrink-0 rounded-full border ${dimension} ${DOT[key]}`}
-      aria-label={title ?? (status ? STATUS_LABEL[status] : 'No check')}
+      aria-label={title ?? (status ? STATUS_LABEL[status] : 'Sem verificação')}
     />
   );
 }

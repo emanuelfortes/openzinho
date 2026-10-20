@@ -27,7 +27,7 @@ function DrBadge({ value }: { value?: number }) {
 
 function fmtVisited(s?: string) {
   if (!s) return '—';
-  return new Date(s).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+  return new Date(s).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
 }
 
 function sortValue(item: FindDomainItem, key: SortKey): number | string {
@@ -89,17 +89,17 @@ export default function TechFindTable({ items }: { items: FindDomainItem[] }) {
   return (
     <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
       <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between">
-        <h2 className="nexo-label">Matching domains</h2>
+        <h2 className="nexo-label">Domínios encontrados</h2>
         <div className="flex items-center gap-3">
-          <span className="text-xs font-medium text-nexo-faint">{items.length} shown</span>
+          <span className="text-xs font-medium text-nexo-faint">{items.length} exibidos</span>
           <CopyMarkdownButton
             data={csvData}
             columns={[
               { key: 'dr', label: 'DR' },
-              { key: 'domain', label: 'Domain' },
-              { key: 'title', label: 'Title' },
-              { key: 'country', label: 'Country' },
-              { key: 'last_seen', label: 'Last Seen' },
+              { key: 'domain', label: 'Domínio' },
+              { key: 'title', label: 'Título' },
+              { key: 'country', label: 'País' },
+              { key: 'last_seen', label: 'Visto pela última vez' },
             ]}
           />
         </div>
@@ -109,10 +109,10 @@ export default function TechFindTable({ items }: { items: FindDomainItem[] }) {
           <thead>
             <tr className="border-b border-nexo-border bg-white/[0.02]">
               <Header label="DR" sortK="dr" align="center" className="w-14" />
-              <Header label="Domain" sortK="domain" align="left" />
-              <Header label="Title" sortK="title" align="left" className="hidden md:table-cell" />
-              <Header label="Country" sortK="country" align="center" className="hidden sm:table-cell w-16" />
-              <Header label="Last seen" sortK="last_seen" align="right" className="hidden lg:table-cell" />
+              <Header label="Domínio" sortK="domain" align="left" />
+              <Header label="Título" sortK="title" align="left" className="hidden md:table-cell" />
+              <Header label="País" sortK="country" align="center" className="hidden sm:table-cell w-16" />
+              <Header label="Visto pela última vez" sortK="last_seen" align="right" className="hidden lg:table-cell" />
             </tr>
           </thead>
           <tbody className="divide-y divide-nexo-border">

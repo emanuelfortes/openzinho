@@ -31,7 +31,7 @@ async function SettingsPage() {
   const gridPreferences = getGridPreferences();
 
   let balance = 0;
-  let status = 'NOT CONNECTED';
+  let status = 'NÃO CONECTADO';
 
   if (creds) {
     try {
@@ -43,23 +43,23 @@ async function SettingsPage() {
       if (res.ok) {
         const data = await res.json() as DFUserResponse;
         balance = data.tasks?.[0]?.result?.[0]?.money?.balance ?? 0;
-        status = 'CONNECTED';
+        status = 'CONECTADO';
       } else {
-        status = `ERROR ${res.status}`;
+        status = `ERRO ${res.status}`;
       }
     } catch {
-      status = 'CONNECTION ERROR';
+      status = 'ERRO DE CONEXÃO';
     }
   }
 
-  const connected = status === 'CONNECTED';
+  const connected = status === 'CONECTADO';
 
   return (
     <div className="max-w-2xl space-y-8 pb-12">
       <div className="flex justify-between items-end">
         <div>
-          <h1 className="nexo-h1">Settings</h1>
-          <p className="text-nexo-dim text-sm mt-1 font-medium">DataForSEO API Management</p>
+          <h1 className="nexo-h1">Configurações</h1>
+          <p className="text-nexo-dim text-sm mt-1 font-medium">Gerenciamento da API do DataForSEO</p>
         </div>
         <div className={`px-3 py-1 rounded-full text-[10px] font-medium tracking-widest border ${
           connected
@@ -73,11 +73,11 @@ async function SettingsPage() {
       {/* Balance Card */}
       <div className="nexo-panel p-10 relative overflow-hidden border-nexo-border-strong">
         <div className="relative z-10">
-          <p className="nexo-label">Total Available Credits</p>
+          <p className="nexo-label">Total de créditos disponíveis</p>
           <div className="mt-4 flex items-center gap-4">
-            <span className="nexo-metric text-6xl font-mono leading-none">${balance.toFixed(2)}</span>
+            <span className="nexo-metric text-6xl font-mono leading-none">{balance.toLocaleString('pt-BR', { style: 'currency', currency: 'USD' })}</span>
             <div className="h-10 w-px bg-nexo-border-strong mx-2" />
-            <span className="text-nexo-faint text-xs font-medium leading-tight">USD<br />BALANCE</span>
+            <span className="text-nexo-faint text-xs font-medium leading-tight">SALDO<br />EM USD</span>
           </div>
         </div>
       </div>
@@ -88,26 +88,26 @@ async function SettingsPage() {
           <form action={updateSettings} className="space-y-8">
             {/* API Credentials */}
             <div>
-              <p className="nexo-label mb-4">API Credentials</p>
+              <p className="nexo-label mb-4">Credenciais da API</p>
               {!creds && (
                 <aside className="mb-6 border-l-2 border-nexo-sky bg-nexo-blue/10 px-4 py-3.5">
-                  <p className="text-xs font-medium text-nexo-text">New to DataForSEO?</p>
+                  <p className="text-xs font-medium text-nexo-text">Ainda não usa o DataForSEO?</p>
                   <p className="mt-1 text-xs leading-relaxed text-nexo-dim">
-                    <a href="https://try.dataforseo.com/nrjev32kinaz" target="_blank" rel="noreferrer" className="font-medium text-nexo-sky underline decoration-nexo-border-strong underline-offset-2 transition-colors hover:text-white">Create an account through this link ↗</a>
-                    {' '}to support the continued development of SEO Playground, the open-source project Nexo is built on, at no extra cost to you.
+                    <a href="https://try.dataforseo.com/nrjev32kinaz" target="_blank" rel="noreferrer" className="font-medium text-nexo-sky underline decoration-nexo-border-strong underline-offset-2 transition-colors hover:text-white">Crie uma conta por este link ↗</a>
+                    {' '}para apoiar o desenvolvimento contínuo do SEO Playground, o projeto open source em que o Nexo se baseia, sem custo extra para você.
                   </p>
-                  <p className="mt-1.5 text-[10px] font-medium text-nexo-dim">Affiliate link — I may earn a commission if you become a customer.</p>
+                  <p className="mt-1.5 text-[10px] font-medium text-nexo-dim">Link de afiliado — posso receber uma comissão se você se tornar cliente.</p>
                 </aside>
               )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="nexo-label ml-1">API Username</label>
+                  <label className="nexo-label ml-1">Usuário da API</label>
                   <input name="login" type="text" defaultValue={creds?.login || ''} className={inputCls} />
                 </div>
                 <div className="space-y-2">
-                  <label className="nexo-label ml-1">API Password</label>
+                  <label className="nexo-label ml-1">Senha da API</label>
                   <input name="password" type="password" className={inputCls} />
-                  {creds && <p className="text-[10px] text-nexo-ice ml-1">Password saved. Leave blank to keep it unchanged.</p>}
+                  {creds && <p className="text-[10px] text-nexo-ice ml-1">Senha salva. Deixe em branco para mantê-la.</p>}
                 </div>
               </div>
             </div>
@@ -116,8 +116,8 @@ async function SettingsPage() {
 
             {/* White-label report identity */}
             <div>
-              <p className="nexo-label mb-1">White-label reports</p>
-              <p className="text-xs text-nexo-faint mb-6">Applied to every PDF you export. Leave the name blank to use Nexo.</p>
+              <p className="nexo-label mb-1">Relatórios com sua marca</p>
+              <p className="text-xs text-nexo-faint mb-6">Aplicado a todo PDF que você exportar. Deixe o nome em branco para usar Nexo.</p>
               <BrandIdentityFields
                 initialName={brandName}
                 initialColor={brandColor}
@@ -131,13 +131,13 @@ async function SettingsPage() {
 
             {/* Geo-grid display preferences */}
             <div>
-              <p className="nexo-label mb-1">Geo-grid</p>
-              <p className="text-xs text-nexo-faint mb-6">How the Geo-grid tracker shows distances and ranking pins.</p>
+              <p className="nexo-label mb-1">Geo-Grid</p>
+              <p className="text-xs text-nexo-faint mb-6">Como o monitor Geo-Grid exibe distâncias e pinos de posição.</p>
               <GridPreferenceFields initial={gridPreferences} />
             </div>
 
             <button type="submit" className="w-full bg-nexo-blue text-white py-5 rounded-nexo-lg font-medium uppercase text-xs tracking-[0.2em] hover:bg-nexo-sky transition-all active:scale-[0.98]">
-              Save Settings
+              Salvar configurações
             </button>
           </form>
         </div>
@@ -146,12 +146,12 @@ async function SettingsPage() {
       {/* Danger Zone */}
       <div className="bg-nexo-danger/10 border border-nexo-danger/40 rounded-nexo-lg p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="max-w-md">
-          <h2 className="text-nexo-danger-text font-medium text-xs uppercase tracking-widest mb-1">Danger Zone</h2>
-          <p className="text-xs text-nexo-danger-text font-medium leading-relaxed">Removes your locally stored credentials.</p>
+          <h2 className="text-nexo-danger-text font-medium text-xs uppercase tracking-widest mb-1">Zona de perigo</h2>
+          <p className="text-xs text-nexo-danger-text font-medium leading-relaxed">Remove as credenciais armazenadas localmente.</p>
         </div>
         <form action={deleteCredentials}>
           <button type="submit" className="px-6 py-3 bg-nexo-surface border border-nexo-danger/40 text-nexo-danger-text text-[10px] font-medium uppercase tracking-widest rounded-nexo-lg hover:bg-nexo-danger/80 hover:text-white transition-all">
-            Disconnect
+            Desconectar
           </button>
         </form>
       </div>

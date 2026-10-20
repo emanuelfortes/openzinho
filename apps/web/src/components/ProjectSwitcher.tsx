@@ -40,7 +40,7 @@ export default function ProjectSwitcher({ projects, activeProject }: { projects:
 
       {open && (
         <div role="menu" className="absolute left-3 right-3 top-[calc(100%+6px)] z-30 overflow-hidden rounded-nexo-lg border border-nexo-border bg-nexo-surface py-1.5">
-          <p className="px-3 pb-1.5 pt-1 text-[9px] font-medium uppercase tracking-[0.14em] text-nexo-faint">Projects</p>
+          <p className="px-3 pb-1.5 pt-1 text-[9px] font-medium uppercase tracking-[0.14em] text-nexo-faint">Projetos</p>
           <div className="max-h-52 overflow-y-auto px-1.5 scrollbar-thin">
             {projects.map((project) => (
               <form key={project.id} action={selectProjectAction}>
@@ -62,8 +62,8 @@ export default function ProjectSwitcher({ projects, activeProject }: { projects:
                   <Link
                     href={`/dashboard/projects?edit=${encodeURIComponent(project.id)}`}
                     onClick={() => setOpen(false)}
-                    aria-label={`Edit ${project.name} settings`}
-                    title="Project settings"
+                    aria-label={`Editar configurações de ${project.name}`}
+                    title="Configurações do projeto"
                     className="mr-1 grid h-7 w-7 shrink-0 place-items-center rounded-md text-nexo-faint transition-colors hover:bg-white/[0.06] hover:text-nexo-sky"
                   >
                     <Settings className="h-3.5 w-3.5" />
@@ -74,10 +74,10 @@ export default function ProjectSwitcher({ projects, activeProject }: { projects:
           </div>
           <div className="mt-1 border-t border-nexo-border px-1.5 pt-1.5">
             <Link href="/dashboard/projects" onClick={() => setOpen(false)} className="flex items-center gap-2 rounded-nexo px-2 py-2 text-xs font-semibold text-nexo-dim transition-colors hover:bg-white/[0.04] hover:text-white">
-              <FolderKanban className="h-3.5 w-3.5" /> Manage projects
+              <FolderKanban className="h-3.5 w-3.5" /> Gerenciar projetos
             </Link>
             <Link href="/dashboard/projects#new-project" onClick={() => setOpen(false)} className="flex items-center gap-2 rounded-nexo px-2 py-2 text-xs font-semibold text-nexo-sky transition-colors hover:bg-nexo-blue/15">
-              <Plus className="h-3.5 w-3.5" /> Create project
+              <Plus className="h-3.5 w-3.5" /> Criar projeto
             </Link>
           </div>
         </div>

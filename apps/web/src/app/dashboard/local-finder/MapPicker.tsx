@@ -87,7 +87,7 @@ export default function MapPicker({ coordinate, onChange, showGrid, gridSize, sp
 
       const [defaultLat, defaultLng] = coordinate
         ? coordinate.split(',').map(Number)
-        : [48.8566, 2.3522];
+        : [-23.5505, -46.6333];
 
       const map = L.map(containerRef.current!).setView([defaultLat, defaultLng], 12);
       mapRef.current = map;
@@ -251,9 +251,9 @@ export default function MapPicker({ coordinate, onChange, showGrid, gridSize, sp
         setBusinesses(found);
         return;
       }
-      if (!(await geocodeAddress(query))) setGeoError('No Google listing or address found. Try the business name plus city, or type lat,lng below.');
+      if (!(await geocodeAddress(query))) setGeoError('Nenhum perfil do Google ou endereço encontrado. Tente o nome da empresa mais a cidade, ou digite lat,lng abaixo.');
     } catch {
-      setGeoError('Search failed. Try again.');
+      setGeoError('A busca falhou. Tente novamente.');
     } finally {
       setGeocodng(false);
     }
@@ -270,7 +270,7 @@ export default function MapPicker({ coordinate, onChange, showGrid, gridSize, sp
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleGeocode(); } }}
-          placeholder="Search a business name (e.g. Best Plumbing Austin) or an address…"
+          placeholder="Busque o nome de uma empresa (ex.: Hidráulica Central Campinas) ou um endereço…"
           className="nexo-input min-w-0 flex-1 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
         />
         <button
@@ -279,13 +279,13 @@ export default function MapPicker({ coordinate, onChange, showGrid, gridSize, sp
           disabled={geocoding || !query.trim()}
           className="nexo-label px-4 py-2 bg-white text-nexo-bg rounded-nexo-lg hover:bg-nexo-ice transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {geocoding ? '…' : 'Find'}
+          {geocoding ? '…' : 'Localizar'}
         </button>
       </div>
       {geoError && <p className="text-[11px] text-nexo-danger-text -mt-1">{geoError}</p>}
       {businesses.length > 0 && (
         <div className="overflow-hidden rounded-nexo-lg border border-nexo-border">
-          <p className="nexo-label bg-white/[0.02] px-3 py-1.5">Google Maps listings · pick one</p>
+          <p className="nexo-label bg-white/[0.02] px-3 py-1.5">Perfis no Google Maps · escolha um</p>
           {businesses.map((business) => (
             <button
               key={business.cid}
@@ -296,7 +296,7 @@ export default function MapPicker({ coordinate, onChange, showGrid, gridSize, sp
               <span className="block text-sm font-medium text-nexo-text">{business.title}</span>
               <span className="block text-[11px] text-nexo-faint">
                 {[business.category, business.address].filter(Boolean).join(' · ')}
-                {business.rating != null ? ` · ${business.rating}★ (${business.reviews ?? 0})` : ''}
+                {business.rating != null ? ` · ${business.rating.toLocaleString('pt-BR')}★ (${(business.reviews ?? 0).toLocaleString('pt-BR')})` : ''}
               </span>
             </button>
           ))}
@@ -311,7 +311,7 @@ export default function MapPicker({ coordinate, onChange, showGrid, gridSize, sp
       />
       {showGrid && coordinate && gridSize && spacingKm && (
         <p className="text-[11px] text-nexo-faint -mt-1">
-          {gridSize}×{gridSize} grid · {distanceUnit === 'km' && spacingKm < 1 ? `${spacingKm * 1000} m` : formatDistance(spacingKm, distanceUnit)} spacing · {gridSize ** 2} points
+          grade {gridSize}×{gridSize} · espaçamento de {distanceUnit === 'km' && spacingKm < 1 ? `${spacingKm * 1000} m` : formatDistance(spacingKm, distanceUnit)} · {gridSize ** 2} pontos
         </p>
       )}
     </>

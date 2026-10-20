@@ -71,7 +71,7 @@ async function fetchCompetitors(
 // ---- UI helpers ----
 
 function formatDate(ts: number) {
-  return new Date(ts).toLocaleDateString("en-GB", { day: 'numeric', month: 'short', year: 'numeric' });
+  return new Date(ts).toLocaleDateString("pt-BR", { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 // ---- Page ----
@@ -82,8 +82,8 @@ async function CompetitorsPage({ searchParams }: { searchParams: Promise<SearchP
   const historyId = params.history_id;
 
   const target = params.target?.trim() ?? '';
-  const location = params.location ?? toLabsCountry(getSetting('default_location') ?? 'France');
-  const language = params.language ?? getSetting('default_language') ?? 'French';
+  const location = params.location ?? toLabsCountry(getSetting('default_location') ?? 'Brazil');
+  const language = params.language ?? getSetting('default_language') ?? 'Portuguese';
   const limit = Math.min(parseInt(params.limit ?? '20', 10) || 20, 100);
 
   let items: CompetitorItem[] = [];
@@ -100,7 +100,7 @@ async function CompetitorsPage({ searchParams }: { searchParams: Promise<SearchP
       const history = getCompetitorsHistory();
       activeEntry = history.find((e) => e.id === historyId) ?? null;
     } else {
-      error = 'This search is no longer available.';
+      error = 'Esta busca não está mais disponível.';
     }
   }
 
@@ -114,7 +114,7 @@ async function CompetitorsPage({ searchParams }: { searchParams: Promise<SearchP
       const cachedEntry = getCompetitorsHistory().find((e) => e.id === dedupeId);
       cost = cachedEntry?.cost;
     } else if (!creds) {
-      error = 'DataForSEO credentials missing. Configure them in Settings.';
+      error = 'Credenciais do DataForSEO ausentes. Configure-as em Configurações.';
     } else {
       const res = await fetchCompetitors(target, location, language, limit, creds.login, creds.pass);
       items = res.items;
@@ -146,36 +146,36 @@ async function CompetitorsPage({ searchParams }: { searchParams: Promise<SearchP
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="nexo-h1">Competitors</h1>
-        <p className="text-sm text-nexo-faint mt-1">Domains that rank for the same keywords as your target.</p>
+        <h1 className="nexo-h1">Concorrentes</h1>
+        <p className="text-sm text-nexo-faint mt-1">Domínios que ranqueiam nas mesmas palavras-chave que o seu alvo.</p>
       </div>
 
       {/* Form */}
-      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Analyze" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
+      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Analisar" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="sm:col-span-2">
-            <label className="nexo-label block mb-1.5">Target domain</label>
+            <label className="nexo-label block mb-1.5">Domínio alvo</label>
             <input
               type="text" name="target"
               defaultValue={activeEntry?.target ?? target}
-              placeholder="e.g. example.com"
+              placeholder="ex.: exemplo.com.br"
               required
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky font-mono transition-all"
             />
           </div>
           <div>
-            <label className="nexo-label block mb-1.5">Location</label>
+            <label className="nexo-label block mb-1.5">Local</label>
             <LocationPicker name="location" defaultValue={activeEntry?.location ?? location} className="w-full px-4 py-2.5 border border-nexo-border rounded-nexo-lg text-sm text-nexo-text focus:outline-none focus:ring-2 focus:ring-nexo-sky bg-nexo-surface" scope="labs" />
           </div>
           <div>
-            <label className="nexo-label block mb-1.5">Language</label>
+            <label className="nexo-label block mb-1.5">Idioma</label>
             <select name="language" defaultValue={activeEntry?.language ?? language}
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
               {LANGUAGES.map((l) => <option key={l.value} value={l.value}>{l.label}</option>)}
             </select>
           </div>
           <div>
-            <label className="nexo-label block mb-1.5">Number of competitors</label>
+            <label className="nexo-label block mb-1.5">Número de concorrentes</label>
             <select name="limit" defaultValue={String(limit)}
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
               <option value="10">10</option>
@@ -196,14 +196,14 @@ async function CompetitorsPage({ searchParams }: { searchParams: Promise<SearchP
             <div className="flex items-center gap-3">
               <h2 className="nexo-label">
                 {displayTarget
-                  ? <><span className="text-nexo-text">{displayTarget}</span> — competitors</>
-                  : 'Competitors'}
+                  ? <><span className="text-nexo-text">{displayTarget}</span> — concorrentes</>
+                  : 'Concorrentes'}
               </h2>
-              {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>}
+              {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">Histórico</span>}
             </div>
             <div className="flex items-center gap-3">
-              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">cost: ${cost.toFixed(4)}</span>}
-              <span className="text-xs font-medium text-nexo-faint">{items.length} competitor{items.length !== 1 ? 's' : ''}</span>
+              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">custo: US$ {cost.toFixed(4).replace('.', ',')}</span>}
+              <span className="text-xs font-medium text-nexo-faint">{items.length} {items.length === 1 ? 'concorrente' : 'concorrentes'}</span>
               {items.length > 0 && (
                 <div className="flex items-center gap-2">
                   <CopyMarkdownButton
@@ -215,11 +215,11 @@ async function CompetitorsPage({ searchParams }: { searchParams: Promise<SearchP
                       total_kw: item.full_domain_metrics?.organic?.count ?? item.metrics?.organic?.count ?? '',
                     }))}
                     columns={[
-                      { key: 'domain', label: 'Domain' },
-                      { key: 'intersections', label: 'Common KWs' },
-                      { key: 'avg_position', label: 'Avg Position' },
-                      { key: 'traffic', label: 'Est. Traffic' },
-                      { key: 'total_kw', label: 'Total KWs' },
+                      { key: 'domain', label: 'Domínio' },
+                      { key: 'intersections', label: 'Palavras-chave em comum' },
+                      { key: 'avg_position', label: 'Posição média' },
+                      { key: 'traffic', label: 'Tráfego estimado' },
+                      { key: 'total_kw', label: 'Total de palavras-chave' },
                     ]}
                   />
                   <ExportCSVButton
@@ -232,11 +232,11 @@ async function CompetitorsPage({ searchParams }: { searchParams: Promise<SearchP
                     }))}
                     filename={`competitors-${displayTarget}.csv`}
                     columns={[
-                      { key: 'domain', label: 'Domain' },
-                      { key: 'intersections', label: 'Common KWs' },
-                      { key: 'avg_position', label: 'Avg Position' },
-                      { key: 'traffic', label: 'Est. Traffic' },
-                      { key: 'total_kw', label: 'Total KWs' },
+                      { key: 'domain', label: 'Domínio' },
+                      { key: 'intersections', label: 'Palavras-chave em comum' },
+                      { key: 'avg_position', label: 'Posição média' },
+                      { key: 'traffic', label: 'Tráfego estimado' },
+                      { key: 'total_kw', label: 'Total de palavras-chave' },
                     ]}
                   />
                 </div>
@@ -245,7 +245,7 @@ async function CompetitorsPage({ searchParams }: { searchParams: Promise<SearchP
           </div>
 
           {items.length === 0 ? (
-            <div className="px-6 py-12 text-center text-sm text-nexo-faint">No competitors found.</div>
+            <div className="px-6 py-12 text-center text-sm text-nexo-faint">Nenhum concorrente encontrado.</div>
           ) : (
             <CompetitorsTable items={items} maxIntersections={maxIntersections} />
           )}
@@ -256,7 +256,7 @@ async function CompetitorsPage({ searchParams }: { searchParams: Promise<SearchP
       {history.length > 0 && (
         <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border">
-            <h2 className="nexo-label">History</h2>
+            <h2 className="nexo-label">Histórico</h2>
           </div>
           <div className="divide-y divide-nexo-border">
             {history.map((entry) => {
@@ -267,8 +267,8 @@ async function CompetitorsPage({ searchParams }: { searchParams: Promise<SearchP
                   <div className="flex-1 min-w-0">
                     <p className={`text-sm font-medium font-mono truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.target}</p>
                     <p className="text-[11px] text-nexo-faint mt-0.5">
-                      {entry.location} · {entry.count} competitor{entry.count !== 1 ? 's' : ''}
-                      {entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}
+                      {entry.location} · {entry.count} {entry.count === 1 ? 'concorrente' : 'concorrentes'}
+                      {entry.cost !== undefined ? ` · US$ ${entry.cost.toFixed(4).replace('.', ',')}` : ''}
                     </p>
                   </div>
                   <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>

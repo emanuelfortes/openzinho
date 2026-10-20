@@ -34,7 +34,7 @@ export const RANK_TIERS: Record<RankTier, RankTierStyle> = {
     swatch: '#1246b8', pdfFill: [18, 70, 184], pdfText: [255, 255, 255],
   },
   none: {
-    label: '20+ / not found', fill: 'rgba(77,162,255,.1)', text: 'rgba(194,224,255,.45)', border: '1px solid rgba(77,162,255,.4)', glow: '',
+    label: '20+ / não encontrado', fill: 'rgba(77,162,255,.1)', text: 'rgba(194,224,255,.45)', border: '1px solid rgba(77,162,255,.4)', glow: '',
     swatch: '#16263d', pdfFill: [226, 237, 252], pdfText: [90, 120, 160],
   },
 };

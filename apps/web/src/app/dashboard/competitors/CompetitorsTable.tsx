@@ -9,12 +9,12 @@ type SortDir = 'asc' | 'desc';
 
 function fmt(n?: number) {
   if (n === undefined || n === null) return '—';
-  return n.toLocaleString('en-GB');
+  return n.toLocaleString('pt-BR');
 }
 
 function n(v: number) {
-  if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(1)}M`;
-  if (v >= 1_000) return `${(v / 1_000).toFixed(1)}k`;
+  if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(1).replace('.', ',')} mi`;
+  if (v >= 1_000) return `${(v / 1_000).toFixed(1).replace('.', ',')} mil`;
   return String(v);
 }
 
@@ -78,11 +78,11 @@ export default function CompetitorsTable({ items, maxIntersections }: { items: C
         <thead>
           <tr className="border-b border-nexo-border bg-white/[0.02]">
             <th className="nexo-label px-5 py-3 text-center w-10">#</th>
-            <Header label="Competitor domain" sortK="domain" align="left" />
-            <Header label="Common keywords" sortK="intersections" align="left" />
-            <Header label="Avg pos." sortK="avg_position" align="right" />
-            <Header label="Est. traffic" sortK="traffic" align="right" className="hidden sm:table-cell" />
-            <Header label="Total KW" sortK="total_kw" align="right" className="hidden md:table-cell" />
+            <Header label="Domínio concorrente" sortK="domain" align="left" />
+            <Header label="Palavras-chave em comum" sortK="intersections" align="left" />
+            <Header label="Pos. média" sortK="avg_position" align="right" />
+            <Header label="Tráfego estimado" sortK="traffic" align="right" className="hidden sm:table-cell" />
+            <Header label="Total de palavras-chave" sortK="total_kw" align="right" className="hidden md:table-cell" />
           </tr>
         </thead>
         <tbody className="divide-y divide-nexo-border">
@@ -118,7 +118,7 @@ export default function CompetitorsTable({ items, maxIntersections }: { items: C
                   </div>
                 </td>
                 <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">
-                  {item.avg_position ? item.avg_position.toFixed(1) : '—'}
+                  {item.avg_position ? item.avg_position.toFixed(1).replace('.', ',') : '—'}
                 </td>
                 <td className="px-4 py-3 text-right hidden sm:table-cell">
                   <TrafficBadge value={traffic} />

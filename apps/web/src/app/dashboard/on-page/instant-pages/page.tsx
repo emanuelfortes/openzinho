@@ -102,52 +102,52 @@ interface SearchParams {
 type CheckSeverity = 'error' | 'warning' | 'info' | 'good';
 
 const CHECK_META: Record<string, { label: string; severity: CheckSeverity }> = {
-  no_title: { label: 'Missing title tag', severity: 'error' },
-  no_description: { label: 'Missing meta description', severity: 'error' },
-  no_h1_tag: { label: 'Missing H1 tag', severity: 'error' },
-  duplicate_title_tag: { label: 'Duplicate title tags', severity: 'error' },
-  is_4xx_code: { label: '4XX status code', severity: 'error' },
-  is_5xx_code: { label: '5XX status code', severity: 'error' },
-  is_broken: { label: 'Broken page', severity: 'error' },
-  no_doctype: { label: 'Missing DOCTYPE', severity: 'error' },
-  has_micromarkup_errors: { label: 'Microdata errors', severity: 'error' },
-  high_loading_time: { label: 'High loading time (>3s)', severity: 'warning' },
-  high_waiting_time: { label: 'High TTFB (>1.5s)', severity: 'warning' },
-  https_to_http_links: { label: 'HTTPS page links to HTTP', severity: 'warning' },
-  no_image_alt: { label: 'Images missing alt text', severity: 'warning' },
-  no_image_title: { label: 'Images missing title text', severity: 'warning' },
-  no_favicon: { label: 'No favicon', severity: 'warning' },
-  title_too_long: { label: 'Title too long (>65 chars)', severity: 'warning' },
-  title_too_short: { label: 'Title too short (<30 chars)', severity: 'warning' },
-  low_content_rate: { label: 'Low text-to-size ratio', severity: 'warning' },
-  high_content_rate: { label: 'High text-to-size ratio', severity: 'warning' },
-  has_render_blocking_resources: { label: 'Render-blocking resources', severity: 'warning' },
-  size_greater_than_3mb: { label: 'Page > 3 MB', severity: 'warning' },
-  large_page_size: { label: 'Large page size (>1 MB)', severity: 'warning' },
-  low_character_count: { label: 'Low character count (<1024)', severity: 'warning' },
-  deprecated_html_tags: { label: 'Deprecated HTML tags', severity: 'warning' },
-  duplicate_meta_tags: { label: 'Duplicate meta tags', severity: 'warning' },
-  no_encoding_meta_tag: { label: 'Missing charset meta tag', severity: 'warning' },
-  has_meta_refresh_redirect: { label: 'Meta refresh redirect', severity: 'warning' },
-  flash: { label: 'Flash elements detected', severity: 'warning' },
-  frame: { label: 'Frame/iframe elements', severity: 'warning' },
-  lorem_ipsum: { label: 'Lorem ipsum text found', severity: 'warning' },
-  has_misspelling: { label: 'Spelling errors', severity: 'warning' },
-  irrelevant_description: { label: 'Description irrelevant to content', severity: 'warning' },
-  irrelevant_title: { label: 'Title irrelevant to content', severity: 'warning' },
+  no_title: { label: 'Tag de título ausente', severity: 'error' },
+  no_description: { label: 'Meta description ausente', severity: 'error' },
+  no_h1_tag: { label: 'Tag H1 ausente', severity: 'error' },
+  duplicate_title_tag: { label: 'Tags de título duplicadas', severity: 'error' },
+  is_4xx_code: { label: 'Código de status 4XX', severity: 'error' },
+  is_5xx_code: { label: 'Código de status 5XX', severity: 'error' },
+  is_broken: { label: 'Página quebrada', severity: 'error' },
+  no_doctype: { label: 'DOCTYPE ausente', severity: 'error' },
+  has_micromarkup_errors: { label: 'Erros de microdados', severity: 'error' },
+  high_loading_time: { label: 'Tempo de carregamento alto (>3s)', severity: 'warning' },
+  high_waiting_time: { label: 'TTFB alto (>1,5s)', severity: 'warning' },
+  https_to_http_links: { label: 'Página HTTPS com links para HTTP', severity: 'warning' },
+  no_image_alt: { label: 'Imagens sem texto alt', severity: 'warning' },
+  no_image_title: { label: 'Imagens sem atributo title', severity: 'warning' },
+  no_favicon: { label: 'Sem favicon', severity: 'warning' },
+  title_too_long: { label: 'Título longo demais (>65 caracteres)', severity: 'warning' },
+  title_too_short: { label: 'Título curto demais (<30 caracteres)', severity: 'warning' },
+  low_content_rate: { label: 'Proporção texto/tamanho baixa', severity: 'warning' },
+  high_content_rate: { label: 'Proporção texto/tamanho alta', severity: 'warning' },
+  has_render_blocking_resources: { label: 'Recursos que bloqueiam a renderização', severity: 'warning' },
+  size_greater_than_3mb: { label: 'Página > 3 MB', severity: 'warning' },
+  large_page_size: { label: 'Página pesada (>1 MB)', severity: 'warning' },
+  low_character_count: { label: 'Poucos caracteres (<1024)', severity: 'warning' },
+  deprecated_html_tags: { label: 'Tags HTML obsoletas', severity: 'warning' },
+  duplicate_meta_tags: { label: 'Meta tags duplicadas', severity: 'warning' },
+  no_encoding_meta_tag: { label: 'Meta tag charset ausente', severity: 'warning' },
+  has_meta_refresh_redirect: { label: 'Redirecionamento por meta refresh', severity: 'warning' },
+  flash: { label: 'Elementos Flash detectados', severity: 'warning' },
+  frame: { label: 'Elementos frame/iframe', severity: 'warning' },
+  lorem_ipsum: { label: 'Texto lorem ipsum encontrado', severity: 'warning' },
+  has_misspelling: { label: 'Erros de ortografia', severity: 'warning' },
+  irrelevant_description: { label: 'Descrição sem relação com o conteúdo', severity: 'warning' },
+  irrelevant_title: { label: 'Título sem relação com o conteúdo', severity: 'warning' },
   is_https: { label: 'HTTPS', severity: 'good' },
-  has_html_doctype: { label: 'HTML DOCTYPE present', severity: 'good' },
-  has_micromarkup: { label: 'Structured data present', severity: 'good' },
-  seo_friendly_url: { label: 'SEO-friendly URL', severity: 'good' },
-  is_redirect: { label: 'Contains redirect (3XX)', severity: 'info' },
-  is_www: { label: 'WWW subdomain', severity: 'info' },
-  is_http: { label: 'HTTP (not HTTPS)', severity: 'info' },
-  canonical: { label: 'Canonical tag set', severity: 'info' },
-  has_meta_title: { label: 'Meta title tag present', severity: 'info' },
-  seo_friendly_url_characters_check: { label: 'URL uses valid characters', severity: 'info' },
-  seo_friendly_url_dynamic_check: { label: 'No dynamic URL parameters', severity: 'info' },
-  seo_friendly_url_keywords_check: { label: 'URL matches title keywords', severity: 'info' },
-  seo_friendly_url_relative_length_check: { label: 'URL length under 120 chars', severity: 'info' },
+  has_html_doctype: { label: 'DOCTYPE HTML presente', severity: 'good' },
+  has_micromarkup: { label: 'Dados estruturados presentes', severity: 'good' },
+  seo_friendly_url: { label: 'URL amigável para SEO', severity: 'good' },
+  is_redirect: { label: 'Contém redirecionamento (3XX)', severity: 'info' },
+  is_www: { label: 'Subdomínio WWW', severity: 'info' },
+  is_http: { label: 'HTTP (sem HTTPS)', severity: 'info' },
+  canonical: { label: 'Tag canonical definida', severity: 'info' },
+  has_meta_title: { label: 'Tag meta title presente', severity: 'info' },
+  seo_friendly_url_characters_check: { label: 'URL usa caracteres válidos', severity: 'info' },
+  seo_friendly_url_dynamic_check: { label: 'Sem parâmetros dinâmicos na URL', severity: 'info' },
+  seo_friendly_url_keywords_check: { label: 'URL corresponde às palavras-chave do título', severity: 'info' },
+  seo_friendly_url_relative_length_check: { label: 'URL com menos de 120 caracteres', severity: 'info' },
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -166,7 +166,7 @@ function formatMs(ms?: number): string {
 }
 
 function formatDate(ts: number) {
-  return new Date(ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  return new Date(ts).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 
 function scoreColor(score?: number): string {
@@ -246,13 +246,13 @@ async function InstantPagesPage({ searchParams }: { searchParams: Promise<Search
     try { new URL(rawUrl); validUrl = true; } catch { /* noop */ }
 
     if (!validUrl) {
-      createError = 'Invalid URL.';
+      createError = 'URL inválida.';
     } else if (!creds) {
-      createError = 'DataForSEO credentials missing. Configure them in settings.';
+      createError = 'Credenciais da DataForSEO ausentes. Configure-as em Configurações.';
     } else {
       const { result, cost, error } = await fetchInstantPage(rawUrl, creds.login, creds.pass);
       if (error || !result) {
-        createError = error ?? 'API call failed.';
+        createError = error ?? 'A chamada à API falhou.';
       } else {
         const id = randomUUID();
         saveInstantPageResult<ApiResult>({ id, ts: Date.now(), url: rawUrl, cost }, result);
@@ -288,23 +288,23 @@ async function InstantPagesPage({ searchParams }: { searchParams: Promise<Search
       {/* Header */}
       <div>
         <div className="nexo-label flex items-center gap-2 mb-1">
-          <span>On Page</span><span className="text-nexo-text">/</span><span className="text-nexo-dim">Instant Pages</span>
+          <span>On-page</span><span className="text-nexo-text">/</span><span className="text-nexo-dim">Páginas instantâneas</span>
         </div>
-        <h1 className="nexo-h1">Instant Page Analysis</h1>
-        <p className="text-sm text-nexo-faint mt-1">Full on-page audit of a URL — metadata, performance, checks, and content metrics.</p>
+        <h1 className="nexo-h1">Análise instantânea de página</h1>
+        <p className="text-sm text-nexo-faint mt-1">Auditoria on-page completa de uma URL: metadados, desempenho, verificações e métricas de conteúdo.</p>
       </div>
 
       {/* Form */}
       <SearchForm
         className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-3"
-        btnLabel="Analyze"
+        btnLabel="Analisar"
         btnClassName="nexo-label w-full bg-white text-nexo-bg py-2.5 rounded-nexo-lg hover:bg-nexo-ice transition-colors"
       >
-        <label className="nexo-label block mb-1.5">Page URL</label>
+        <label className="nexo-label block mb-1.5">URL da página</label>
         <input
           type="url"
           name="url"
-          placeholder="https://example.com/page"
+          placeholder="https://exemplo.com.br/pagina"
           required
           defaultValue={activeEntry?.url ?? ''}
           className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky font-mono"
@@ -325,7 +325,7 @@ async function InstantPagesPage({ searchParams }: { searchParams: Promise<Search
               <p className="text-xs font-mono text-nexo-dim truncate max-w-lg">{activeEntry.url}</p>
               <p className="text-[11px] text-nexo-faint mt-1">
                 {formatDate(activeEntry.ts)}
-                {activeEntry.cost !== undefined && ` · $${activeEntry.cost.toFixed(5)}`}
+                {activeEntry.cost !== undefined && ` · US$ ${activeEntry.cost.toFixed(5).replace('.', ',')}`}
                 {page.status_code !== undefined && ` · HTTP ${page.status_code}`}
                 {page.server && ` · ${page.server}`}
               </p>
@@ -333,7 +333,7 @@ async function InstantPagesPage({ searchParams }: { searchParams: Promise<Search
             {/* OnPage score */}
             {page.onpage_score !== undefined && (
               <div className={`shrink-0 rounded-nexo-lg border px-5 py-3 text-center ${scoreBg(page.onpage_score)}`}>
-                <p className="nexo-label mb-0.5">OnPage Score</p>
+                <p className="nexo-label mb-0.5">Nota OnPage</p>
                 <p className={`text-3xl font-medium ${scoreColor(page.onpage_score)}`}>{page.onpage_score.toFixed(1)}</p>
                 <p className="text-[10px] text-nexo-faint">/ 100</p>
               </div>
@@ -342,22 +342,22 @@ async function InstantPagesPage({ searchParams }: { searchParams: Promise<Search
 
           {/* Stats row */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <StatCard label="Page size" value={formatBytes(page.size)} sub={page.total_transfer_size ? `${formatBytes(page.total_transfer_size)} compressed` : undefined} />
-            <StatCard label="URL length" value={page.url_length ?? '—'} sub="characters" />
-            <StatCard label="Internal links" value={page.meta?.internal_links_count ?? '—'} />
-            <StatCard label="External links" value={page.meta?.external_links_count ?? '—'} />
+            <StatCard label="Tamanho da página" value={formatBytes(page.size)} sub={page.total_transfer_size ? `${formatBytes(page.total_transfer_size)} comprimido` : undefined} />
+            <StatCard label="Tamanho da URL" value={page.url_length ?? '—'} sub="caracteres" />
+            <StatCard label="Links internos" value={page.meta?.internal_links_count ?? '—'} />
+            <StatCard label="Links externos" value={page.meta?.external_links_count ?? '—'} />
           </div>
 
           {/* Checks */}
           {flaggedChecks.length > 0 && (
             <div id="results" className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
               <div className="px-6 py-4 border-b border-nexo-border">
-                <h2 className="nexo-label">Checks</h2>
+                <h2 className="nexo-label">Verificações</h2>
               </div>
               <div className="px-6 py-5 space-y-4">
                 {errors.length > 0 && (
                   <div>
-                    <p className="text-[10px] font-medium uppercase tracking-widest text-nexo-danger-text mb-2">Errors</p>
+                    <p className="text-[10px] font-medium uppercase tracking-widest text-nexo-danger-text mb-2">Erros</p>
                     <div className="flex flex-wrap gap-2">
                       {errors.map(([k]) => <CheckBadge key={k} severity="error" label={CHECK_META[k]?.label ?? k} />)}
                     </div>
@@ -365,7 +365,7 @@ async function InstantPagesPage({ searchParams }: { searchParams: Promise<Search
                 )}
                 {warnings.length > 0 && (
                   <div>
-                    <p className="text-[10px] font-medium uppercase tracking-widest text-nexo-warn-text mb-2">Warnings</p>
+                    <p className="text-[10px] font-medium uppercase tracking-widest text-nexo-warn-text mb-2">Avisos</p>
                     <div className="flex flex-wrap gap-2">
                       {warnings.map(([k]) => <CheckBadge key={k} severity="warning" label={CHECK_META[k]?.label ?? k} />)}
                     </div>
@@ -373,7 +373,7 @@ async function InstantPagesPage({ searchParams }: { searchParams: Promise<Search
                 )}
                 {goods.length > 0 && (
                   <div>
-                    <p className="text-[10px] font-medium uppercase tracking-widest text-nexo-ice mb-2">Good</p>
+                    <p className="text-[10px] font-medium uppercase tracking-widest text-nexo-ice mb-2">Ok</p>
                     <div className="flex flex-wrap gap-2">
                       {goods.map(([k]) => <CheckBadge key={k} severity="good" label={CHECK_META[k]?.label ?? k} />)}
                     </div>
@@ -381,7 +381,7 @@ async function InstantPagesPage({ searchParams }: { searchParams: Promise<Search
                 )}
                 {infos.length > 0 && (
                   <div>
-                    <p className="nexo-section mb-2">Info</p>
+                    <p className="nexo-section mb-2">Informações</p>
                     <div className="flex flex-wrap gap-2">
                       {infos.map(([k]) => <CheckBadge key={k} severity="info" label={CHECK_META[k]?.label ?? k} />)}
                     </div>
@@ -394,23 +394,23 @@ async function InstantPagesPage({ searchParams }: { searchParams: Promise<Search
           {/* Meta */}
           <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
             <div className="px-6 py-4 border-b border-nexo-border">
-              <h2 className="nexo-label">Page Metadata</h2>
+              <h2 className="nexo-label">Metadados da página</h2>
             </div>
             <div className="px-6 py-2">
-              <MetaRow label="Title" value={page.meta?.title} />
+              <MetaRow label="Título" value={page.meta?.title} />
               {page.meta?.title_length !== undefined && (
-                <MetaRow label="Title length" value={`${page.meta.title_length} chars`} />
+                <MetaRow label="Tamanho do título" value={`${page.meta.title_length} caracteres`} />
               )}
-              <MetaRow label="Description" value={page.meta?.description} />
+              <MetaRow label="Descrição" value={page.meta?.description} />
               {page.meta?.description_length !== undefined && (
-                <MetaRow label="Desc. length" value={`${page.meta.description_length} chars`} />
+                <MetaRow label="Tamanho da descr." value={`${page.meta.description_length} caracteres`} />
               )}
               <MetaRow label="Canonical" value={page.meta?.canonical} mono />
               <MetaRow label="Meta title" value={page.meta?.meta_title} />
               <MetaRow label="Meta keywords" value={page.meta?.meta_keywords} />
-              <MetaRow label="Generator" value={page.meta?.generator} />
+              <MetaRow label="Gerador" value={page.meta?.generator} />
               <MetaRow label="Charset" value={page.meta?.charset} />
-              <MetaRow label="DOM nodes" value={page.meta?.total_dom_size} />
+              <MetaRow label="Nós do DOM" value={page.meta?.total_dom_size} />
             </div>
           </div>
 
@@ -418,7 +418,7 @@ async function InstantPagesPage({ searchParams }: { searchParams: Promise<Search
           {page.meta?.htags && Object.keys(page.meta.htags).length > 0 && (
             <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
               <div className="px-6 py-4 border-b border-nexo-border">
-                <h2 className="nexo-label">Headings</h2>
+                <h2 className="nexo-label">Títulos (headings)</h2>
               </div>
               <div className="px-6 py-4 space-y-3">
                 {(['h1', 'h2', 'h3', 'h4'] as const).map((tag) => {
@@ -432,7 +432,7 @@ async function InstantPagesPage({ searchParams }: { searchParams: Promise<Search
                         {values.slice(0, 5).map((v, i) => (
                           <p key={i} className="text-sm text-nexo-dim pl-2 border-l-2 border-nexo-border">{v}</p>
                         ))}
-                        {values.length > 5 && <p className="text-xs text-nexo-faint pl-2">+{values.length - 5} more</p>}
+                        {values.length > 5 && <p className="text-xs text-nexo-faint pl-2">+{values.length - 5} mais</p>}
                       </div>
                     </div>
                   );
@@ -445,19 +445,19 @@ async function InstantPagesPage({ searchParams }: { searchParams: Promise<Search
           {page.page_timing && (
             <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
               <div className="px-6 py-4 border-b border-nexo-border">
-                <h2 className="nexo-label">Performance</h2>
+                <h2 className="nexo-label">Desempenho</h2>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 px-6 py-4">
                 <StatCard label="LCP" value={formatMs(page.page_timing.largest_contentful_paint)} sub="Largest Contentful Paint" />
                 <StatCard label="TTFB" value={formatMs(page.page_timing.waiting_time)} sub="Time to First Byte" />
                 <StatCard label="TTI" value={formatMs(page.page_timing.time_to_interactive)} sub="Time to Interactive" />
-                <StatCard label="Total" value={formatMs(page.page_timing.duration_time)} sub="Full load time" />
+                <StatCard label="Total" value={formatMs(page.page_timing.duration_time)} sub="Tempo total de carregamento" />
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 px-6 pb-4">
-                <StatCard label="DOM complete" value={formatMs(page.page_timing.dom_complete)} />
+                <StatCard label="DOM completo" value={formatMs(page.page_timing.dom_complete)} />
                 <StatCard label="Download" value={formatMs(page.page_timing.download_time)} />
-                <StatCard label="Connect" value={formatMs(page.page_timing.connection_time)} />
-                <StatCard label="TLS" value={formatMs(page.page_timing.time_to_secure_connection)} sub="Secure connection" />
+                <StatCard label="Conexão" value={formatMs(page.page_timing.connection_time)} />
+                <StatCard label="TLS" value={formatMs(page.page_timing.time_to_secure_connection)} sub="Conexão segura" />
               </div>
             </div>
           )}
@@ -466,17 +466,17 @@ async function InstantPagesPage({ searchParams }: { searchParams: Promise<Search
           {page.meta && (
             <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
               <div className="px-6 py-4 border-b border-nexo-border">
-                <h2 className="nexo-label">Resources</h2>
+                <h2 className="nexo-label">Recursos</h2>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 px-6 py-4">
-                <StatCard label="Images" value={page.meta.images_count ?? '—'} sub={formatBytes(page.meta.images_size)} />
+                <StatCard label="Imagens" value={page.meta.images_count ?? '—'} sub={formatBytes(page.meta.images_size)} />
                 <StatCard label="Scripts" value={page.meta.scripts_count ?? '—'} sub={formatBytes(page.meta.scripts_size)} />
-                <StatCard label="Stylesheets" value={page.meta.stylesheets_count ?? '—'} sub={formatBytes(page.meta.stylesheets_size)} />
+                <StatCard label="Folhas de estilo" value={page.meta.stylesheets_count ?? '—'} sub={formatBytes(page.meta.stylesheets_size)} />
                 {page.meta.render_blocking_scripts_count !== undefined && (
-                  <StatCard label="Blocking scripts" value={page.meta.render_blocking_scripts_count} />
+                  <StatCard label="Scripts bloqueantes" value={page.meta.render_blocking_scripts_count} />
                 )}
                 {page.meta.render_blocking_stylesheets_count !== undefined && (
-                  <StatCard label="Blocking CSS" value={page.meta.render_blocking_stylesheets_count} />
+                  <StatCard label="CSS bloqueante" value={page.meta.render_blocking_stylesheets_count} />
                 )}
                 {page.meta.cumulative_layout_shift !== undefined && (
                   <StatCard label="CLS" value={page.meta.cumulative_layout_shift.toFixed(3)} sub="Cumulative Layout Shift" />
@@ -489,26 +489,26 @@ async function InstantPagesPage({ searchParams }: { searchParams: Promise<Search
           {page.content && (
             <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
               <div className="px-6 py-4 border-b border-nexo-border">
-                <h2 className="nexo-label">Content Metrics</h2>
+                <h2 className="nexo-label">Métricas de conteúdo</h2>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 px-6 py-4">
                 {page.content.plain_text_word_count !== undefined && (
-                  <StatCard label="Word count" value={Math.round(page.content.plain_text_word_count)} />
+                  <StatCard label="Palavras" value={Math.round(page.content.plain_text_word_count)} />
                 )}
                 {page.content.plain_text_size !== undefined && (
-                  <StatCard label="Text size" value={formatBytes(page.content.plain_text_size)} />
+                  <StatCard label="Tamanho do texto" value={formatBytes(page.content.plain_text_size)} />
                 )}
                 {page.content.plain_text_rate !== undefined && (
-                  <StatCard label="Text rate" value={`${page.content.plain_text_rate}%`} sub="Text to page size" />
+                  <StatCard label="Taxa de texto" value={`${page.content.plain_text_rate}%`} sub="Texto / tamanho da página" />
                 )}
                 {page.content.flesch_kincaid_readability_index !== undefined && (
-                  <StatCard label="Flesch-Kincaid" value={page.content.flesch_kincaid_readability_index.toFixed(1)} sub="Readability" />
+                  <StatCard label="Flesch-Kincaid" value={page.content.flesch_kincaid_readability_index.toFixed(1)} sub="Legibilidade" />
                 )}
                 {page.content.title_to_content_consistency !== undefined && (
-                  <StatCard label="Title consistency" value={`${(page.content.title_to_content_consistency * 100).toFixed(0)}%`} sub="Title ↔ content" />
+                  <StatCard label="Coerência do título" value={`${(page.content.title_to_content_consistency * 100).toFixed(0)}%`} sub="Título ↔ conteúdo" />
                 )}
                 {page.content.description_to_content_consistency !== undefined && (
-                  <StatCard label="Desc. consistency" value={`${(page.content.description_to_content_consistency * 100).toFixed(0)}%`} sub="Description ↔ content" />
+                  <StatCard label="Coerência da descr." value={`${(page.content.description_to_content_consistency * 100).toFixed(0)}%`} sub="Descrição ↔ conteúdo" />
                 )}
               </div>
             </div>
@@ -519,7 +519,7 @@ async function InstantPagesPage({ searchParams }: { searchParams: Promise<Search
       {/* No result yet */}
       {params.id && !pageResult && !createError && (
         <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-6 py-12 text-center text-sm text-nexo-faint">
-          Result not found.
+          Resultado não encontrado.
         </div>
       )}
 
@@ -527,7 +527,7 @@ async function InstantPagesPage({ searchParams }: { searchParams: Promise<Search
       {history.length > 0 && (
         <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border">
-            <h2 className="nexo-label">Analysis history</h2>
+            <h2 className="nexo-label">Histórico de análises</h2>
           </div>
           <div className="divide-y divide-nexo-border">
             {history.map((entry) => {

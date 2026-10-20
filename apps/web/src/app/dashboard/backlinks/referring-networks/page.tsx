@@ -19,7 +19,7 @@ async function fetchNetworks(target: string, login: string, pass: string): Promi
   return { items: result?.items ?? [], cost };
 }
 
-function formatDate(ts: number) { return new Date(ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); }
+function formatDate(ts: number) { return new Date(ts).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' }); }
 
 async function ReferringNetworksPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const creds = getCredentials();
@@ -36,7 +36,7 @@ async function ReferringNetworksPage({ searchParams }: { searchParams: Promise<S
   if (historyId) {
     const saved = getBlRefNetResults<NetworkItem>(historyId);
     if (saved) { items = saved; activeEntry = getBlRefNetHistory().find((e) => e.id === historyId) ?? null; }
-    else error = 'Search no longer available.';
+    else error = 'Esta busca não está mais disponível.';
   } else if (rawTarget) {
     const dedupeId = stableSearchId(['bl-ref-networks', rawTarget]);
     const cached = getBlRefNetResults<NetworkItem>(dedupeId);
@@ -44,7 +44,7 @@ async function ReferringNetworksPage({ searchParams }: { searchParams: Promise<S
       items = cached;
       const cachedEntry = getBlRefNetHistory().find((e) => e.id === dedupeId);
       cost = cachedEntry?.cost;
-    } else if (!creds) { error = 'DataForSEO credentials missing. Configure them in Settings.'; }
+    } else if (!creds) { error = 'Credenciais do DataForSEO ausentes. Configure-as em Configurações.'; }
     else {
       const result = await fetchNetworks(rawTarget, creds.login, creds.pass);
       items = result.items; cost = result.cost; error = result.error ?? null;
@@ -72,15 +72,15 @@ async function ReferringNetworksPage({ searchParams }: { searchParams: Promise<S
         <div className="nexo-label flex items-center gap-2 mb-1">
           <a href="/dashboard/backlinks" className="hover:text-white transition-colors">Backlinks</a>
           <span className="text-nexo-text">/</span>
-          <span className="text-nexo-dim">Referring Networks</span>
+          <span className="text-nexo-dim">Redes de referência</span>
         </div>
-        <h1 className="nexo-h1">Referring Networks</h1>
-        <p className="text-sm text-nexo-faint mt-1">IP subnets and networks sending backlinks to a domain.</p>
+        <h1 className="nexo-h1">Redes de referência</h1>
+        <p className="text-sm text-nexo-faint mt-1">Sub-redes de IP e redes que enviam backlinks para um domínio.</p>
       </div>
 
-      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Analyze" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
+      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Analisar" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
         <div>
-          <label className="nexo-label block mb-1.5">Domain</label>
+          <label className="nexo-label block mb-1.5">Domínio</label>
           <input type="text" name="target" defaultValue={displayTarget || defaultDomain} placeholder="example.com" required
             className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky font-mono" />
         </div>
@@ -91,19 +91,19 @@ async function ReferringNetworksPage({ searchParams }: { searchParams: Promise<S
       {(historyId || rawTarget) && !error && (
         <div id="results" className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between">
-            <span className="nexo-label">{items.length} networks — {displayTarget}</span>
+            <span className="nexo-label">{items.length} {items.length === 1 ? 'rede' : 'redes'} — {displayTarget}</span>
             <div className="flex items-center gap-3">
-              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">cost: ${cost.toFixed(4)}</span>}
+              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">custo: US$ {cost.toFixed(4).replace('.', ',')}</span>}
               {items.length > 0 && (
                 <div className="flex items-center gap-2">
-                  <CopyMarkdownButton data={csvData} columns={[{key:'network',label:'Network'},{key:'ip_count',label:'IPs'},{key:'referring_domains',label:'Ref. Domains'},{key:'backlinks',label:'Backlinks'},{key:'rank',label:'Rank'}]} />
-                  <ExportCSVButton data={csvData} filename={`referring-networks-${displayTarget}.csv`} columns={[{key:'network',label:'Network'},{key:'ip_count',label:'IPs'},{key:'referring_domains',label:'Ref. Domains'},{key:'backlinks',label:'Backlinks'},{key:'rank',label:'Rank'}]} />
+                  <CopyMarkdownButton data={csvData} columns={[{key:'network',label:'Rede'},{key:'ip_count',label:'IPs'},{key:'referring_domains',label:'Domínios de ref.'},{key:'backlinks',label:'Backlinks'},{key:'rank',label:'Rank'}]} />
+                  <ExportCSVButton data={csvData} filename={`referring-networks-${displayTarget}.csv`} columns={[{key:'network',label:'Rede'},{key:'ip_count',label:'IPs'},{key:'referring_domains',label:'Domínios de ref.'},{key:'backlinks',label:'Backlinks'},{key:'rank',label:'Rank'}]} />
                 </div>
               )}
             </div>
           </div>
           {items.length === 0 ? (
-            <div className="px-6 py-12 text-center text-sm text-nexo-faint">No networks found.</div>
+            <div className="px-6 py-12 text-center text-sm text-nexo-faint">Nenhuma rede encontrada.</div>
           ) : (
             <ReferringNetworksTable items={items} />
           )}
@@ -113,7 +113,7 @@ async function ReferringNetworksPage({ searchParams }: { searchParams: Promise<S
       {history.length > 0 && (
         <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border">
-            <h2 className="nexo-label">History</h2>
+            <h2 className="nexo-label">Histórico</h2>
           </div>
           <div className="divide-y divide-nexo-border">
             {history.map((entry) => {
@@ -123,7 +123,7 @@ async function ReferringNetworksPage({ searchParams }: { searchParams: Promise<S
                   className={`flex items-center gap-4 px-6 py-3.5 hover:bg-white/[0.04] transition-colors ${isActive ? 'bg-nexo-blue/10' : ''}`}>
                   <div className="flex-1 min-w-0">
                     <p className={`text-sm font-medium font-mono truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.target}</p>
-                    <p className="text-[11px] text-nexo-faint mt-0.5">{entry.count} networks{entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}</p>
+                    <p className="text-[11px] text-nexo-faint mt-0.5">{entry.count} {entry.count === 1 ? 'rede' : 'redes'}{entry.cost !== undefined ? ` · US$ ${entry.cost.toFixed(4).replace('.', ',')}` : ''}</p>
                   </div>
                   <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>
                 </a>

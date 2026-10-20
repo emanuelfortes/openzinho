@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Nexo",
-  description: "Local SEO dashboard powered by DataForSEO",
+  description: "Painel de SEO local com dados do DataForSEO",
 };
 
 export default function RootLayout({
@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     // Nexo is dark-only: the class is fixed instead of following a stored theme.
     <html
-      lang="en"
+      lang="pt-BR"
       suppressHydrationWarning
       className={`dark ${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >

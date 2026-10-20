@@ -24,9 +24,15 @@ function IntentBadge({ value }: { value?: string }) {
     transactional: 'text-nexo-ice bg-nexo-ice/10',
     commercial: 'text-nexo-warn-text bg-nexo-warn/10',
   };
+  const labels: Record<string, string> = {
+    informational: 'Informacional',
+    navigational: 'Navegacional',
+    transactional: 'Transacional',
+    commercial: 'Comercial',
+  };
   return (
     <span className={`px-2 py-0.5 rounded-md text-[10px] font-medium uppercase ${map[value] ?? 'text-nexo-dim bg-nexo-surface-2'}`}>
-      {value.slice(0, 4)}
+      {(labels[value] ?? value).slice(0, 4)}
     </span>
   );
 }
@@ -101,11 +107,11 @@ export default function RankedKeywordsTable({ items }: { items: RankedKwItem[] }
         <thead>
           <tr className="border-b border-nexo-border bg-white/[0.02]">
             <Header label="Pos." sortK="position" align="center" className="w-12" />
-            <Header label="Keyword" sortK="keyword" align="left" />
+            <Header label="Palavra-chave" sortK="keyword" align="left" />
             <th className="nexo-label px-4 py-3 text-left hidden lg:table-cell">URL</th>
             <Header label="Vol." sortK="volume" align="right" />
             <Header label="KD" sortK="kd" align="center" />
-            <Header label="Intent" sortK="intent" align="center" className="hidden sm:table-cell" />
+            <Header label="Intenção" sortK="intent" align="center" className="hidden sm:table-cell" />
             <Header label="CPC" sortK="cpc" align="right" className="hidden md:table-cell" />
           </tr>
         </thead>
@@ -130,7 +136,7 @@ export default function RankedKeywordsTable({ items }: { items: RankedKwItem[] }
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-nexo-text">{kw?.keyword ?? '—'}</span>
                     {serp?.is_featured_snippet && (
-                      <span className="text-[9px] font-medium uppercase tracking-widest text-nexo-warn-text bg-nexo-warn/10 border border-nexo-warn/40 px-1.5 py-0.5 rounded shrink-0">featured</span>
+                      <span className="text-[9px] font-medium uppercase tracking-widest text-nexo-warn-text bg-nexo-warn/10 border border-nexo-warn/40 px-1.5 py-0.5 rounded shrink-0">destaque</span>
                     )}
                   </div>
                 </td>
@@ -143,7 +149,7 @@ export default function RankedKeywordsTable({ items }: { items: RankedKwItem[] }
                   ) : <span className="text-nexo-faint">—</span>}
                 </td>
                 <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">
-                  {kw?.keyword_info?.search_volume?.toLocaleString('en-GB') ?? '—'}
+                  {kw?.keyword_info?.search_volume?.toLocaleString('pt-BR') ?? '—'}
                 </td>
                 <td className="px-4 py-3 text-center">
                   <DifficultyBadge value={kw?.keyword_properties?.keyword_difficulty} />
@@ -152,7 +158,7 @@ export default function RankedKeywordsTable({ items }: { items: RankedKwItem[] }
                   <IntentBadge value={kw?.search_intent_info?.main_intent} />
                 </td>
                 <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums hidden md:table-cell">
-                  {kw?.keyword_info?.cpc != null ? `$${kw.keyword_info.cpc.toFixed(2)}` : '—'}
+                  {kw?.keyword_info?.cpc != null ? `US$ ${kw.keyword_info.cpc.toFixed(2).replace('.', ',')}` : '—'}
                 </td>
               </tr>
             );

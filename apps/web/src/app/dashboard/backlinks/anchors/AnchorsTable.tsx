@@ -72,11 +72,11 @@ export default function AnchorsTable({ items }: { items: AnchorItem[] }) {
     <table className="w-full text-xs">
       <thead>
         <tr className="border-b border-nexo-border">
-          <Header label="Anchor Text" sortK="anchor" align="left" />
+          <Header label="Texto-âncora" sortK="anchor" align="left" />
           <Header label="Links" sortK="backlinks" align="right" />
-          <Header label="Domains" sortK="referring_domains" align="right" />
-          <Header label="Split" sortK="dofollow_pct" align="left" />
-          <Header label="First Seen" sortK="first_seen" align="left" />
+          <Header label="Domínios" sortK="referring_domains" align="right" />
+          <Header label="Proporção" sortK="dofollow_pct" align="left" />
+          <Header label="Visto pela primeira vez" sortK="first_seen" align="left" />
         </tr>
       </thead>
       <tbody className="divide-y divide-nexo-border">
@@ -86,13 +86,13 @@ export default function AnchorsTable({ items }: { items: AnchorItem[] }) {
           return (
             <tr key={i} className="hover:bg-white/[0.04]">
               <td className="px-5 py-3">
-                <div className="font-medium text-nexo-text max-w-xs truncate">{item.anchor || <span className="text-nexo-faint italic">empty</span>}</div>
+                <div className="font-medium text-nexo-text max-w-xs truncate">{item.anchor || <span className="text-nexo-faint italic">vazia</span>}</div>
                 <div className="mt-1 h-1 w-full bg-nexo-surface-2 rounded-full overflow-hidden">
                   <div className="h-full bg-nexo-sky/40 rounded-full" style={{ width: `${pct}%` }} />
                 </div>
               </td>
-              <td className="px-3 py-3 text-right font-mono font-medium text-nexo-dim">{item.backlinks.toLocaleString('en-GB')}</td>
-              <td className="px-3 py-3 text-right font-mono text-nexo-dim">{item.referring_domains.toLocaleString('en-GB')}</td>
+              <td className="px-3 py-3 text-right font-mono font-medium text-nexo-dim">{item.backlinks.toLocaleString('pt-BR')}</td>
+              <td className="px-3 py-3 text-right font-mono text-nexo-dim">{item.referring_domains.toLocaleString('pt-BR')}</td>
               <td className="px-3 py-3">
                 <div className="flex items-center gap-1">
                   <span className="text-[9px] font-medium text-nexo-ice">{dfPct}% do</span>

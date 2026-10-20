@@ -90,11 +90,11 @@ export default function ResourcesTable({ resources }: { resources: ResourceItem[
   }));
   const columns = [
     { key: 'url', label: 'URL' },
-    { key: 'type', label: 'Type' },
+    { key: 'type', label: 'Tipo' },
     { key: 'status', label: 'HTTP' },
-    { key: 'size_kb', label: 'Size (KB)' },
-    { key: 'load_ms', label: 'Load (ms)' },
-    { key: 'broken', label: 'Broken' },
+    { key: 'size_kb', label: 'Tamanho (KB)' },
+    { key: 'load_ms', label: 'Carregamento (ms)' },
+    { key: 'broken', label: 'Quebrado' },
   ];
 
   return (
@@ -103,10 +103,10 @@ export default function ResourcesTable({ resources }: { resources: ResourceItem[
         <div className="flex gap-3 flex-wrap text-[11px] font-medium">
           {['image', 'script', 'stylesheet', 'other'].map((type) => (
             <span key={type} className="text-nexo-dim">
-              {resources.filter((r) => (type === 'other' ? !['image', 'script', 'stylesheet'].includes(r.resource_type ?? '') : r.resource_type === type)).length} {type}
+              {resources.filter((r) => (type === 'other' ? !['image', 'script', 'stylesheet'].includes(r.resource_type ?? '') : r.resource_type === type)).length} {({ image: 'imagens', script: 'scripts', stylesheet: 'folhas de estilo', other: 'outros' } as Record<string, string>)[type]}
             </span>
           ))}
-          <span className="text-nexo-danger-text">{resources.filter((r) => r.checks?.broken_resources).length} broken</span>
+          <span className="text-nexo-danger-text">{resources.filter((r) => r.checks?.broken_resources).length} quebrados</span>
         </div>
         <div className="flex items-center gap-2">
           <CopyMarkdownButton data={csvData} columns={columns} />
@@ -118,10 +118,10 @@ export default function ResourcesTable({ resources }: { resources: ResourceItem[
           <thead>
             <tr className="border-b border-nexo-border bg-white/[0.02]">
               <Header label="URL" sortK="url" align="left" />
-              <Header label="Type" sortK="type" align="center" />
+              <Header label="Tipo" sortK="type" align="center" />
               <Header label="HTTP" sortK="status" align="center" />
-              <Header label="Size" sortK="size" align="right" />
-              <Header label="Load" sortK="load" align="right" className="hidden md:table-cell" />
+              <Header label="Tamanho" sortK="size" align="right" />
+              <Header label="Carregamento" sortK="load" align="right" className="hidden md:table-cell" />
             </tr>
           </thead>
           <tbody className="divide-y divide-nexo-border">

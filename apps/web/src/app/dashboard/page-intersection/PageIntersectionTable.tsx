@@ -20,7 +20,7 @@ function KdBadge({ v }: { v?: number }) {
   return <span className={`inline-flex items-center justify-center w-9 h-5 rounded text-[10px] font-medium ${cls}`}>{v}</span>;
 }
 
-function fmt(n?: number) { return n != null ? n.toLocaleString('en-GB') : '—'; }
+function fmt(n?: number) { return n != null ? n.toLocaleString('pt-BR') : '—'; }
 
 function RankBadge({ rank }: { rank?: number }) {
   if (rank == null) return <span className="text-nexo-faint">—</span>;
@@ -81,11 +81,11 @@ export default function PageIntersectionTable({ items, pageList }: { items: Inte
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-nexo-border bg-white/[0.02]">
-            <Header label="Keyword" sortK="keyword" align="left" className="!px-6" />
+            <Header label="Palavra-chave" sortK="keyword" align="left" className="!px-6" />
             <Header label="KD" sortK="kd" align="center" />
             <Header label="Volume" sortK="volume" align="right" />
             {pageList.map((p, i) => (
-              <Header key={i} label={`Page ${i + 1}`} sortK={i} align="center" className="max-w-[100px]" title={p} />
+              <Header key={i} label={`Página ${i + 1}`} sortK={i} align="center" className="max-w-[100px]" title={p} />
             ))}
           </tr>
         </thead>

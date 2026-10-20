@@ -24,13 +24,13 @@ async function fetchTraffic(targets: string[], location: string, language: strin
   return { items: result?.items ?? [], cost };
 }
 
-function formatDate(ts: number) { return new Date(ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); }
+function formatDate(ts: number) { return new Date(ts).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' }); }
 
 async function TrafficEstimationPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const creds = getCredentials();
   const params = await searchParams;
-  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'France');
-  const defaultLanguage = getSetting('default_language') ?? 'French';
+  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'Brazil');
+  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
 
   const rawTargets = params.targets?.trim() ?? '';
   const location = params.location ?? defaultLocation;
@@ -45,7 +45,7 @@ async function TrafficEstimationPage({ searchParams }: { searchParams: Promise<S
   if (historyId) {
     const saved = getTrafficEstimationResults<TrafficItem>(historyId);
     if (saved) { items = saved; activeEntry = getTrafficEstimationHistory().find((e) => e.id === historyId) ?? null; }
-    else error = 'Search no longer available.';
+    else error = 'Esta busca não está mais disponível.';
   } else if (rawTargets) {
     const targetList = rawTargets.split('\n').map((t) => t.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/\/$/, '')).filter(Boolean).slice(0, 1000);
     const dedupeId = stableSearchId(['traffic-estimation', location, language, ...targetList]);
@@ -55,7 +55,7 @@ async function TrafficEstimationPage({ searchParams }: { searchParams: Promise<S
       items = cached;
       activeEntry = getTrafficEstimationHistory().find((e) => e.id === dedupeId) ?? null;
       cost = activeEntry?.cost;
-    } else if (!creds) { error = 'DataForSEO credentials missing. Configure them in Settings.'; }
+    } else if (!creds) { error = 'Credenciais do DataForSEO ausentes. Configure-as em Configurações.'; }
     else {
       const result = await fetchTraffic(targetList, location, language, creds.login, creds.pass);
       items = result.items; cost = result.cost; error = result.error ?? null;
@@ -85,15 +85,15 @@ async function TrafficEstimationPage({ searchParams }: { searchParams: Promise<S
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="nexo-h1">Traffic Estimation</h1>
-        <p className="text-sm text-nexo-faint mt-1">Bulk organic traffic estimate for a list of domains.</p>
+        <h1 className="nexo-h1">Estimativa de tráfego</h1>
+        <p className="text-sm text-nexo-faint mt-1">Estimativa em massa do tráfego orgânico de uma lista de domínios.</p>
       </div>
 
-      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Estimate" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
+      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Estimar" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="sm:col-span-2">
-            <label className="nexo-label block mb-1.5">Domains <span className="normal-case font-normal tracking-normal text-nexo-faint">(one per line)</span></label>
-            <textarea name="targets" rows={6} defaultValue={activeEntry?.targets?.split(', ').join('\n') ?? rawTargets} placeholder={"example.com\ncompetitor.com\nanother.fr"} required
+            <label className="nexo-label block mb-1.5">Domínios <span className="normal-case font-normal tracking-normal text-nexo-faint">(um por linha)</span></label>
+            <textarea name="targets" rows={6} defaultValue={activeEntry?.targets?.split(', ').join('\n') ?? rawTargets} placeholder={"exemplo.com.br\nconcorrente.com.br\noutro.com"} required
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky font-mono resize-y" />
           </div>
           <LabsLocationLanguageFields
@@ -109,19 +109,19 @@ async function TrafficEstimationPage({ searchParams }: { searchParams: Promise<S
       {(historyId || rawTargets) && !error && (
         <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between">
-            <span className="nexo-label">{items.length} domains</span>
+            <span className="nexo-label">{items.length} {items.length === 1 ? 'domínio' : 'domínios'}</span>
             <div className="flex items-center gap-3">
-              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">cost: ${cost.toFixed(4)}</span>}
+              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">custo: US$ {cost.toFixed(4).replace('.', ',')}</span>}
               {items.length > 0 && (
                 <div className="flex items-center gap-2">
-                  <CopyMarkdownButton data={csvData} columns={[{key:'target',label:'Domain'},{key:'keywords',label:'Keywords'},{key:'traffic',label:'Est. Traffic (ETV)'},{key:'paid_keywords',label:'Paid KWs'}]} />
-                  <ExportCSVButton data={csvData} filename="traffic-estimation.csv" columns={[{key:'target',label:'Domain'},{key:'keywords',label:'Keywords'},{key:'traffic',label:'Est. Traffic (ETV)'},{key:'paid_keywords',label:'Paid KWs'}]} />
+                  <CopyMarkdownButton data={csvData} columns={[{key:'target',label:'Domínio'},{key:'keywords',label:'Palavras-chave'},{key:'traffic',label:'Tráfego estimado (ETV)'},{key:'paid_keywords',label:'Palavras-chave pagas'}]} />
+                  <ExportCSVButton data={csvData} filename="traffic-estimation.csv" columns={[{key:'target',label:'Domínio'},{key:'keywords',label:'Palavras-chave'},{key:'traffic',label:'Tráfego estimado (ETV)'},{key:'paid_keywords',label:'Palavras-chave pagas'}]} />
                 </div>
               )}
             </div>
           </div>
           {items.length === 0 ? (
-            <div className="px-6 py-12 text-center text-sm text-nexo-faint">No results found.</div>
+            <div className="px-6 py-12 text-center text-sm text-nexo-faint">Nenhum resultado encontrado.</div>
           ) : (
             <TrafficEstimationTable items={items} />
           )}
@@ -131,7 +131,7 @@ async function TrafficEstimationPage({ searchParams }: { searchParams: Promise<S
       {history.length > 0 && (
         <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border">
-            <h2 className="nexo-label">History</h2>
+            <h2 className="nexo-label">Histórico</h2>
           </div>
           <div className="divide-y divide-nexo-border">
             {history.map((entry) => {
@@ -141,7 +141,7 @@ async function TrafficEstimationPage({ searchParams }: { searchParams: Promise<S
                   className={`flex items-center gap-4 px-6 py-3.5 hover:bg-white/[0.04] transition-colors ${isActive ? 'bg-nexo-blue/10' : ''}`}>
                   <div className="flex-1 min-w-0">
                     <p className={`text-sm font-medium truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.targets}</p>
-                    <p className="text-[11px] text-nexo-faint mt-0.5">{entry.count} domains · {entry.location}{entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}</p>
+                    <p className="text-[11px] text-nexo-faint mt-0.5">{entry.count} {entry.count === 1 ? 'domínio' : 'domínios'} · {entry.location}{entry.cost !== undefined ? ` · US$ ${entry.cost.toFixed(4).replace('.', ',')}` : ''}</p>
                   </div>
                   <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>
                 </a>

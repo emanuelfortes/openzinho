@@ -56,10 +56,10 @@ export default function GridAnalysisPanel({ snapshots, selectedId, gridSize, spa
       <section className="mt-6 border-t border-nexo-border pt-6">
         <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
           <div>
-            <p className="nexo-section">Detailed analysis</p>
-            <h3 className="mt-1 text-lg font-medium tracking-tight text-nexo-text">Map and competitive landscape</h3>
+            <p className="nexo-section">Análise detalhada</p>
+            <h3 className="mt-1 text-lg font-medium tracking-tight text-nexo-text">Mapa e cenário competitivo</h3>
           </div>
-          <span className="rounded-full bg-nexo-blue/10 px-2.5 py-1 text-[10px] font-medium text-nexo-sky">Selected snapshot</span>
+          <span className="rounded-full bg-nexo-blue/10 px-2.5 py-1 text-[10px] font-medium text-nexo-sky">Varredura selecionada</span>
         </div>
         <GridResults
           key={activeSnapshot.id}

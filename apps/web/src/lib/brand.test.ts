@@ -125,8 +125,8 @@ describe('validateLogoUpload', () => {
   });
 
   it('rejects other formats and oversized files', () => {
-    expect(validateLogoUpload('image/svg+xml', 1024)).toMatch(/PNG or JPEG/);
-    expect(validateLogoUpload('image/png', LOGO_MAX_BYTES + 1)).toMatch(/smaller than/);
+    expect(validateLogoUpload('image/svg+xml', 1024)).toMatch(/PNG ou JPEG/);
+    expect(validateLogoUpload('image/png', LOGO_MAX_BYTES + 1)).toMatch(/menos de/);
   });
 });
 

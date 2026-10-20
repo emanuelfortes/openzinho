@@ -17,7 +17,7 @@ interface HistoryPoint {
 type SortKey = 'date' | 'backlinks' | 'new_backlinks' | 'lost_backlinks' | 'referring_domains' | 'new_referring_domains' | 'lost_referring_domains';
 type SortDir = 'asc' | 'desc';
 
-function fmt(n?: number) { return n != null ? n.toLocaleString('en-GB') : '—'; }
+function fmt(n?: number) { return n != null ? n.toLocaleString('pt-BR') : '—'; }
 
 function sortValue(item: HistoryPoint, key: SortKey): number | string {
   switch (key) {
@@ -75,13 +75,13 @@ export default function BacklinksHistoryTable({ points }: { points: HistoryPoint
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-nexo-border bg-white/[0.02]">
-            <Header label="Date" sortK="date" align="left" />
+            <Header label="Data" sortK="date" align="left" />
             <Header label="Backlinks" sortK="backlinks" align="right" />
-            <Header label="+New" sortK="new_backlinks" align="right" className="text-nexo-ice" />
-            <Header label="−Lost" sortK="lost_backlinks" align="right" className="text-nexo-danger-text" />
-            <Header label="Ref. Domains" sortK="referring_domains" align="right" className="hidden sm:table-cell text-nexo-faint" />
-            <Header label="+New RD" sortK="new_referring_domains" align="right" className="hidden md:table-cell text-nexo-ice" />
-            <Header label="−Lost RD" sortK="lost_referring_domains" align="right" className="hidden md:table-cell text-nexo-danger-text" />
+            <Header label="+Novos" sortK="new_backlinks" align="right" className="text-nexo-ice" />
+            <Header label="−Perdidos" sortK="lost_backlinks" align="right" className="text-nexo-danger-text" />
+            <Header label="Domínios de ref." sortK="referring_domains" align="right" className="hidden sm:table-cell text-nexo-faint" />
+            <Header label="+Novos dom." sortK="new_referring_domains" align="right" className="hidden md:table-cell text-nexo-ice" />
+            <Header label="−Dom. perdidos" sortK="lost_referring_domains" align="right" className="hidden md:table-cell text-nexo-danger-text" />
           </tr>
         </thead>
         <tbody className="divide-y divide-nexo-border">

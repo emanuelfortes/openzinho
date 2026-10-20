@@ -8,8 +8,8 @@ import { revalidatePath } from 'next/cache';
 export async function submitReviewsTaskAction(formData: FormData) {
   return runWithCurrentProject(async () => {
     const keyword = (formData.get('keyword') as string)?.trim();
-    const location = (formData.get('location') as string)?.trim() || 'France';
-    const language = (formData.get('language') as string)?.trim() || 'French';
+    const location = (formData.get('location') as string)?.trim() || 'Brazil';
+    const language = (formData.get('language') as string)?.trim() || 'Portuguese';
     const depth = parseInt((formData.get('depth') as string) || '100', 10);
     const sortBy = (formData.get('sort_by') as string) || 'newest';
 

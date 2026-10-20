@@ -11,7 +11,7 @@ interface BulkBlItem {
 type SortKey = 'target' | 'backlinks';
 type SortDir = 'asc' | 'desc';
 
-function fmt(n?: number) { return n != null ? n.toLocaleString('en-GB') : '—'; }
+function fmt(n?: number) { return n != null ? n.toLocaleString('pt-BR') : '—'; }
 
 function sortValue(item: BulkBlItem, key: SortKey): number | string {
   switch (key) {
@@ -65,7 +65,7 @@ export default function BulkBacklinksTable({ items }: { items: BulkBlItem[] }) {
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-nexo-border bg-white/[0.02]">
-            <Header label="Domain" sortK="target" align="left" />
+            <Header label="Domínio" sortK="target" align="left" />
             <Header label="Backlinks" sortK="backlinks" align="left" />
           </tr>
         </thead>

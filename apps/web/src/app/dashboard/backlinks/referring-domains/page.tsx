@@ -89,27 +89,27 @@ async function RefDomainsPage({ searchParams }: { searchParams: Promise<SearchPa
   return (
     <div className="space-y-6 pb-12">
       <div>
-        <h1 className="nexo-h1">Referring Domains</h1>
-        <p className="text-nexo-dim text-sm mt-1 font-medium">Domains linking to a target</p>
+        <h1 className="nexo-h1">Domínios de referência</h1>
+        <p className="text-nexo-dim text-sm mt-1 font-medium">Domínios que apontam para um alvo</p>
       </div>
 
       <div className="grid gap-6 grid-cols-[repeat(auto-fit,minmax(320px,1fr))]">
         {/* Form + Results */}
         <div className="xl:col-span-2 space-y-5">
-          <SearchForm className="bg-nexo-surface border border-nexo-border rounded-nexo-lg p-6 space-y-4" btnLabel="Analyze" btnClassName="w-full bg-nexo-blue text-white py-3 rounded-nexo-lg font-medium uppercase text-[10px] tracking-widest hover:bg-nexo-sky transition-all disabled:opacity-40" disabled={!creds}>
+          <SearchForm className="bg-nexo-surface border border-nexo-border rounded-nexo-lg p-6 space-y-4" btnLabel="Analisar" btnClassName="w-full bg-nexo-blue text-white py-3 rounded-nexo-lg font-medium uppercase text-[10px] tracking-widest hover:bg-nexo-sky transition-all disabled:opacity-40" disabled={!creds}>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="md:col-span-2 space-y-1.5">
-                <label className="nexo-label">Target Domain</label>
+                <label className="nexo-label">Domínio alvo</label>
                 <input name="target" type="text" defaultValue={target || defaultDomain} placeholder="example.com" className="nexo-input min-w-0 w-full px-4 py-3 outline-none focus:ring-4 focus:ring-nexo-sky text-sm font-medium transition-all" />
               </div>
               <div className="space-y-1.5">
-                <label className="nexo-label">Limit</label>
+                <label className="nexo-label">Limite</label>
                 <select name="limit" defaultValue={String(limit)} className="nexo-input min-w-0 w-full px-4 py-3 outline-none text-sm font-medium">
                   {[50, 100, 250, 500, 1000].map((n) => <option key={n} value={n}>{n}</option>)}
                 </select>
               </div>
             </div>
-            {!creds && <p className="text-xs text-nexo-warn-text font-medium">Configure API credentials in Settings first.</p>}
+            {!creds && <p className="text-xs text-nexo-warn-text font-medium">Configure primeiro as credenciais da API em Configurações.</p>}
           </SearchForm>
 
           {error && <div className="bg-nexo-danger/10 border border-nexo-danger/40 text-nexo-danger-text rounded-nexo-lg px-5 py-3 text-sm">{error}</div>}
@@ -118,31 +118,31 @@ async function RefDomainsPage({ searchParams }: { searchParams: Promise<SearchPa
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <p className="nexo-label">
-                  {items.length} shown / {total.toLocaleString()} total
-                  {cost > 0 && <span className="ml-3 text-nexo-faint">· ${cost.toFixed(4)}</span>}
+                  {items.length} exibidos / {total.toLocaleString('pt-BR')} no total
+                  {cost > 0 && <span className="ml-3 text-nexo-faint">· US$ {cost.toFixed(4).replace('.', ',')}</span>}
                 </p>
                 <div className="flex items-center gap-2">
                   <CopyMarkdownButton
                     data={csvData}
                     columns={[
-                      { key: 'domain', label: 'Domain' },
+                      { key: 'domain', label: 'Domínio' },
                       { key: 'dr', label: 'DR' },
                       { key: 'backlinks', label: 'Backlinks' },
-                      { key: 'broken', label: 'Broken' },
-                      { key: 'first_seen', label: 'First Seen' },
-                      { key: 'last_seen', label: 'Last Seen' },
+                      { key: 'broken', label: 'Quebrados' },
+                      { key: 'first_seen', label: 'Visto pela primeira vez' },
+                      { key: 'last_seen', label: 'Visto pela última vez' },
                     ]}
                   />
                   <ExportCSVButton
                     data={csvData}
                     filename={`referring-domains-${target}.csv`}
                     columns={[
-                      { key: 'domain', label: 'Domain' },
+                      { key: 'domain', label: 'Domínio' },
                       { key: 'dr', label: 'DR' },
                       { key: 'backlinks', label: 'Backlinks' },
-                      { key: 'broken', label: 'Broken' },
-                      { key: 'first_seen', label: 'First Seen' },
-                      { key: 'last_seen', label: 'Last Seen' },
+                      { key: 'broken', label: 'Quebrados' },
+                      { key: 'first_seen', label: 'Visto pela primeira vez' },
+                      { key: 'last_seen', label: 'Visto pela última vez' },
                     ]}
                   />
                 </div>
@@ -157,16 +157,16 @@ async function RefDomainsPage({ searchParams }: { searchParams: Promise<SearchPa
         {/* History */}
         <div>
           <div className="bg-nexo-surface border border-nexo-border rounded-nexo-lg p-5 sticky top-6">
-            <h2 className="nexo-label mb-4">History</h2>
+            <h2 className="nexo-label mb-4">Histórico</h2>
             {history.length === 0 ? (
-              <p className="text-xs text-nexo-faint">No searches yet.</p>
+              <p className="text-xs text-nexo-faint">Nenhuma busca ainda.</p>
             ) : (
               <div className="space-y-2">
                 {history.map((h) => (
                   <a key={h.id} href={`?history_id=${h.id}`} className="block rounded-nexo-lg px-3 py-2.5 hover:bg-white/[0.04] transition-colors border border-transparent hover:border-nexo-border">
                     <div className="font-medium text-xs text-nexo-text">{h.target}</div>
                     <div className="text-[10px] text-nexo-faint mt-0.5">
-                      {h.total?.toLocaleString() ?? '?'} domains · {new Date(h.ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                      {h.total?.toLocaleString('pt-BR') ?? '?'} {h.total === 1 ? 'domínio' : 'domínios'} · {new Date(h.ts).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' })}
                     </div>
                   </a>
                 ))}

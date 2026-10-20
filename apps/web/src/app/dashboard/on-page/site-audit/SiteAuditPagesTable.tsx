@@ -26,39 +26,39 @@ interface AuditPage {
 type Sev = 'error' | 'warning' | 'info' | 'good';
 
 const PAGE_CHECKS: Record<string, { label: string; sev: Sev }> = {
-  no_title: { label: 'Missing title', sev: 'error' },
-  no_description: { label: 'Missing description', sev: 'error' },
-  no_h1_tag: { label: 'Missing H1', sev: 'error' },
-  is_4xx_code: { label: '4XX error', sev: 'error' },
-  is_5xx_code: { label: '5XX error', sev: 'error' },
-  is_broken: { label: 'Broken', sev: 'error' },
-  duplicate_title_tag: { label: 'Duplicate title', sev: 'error' },
-  has_micromarkup_errors: { label: 'Microdata errors', sev: 'error' },
-  high_loading_time: { label: 'High load time', sev: 'warning' },
-  high_waiting_time: { label: 'High TTFB', sev: 'warning' },
-  https_to_http_links: { label: 'HTTPS→HTTP links', sev: 'warning' },
-  no_image_alt: { label: 'Missing alt text', sev: 'warning' },
-  no_favicon: { label: 'No favicon', sev: 'warning' },
-  title_too_long: { label: 'Title too long', sev: 'warning' },
-  title_too_short: { label: 'Title too short', sev: 'warning' },
-  low_content_rate: { label: 'Low text rate', sev: 'warning' },
-  has_render_blocking_resources: { label: 'Render-blocking', sev: 'warning' },
-  large_page_size: { label: 'Large page', sev: 'warning' },
-  low_character_count: { label: 'Low char count', sev: 'warning' },
-  deprecated_html_tags: { label: 'Deprecated HTML', sev: 'warning' },
-  duplicate_meta_tags: { label: 'Duplicate meta', sev: 'warning' },
-  no_encoding_meta_tag: { label: 'Missing charset', sev: 'warning' },
-  irrelevant_description: { label: 'Irrelevant desc.', sev: 'warning' },
-  irrelevant_title: { label: 'Irrelevant title', sev: 'warning' },
+  no_title: { label: 'Título ausente', sev: 'error' },
+  no_description: { label: 'Descrição ausente', sev: 'error' },
+  no_h1_tag: { label: 'H1 ausente', sev: 'error' },
+  is_4xx_code: { label: 'Erro 4XX', sev: 'error' },
+  is_5xx_code: { label: 'Erro 5XX', sev: 'error' },
+  is_broken: { label: 'Quebrada', sev: 'error' },
+  duplicate_title_tag: { label: 'Título duplicado', sev: 'error' },
+  has_micromarkup_errors: { label: 'Erros de microdados', sev: 'error' },
+  high_loading_time: { label: 'Carregamento lento', sev: 'warning' },
+  high_waiting_time: { label: 'TTFB alto', sev: 'warning' },
+  https_to_http_links: { label: 'Links HTTPS→HTTP', sev: 'warning' },
+  no_image_alt: { label: 'Sem texto alt', sev: 'warning' },
+  no_favicon: { label: 'Sem favicon', sev: 'warning' },
+  title_too_long: { label: 'Título longo demais', sev: 'warning' },
+  title_too_short: { label: 'Título curto demais', sev: 'warning' },
+  low_content_rate: { label: 'Pouco texto', sev: 'warning' },
+  has_render_blocking_resources: { label: 'Bloqueio de renderização', sev: 'warning' },
+  large_page_size: { label: 'Página pesada', sev: 'warning' },
+  low_character_count: { label: 'Poucos caracteres', sev: 'warning' },
+  deprecated_html_tags: { label: 'HTML obsoleto', sev: 'warning' },
+  duplicate_meta_tags: { label: 'Meta duplicada', sev: 'warning' },
+  no_encoding_meta_tag: { label: 'Charset ausente', sev: 'warning' },
+  irrelevant_description: { label: 'Descr. irrelevante', sev: 'warning' },
+  irrelevant_title: { label: 'Título irrelevante', sev: 'warning' },
   is_https: { label: 'HTTPS', sev: 'good' },
   has_html_doctype: { label: 'DOCTYPE', sev: 'good' },
-  has_micromarkup: { label: 'Structured data', sev: 'good' },
-  seo_friendly_url: { label: 'SEO URL', sev: 'good' },
-  canonical: { label: 'Canonical set', sev: 'info' },
-  is_redirect: { label: 'Has redirect', sev: 'info' },
+  has_micromarkup: { label: 'Dados estruturados', sev: 'good' },
+  seo_friendly_url: { label: 'URL amigável', sev: 'good' },
+  canonical: { label: 'Canonical definida', sev: 'info' },
+  is_redirect: { label: 'Tem redirecionamento', sev: 'info' },
 };
 
-function fmt(n?: number) { return n !== undefined && n !== null ? n.toLocaleString('en-GB') : '—'; }
+function fmt(n?: number) { return n !== undefined && n !== null ? n.toLocaleString('pt-BR') : '—'; }
 
 function formatMs(ms?: number) {
   if (ms === undefined || ms === null) return '—';
@@ -156,12 +156,12 @@ export default function SiteAuditPagesTable({ pages }: { pages: AuditPage[] }) {
           <tr className="border-b border-nexo-border bg-white/[0.02]">
             <th className="nexo-label px-4 py-3 text-left">#</th>
             <Header label="URL" sortK="url" align="left" />
-            <Header label="Score" sortK="score" align="center" />
+            <Header label="Nota" sortK="score" align="center" />
             <Header label="HTTP" sortK="status" align="center" />
-            <th className="nexo-label px-4 py-3 text-left hidden md:table-cell">Title</th>
-            <Header label="Issues" sortK="issues" align="center" />
-            <Header label="Load" sortK="load" align="right" className="hidden lg:table-cell" />
-            <Header label="Words" sortK="words" align="right" className="hidden xl:table-cell" />
+            <th className="nexo-label px-4 py-3 text-left hidden md:table-cell">Título</th>
+            <Header label="Problemas" sortK="issues" align="center" />
+            <Header label="Carregamento" sortK="load" align="right" className="hidden lg:table-cell" />
+            <Header label="Palavras" sortK="words" align="right" className="hidden xl:table-cell" />
           </tr>
         </thead>
         <tbody className="divide-y divide-nexo-border">
@@ -186,9 +186,9 @@ export default function SiteAuditPagesTable({ pages }: { pages: AuditPage[] }) {
                 </td>
                 <td className="px-4 py-3 text-center">{httpBadge(page.status_code)}</td>
                 <td className="px-4 py-3 max-w-[200px] hidden md:table-cell">
-                  <span className="text-xs text-nexo-dim truncate block">{page.meta?.title ?? <span className="text-nexo-faint italic">no title</span>}</span>
+                  <span className="text-xs text-nexo-dim truncate block">{page.meta?.title ?? <span className="text-nexo-faint italic">sem título</span>}</span>
                   {page.meta?.title_length !== undefined && (
-                    <span className={`text-[10px] ${page.meta.title_length > 65 || page.meta.title_length < 30 ? 'text-nexo-warn-text' : 'text-nexo-faint'}`}>{page.meta.title_length} chars</span>
+                    <span className={`text-[10px] ${page.meta.title_length > 65 || page.meta.title_length < 30 ? 'text-nexo-warn-text' : 'text-nexo-faint'}`}>{page.meta.title_length} caracteres</span>
                   )}
                 </td>
                 <td className="px-4 py-3 text-center">

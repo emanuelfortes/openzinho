@@ -20,7 +20,7 @@ function RankBadge({ rank }: { rank?: number }) {
   return <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded border tabular-nums ${cls}`}>DR {rank}</span>;
 }
 
-function fmt(n?: number) { return n != null ? n.toLocaleString('en-GB') : '—'; }
+function fmt(n?: number) { return n != null ? n.toLocaleString('pt-BR') : '—'; }
 
 function sortValue(item: DomIntItem, key: SortKey): number | string {
   switch (key) {
@@ -75,11 +75,11 @@ export default function DomainIntersectionTable({ items, t1, t2 }: { items: DomI
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-nexo-border bg-white/[0.02]">
-            <Header label="Linking domain" sortK="domain_from" align="left" />
+            <Header label="Domínio de origem" sortK="domain_from" align="left" />
             <Header label="DR" sortK="domain_from_rank" align="center" />
-            <Header label={`→ ${t1 || 'Target 1'}`} sortK="backlinks_from_target1" align="right" className="text-nexo-sky" />
-            <Header label={`→ ${t2 || 'Target 2'}`} sortK="backlinks_from_target2" align="right" className="text-nexo-sky" />
-            <Header label="First seen" sortK="first_seen" align="right" className="hidden lg:table-cell text-nexo-faint" />
+            <Header label={`→ ${t1 || 'Alvo 1'}`} sortK="backlinks_from_target1" align="right" className="text-nexo-sky" />
+            <Header label={`→ ${t2 || 'Alvo 2'}`} sortK="backlinks_from_target2" align="right" className="text-nexo-sky" />
+            <Header label="Visto pela primeira vez" sortK="first_seen" align="right" className="hidden lg:table-cell text-nexo-faint" />
           </tr>
         </thead>
         <tbody className="divide-y divide-nexo-border">

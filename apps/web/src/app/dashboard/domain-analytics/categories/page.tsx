@@ -28,13 +28,13 @@ async function fetchCategories(target: string, location: string, language: strin
   return { items: result?.items ?? [], cost };
 }
 
-function formatDate(ts: number) { return new Date(ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); }
+function formatDate(ts: number) { return new Date(ts).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' }); }
 
 async function DomainCategoriesPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const creds = getCredentials();
   const params = await searchParams;
-  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'France');
-  const defaultLanguage = getSetting('default_language') ?? 'French';
+  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'Brazil');
+  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
 
   const rawTarget = params.target?.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/\/$/, '') ?? '';
   const location = params.location ?? defaultLocation;
@@ -49,7 +49,7 @@ async function DomainCategoriesPage({ searchParams }: { searchParams: Promise<Se
   if (historyId) {
     const saved = getDomainCategoriesResults<CategoryItem>(historyId);
     if (saved) { items = saved; activeEntry = getDomainCategoriesHistory().find((e) => e.id === historyId) ?? null; }
-    else error = 'Search no longer available.';
+    else error = 'Esta busca não está mais disponível.';
   } else if (rawTarget) {
     const dedupeId = stableSearchId(['domain-categories', rawTarget, location, language]);
     const cached = getDomainCategoriesResults<CategoryItem>(dedupeId);
@@ -57,7 +57,7 @@ async function DomainCategoriesPage({ searchParams }: { searchParams: Promise<Se
       items = cached;
       const cachedEntry = getDomainCategoriesHistory().find((e) => e.id === dedupeId);
       cost = cachedEntry?.cost;
-    } else if (!creds) { error = 'DataForSEO credentials missing. Configure them in Settings.'; }
+    } else if (!creds) { error = 'Credenciais do DataForSEO ausentes. Configure-as em Configurações.'; }
     else {
       const result = await fetchCategories(rawTarget, location, language, creds.login, creds.pass);
       items = result.items; cost = result.cost; error = result.error ?? null;
@@ -89,18 +89,18 @@ async function DomainCategoriesPage({ searchParams }: { searchParams: Promise<Se
     <div className="space-y-6">
       <div>
         <div className="nexo-label flex items-center gap-2 mb-1">
-          <a href="/dashboard/domain-analytics" className="hover:text-white transition-colors">Domain Analytics</a>
+          <a href="/dashboard/domain-analytics" className="hover:text-white transition-colors">Análise de domínios</a>
           <span className="text-nexo-text">/</span>
-          <span className="text-nexo-dim">Categories</span>
+          <span className="text-nexo-dim">Categorias</span>
         </div>
-        <h1 className="nexo-h1">Domain Categories</h1>
-        <p className="text-sm text-nexo-faint mt-1">Thematic categories that best describe a domain&apos;s organic content.</p>
+        <h1 className="nexo-h1">Categorias do domínio</h1>
+        <p className="text-sm text-nexo-faint mt-1">Categorias temáticas que melhor descrevem o conteúdo orgânico de um domínio.</p>
       </div>
 
-      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Analyze" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
+      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Analisar" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="sm:col-span-2">
-            <label className="nexo-label block mb-1.5">Domain</label>
+            <label className="nexo-label block mb-1.5">Domínio</label>
             <input type="text" name="target" defaultValue={displayTarget} placeholder="example.com" required
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky font-mono" />
           </div>
@@ -117,19 +117,19 @@ async function DomainCategoriesPage({ searchParams }: { searchParams: Promise<Se
       {(historyId || rawTarget) && !error && (
         <div id="results" className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between">
-            <span className="nexo-label">{items.length} categories — {displayTarget}</span>
+            <span className="nexo-label">{items.length} {items.length === 1 ? 'categoria' : 'categorias'} — {displayTarget}</span>
             <div className="flex items-center gap-3">
-              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">cost: ${cost.toFixed(4)}</span>}
+              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">custo: US$ {cost.toFixed(4).replace('.', ',')}</span>}
               {items.length > 0 && (
                 <div className="flex items-center gap-2">
-                  <CopyMarkdownButton data={csvData} columns={[{key:'category',label:'Category'},{key:'keywords',label:'Keywords'},{key:'etv',label:'Est. Traffic (ETV)'}]} />
-                  <ExportCSVButton data={csvData} filename={`categories-${displayTarget}.csv`} columns={[{key:'category',label:'Category'},{key:'keywords',label:'Keywords'},{key:'etv',label:'Est. Traffic (ETV)'}]} />
+                  <CopyMarkdownButton data={csvData} columns={[{key:'category',label:'Categoria'},{key:'keywords',label:'Palavras-chave'},{key:'etv',label:'Tráfego estimado (ETV)'}]} />
+                  <ExportCSVButton data={csvData} filename={`categories-${displayTarget}.csv`} columns={[{key:'category',label:'Categoria'},{key:'keywords',label:'Palavras-chave'},{key:'etv',label:'Tráfego estimado (ETV)'}]} />
                 </div>
               )}
             </div>
           </div>
           {items.length === 0 ? (
-            <div className="px-6 py-12 text-center text-sm text-nexo-faint">No categories found.</div>
+            <div className="px-6 py-12 text-center text-sm text-nexo-faint">Nenhuma categoria encontrada.</div>
           ) : (
             <CategoriesList items={resolvedItems} />
           )}
@@ -139,7 +139,7 @@ async function DomainCategoriesPage({ searchParams }: { searchParams: Promise<Se
       {history.length > 0 && (
         <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border">
-            <h2 className="nexo-label">History</h2>
+            <h2 className="nexo-label">Histórico</h2>
           </div>
           <div className="divide-y divide-nexo-border">
             {history.map((entry) => {
@@ -149,7 +149,7 @@ async function DomainCategoriesPage({ searchParams }: { searchParams: Promise<Se
                   className={`flex items-center gap-4 px-6 py-3.5 hover:bg-white/[0.04] transition-colors ${isActive ? 'bg-nexo-blue/10' : ''}`}>
                   <div className="flex-1 min-w-0">
                     <p className={`text-sm font-medium font-mono truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.target}</p>
-                    <p className="text-[11px] text-nexo-faint mt-0.5">{entry.count} categories{entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}</p>
+                    <p className="text-[11px] text-nexo-faint mt-0.5">{entry.count} {entry.count === 1 ? 'categoria' : 'categorias'}{entry.cost !== undefined ? ` · US$ ${entry.cost.toFixed(4).replace('.', ',')}` : ''}</p>
                   </div>
                   <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>
                 </a>

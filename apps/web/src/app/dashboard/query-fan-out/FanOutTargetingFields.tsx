@@ -13,7 +13,7 @@ interface Props {
 
 const FIELD_CLASS = 'w-full px-4 py-2.5 border border-nexo-border rounded-nexo-lg text-sm text-nexo-text focus:outline-none focus:ring-2 focus:ring-nexo-sky bg-nexo-surface disabled:opacity-50 disabled:cursor-not-allowed';
 
-const CHAT_GPT_LANGUAGE_OPTIONS = [{ value: 'English', label: 'English' }];
+const CHAT_GPT_LANGUAGE_OPTIONS = [{ value: 'English', label: 'Inglês' }];
 
 export default function FanOutTargetingFields({ defaultPlatform, defaultLimit, defaultLocation, defaultLanguage }: Props) {
   const [platform, setPlatform] = useState(defaultPlatform);
@@ -31,7 +31,7 @@ export default function FanOutTargetingFields({ defaultPlatform, defaultLimit, d
   return (
     <>
       <div>
-        <label className="nexo-label block mb-1.5">Platform</label>
+        <label className="nexo-label block mb-1.5">Plataforma</label>
         <select
           name="platform"
           value={platform}
@@ -44,7 +44,7 @@ export default function FanOutTargetingFields({ defaultPlatform, defaultLimit, d
       </div>
 
       <div>
-        <label className="nexo-label block mb-1.5">Mentions checked per seed</label>
+        <label className="nexo-label block mb-1.5">Menções verificadas por semente</label>
         <select name="limit" defaultValue={defaultLimit} className={FIELD_CLASS}>
           {[10, 20, 50, 100].map((n) => (
             <option key={n} value={n}>{n}</option>
@@ -53,7 +53,7 @@ export default function FanOutTargetingFields({ defaultPlatform, defaultLimit, d
       </div>
 
       <div>
-        <label className="nexo-label block mb-1.5">Location</label>
+        <label className="nexo-label block mb-1.5">Local</label>
         {/* Remounted on toggle (via key) so LocationPicker's internal text state — seeded once
             from defaultValue — picks up "United States" instead of keeping whatever was typed. */}
         <LocationPicker
@@ -65,11 +65,11 @@ export default function FanOutTargetingFields({ defaultPlatform, defaultLimit, d
           className={FIELD_CLASS}
           scope="labs"
         />
-        {isChatGpt && <p className="text-[11px] text-nexo-faint mt-1">Always United States for ChatGPT — DataForSEO only supports ChatGPT mentions for that market.</p>}
+        {isChatGpt && <p className="text-[11px] text-nexo-faint mt-1">Sempre Estados Unidos no ChatGPT — a DataForSEO só oferece menções do ChatGPT nesse mercado.</p>}
       </div>
 
       <div>
-        <label className="nexo-label block mb-1.5">Language</label>
+        <label className="nexo-label block mb-1.5">Idioma</label>
         <select
           name="language"
           value={selectedLanguage}
@@ -79,7 +79,7 @@ export default function FanOutTargetingFields({ defaultPlatform, defaultLimit, d
         >
           {languageOptions.map((l) => <option key={l.value} value={l.value}>{l.label}</option>)}
         </select>
-        {isChatGpt && <p className="text-[11px] text-nexo-faint mt-1">Always English for ChatGPT — DataForSEO only supports ChatGPT mentions in that language.</p>}
+        {isChatGpt && <p className="text-[11px] text-nexo-faint mt-1">Sempre inglês no ChatGPT — a DataForSEO só oferece menções do ChatGPT nesse idioma.</p>}
       </div>
     </>
   );

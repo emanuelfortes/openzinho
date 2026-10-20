@@ -46,24 +46,24 @@ export async function callDataForSeo<T>(
       signal: timeoutMs != null ? AbortSignal.timeout(timeoutMs) : undefined,
     });
   } catch (err) {
-    if (err instanceof Error && err.name === 'TimeoutError') return { error: `Request timed out after ${timeoutMs}ms.` };
-    return { error: err instanceof Error ? `Network error: ${err.message}` : 'Network error.' };
+    if (err instanceof Error && err.name === 'TimeoutError') return { error: `A requisição expirou após ${timeoutMs} ms.` };
+    return { error: err instanceof Error ? `Erro de rede: ${err.message}` : 'Erro de rede.' };
   }
 
-  if (!res.ok) return { error: `API error ${res.status}: ${res.statusText}` };
+  if (!res.ok) return { error: `Erro da API ${res.status}: ${res.statusText}` };
 
   let data: { status_code?: number; status_message?: string; tasks?: Array<{ status_code?: number; status_message?: string; cost?: number; result?: T[] }> | null };
   try {
     data = await res.json();
   } catch {
-    return { error: 'Invalid API response (not JSON).' };
+    return { error: 'Resposta inválida da API (não é JSON).' };
   }
 
   // Request-level failures (e.g. 50304 "function temporarily unavailable") come back with `tasks: null`
   // and the reason only in the top-level status, so surface that instead of a generic message.
   if (data?.status_code && data.status_code !== 20000) return { error: `DataForSEO: ${data.status_message}` };
   const task = data?.tasks?.[0];
-  if (!task) return { error: 'Empty API response.' };
+  if (!task) return { error: 'Resposta vazia da API.' };
   if (task.status_code && task.status_code !== 20000) return { error: `DataForSEO: ${task.status_message}` };
   return { result: task.result, cost: task.cost };
 }

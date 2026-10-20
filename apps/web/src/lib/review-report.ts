@@ -38,7 +38,7 @@ export interface ReportListing {
 
 // ─── Criteria ─────────────────────────────────────────────────────────────────
 
-export type CriterionGroup = 'Momentum' | 'Satisfaction' | 'Engagement' | 'Richness' | 'Standing';
+export type CriterionGroup = 'Ritmo' | 'Satisfação' | 'Engajamento' | 'Riqueza' | 'Presença';
 export type ValueFormat = 'rate1' | 'percent' | 'signedPercent' | 'days' | 'rating' | 'signedRating' | 'duration' | 'count' | 'position';
 
 export type CriterionId =
@@ -63,26 +63,26 @@ export interface Criterion {
 }
 
 export const CRITERIA: Criterion[] = [
-  { id: 'perWeek4', label: 'Reviews per week (last 4 weeks)', short: 'Per week', group: 'Momentum', direction: 'up', format: 'rate1', weight: 25, description: 'Average of the last 4 complete weeks.' },
-  { id: 'perMonth', label: 'Reviews per month', short: 'Per month', group: 'Momentum', direction: 'up', format: 'rate1', weight: 0, description: 'Average of the last 3 complete months.' },
-  { id: 'momentum', label: 'Momentum', short: 'Momentum', group: 'Momentum', direction: 'up', format: 'signedPercent', weight: 10, description: 'Last 4 complete weeks vs the 4 before.' },
-  { id: 'regularity', label: 'Regularity', short: 'Regularity', group: 'Momentum', direction: 'up', format: 'percent', weight: 10, description: 'Share of the last 13 complete weeks with at least one review.' },
-  { id: 'freshness', label: 'Days since last review', short: 'Last review', group: 'Momentum', direction: 'down', format: 'days', weight: 0, description: 'Days since the most recent review.' },
-  { id: 'shareOfVoice', label: 'Share of new reviews', short: 'Share', group: 'Momentum', direction: 'up', format: 'percent', weight: 0, description: 'Share of all new reviews in this market over the period.' },
-  { id: 'recentRating', label: 'Recent rating', short: 'Rating', group: 'Satisfaction', direction: 'up', format: 'rating', weight: 20, description: 'Average rating of the reviews of the period.' },
-  { id: 'ratingTrend', label: 'Rating trend', short: 'Rating trend', group: 'Satisfaction', direction: 'up', format: 'signedRating', weight: 0, description: 'Recent rating minus the overall Google rating.' },
-  { id: 'negativeShare', label: 'Negative reviews', short: 'Negative', group: 'Satisfaction', direction: 'down', format: 'percent', weight: 0, description: 'Share of reviews rated 3★ or less.' },
-  { id: 'replyRate', label: 'Owner reply rate', short: 'Reply rate', group: 'Engagement', direction: 'up', format: 'percent', weight: 15, description: 'Share of reviews older than 7 days with an owner reply.' },
-  { id: 'negativeReplyRate', label: 'Reply rate on negative reviews', short: 'Neg. replies', group: 'Engagement', direction: 'up', format: 'percent', weight: 10, description: 'Same, for reviews rated 3★ or less.' },
-  { id: 'replyTime', label: 'Median reply time', short: 'Reply time', group: 'Engagement', direction: 'down', format: 'duration', weight: 0, description: 'Median delay between a review and the owner reply.' },
-  { id: 'textShare', label: 'Reviews with text', short: 'With text', group: 'Richness', direction: 'up', format: 'percent', weight: 0, description: 'Share of reviews with a written comment.' },
-  { id: 'photoShare', label: 'Reviews with photos', short: 'Photos', group: 'Richness', direction: 'up', format: 'percent', weight: 0, description: 'Share of reviews with at least one photo.' },
-  { id: 'localGuideShare', label: 'Local Guides', short: 'Local Guides', group: 'Richness', direction: 'up', format: 'percent', weight: 0, description: 'Share of reviews written by Local Guides.' },
-  { id: 'googleTotal', label: 'Total Google reviews', short: 'Total', group: 'Standing', direction: 'up', format: 'count', weight: 10, description: 'Review count shown by Google.' },
-  { id: 'mapsRank', label: 'Google Maps position', short: 'Maps pos.', group: 'Standing', direction: 'down', format: 'position', weight: 0, description: 'Position in the Google Maps search used to find the listings.' },
+  { id: 'perWeek4', label: 'Avaliações por semana (últimas 4 semanas)', short: 'Por semana', group: 'Ritmo', direction: 'up', format: 'rate1', weight: 25, description: 'Média das últimas 4 semanas completas.' },
+  { id: 'perMonth', label: 'Avaliações por mês', short: 'Por mês', group: 'Ritmo', direction: 'up', format: 'rate1', weight: 0, description: 'Média dos últimos 3 meses completos.' },
+  { id: 'momentum', label: 'Aceleração', short: 'Aceleração', group: 'Ritmo', direction: 'up', format: 'signedPercent', weight: 10, description: 'Últimas 4 semanas completas vs. as 4 anteriores.' },
+  { id: 'regularity', label: 'Regularidade', short: 'Regularidade', group: 'Ritmo', direction: 'up', format: 'percent', weight: 10, description: 'Fração das últimas 13 semanas completas com pelo menos uma avaliação.' },
+  { id: 'freshness', label: 'Dias desde a última avaliação', short: 'Última aval.', group: 'Ritmo', direction: 'down', format: 'days', weight: 0, description: 'Dias desde a avaliação mais recente.' },
+  { id: 'shareOfVoice', label: 'Fatia das novas avaliações', short: 'Fatia', group: 'Ritmo', direction: 'up', format: 'percent', weight: 0, description: 'Fatia de todas as novas avaliações deste mercado no período.' },
+  { id: 'recentRating', label: 'Nota recente', short: 'Nota', group: 'Satisfação', direction: 'up', format: 'rating', weight: 20, description: 'Nota média das avaliações do período.' },
+  { id: 'ratingTrend', label: 'Tendência da nota', short: 'Tendência', group: 'Satisfação', direction: 'up', format: 'signedRating', weight: 0, description: 'Nota recente menos a nota geral no Google.' },
+  { id: 'negativeShare', label: 'Avaliações negativas', short: 'Negativas', group: 'Satisfação', direction: 'down', format: 'percent', weight: 0, description: 'Fração das avaliações com nota 3★ ou menos.' },
+  { id: 'replyRate', label: 'Taxa de resposta do proprietário', short: 'Taxa de resp.', group: 'Engajamento', direction: 'up', format: 'percent', weight: 15, description: 'Fração das avaliações com mais de 7 dias que têm resposta do proprietário.' },
+  { id: 'negativeReplyRate', label: 'Taxa de resposta em avaliações negativas', short: 'Resp. negativas', group: 'Engajamento', direction: 'up', format: 'percent', weight: 10, description: 'O mesmo, para avaliações com nota 3★ ou menos.' },
+  { id: 'replyTime', label: 'Tempo mediano de resposta', short: 'Tempo de resp.', group: 'Engajamento', direction: 'down', format: 'duration', weight: 0, description: 'Intervalo mediano entre uma avaliação e a resposta do proprietário.' },
+  { id: 'textShare', label: 'Avaliações com texto', short: 'Com texto', group: 'Riqueza', direction: 'up', format: 'percent', weight: 0, description: 'Fração das avaliações com comentário escrito.' },
+  { id: 'photoShare', label: 'Avaliações com fotos', short: 'Fotos', group: 'Riqueza', direction: 'up', format: 'percent', weight: 0, description: 'Fração das avaliações com pelo menos uma foto.' },
+  { id: 'localGuideShare', label: 'Local Guides', short: 'Local Guides', group: 'Riqueza', direction: 'up', format: 'percent', weight: 0, description: 'Fração das avaliações escritas por Local Guides.' },
+  { id: 'googleTotal', label: 'Total de avaliações no Google', short: 'Total', group: 'Presença', direction: 'up', format: 'count', weight: 10, description: 'Número de avaliações exibido pelo Google.' },
+  { id: 'mapsRank', label: 'Posição no Google Maps', short: 'Pos. Maps', group: 'Presença', direction: 'down', format: 'position', weight: 0, description: 'Posição na busca do Google Maps usada para encontrar os perfis.' },
 ];
 
-export const CRITERION_GROUPS: CriterionGroup[] = ['Momentum', 'Satisfaction', 'Engagement', 'Richness', 'Standing'];
+export const CRITERION_GROUPS: CriterionGroup[] = ['Ritmo', 'Satisfação', 'Engajamento', 'Riqueza', 'Presença'];
 
 export function criterion(id: CriterionId): Criterion {
   return CRITERIA.find((c) => c.id === id)!;
@@ -242,20 +242,25 @@ export function weightedScore(scores: Partial<Record<CriterionId, number | null>
 
 // ─── Formatting ───────────────────────────────────────────────────────────────
 
+/** Fixed decimals with the pt-BR separator, for display only. */
+function decimal(value: number, digits: number): string {
+  return value.toLocaleString('pt-BR', { minimumFractionDigits: digits, maximumFractionDigits: digits });
+}
+
 export function formatValue(format: ValueFormat, value: number | null): string {
-  if (value === null || !Number.isFinite(value)) return 'n/a';
+  if (value === null || !Number.isFinite(value)) return 'n/d';
   switch (format) {
-    case 'rate1': return value.toFixed(1);
+    case 'rate1': return decimal(value, 1);
     case 'percent': return `${Math.round(value)}%`;
     case 'signedPercent': return `${value > 0 ? '+' : ''}${Math.round(value)}%`;
-    case 'days': return value === 0 ? 'today' : `${value} d`;
-    case 'rating': return `${value.toFixed(2)}★`;
-    case 'signedRating': return `${value > 0 ? '+' : ''}${value.toFixed(2)}`;
+    case 'days': return value === 0 ? 'hoje' : `${value} d`;
+    case 'rating': return `${decimal(value, 2)}★`;
+    case 'signedRating': return `${value > 0 ? '+' : ''}${decimal(value, 2)}`;
     case 'duration': {
       const hours = value / 3_600_000;
       return hours < 48 ? `${Math.max(1, Math.round(hours))} h` : `${Math.round(hours / 24)} d`;
     }
-    case 'count': return Math.round(value).toLocaleString('en-US');
+    case 'count': return Math.round(value).toLocaleString('pt-BR');
     case 'position': return `#${Math.round(value)}`;
   }
 }
@@ -276,12 +281,11 @@ export function rankColor(rank: number, count: number): [number, number, number]
 }
 
 function ordinal(n: number): string {
-  const s = ['th', 'st', 'nd', 'rd'], v = n % 100;
-  return `${n}${s[(v - 20) % 10] || s[v] || s[0]}`;
+  return `${n}º`;
 }
 
-function plural(n: number, word: string): string {
-  return `${n} ${word}${n === 1 ? '' : 's'}`;
+function plural(n: number, singular: string, pluralForm: string): string {
+  return `${n} ${n === 1 ? singular : pluralForm}`;
 }
 
 // ─── Report ───────────────────────────────────────────────────────────────────
@@ -358,17 +362,17 @@ function buildKpis(listings: ListingResult[], self: ListingResult | null): Kpi[]
   const leaderPace = leader?.metrics.perWeek4 ?? null;
   if (self) {
     return [
-      { label: 'Overall rank', value: self.overallRank ? `#${self.overallRank} of ${listings.length}` : 'n/a', detail: self.score !== null ? `Score ${Math.round(self.score)}/100` : undefined },
-      { label: 'Reviews per week', value: formatCriterion('perWeek4', self.metrics.perWeek4), detail: leader && leader.id !== self.id ? `Leader: ${formatCriterion('perWeek4', leaderPace)} (${leader.title})` : 'Market leader' },
-      { label: 'Owner reply rate', value: formatCriterion('replyRate', self.metrics.replyRate), detail: `Market median: ${formatCriterion('replyRate', marketMedian(listings, 'replyRate'))}` },
-      { label: 'Recent rating', value: formatCriterion('recentRating', self.metrics.recentRating), detail: `Market median: ${formatCriterion('recentRating', marketMedian(listings, 'recentRating'))}` },
+      { label: 'Posição geral', value: self.overallRank ? `#${self.overallRank} de ${listings.length}` : 'n/d', detail: self.score !== null ? `Pontuação ${Math.round(self.score)}/100` : undefined },
+      { label: 'Avaliações por semana', value: formatCriterion('perWeek4', self.metrics.perWeek4), detail: leader && leader.id !== self.id ? `Líder: ${formatCriterion('perWeek4', leaderPace)} (${leader.title})` : 'Líder do mercado' },
+      { label: 'Taxa de resposta do proprietário', value: formatCriterion('replyRate', self.metrics.replyRate), detail: `Mediana do mercado: ${formatCriterion('replyRate', marketMedian(listings, 'replyRate'))}` },
+      { label: 'Nota recente', value: formatCriterion('recentRating', self.metrics.recentRating), detail: `Mediana do mercado: ${formatCriterion('recentRating', marketMedian(listings, 'recentRating'))}` },
     ];
   }
   return [
-    { label: 'Listings compared', value: String(listings.length) },
-    { label: 'Fastest pace', value: formatCriterion('perWeek4', leaderPace), detail: leader ? `${leader.title} · per week` : undefined },
-    { label: 'Median pace', value: formatCriterion('perWeek4', marketMedian(listings, 'perWeek4')), detail: 'Reviews per week' },
-    { label: 'Median reply rate', value: formatCriterion('replyRate', marketMedian(listings, 'replyRate')) },
+    { label: 'Perfis comparados', value: String(listings.length) },
+    { label: 'Ritmo mais rápido', value: formatCriterion('perWeek4', leaderPace), detail: leader ? `${leader.title} · por semana` : undefined },
+    { label: 'Ritmo mediano', value: formatCriterion('perWeek4', marketMedian(listings, 'perWeek4')), detail: 'Avaliações por semana' },
+    { label: 'Taxa de resposta mediana', value: formatCriterion('replyRate', marketMedian(listings, 'replyRate')) },
   ];
 }
 
@@ -381,22 +385,22 @@ function buildSummary(listings: ListingResult[], self: ListingResult | null, sel
 
   const leader = bestFor(listings, 'perWeek4');
   if (!self) {
-    if (leader) headline.push(`${leader.title} gains the most reviews: ${formatCriterion('perWeek4', leader.metrics.perWeek4)} per week over the last 4 weeks.`);
+    if (leader) headline.push(`${leader.title} é quem mais ganha avaliações: ${formatCriterion('perWeek4', leader.metrics.perWeek4)} por semana nas últimas 4 semanas.`);
     const top = listings[0];
-    if (top?.overallRank === 1) headline.push(`${top.title} leads the overall ranking with a score of ${Math.round(top.score ?? 0)}/100.`);
-    headline.push('Mark one listing as "My listing" to get a personalised comparison and targets.');
+    if (top?.overallRank === 1) headline.push(`${top.title} lidera o ranking geral com pontuação de ${Math.round(top.score ?? 0)}/100.`);
+    headline.push('Marque um perfil como "Meu perfil" para obter uma comparação personalizada e metas.');
     return { headline, strengths, weaknesses, targets };
   }
 
-  if (self.overallRank) headline.push(`You rank ${ordinal(self.overallRank)} of ${n} overall, with a score of ${Math.round(self.score ?? 0)}/100.`);
+  if (self.overallRank) headline.push(`Você está em ${ordinal(self.overallRank)} lugar entre ${n} no geral, com pontuação de ${Math.round(self.score ?? 0)}/100.`);
   const paceRank = self.ranks.perWeek4;
   if (paceRank) {
     headline.push(paceRank === 1
-      ? `You gain reviews faster than every competitor: ${formatCriterion('perWeek4', self.metrics.perWeek4)} per week.`
-      : `You are ${ordinal(paceRank)} on review pace: ${formatCriterion('perWeek4', self.metrics.perWeek4)} per week vs ${formatCriterion('perWeek4', leader?.metrics.perWeek4 ?? null)} for ${leader?.title}.`);
+      ? `Você ganha avaliações mais rápido que todos os concorrentes: ${formatCriterion('perWeek4', self.metrics.perWeek4)} por semana.`
+      : `Você está em ${ordinal(paceRank)} lugar no ritmo de avaliações: ${formatCriterion('perWeek4', self.metrics.perWeek4)} por semana vs. ${formatCriterion('perWeek4', leader?.metrics.perWeek4 ?? null)} de ${leader?.title}.`);
   }
   const replyRank = self.ranks.replyRate;
-  if (replyRank) headline.push(`You are ${ordinal(replyRank)} on owner replies (${formatCriterion('replyRate', self.metrics.replyRate)} of reviews answered).`);
+  if (replyRank) headline.push(`Você está em ${ordinal(replyRank)} lugar nas respostas do proprietário (${formatCriterion('replyRate', self.metrics.replyRate)} das avaliações respondidas).`);
 
   // Strengths and weaknesses: top / bottom third of the field on each ranked criterion.
   // Scored criteria first (heaviest weight first), so a short list keeps what matters most.
@@ -416,17 +420,17 @@ function buildSummary(listings: ListingResult[], self: ListingResult | null, sel
   const pace = self.metrics.perWeek4;
   const paces = listings.map((l) => l.metrics.perWeek4).filter((v): v is number => v !== null).sort((a, b) => b - a);
   if (pace !== null && paceRank !== null && paceRank > 1 && leader) {
-    targets.push(`+${(paces[0] - pace + 0.1).toFixed(1)} reviews per week to overtake ${leader.title} and lead on pace.`);
-    if (paceRank > 3 && paces.length >= 3) targets.push(`+${(paces[2] - pace + 0.1).toFixed(1)} reviews per week to enter the top 3.`);
+    targets.push(`+${decimal(paces[0] - pace + 0.1, 1)} avaliações por semana para ultrapassar ${leader.title} e liderar no ritmo.`);
+    if (paceRank > 3 && paces.length >= 3) targets.push(`+${decimal(paces[2] - pace + 0.1, 1)} avaliações por semana para entrar no top 3.`);
   }
 
   // Unanswered negative reviews.
   const unanswered = selfReviews.filter((r) => r.rating !== null && r.rating <= 3 && !r.ownerAnswered && r.publishedAt <= now - REPLY_GRACE_MS).length;
-  if (unanswered > 0) targets.push(`${plural(unanswered, 'negative review')} from the period still ${unanswered === 1 ? 'has' : 'have'} no owner reply.`);
+  if (unanswered > 0) targets.push(`${plural(unanswered, 'avaliação negativa', 'avaliações negativas')} do período ainda ${unanswered === 1 ? 'está' : 'estão'} sem resposta do proprietário.`);
 
   const bestReply = bestFor(listings, 'replyRate');
   if (bestReply && bestReply.id !== self.id && self.metrics.replyRate !== null) {
-    targets.push(`Reply rate: ${formatCriterion('replyRate', self.metrics.replyRate)} vs ${formatCriterion('replyRate', bestReply.metrics.replyRate)} for ${bestReply.title}.`);
+    targets.push(`Taxa de resposta: ${formatCriterion('replyRate', self.metrics.replyRate)} vs. ${formatCriterion('replyRate', bestReply.metrics.replyRate)} de ${bestReply.title}.`);
   }
 
   // Catch-up on total reviews, at the current monthly pace.
@@ -439,8 +443,8 @@ function buildSummary(listings: ListingResult[], self: ListingResult | null, sel
       const gap = (above.googleTotal as number) - selfTotal;
       const gain = selfMonth - (above.metrics.perMonth as number);
       targets.push(gain > 0
-        ? `At the current pace you overtake ${above.title}'s review count in about ${Math.ceil(gap / gain)} months (gap: ${gap}).`
-        : `${above.title} has ${gap} more reviews and gains ${(-gain).toFixed(1)} more per month: the gap keeps growing.`);
+        ? `No ritmo atual, você ultrapassa o número de avaliações de ${above.title} em cerca de ${plural(Math.ceil(gap / gain), 'mês', 'meses')} (diferença: ${gap}).`
+        : `${above.title} tem ${plural(gap, 'avaliação', 'avaliações')} a mais e ganha ${decimal(-gain, 1)} a mais por mês: a diferença continua crescendo.`);
     }
     const chaser = listings
       .filter((l) => l.id !== self.id && l.googleTotal !== null && l.googleTotal <= selfTotal && l.metrics.perMonth !== null && (l.metrics.perMonth as number) > selfMonth)
@@ -448,7 +452,7 @@ function buildSummary(listings: ListingResult[], self: ListingResult | null, sel
     if (chaser) {
       const gap = selfTotal - (chaser.googleTotal as number);
       const gain = (chaser.metrics.perMonth as number) - selfMonth;
-      targets.push(`${chaser.title} is catching up: at its pace it overtakes your review count in about ${Math.max(1, Math.ceil(gap / gain))} months.`);
+      targets.push(`${chaser.title} está se aproximando: nesse ritmo, ultrapassa o seu número de avaliações em cerca de ${plural(Math.max(1, Math.ceil(gap / gain)), 'mês', 'meses')}.`);
     }
   }
 

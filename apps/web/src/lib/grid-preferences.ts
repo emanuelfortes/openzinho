@@ -45,7 +45,7 @@ export function unitToKm(value: number, unit: DistanceUnit): number {
 export function formatDistance(km: number, unit: DistanceUnit, decimals = 2): string {
   const factor = 10 ** decimals;
   const value = Math.round(kmToUnit(km, unit) * factor) / factor;
-  return `${value} ${unit}`;
+  return `${String(value).replace('.', ',')} ${unit}`;
 }
 
 /** Spacing presets offered by the Geo-grid form, in the display unit. */
@@ -62,7 +62,7 @@ export type SpacingOption = { km: number; label: string };
  * rerun reuses the exact same grid and stays in the same monitor series.
  */
 export function spacingOptions(unit: DistanceUnit, currentKm?: number): SpacingOption[] {
-  const options = SPACING_PRESETS[unit].map((value) => ({ km: unitToKm(value, unit), label: `${value} ${unit}` }));
+  const options = SPACING_PRESETS[unit].map((value) => ({ km: unitToKm(value, unit), label: `${String(value).replace('.', ',')} ${unit}` }));
   if (currentKm != null && Number.isFinite(currentKm) && currentKm > 0 && !options.some((option) => Math.abs(option.km - currentKm) < 1e-6)) {
     options.push({ km: currentKm, label: formatDistance(currentKm, unit) });
     options.sort((a, b) => a.km - b.km);

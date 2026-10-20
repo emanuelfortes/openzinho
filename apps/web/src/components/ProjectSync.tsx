@@ -78,12 +78,12 @@ export default function ProjectSync({ projectId, projectName }: { projectId: str
     >
       <ArrowLeftRight className="mt-0.5 h-4 w-4 shrink-0 text-nexo-sky" aria-hidden="true" />
       <p className="text-nexo-dim">
-        Now showing <span className="font-semibold text-nexo-text">{notice}</span>: the active project was switched in another window.
+        Exibindo agora <span className="font-semibold text-nexo-text">{notice}</span>: o projeto ativo foi trocado em outra janela.
       </p>
       <button
         type="button"
         onClick={() => setNotice(null)}
-        aria-label="Dismiss"
+        aria-label="Dispensar"
         className="-mr-1 shrink-0 rounded-md p-0.5 text-nexo-faint transition-colors hover:bg-white/[0.04] hover:text-white"
       >
         <X className="h-4 w-4" />

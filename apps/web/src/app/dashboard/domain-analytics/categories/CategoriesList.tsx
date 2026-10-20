@@ -55,14 +55,14 @@ export default function CategoriesList({ items }: { items: ResolvedCategoryItem[
   return (
     <div>
       <div className="flex items-center gap-2 px-6 py-2.5 border-b border-nexo-border">
-        <span className="nexo-label mr-1">Sort</span>
+        <span className="nexo-label mr-1">Ordenar</span>
         <SortButton label="ETV" sortK="etv" />
-        <SortButton label="Keywords" sortK="count" />
+        <SortButton label="Palavras-chave" sortK="count" />
       </div>
       <div className="divide-y divide-nexo-border">
         {sorted.map((item, i) => {
           const barW = Math.round((item.etv / maxEtv) * 100);
-          const share = totalEtv > 0 ? ((item.etv / totalEtv) * 100).toFixed(1) : '0.0';
+          const share = totalEtv > 0 ? ((item.etv / totalEtv) * 100).toFixed(1).replace('.', ',') : '0,0';
           return (
             <div key={i} className="px-6 py-4 flex items-center gap-4 hover:bg-white/[0.04] transition-colors">
               <div className="w-10 text-right text-[11px] font-mono text-nexo-faint tabular-nums shrink-0">{i + 1}</div>
@@ -71,14 +71,14 @@ export default function CategoriesList({ items }: { items: ResolvedCategoryItem[
                   {item.categoryPaths.map((p, ci) => (
                     <span key={ci} className="text-[11px] font-medium bg-nexo-surface-2 text-nexo-dim px-2 py-0.5 rounded">{p}</span>
                   ))}
-                  <span className="text-[11px] text-nexo-faint">{item.count.toLocaleString('en-GB')} keywords</span>
+                  <span className="text-[11px] text-nexo-faint">{item.count.toLocaleString('pt-BR')} {item.count === 1 ? 'palavra-chave' : 'palavras-chave'}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="flex-1 h-1.5 bg-nexo-surface-2 rounded-full overflow-hidden">
                     <div className="h-full bg-nexo-sky/40 rounded-full transition-all" style={{ width: `${barW}%` }} />
                   </div>
                   <span className="text-[11px] font-medium text-nexo-dim tabular-nums shrink-0">{share}%</span>
-                  <span className="text-[11px] font-mono text-nexo-faint tabular-nums shrink-0">{Math.round(item.etv).toLocaleString('en-GB')} ETV</span>
+                  <span className="text-[11px] font-mono text-nexo-faint tabular-nums shrink-0">{Math.round(item.etv).toLocaleString('pt-BR')} ETV</span>
                 </div>
               </div>
             </div>

@@ -7,12 +7,12 @@ export default function DeleteCampaignButton({ id }: { id: string }) {
     <form
       action={deleteCampaignAction}
       onSubmit={(event) => {
-        if (!window.confirm('Delete this campaign? Its schedules stop. Runs already made stay available as Geo-grid monitors.')) event.preventDefault();
+        if (!window.confirm('Excluir esta campanha? Os agendamentos param. As execuções já feitas continuam disponíveis como monitores Geo-Grid.')) event.preventDefault();
       }}
     >
       <input type="hidden" name="id" value={id} />
       <button type="submit" className="nexo-label transition-colors hover:text-nexo-danger-text">
-        Delete
+        Excluir
       </button>
     </form>
   );

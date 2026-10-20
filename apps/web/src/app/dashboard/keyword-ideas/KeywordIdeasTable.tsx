@@ -20,13 +20,15 @@ function KdBadge({ v }: { v?: number }) {
   return <span className={`inline-flex items-center justify-center w-9 h-5 rounded text-[10px] font-medium ${cls}`}>{v}</span>;
 }
 
+const INTENT_SHORT: Record<string, string> = { informational: 'info', navigational: 'nav', commercial: 'com', transactional: 'trans' };
+
 function IntentBadge({ intent }: { intent?: string }) {
   if (!intent) return null;
   const map: Record<string, string> = { informational: 'bg-nexo-blue/10 text-nexo-sky', navigational: 'bg-nexo-blue/10 text-nexo-sky', commercial: 'bg-nexo-warn/10 text-nexo-warn-text', transactional: 'bg-nexo-ice/10 text-nexo-ice' };
-  return <span className={`text-[9px] font-medium uppercase tracking-wider px-1.5 py-0.5 rounded ${map[intent] ?? 'bg-nexo-surface-2 text-nexo-dim'}`}>{intent.slice(0, 4)}</span>;
+  return <span className={`text-[9px] font-medium uppercase tracking-wider px-1.5 py-0.5 rounded ${map[intent] ?? 'bg-nexo-surface-2 text-nexo-dim'}`}>{INTENT_SHORT[intent] ?? intent.slice(0, 4)}</span>;
 }
 
-function fmt(n?: number) { return n != null ? n.toLocaleString('en-GB') : '—'; }
+function fmt(n?: number) { return n != null ? n.toLocaleString('pt-BR') : '—'; }
 
 function sortValue(item: IdeaItem, key: SortKey): number | string {
   switch (key) {
@@ -84,13 +86,13 @@ export default function KeywordIdeasTable({ items }: { items: IdeaItem[] }) {
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-nexo-border bg-white/[0.02]">
-            <Header label="Keyword" sortK="keyword" align="left" className="!px-6" />
+            <Header label="Palavra-chave" sortK="keyword" align="left" className="!px-6" />
             <Header label="KD" sortK="kd" align="center" />
             <Header label="Volume" sortK="volume" align="right" />
             <Header label="CPC" sortK="cpc" align="right" />
-            <Header label="Intent" sortK="intent" align="center" className="hidden sm:table-cell" />
-            <Header label="Competition" sortK="competition" align="right" className="hidden md:table-cell" />
-            <Header label="Ref. Domains" sortK="ref_domains" align="right" className="hidden lg:table-cell" />
+            <Header label="Intenção" sortK="intent" align="center" className="hidden sm:table-cell" />
+            <Header label="Concorrência" sortK="competition" align="right" className="hidden md:table-cell" />
+            <Header label="Dom. de referência" sortK="ref_domains" align="right" className="hidden lg:table-cell" />
           </tr>
         </thead>
         <tbody className="divide-y divide-nexo-border">
@@ -101,7 +103,7 @@ export default function KeywordIdeasTable({ items }: { items: IdeaItem[] }) {
                 <td className="px-6 py-3 font-medium text-nexo-text max-w-[220px]"><span className="truncate block">{item.keyword ?? '—'}</span></td>
                 <td className="px-4 py-3 text-center"><KdBadge v={item.keyword_properties?.keyword_difficulty} /></td>
                 <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">{fmt(ki?.search_volume)}</td>
-                <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">{ki?.cpc != null ? `$${ki.cpc.toFixed(2)}` : '—'}</td>
+                <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">{ki?.cpc != null ? `US$ ${ki.cpc.toFixed(2).replace('.', ',')}` : '—'}</td>
                 <td className="px-4 py-3 text-center hidden sm:table-cell"><IntentBadge intent={item.search_intent_info?.main_intent} /></td>
                 <td className="px-4 py-3 text-right text-nexo-dim tabular-nums hidden md:table-cell text-xs">{ki?.competition_level ?? '—'}</td>
                 <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums hidden lg:table-cell">{fmt(item.avg_backlinks_info?.referring_domains)}</td>

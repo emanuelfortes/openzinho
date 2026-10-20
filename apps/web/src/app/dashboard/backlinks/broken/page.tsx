@@ -68,8 +68,8 @@ async function fetchBroken(
   return { items, total: result?.total_count ?? items.length, cost };
 }
 
-function fmt(n?: number) { return n === undefined ? '—' : n.toLocaleString('en-GB'); }
-function formatDate(ts: number) { return new Date(ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); }
+function fmt(n?: number) { return n === undefined ? '—' : n.toLocaleString('pt-BR'); }
+function formatDate(ts: number) { return new Date(ts).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' }); }
 
 function Stat({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
@@ -103,7 +103,7 @@ async function BrokenBacklinksPage({ searchParams }: { searchParams: Promise<Sea
       activeEntry = getBlBrokenHistory().find((e) => e.id === historyId) ?? null;
       total = activeEntry?.total ?? items.length;
       cost = activeEntry?.cost;
-    } else error = 'Search no longer available.';
+    } else error = 'Esta busca não está mais disponível.';
   } else if (target) {
     const dedupeId = stableSearchId(['bl-broken', target, limit, dofollowOnly]);
     const cached = getBlBrokenResults<BrokenLink>(dedupeId);
@@ -113,7 +113,7 @@ async function BrokenBacklinksPage({ searchParams }: { searchParams: Promise<Sea
       total = activeEntry?.total ?? items.length;
       cost = activeEntry?.cost;
     } else if (!creds) {
-      error = 'DataForSEO credentials missing. Configure them in Settings.';
+      error = 'Credenciais do DataForSEO ausentes. Configure-as em Configurações.';
     } else {
       const res = await fetchBroken(target, limit, dofollowOnly, creds.login, creds.pass);
       if (res.error) error = res.error;
@@ -158,19 +158,19 @@ async function BrokenBacklinksPage({ searchParams }: { searchParams: Promise<Sea
         <div className="nexo-label flex items-center gap-2 mb-1">
           <a href="/dashboard/backlinks" className="hover:text-white transition-colors">Backlinks</a>
           <span className="text-nexo-text">/</span>
-          <span className="text-nexo-dim">Broken Backlinks</span>
+          <span className="text-nexo-dim">Backlinks quebrados</span>
         </div>
-        <h1 className="nexo-h1">Broken Backlinks</h1>
+        <h1 className="nexo-h1">Backlinks quebrados</h1>
         <p className="text-sm text-nexo-faint mt-1 max-w-2xl">
-          Live backlinks pointing to pages that answer 4xx or 5xx. On your own site, 301-redirect or restore those pages to reclaim the links.
-          On a competitor, each broken page is a broken link building opportunity: offer your content to the sites still linking to it.
+          Backlinks ativos que apontam para páginas que respondem 4xx ou 5xx. No seu site, aplique um redirecionamento 301 ou restaure essas páginas para recuperar os links.
+          Num concorrente, cada página quebrada é uma oportunidade de broken link building: ofereça seu conteúdo aos sites que ainda apontam para ela.
         </p>
       </div>
 
-      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Find broken backlinks" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors" disabled={!creds}>
+      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Encontrar backlinks quebrados" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors" disabled={!creds}>
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
           <div className="sm:col-span-2">
-            <label htmlFor="bb-target" className="nexo-label block mb-1.5">Domain or page</label>
+            <label htmlFor="bb-target" className="nexo-label block mb-1.5">Domínio ou página</label>
             <input id="bb-target" type="text" name="target" defaultValue={displayTarget || defaultDomain} placeholder="example.com" required
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky font-mono" />
           </div>
@@ -178,19 +178,19 @@ async function BrokenBacklinksPage({ searchParams }: { searchParams: Promise<Sea
             <label htmlFor="bb-dofollow" className="nexo-label block mb-1.5">Links</label>
             <select id="bb-dofollow" name="dofollow" defaultValue={displayDofollow ? 'true' : ''}
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
-              <option value="">All broken links</option>
-              <option value="true">Dofollow only</option>
+              <option value="">Todos os links quebrados</option>
+              <option value="true">Somente dofollow</option>
             </select>
           </div>
           <div>
-            <label htmlFor="bb-limit" className="nexo-label block mb-1.5">Max links</label>
+            <label htmlFor="bb-limit" className="nexo-label block mb-1.5">Máximo de links</label>
             <select id="bb-limit" name="limit" defaultValue={String(limit)}
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
               {LIMITS.map((n) => <option key={n} value={n}>{n}</option>)}
             </select>
           </div>
         </div>
-        {!creds && <p className="text-xs text-nexo-warn-text font-medium">Configure API credentials in Settings first.</p>}
+        {!creds && <p className="text-xs text-nexo-warn-text font-medium">Configure primeiro as credenciais da API em Configurações.</p>}
       </SearchForm>
 
       {error && <div className="bg-nexo-danger/10 border border-nexo-danger/40 text-nexo-danger-text text-sm rounded-nexo-lg px-4 py-3">{error}</div>}
@@ -198,29 +198,29 @@ async function BrokenBacklinksPage({ searchParams }: { searchParams: Promise<Sea
       {(historyId || target) && !error && (
         <>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <Stat label="Broken backlinks" value={fmt(total)} hint={total > items.length ? `${fmt(items.length)} loaded` : undefined} />
-            <Stat label="Broken pages" value={fmt(pages.length)} hint={total > items.length ? 'in loaded links' : undefined} />
-            <Stat label="Referring domains" value={fmt(domains)} />
-            <Stat label="Dofollow" value={fmt(dofollowCount)} hint={items.length ? `${Math.round((dofollowCount / items.length) * 100)}% of links` : undefined} />
+            <Stat label="Backlinks quebrados" value={fmt(total)} hint={total > items.length ? `${fmt(items.length)} carregados` : undefined} />
+            <Stat label="Páginas quebradas" value={fmt(pages.length)} hint={total > items.length ? 'nos links carregados' : undefined} />
+            <Stat label="Domínios de referência" value={fmt(domains)} />
+            <Stat label="Dofollow" value={fmt(dofollowCount)} hint={items.length ? `${Math.round((dofollowCount / items.length) * 100)}% dos links` : undefined} />
           </div>
 
           <div id="results" className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
             <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between gap-3 flex-wrap">
               <span className="nexo-label">
-                {displayTarget}{displayDofollow && ' · dofollow only'}
+                {displayTarget}{displayDofollow && ' · somente dofollow'}
               </span>
               <div className="flex items-center gap-3">
-                {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">cost: ${cost.toFixed(4)}</span>}
+                {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">custo: US$ {cost.toFixed(4).replace('.', ',')}</span>}
                 {items.length > 0 && (
                   <div className="flex items-center gap-2">
                     <CopyMarkdownButton data={pagesMd} columns={[
-                      { key: 'page', label: 'Broken page' }, { key: 'status', label: 'Status' }, { key: 'links', label: 'Links' },
-                      { key: 'domains', label: 'Ref. domains' }, { key: 'dofollow', label: 'Dofollow' }, { key: 'best_dr', label: 'Best DR' },
+                      { key: 'page', label: 'Página quebrada' }, { key: 'status', label: 'Status' }, { key: 'links', label: 'Links' },
+                      { key: 'domains', label: 'Domínios de ref.' }, { key: 'dofollow', label: 'Dofollow' }, { key: 'best_dr', label: 'Melhor DR' },
                     ]} />
                     <ExportCSVButton data={linksCsv} filename={`broken-backlinks-${fileSlug}.csv`} columns={[
-                      { key: 'broken_page', label: 'Broken page' }, { key: 'status', label: 'Status' }, { key: 'source', label: 'Source URL' },
-                      { key: 'domain_from', label: 'Source domain' }, { key: 'dr', label: 'DR' }, { key: 'anchor', label: 'Anchor' },
-                      { key: 'dofollow', label: 'Dofollow' }, { key: 'first_seen', label: 'First seen' },
+                      { key: 'broken_page', label: 'Página quebrada' }, { key: 'status', label: 'Status' }, { key: 'source', label: 'URL de origem' },
+                      { key: 'domain_from', label: 'Domínio de origem' }, { key: 'dr', label: 'DR' }, { key: 'anchor', label: 'Âncora' },
+                      { key: 'dofollow', label: 'Dofollow' }, { key: 'first_seen', label: 'Visto pela primeira vez' },
                     ]} />
                   </div>
                 )}
@@ -228,7 +228,7 @@ async function BrokenBacklinksPage({ searchParams }: { searchParams: Promise<Sea
             </div>
             {items.length === 0 ? (
               <div className="px-6 py-12 text-center text-sm text-nexo-faint">
-                No broken backlinks found{displayDofollow ? ' among dofollow links' : ''}. Every live link to this target lands on a working page.
+                Nenhum backlink quebrado encontrado{displayDofollow ? ' entre os links dofollow' : ''}. Todos os links ativos para este alvo chegam a uma página que funciona.
               </div>
             ) : (
               <BrokenBacklinksTable links={items} />
@@ -240,7 +240,7 @@ async function BrokenBacklinksPage({ searchParams }: { searchParams: Promise<Sea
       {history.length > 0 && (
         <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border">
-            <h2 className="nexo-label">History</h2>
+            <h2 className="nexo-label">Histórico</h2>
           </div>
           <div className="divide-y divide-nexo-border">
             {history.map((entry) => {
@@ -251,7 +251,7 @@ async function BrokenBacklinksPage({ searchParams }: { searchParams: Promise<Sea
                   <div className="flex-1 min-w-0">
                     <p className={`text-sm font-medium font-mono truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.target}</p>
                     <p className="text-[11px] text-nexo-faint mt-0.5">
-                      {fmt(entry.total ?? entry.count)} broken backlinks{entry.dofollowOnly ? ' · dofollow only' : ''}{entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}
+                      {fmt(entry.total ?? entry.count)} backlinks quebrados{entry.dofollowOnly ? ' · somente dofollow' : ''}{entry.cost !== undefined ? ` · US$ ${entry.cost.toFixed(4).replace('.', ',')}` : ''}
                     </p>
                   </div>
                   <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>

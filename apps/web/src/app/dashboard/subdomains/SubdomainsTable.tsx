@@ -17,7 +17,7 @@ interface SubdomainItem {
 type SortKey = 'subdomain' | 'keywords' | 'traffic' | 'traffic_cost';
 type SortDir = 'asc' | 'desc';
 
-function fmt(n?: number) { return n != null ? n.toLocaleString('en-GB') : '—'; }
+function fmt(n?: number) { return n != null ? n.toLocaleString('pt-BR') : '—'; }
 
 function sortValue(item: SubdomainItem, key: SortKey): number | string {
   const org = item.metrics?.organic;
@@ -74,11 +74,11 @@ export default function SubdomainsTable({ items }: { items: SubdomainItem[] }) {
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-nexo-border bg-white/[0.02]">
-            <Header label="Subdomain" sortK="subdomain" align="left" className="!px-6" />
-            <Header label="Keywords" sortK="keywords" align="right" />
-            <Header label="Traffic" sortK="traffic" align="right" />
-            <th className="nexo-label px-6 py-3 text-left hidden md:table-cell">Share</th>
-            <Header label="Traffic value" sortK="traffic_cost" align="right" className="hidden lg:table-cell" />
+            <Header label="Subdomínio" sortK="subdomain" align="left" className="!px-6" />
+            <Header label="Palavras-chave" sortK="keywords" align="right" />
+            <Header label="Tráfego" sortK="traffic" align="right" />
+            <th className="nexo-label px-6 py-3 text-left hidden md:table-cell">Participação</th>
+            <Header label="Valor do tráfego" sortK="traffic_cost" align="right" className="hidden lg:table-cell" />
           </tr>
         </thead>
         <tbody className="divide-y divide-nexo-border">
@@ -102,7 +102,7 @@ export default function SubdomainsTable({ items }: { items: SubdomainItem[] }) {
                   </div>
                 </td>
                 <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums hidden lg:table-cell">
-                  {org?.estimated_paid_traffic_cost != null ? `$${Math.round(org.estimated_paid_traffic_cost).toLocaleString('en-GB')}` : '—'}
+                  {org?.estimated_paid_traffic_cost != null ? `US$ ${Math.round(org.estimated_paid_traffic_cost).toLocaleString('pt-BR')}` : '—'}
                 </td>
               </tr>
             );

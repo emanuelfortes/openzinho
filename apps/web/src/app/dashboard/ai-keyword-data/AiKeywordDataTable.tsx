@@ -24,7 +24,7 @@ function Sparkline({ monthly }: { monthly?: MonthlyAiSearch[] }) {
   const max = Math.max(...data.map((m) => m.ai_search_volume ?? 0), 1);
   return (
     <div className="flex items-end gap-0.5 h-6"
-      title={data.map((m) => `${m.month}/${m.year}: ${m.ai_search_volume?.toLocaleString('en-GB')}`).join(' · ')}>
+      title={data.map((m) => `${m.month}/${m.year}: ${m.ai_search_volume?.toLocaleString('pt-BR')}`).join(' · ')}>
       {data.map((m, i) => (
         <div
           key={i}
@@ -38,7 +38,7 @@ function Sparkline({ monthly }: { monthly?: MonthlyAiSearch[] }) {
 
 function fmt(n?: number) {
   if (n === undefined || n === null) return '—';
-  return n.toLocaleString('en-GB');
+  return n.toLocaleString('pt-BR');
 }
 
 function sortValue(item: AiKeywordItem, key: SortKey): number | string {
@@ -91,9 +91,9 @@ export default function AiKeywordDataTable({ items }: { items: AiKeywordItem[] }
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-nexo-border bg-white/[0.02]">
-            <Header label="Keyword" sortK="keyword" align="left" />
-            <Header label="AI volume" sortK="volume" align="right" />
-            <th className="nexo-label px-4 py-3 text-left">12mo trend</th>
+            <Header label="Palavra-chave" sortK="keyword" align="left" />
+            <Header label="Volume em IA" sortK="volume" align="right" />
+            <th className="nexo-label px-4 py-3 text-left">Tendência em 12 meses</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-nexo-border">

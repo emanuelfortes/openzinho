@@ -50,7 +50,7 @@ describe('rank_tasks active-keyword index migration', () => {
     db.close();
 
     expect(second.status).toBe('failed');
-    expect(second.error_message).toMatch(/Duplicate/);
+    expect(second.error_message).toMatch(/verificação pendente/);
     expect(old.status).toBe('done');
     expect(index).toBeTruthy();
   });

@@ -10,7 +10,7 @@ import type { AggMetric, AggregatedMetrics, LeaderboardItem } from './page';
 type SortKey = 'name' | 'mentions' | 'volume';
 type SortDir = 'asc' | 'desc';
 
-function fmt(n?: number) { return n != null ? n.toLocaleString('en-GB') : '—'; }
+function fmt(n?: number) { return n != null ? n.toLocaleString('pt-BR') : '—'; }
 
 function sortValue(item: LeaderboardItem, key: SortKey, nameOf: (i: LeaderboardItem) => string): number | string {
   switch (key) {
@@ -26,13 +26,13 @@ function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
 }
 
 const METRIC_GROUPS: Array<{ key: Exclude<keyof LeaderboardItem, 'domain' | 'brand' | 'total'>; label: string; location?: boolean }> = [
-  { key: 'location', label: 'Location', location: true },
-  { key: 'language', label: 'Language' },
-  { key: 'platform', label: 'Platform' },
-  { key: 'sources_domain', label: 'Source domains' },
-  { key: 'search_results_domain', label: 'Search-result domains' },
-  { key: 'brand_entities_title', label: 'Brand entities' },
-  { key: 'brand_entities_category', label: 'Brand categories' },
+  { key: 'location', label: 'Local', location: true },
+  { key: 'language', label: 'Idioma' },
+  { key: 'platform', label: 'Plataforma' },
+  { key: 'sources_domain', label: 'Domínios de fonte' },
+  { key: 'search_results_domain', label: 'Domínios nos resultados de busca' },
+  { key: 'brand_entities_title', label: 'Entidades de marca' },
+  { key: 'brand_entities_category', label: 'Categorias de marca' },
 ];
 
 function MetricGroup({ label, items, isLocation = false }: { label: string; items?: AggMetric[]; isLocation?: boolean }) {
@@ -71,7 +71,7 @@ function AggregatePanel({ title, metrics, totalCount }: { title: string; metrics
       <summary className="nexo-label cursor-pointer list-none px-4 py-3 flex items-center gap-3">
         <ChevronDown className="w-4 h-4 text-nexo-sky transition-transform group-open:rotate-180" />
         {title}
-        {totalCount !== undefined && <span className="ml-auto font-mono text-[10px] normal-case tracking-normal text-nexo-faint">{fmt(totalCount)} results</span>}
+        {totalCount !== undefined && <span className="ml-auto font-mono text-[10px] normal-case tracking-normal text-nexo-faint">{fmt(totalCount)} resultados</span>}
       </summary>
       <div className="border-t border-nexo-border px-4 py-4 grid sm:grid-cols-2 gap-x-6 gap-y-4 grid-cols-[repeat(auto-fit,minmax(320px,1fr))]">
         {METRIC_GROUPS.map((group) => (
@@ -129,8 +129,8 @@ function LeaderboardTable({
   }));
   const columns = [
     { key: nameLabel.toLowerCase(), label: nameLabel },
-    { key: 'mentions', label: 'Mentions' },
-    { key: 'ai_search_volume', label: 'AI Search Volume' },
+    { key: 'mentions', label: 'Menções' },
+    { key: 'ai_search_volume', label: 'Volume de buscas em IA' },
   ];
 
   return (
@@ -148,15 +148,15 @@ function LeaderboardTable({
         </div>
       </div>
       {items.length === 0 ? (
-        <div className="px-6 py-8 text-center text-sm text-nexo-faint">No results found.</div>
+        <div className="px-6 py-8 text-center text-sm text-nexo-faint">Nenhum resultado encontrado.</div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-nexo-border bg-white/[0.02]">
                 <Header label={nameLabel} sortK="name" align="left" />
-                <Header label="Mentions" sortK="mentions" align="right" />
-                <Header label="AI Search Volume" sortK="volume" align="right" />
+                <Header label="Menções" sortK="mentions" align="right" />
+                <Header label="Volume de buscas em IA" sortK="volume" align="right" />
               </tr>
             </thead>
             {sorted.map((item, i) => {
@@ -206,23 +206,23 @@ export default function LeaderboardTables({
     <div className="space-y-4">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <LeaderboardTable
-          title="Top Mentioned Domains"
+          title="Domínios mais mencionados"
           items={domains}
-          nameLabel="Domain"
+          nameLabel="Domínio"
           nameOf={(i) => i.domain ?? '—'}
           filenamePrefix={`ai-visibility-domains-${topic}`}
         />
         <LeaderboardTable
-          title="Top Mentioned Brands"
+          title="Marcas mais mencionadas"
           items={brands}
-          nameLabel="Brand"
+          nameLabel="Marca"
           nameOf={(i) => i.brand ?? '—'}
           filenamePrefix={`ai-visibility-brands-${topic}`}
         />
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <AggregatePanel title="Domain leaderboard dataset" metrics={domainAggregates} totalCount={domainsTotalCount} />
-        <AggregatePanel title="Brand leaderboard dataset" metrics={brandAggregates} totalCount={brandsTotalCount} />
+        <AggregatePanel title="Dados do ranking de domínios" metrics={domainAggregates} totalCount={domainsTotalCount} />
+        <AggregatePanel title="Dados do ranking de marcas" metrics={brandAggregates} totalCount={brandsTotalCount} />
       </div>
     </div>
   );

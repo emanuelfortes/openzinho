@@ -33,13 +33,13 @@ describe('competitive report PDF', () => {
     const sections = comparisonReportSections(report, { keyword: 'plombier', area: '5 km around Lyon' });
     expect(comparisonReportMetrics(report)).toHaveLength(4);
     const titles = sections.map((s) => s.title);
-    expect(titles).toEqual(expect.arrayContaining(['Summary', 'Overall ranking', 'Rank matrix (1 = best)', 'Momentum', 'Engagement', 'New reviews per week', 'Methodology']));
-    const matrix = sections.find((s) => s.title.startsWith('Rank matrix'))!.table!;
+    expect(titles).toEqual(expect.arrayContaining(['Resumo', 'Ranking geral', 'Matriz de posições (1 = melhor)', 'Ritmo', 'Engajamento', 'Novas avaliações por semana', 'Metodologia']));
+    const matrix = sections.find((s) => s.title.startsWith('Matriz de posições'))!.table!;
     expect(matrix.columns).toHaveLength(18); // listing + 17 criteria
     expect(matrix.rows).toHaveLength(10);
     expect(matrix.rows.filter((r) => r.highlight)).toHaveLength(1);
-    const ranking = sections.find((s) => s.title === 'Overall ranking')!.table!;
-    expect(ranking.note).toMatch(/does not reach back/); // a partial listing is explained
+    const ranking = sections.find((s) => s.title === 'Ranking geral')!.table!;
+    expect(ranking.note).toMatch(/não alcançam o início/); // a partial listing is explained
   });
 
   it('draws every section on A4 landscape across several pages', () => {

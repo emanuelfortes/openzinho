@@ -13,10 +13,10 @@ type SortKey = 'keyword' | 'intent';
 type SortDir = 'asc' | 'desc';
 
 const INTENT_CONFIG: Record<string, { label: string; cls: string }> = {
-  informational: { label: 'Informational', cls: 'bg-nexo-blue/10 text-nexo-sky border-nexo-border-strong' },
-  navigational:  { label: 'Navigational',  cls: 'bg-nexo-blue/10 text-nexo-sky border-nexo-border-strong' },
-  commercial:    { label: 'Commercial',    cls: 'bg-nexo-warn/10 text-nexo-warn-text border-nexo-warn/40' },
-  transactional: { label: 'Transactional', cls: 'bg-nexo-ice/10 text-nexo-ice border-nexo-ice/30' },
+  informational: { label: 'Informacional', cls: 'bg-nexo-blue/10 text-nexo-sky border-nexo-border-strong' },
+  navigational:  { label: 'Navegacional',  cls: 'bg-nexo-blue/10 text-nexo-sky border-nexo-border-strong' },
+  commercial:    { label: 'Comercial',     cls: 'bg-nexo-warn/10 text-nexo-warn-text border-nexo-warn/40' },
+  transactional: { label: 'Transacional',  cls: 'bg-nexo-ice/10 text-nexo-ice border-nexo-ice/30' },
 };
 
 function IntentBadge({ intent }: { intent?: string }) {
@@ -79,9 +79,9 @@ export default function SearchIntentTable({ items }: { items: IntentItem[] }) {
         <thead>
           <tr className="border-b border-nexo-border bg-white/[0.02]">
             <th className="nexo-label px-6 py-3 text-left">#</th>
-            <Header label="Keyword" sortK="keyword" align="left" />
-            <Header label="Main intent" sortK="intent" align="center" />
-            <th className="nexo-label px-4 py-3 text-left hidden md:table-cell">Secondary intents</th>
+            <Header label="Palavra-chave" sortK="keyword" align="left" />
+            <Header label="Intenção principal" sortK="intent" align="center" />
+            <th className="nexo-label px-4 py-3 text-left hidden md:table-cell">Intenções secundárias</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-nexo-border">

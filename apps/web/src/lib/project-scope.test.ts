@@ -89,17 +89,17 @@ describe('operation-local project identity', () => {
     const gate = deferred();
     const pending = runWithCurrentProject(async () => {
       await gate.promise;
-      expect(() => getCurrentProject()).toThrow('Project not found');
-      expect(() => getSetting('default_domain')).toThrow('Project not found');
-      expect(() => getSerpHistory()).toThrow('Project not found');
-      expect(() => saveSerpSearch(entry('after-delete'), [])).toThrow('Project not found');
+      expect(() => getCurrentProject()).toThrow('Projeto não encontrado');
+      expect(() => getSetting('default_domain')).toThrow('Projeto não encontrado');
+      expect(() => getSerpHistory()).toThrow('Projeto não encontrado');
+      expect(() => saveSerpSearch(entry('after-delete'), [])).toThrow('Projeto não encontrado');
     });
     setActiveProject(b);
     deleteProject(a);
     gate.resolve();
     await pending;
-    expect(() => getTrackedKeywordsForProject(a)).toThrow('Project not found');
-    expect(() => runInProjectScope(a, () => null)).toThrow('Project not found');
+    expect(() => getTrackedKeywordsForProject(a)).toThrow('Projeto não encontrado');
+    expect(() => runInProjectScope(a, () => null)).toThrow('Projeto não encontrado');
     expect(fs.existsSync(file)).toBe(false);
     expect(fs.existsSync(`${file}-wal`)).toBe(false);
     expect(fs.existsSync(`${file}-shm`)).toBe(false);

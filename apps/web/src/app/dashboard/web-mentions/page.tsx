@@ -95,11 +95,11 @@ async function fetchWebMentions(
 
 // ---- UI helpers ----
 
-function fmt(n?: number) { return n != null ? n.toLocaleString('en-GB') : '—'; }
+function fmt(n?: number) { return n != null ? n.toLocaleString('pt-BR') : '—'; }
 
 function formatDate(iso?: string | null) {
   if (!iso) return null;
-  return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  return new Date(iso).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 function dominantSentiment(c?: ConnotationTypes): 'positive' | 'negative' | 'neutral' | null {
@@ -110,6 +110,15 @@ function dominantSentiment(c?: ConnotationTypes): 'positive' | 'negative' | 'neu
   entries.sort((a, b) => b[1] - a[1]);
   return entries[0][1] > 0 ? entries[0][0] : null;
 }
+
+const PAGE_TYPE_LABELS: Record<PageType, string> = {
+  ecommerce: 'e-commerce', news: 'notícias', blogs: 'blogs', 'message-boards': 'fóruns', organization: 'organizações',
+};
+
+const KEY_LABELS: Record<string, string> = {
+  positive: 'positivo', negative: 'negativo', neutral: 'neutro',
+  anger: 'raiva', happiness: 'alegria', love: 'amor', sadness: 'tristeza', share: 'compartilhamento', fun: 'diversão',
+};
 
 const SENTIMENT_STYLE: Record<string, string> = {
   positive: 'text-nexo-ice bg-nexo-ice/10 border-nexo-ice/30',
@@ -122,7 +131,7 @@ function SentimentBadge({ connotations }: { connotations?: ConnotationTypes }) {
   if (!dom) return null;
   return (
     <span className={`text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-md border ${SENTIMENT_STYLE[dom]}`}>
-      {dom}
+      {KEY_LABELS[dom] ?? dom}
     </span>
   );
 }
@@ -141,7 +150,7 @@ function DistributionBars({ title, data, total }: { title: string; data?: Record
           return (
             <div key={key}>
               <div className="flex items-center justify-between mb-1 gap-2">
-                <span className="text-xs font-medium text-nexo-dim truncate capitalize">{key}</span>
+                <span className="text-xs font-medium text-nexo-dim truncate capitalize">{KEY_LABELS[key] ?? key}</span>
                 <span className="text-xs font-mono text-nexo-dim shrink-0">{fmt(value)} ({share}%)</span>
               </div>
               <div className="h-1.5 bg-nexo-surface-2 rounded-full overflow-hidden">
@@ -184,11 +193,11 @@ async function WebMentionsPage({ searchParams }: { searchParams: Promise<SearchP
       isFromHistory = true;
       activeEntry = getWebMentionsHistory().find((e) => e.id === historyId) ?? null;
     } else {
-      error = 'This search is no longer available.';
+      error = 'Esta busca não está mais disponível.';
     }
   } else if (keyword) {
     if (!creds) {
-      error = 'DataForSEO credentials missing. Configure them in Settings.';
+      error = 'Credenciais da DataForSEO ausentes. Configure-as em Configurações.';
     } else {
       const dedupeId = stableSearchId(['web-mentions', keyword, pageTypes.join(','), limit]);
       const cachedItems = getWebMentionsItems<SearchResult>(dedupeId);
@@ -225,47 +234,47 @@ async function WebMentionsPage({ searchParams }: { searchParams: Promise<SearchP
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="nexo-h1">Web Mentions</h1>
-        <p className="text-sm text-nexo-faint mt-1">Brand sentiment across the web — mentions, sentiment split, and geo/domain breakdown via DataForSEO Content Analysis.</p>
+        <h1 className="nexo-h1">Menções na web</h1>
+        <p className="text-sm text-nexo-faint mt-1">Sentimento sobre a marca na web: menções, divisão de sentimento e distribuição por país e domínio via DataForSEO Content Analysis.</p>
       </div>
 
       <SearchForm
         className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4"
-        btnLabel="Analyze"
+        btnLabel="Analisar"
         btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-sky transition-colors"
-        loadingLabel="Scanning the web…"
+        loadingLabel="Varrendo a web…"
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="nexo-label block mb-1.5">Keyword or brand</label>
+            <label className="nexo-label block mb-1.5">Palavra-chave ou marca</label>
             <input
               name="keyword"
               type="text"
               defaultValue={displayKeyword}
-              placeholder="your brand name"
+              placeholder="nome da sua marca"
               required
               className="nexo-input min-w-0 w-full h-[42px] px-4 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
             />
           </div>
           <div>
-            <label className="nexo-label block mb-1.5">Results limit</label>
+            <label className="nexo-label block mb-1.5">Limite de resultados</label>
             <select name="limit" defaultValue={String(limit)}
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
               {[10, 20, 50, 100].map((n) => <option key={n} value={n}>{n}</option>)}
             </select>
           </div>
           <div className="sm:col-span-2">
-            <label className="nexo-label block mb-1.5">Page types</label>
+            <label className="nexo-label block mb-1.5">Tipos de página</label>
             <div className="flex flex-wrap gap-3">
               {PAGE_TYPES.map((pt) => (
                 <label key={pt} className="flex items-center gap-1.5 text-xs font-medium text-nexo-dim">
                   <input type="checkbox" name="page_type" value={pt} defaultChecked={pageTypes.includes(pt)}
                     className="rounded border-nexo-border text-nexo-sky focus:ring-nexo-sky" />
-                  {pt}
+                  {PAGE_TYPE_LABELS[pt]}
                 </label>
               ))}
             </div>
-            <p className="text-[11px] text-nexo-faint mt-1">Leave all unchecked to search every page type.</p>
+            <p className="text-[11px] text-nexo-faint mt-1">Deixe tudo desmarcado para buscar em todos os tipos de página.</p>
           </div>
         </div>
       </SearchForm>
@@ -275,31 +284,31 @@ async function WebMentionsPage({ searchParams }: { searchParams: Promise<SearchP
       {hasQuery && !error && searchResult && summaryResult && (
         <div id="results" className="space-y-4">
           <div className="flex items-center gap-3 flex-wrap">
-            <span className="nexo-label">Keyword</span>
+            <span className="nexo-label">Palavra-chave</span>
             <span className="font-mono font-medium text-nexo-text">{displayKeyword}</span>
-            {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>}
-            {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint ml-auto">cost: ${cost.toFixed(4)}</span>}
+            {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">Histórico</span>}
+            {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint ml-auto">custo: US$ {cost.toFixed(4).replace('.', ',')}</span>}
           </div>
 
           {summaryResult.total_count === 0 ? (
             <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-6 py-12 text-center text-sm text-nexo-faint">
-              No web mentions found for this keyword.
+              Nenhuma menção na web encontrada para esta palavra-chave.
             </div>
           ) : (
             <>
               <div className="grid grid-cols-3 gap-3">
                 <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
-                  <p className="nexo-label">Total mentions</p>
+                  <p className="nexo-label">Total de menções</p>
                   <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{fmt(summaryResult.total_count)}</p>
                 </div>
                 <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
-                  <p className="nexo-label">Positive share</p>
+                  <p className="nexo-label">Parcela positiva</p>
                   <p className="nexo-metric font-mono text-2xl text-nexo-ice mt-1 tabular-nums">
                     {summaryResult.total_count > 0 ? Math.round(((summaryResult.connotation_types?.positive ?? 0) / summaryResult.total_count) * 100) : 0}%
                   </p>
                 </div>
                 <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
-                  <p className="nexo-label">Negative share</p>
+                  <p className="nexo-label">Parcela negativa</p>
                   <p className="nexo-metric font-mono text-2xl text-nexo-danger-text mt-1 tabular-nums">
                     {summaryResult.total_count > 0 ? Math.round(((summaryResult.connotation_types?.negative ?? 0) / summaryResult.total_count) * 100) : 0}%
                   </p>
@@ -307,19 +316,19 @@ async function WebMentionsPage({ searchParams }: { searchParams: Promise<SearchP
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <DistributionBars title="Sentiment polarity" data={summaryResult.connotation_types} total={summaryResult.total_count} />
-                <DistributionBars title="Emotional reactions" data={summaryResult.sentiment_connotations} total={summaryResult.total_count} />
-                <DistributionBars title="Top domains" data={Object.fromEntries((summaryResult.top_domains ?? []).map((d) => [d.domain, d.count]))} total={summaryResult.total_count} />
-                <DistributionBars title="Countries" data={summaryResult.countries} total={summaryResult.total_count} />
+                <DistributionBars title="Polaridade do sentimento" data={summaryResult.connotation_types} total={summaryResult.total_count} />
+                <DistributionBars title="Reações emocionais" data={summaryResult.sentiment_connotations} total={summaryResult.total_count} />
+                <DistributionBars title="Principais domínios" data={Object.fromEntries((summaryResult.top_domains ?? []).map((d) => [d.domain, d.count]))} total={summaryResult.total_count} />
+                <DistributionBars title="Países" data={summaryResult.countries} total={summaryResult.total_count} />
               </div>
 
               <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
                 <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between">
-                  <h2 className="nexo-label">Mentions</h2>
-                  <span className="text-xs font-medium text-nexo-faint">{items.length} shown</span>
+                  <h2 className="nexo-label">Menções</h2>
+                  <span className="text-xs font-medium text-nexo-faint">{items.length} {items.length === 1 ? 'exibida' : 'exibidas'}</span>
                 </div>
                 {items.length === 0 ? (
-                  <div className="px-6 py-12 text-center text-sm text-nexo-faint">No individual mentions returned.</div>
+                  <div className="px-6 py-12 text-center text-sm text-nexo-faint">Nenhuma menção individual retornada.</div>
                 ) : (
                   <div className="divide-y divide-nexo-border">
                     {items.map((item, i) => (
@@ -365,7 +374,7 @@ async function WebMentionsPage({ searchParams }: { searchParams: Promise<SearchP
       {history.length > 0 && (
         <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border">
-            <h2 className="nexo-label">History</h2>
+            <h2 className="nexo-label">Histórico</h2>
           </div>
           <div className="divide-y divide-nexo-border">
             {history.map((entry) => {
@@ -376,8 +385,8 @@ async function WebMentionsPage({ searchParams }: { searchParams: Promise<SearchP
                   <div className="flex-1 min-w-0">
                     <p className={`text-sm font-medium truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.keyword}</p>
                     <p className="text-[11px] text-nexo-faint mt-0.5">
-                      {fmt(entry.totalCount)} mentions
-                      {entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}
+                      {fmt(entry.totalCount)} {entry.totalCount === 1 ? 'menção' : 'menções'}
+                      {entry.cost !== undefined ? ` · US$ ${entry.cost.toFixed(4).replace('.', ',')}` : ''}
                     </p>
                   </div>
                   <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(new Date(entry.ts).toISOString())}</span>

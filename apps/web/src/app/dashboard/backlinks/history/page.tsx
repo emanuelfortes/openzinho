@@ -28,8 +28,8 @@ async function fetchHistory(target: string, login: string, pass: string): Promis
   return { items: result?.items ?? [], cost };
 }
 
-function fmt(n?: number) { return n != null ? n.toLocaleString('en-GB') : '—'; }
-function formatDate(ts: number) { return new Date(ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); }
+function fmt(n?: number) { return n != null ? n.toLocaleString('pt-BR') : '—'; }
+function formatDate(ts: number) { return new Date(ts).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' }); }
 
 function SparkChart({ points, key1, key2, color1, color2 }: {
   points: HistoryPoint[];
@@ -41,7 +41,7 @@ function SparkChart({ points, key1, key2, color1, color2 }: {
   const vals1 = points.map((p) => (p[key1] as number | undefined) ?? 0);
   const vals2 = key2 ? points.map((p) => (p[key2] as number | undefined) ?? 0) : [];
   const allVals = [...vals1, ...vals2].filter((v) => v > 0);
-  if (allVals.length < 2) return <div className="h-24 flex items-center justify-center text-xs text-nexo-faint">Not enough data</div>;
+  if (allVals.length < 2) return <div className="h-24 flex items-center justify-center text-xs text-nexo-faint">Dados insuficientes</div>;
 
   const maxV = Math.max(...allVals);
   const minV = 0;
@@ -79,14 +79,14 @@ async function BacklinksHistoryPage({ searchParams }: { searchParams: Promise<Se
   if (historyId) {
     const saved = getBlHistResults<HistoryPoint>(historyId);
     if (saved) { items = saved; activeEntry = getBlHistHistory().find((e) => e.id === historyId) ?? null; }
-    else error = 'Search no longer available.';
+    else error = 'Esta busca não está mais disponível.';
   } else if (rawTarget) {
     const dedupeId = stableSearchId(['backlinks-history', rawTarget]);
     const cached = getBlHistResults<HistoryPoint>(dedupeId);
     if (cached) {
       items = cached;
       cost = getBlHistHistory().find((e) => e.id === dedupeId)?.cost;
-    } else if (!creds) { error = 'DataForSEO credentials missing. Configure them in Settings.'; }
+    } else if (!creds) { error = 'Credenciais do DataForSEO ausentes. Configure-as em Configurações.'; }
     else {
       const result = await fetchHistory(rawTarget, creds.login, creds.pass);
       items = result.items; cost = result.cost; error = result.error ?? null;
@@ -118,15 +118,15 @@ async function BacklinksHistoryPage({ searchParams }: { searchParams: Promise<Se
         <div className="nexo-label flex items-center gap-2 mb-1">
           <a href="/dashboard/backlinks" className="hover:text-white transition-colors">Backlinks</a>
           <span className="text-nexo-text">/</span>
-          <span className="text-nexo-dim">History</span>
+          <span className="text-nexo-dim">Histórico</span>
         </div>
-        <h1 className="nexo-h1">Backlink History</h1>
-        <p className="text-sm text-nexo-faint mt-1">Monthly evolution of backlinks and referring domains over time.</p>
+        <h1 className="nexo-h1">Histórico de backlinks</h1>
+        <p className="text-sm text-nexo-faint mt-1">Evolução mensal de backlinks e domínios de referência ao longo do tempo.</p>
       </div>
 
-      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Load history" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
+      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Carregar histórico" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
         <div>
-          <label className="nexo-label block mb-1.5">Domain</label>
+          <label className="nexo-label block mb-1.5">Domínio</label>
           <input type="text" name="target" defaultValue={displayTarget || defaultDomain} placeholder="example.com" required
             className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky font-mono" />
         </div>
@@ -141,9 +141,9 @@ async function BacklinksHistoryPage({ searchParams }: { searchParams: Promise<Se
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {[
                 { label: 'Backlinks', value: fmt(latest.backlinks) },
-                { label: 'Ref. domains', value: fmt(latest.referring_domains) },
-                { label: 'New (last period)', value: fmt(latest.new_backlinks), accent: 'bg-nexo-ice/10 border-nexo-ice/30' },
-                { label: 'Lost (last period)', value: fmt(latest.lost_backlinks), accent: latest.lost_backlinks ? 'bg-nexo-danger/10 border-nexo-danger/40' : undefined },
+                { label: 'Domínios de ref.', value: fmt(latest.referring_domains) },
+                { label: 'Novos (último período)', value: fmt(latest.new_backlinks), accent: 'bg-nexo-ice/10 border-nexo-ice/30' },
+                { label: 'Perdidos (último período)', value: fmt(latest.lost_backlinks), accent: latest.lost_backlinks ? 'bg-nexo-danger/10 border-nexo-danger/40' : undefined },
               ].map((card) => (
                 <div key={card.label} className={`rounded-nexo-lg border px-4 py-3 ${card.accent ?? 'bg-white/[0.02] border-nexo-border'}`}>
                   <p className="nexo-label mb-1">{card.label}</p>
@@ -156,26 +156,26 @@ async function BacklinksHistoryPage({ searchParams }: { searchParams: Promise<Se
           {/* Charts */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-5">
-              <p className="nexo-label mb-3">Backlinks over time</p>
+              <p className="nexo-label mb-3">Backlinks ao longo do tempo</p>
               <SparkChart points={sorted} key1="backlinks" color1="#3b82f6" />
               <div className="flex gap-4 mt-3 text-[10px] text-nexo-faint">
                 <span className="flex items-center gap-1"><span className="inline-block w-3 h-0.5 bg-nexo-blue rounded" /> Total</span>
               </div>
             </div>
             <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-5">
-              <p className="nexo-label mb-3">Referring domains over time</p>
+              <p className="nexo-label mb-3">Domínios de referência ao longo do tempo</p>
               <SparkChart points={sorted} key1="referring_domains" color1="#10b981" />
             </div>
             <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-5">
-              <p className="nexo-label mb-3">New vs Lost backlinks</p>
+              <p className="nexo-label mb-3">Backlinks novos vs. perdidos</p>
               <SparkChart points={sorted} key1="new_backlinks" key2="lost_backlinks" color1="#10b981" color2="#ef4444" />
               <div className="flex gap-4 mt-3 text-[10px] text-nexo-faint">
-                <span className="flex items-center gap-1"><span className="inline-block w-3 h-0.5 bg-nexo-ice rounded" /> New</span>
-                <span className="flex items-center gap-1"><span className="inline-block w-3 h-0.5 bg-nexo-danger rounded border-dashed" /> Lost</span>
+                <span className="flex items-center gap-1"><span className="inline-block w-3 h-0.5 bg-nexo-ice rounded" /> Novos</span>
+                <span className="flex items-center gap-1"><span className="inline-block w-3 h-0.5 bg-nexo-danger rounded border-dashed" /> Perdidos</span>
               </div>
             </div>
             <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-5">
-              <p className="nexo-label mb-3">New vs Lost referring domains</p>
+              <p className="nexo-label mb-3">Domínios de referência novos vs. perdidos</p>
               <SparkChart points={sorted} key1="new_referring_domains" key2="lost_referring_domains" color1="#10b981" color2="#ef4444" />
             </div>
           </div>
@@ -183,11 +183,11 @@ async function BacklinksHistoryPage({ searchParams }: { searchParams: Promise<Se
           {/* Table */}
           <div id="results" className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
             <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between">
-              <span className="nexo-label">{sorted.length} data points</span>
+              <span className="nexo-label">{sorted.length} {sorted.length === 1 ? 'ponto de dados' : 'pontos de dados'}</span>
               <div className="flex items-center gap-3">
-                {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">cost: ${cost.toFixed(4)}</span>}
-                <CopyMarkdownButton data={csvData} columns={[{key:'date',label:'Date'},{key:'backlinks',label:'Backlinks'},{key:'new_backlinks',label:'New'},{key:'lost_backlinks',label:'Lost'},{key:'referring_domains',label:'Ref. Domains'},{key:'new_referring_domains',label:'New RD'},{key:'lost_referring_domains',label:'Lost RD'}]} />
-                <ExportCSVButton data={csvData} filename={`backlinks-history-${displayTarget}.csv`} columns={[{key:'date',label:'Date'},{key:'backlinks',label:'Backlinks'},{key:'new_backlinks',label:'New'},{key:'lost_backlinks',label:'Lost'},{key:'referring_domains',label:'Ref. Domains'},{key:'new_referring_domains',label:'New RD'},{key:'lost_referring_domains',label:'Lost RD'}]} />
+                {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">custo: US$ {cost.toFixed(4).replace('.', ',')}</span>}
+                <CopyMarkdownButton data={csvData} columns={[{key:'date',label:'Data'},{key:'backlinks',label:'Backlinks'},{key:'new_backlinks',label:'Novos'},{key:'lost_backlinks',label:'Perdidos'},{key:'referring_domains',label:'Domínios de ref.'},{key:'new_referring_domains',label:'Novos domínios de ref.'},{key:'lost_referring_domains',label:'Domínios de ref. perdidos'}]} />
+                <ExportCSVButton data={csvData} filename={`backlinks-history-${displayTarget}.csv`} columns={[{key:'date',label:'Data'},{key:'backlinks',label:'Backlinks'},{key:'new_backlinks',label:'Novos'},{key:'lost_backlinks',label:'Perdidos'},{key:'referring_domains',label:'Domínios de ref.'},{key:'new_referring_domains',label:'Novos domínios de ref.'},{key:'lost_referring_domains',label:'Domínios de ref. perdidos'}]} />
               </div>
             </div>
             <BacklinksHistoryTable points={sorted} />
@@ -198,7 +198,7 @@ async function BacklinksHistoryPage({ searchParams }: { searchParams: Promise<Se
       {searchHistory.length > 0 && (
         <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border">
-            <h2 className="nexo-label">History</h2>
+            <h2 className="nexo-label">Histórico</h2>
           </div>
           <div className="divide-y divide-nexo-border">
             {searchHistory.map((entry) => {
@@ -208,7 +208,7 @@ async function BacklinksHistoryPage({ searchParams }: { searchParams: Promise<Se
                   className={`flex items-center gap-4 px-6 py-3.5 hover:bg-white/[0.04] transition-colors ${isActive ? 'bg-nexo-blue/10' : ''}`}>
                   <div className="flex-1 min-w-0">
                     <p className={`text-sm font-medium font-mono truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.target}</p>
-                    <p className="text-[11px] text-nexo-faint mt-0.5">{entry.count} data points{entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}</p>
+                    <p className="text-[11px] text-nexo-faint mt-0.5">{entry.count} {entry.count === 1 ? 'ponto de dados' : 'pontos de dados'}{entry.cost !== undefined ? ` · US$ ${entry.cost.toFixed(4).replace('.', ',')}` : ''}</p>
                   </div>
                   <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>
                 </a>

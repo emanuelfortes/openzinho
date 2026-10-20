@@ -3,35 +3,35 @@ import { FileSearch2, Globe, Code2, Link2, Package, Tags, EyeOff, ScanText } fro
 
 const tools = [
   {
-    name: 'Site Audit',
-    description: 'Full site crawl — global score, all pages, SEO issues, SSL, CMS, sitemap, broken links.',
+    name: 'Auditoria do site',
+    description: 'Rastreamento completo do site: nota geral, todas as páginas, problemas de SEO, SSL, CMS, sitemap e links quebrados.',
     href: '/dashboard/on-page/site-audit',
     icon: Globe,
-    badge: 'Async',
+    badge: 'Assíncrono',
     badgeCls: 'text-nexo-sky bg-nexo-blue/10 border-nexo-border-strong',
   },
   {
-    name: 'Instant Pages',
-    description: 'Full on-page audit of a single URL: metadata, performance, SEO checks, content metrics.',
+    name: 'Páginas instantâneas',
+    description: 'Auditoria on-page completa de uma URL: metadados, desempenho, verificações de SEO e métricas de conteúdo.',
     href: '/dashboard/on-page/instant-pages',
     icon: FileSearch2,
-    badge: 'Live',
+    badge: 'Ao vivo',
     badgeCls: 'text-nexo-ice bg-nexo-ice/10 border-nexo-ice/30',
   },
   {
-    name: 'Microdata',
-    description: 'Validate JSON-LD and Microdata structured data (schema.org) for a page.',
+    name: 'Microdados',
+    description: 'Valide os dados estruturados JSON-LD e Microdata (schema.org) de uma página.',
     href: '/dashboard/on-page/microdata',
     icon: Code2,
-    badge: 'Async',
+    badge: 'Assíncrono',
     badgeCls: 'text-nexo-sky bg-nexo-blue/10 border-nexo-border-strong',
   },
   {
-    name: 'Content Parsing',
-    description: 'Extract and structure all text content from a URL: headings, paragraphs, word count.',
+    name: 'Análise de conteúdo',
+    description: 'Extraia e estruture todo o texto de uma URL: títulos, parágrafos e contagem de palavras.',
     href: '/dashboard/on-page/content-parsing',
     icon: ScanText,
-    badge: 'Live',
+    badge: 'Ao vivo',
     badgeCls: 'text-nexo-ice bg-nexo-ice/10 border-nexo-ice/30',
   },
 ];
@@ -39,31 +39,31 @@ const tools = [
 const auditTabs = [
   {
     name: 'Links',
-    description: 'All links found during a crawl — internal, external, broken, nofollowed.',
+    description: 'Todos os links encontrados no rastreamento: internos, externos, quebrados e nofollow.',
     href: '/dashboard/on-page/site-audit',
     icon: Link2,
-    note: 'Select a finished audit → Links tab',
+    note: 'Selecione uma auditoria concluída → aba Links',
   },
   {
-    name: 'Resources',
-    description: 'Images, scripts, stylesheets — size, HTTP status, load time.',
+    name: 'Recursos',
+    description: 'Imagens, scripts e folhas de estilo: tamanho, status HTTP e tempo de carregamento.',
     href: '/dashboard/on-page/site-audit',
     icon: Package,
-    note: 'Select a finished audit → Resources tab',
+    note: 'Selecione uma auditoria concluída → aba Recursos',
   },
   {
-    name: 'Duplicate Tags',
-    description: 'Pages sharing identical title or description tags.',
+    name: 'Tags duplicadas',
+    description: 'Páginas que compartilham tags de título ou descrição idênticas.',
     href: '/dashboard/on-page/site-audit',
     icon: Tags,
-    note: 'Select a finished audit → Dup. Tags tab',
+    note: 'Selecione uma auditoria concluída → aba Tags dup.',
   },
   {
-    name: 'Non-indexable',
-    description: 'Pages excluded from indexing: noindex, canonical, 4xx, redirects.',
+    name: 'Não indexáveis',
+    description: 'Páginas excluídas da indexação: noindex, canonical, 4xx e redirecionamentos.',
     href: '/dashboard/on-page/site-audit',
     icon: EyeOff,
-    note: 'Select a finished audit → Non-indexable tab',
+    note: 'Selecione uma auditoria concluída → aba Não indexáveis',
   },
 ];
 
@@ -71,12 +71,12 @@ export default function OnPageHub() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="nexo-h1">On Page</h1>
-        <p className="text-sm text-nexo-faint mt-1">On-page analysis tools via the DataForSEO OnPage API.</p>
+        <h1 className="nexo-h1">On-page</h1>
+        <p className="text-sm text-nexo-faint mt-1">Ferramentas de análise on-page pela API OnPage da DataForSEO.</p>
       </div>
 
       <div>
-        <p className="nexo-label mb-3">Standalone tools</p>
+        <p className="nexo-label mb-3">Ferramentas independentes</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {tools.map((tool) => {
             const Icon = tool.icon;
@@ -96,7 +96,7 @@ export default function OnPageHub() {
       </div>
 
       <div>
-        <p className="nexo-label mb-3">Crawl-based (within Site Audit)</p>
+        <p className="nexo-label mb-3">Baseadas em rastreamento (dentro da Auditoria do site)</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {auditTabs.map((tab) => {
             const Icon = tab.icon;

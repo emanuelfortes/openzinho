@@ -23,7 +23,7 @@ const bands = [
 function formatDate(ts: number) {
   // SVG titles are rendered both on the server and browser. Pin the locale and
   // timezone so a French browser cannot hydrate "Aug 8" as "8 août".
-  return new Intl.DateTimeFormat('en-GB', { month: 'short', day: 'numeric', timeZone: 'UTC' }).format(new Date(ts));
+  return new Intl.DateTimeFormat('pt-BR', { month: 'short', day: 'numeric', timeZone: 'UTC' }).format(new Date(ts));
 }
 
 export default function GridPositionTrend({ points, selectedId }: Props) {
@@ -55,8 +55,8 @@ export default function GridPositionTrend({ points, selectedId }: Props) {
     <section className="mt-5 border-t border-nexo-border pt-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h3 className="text-sm font-medium text-nexo-text">Position distribution over time</h3>
-          <p className="mt-0.5 text-[11px] text-nexo-faint">Share of grid points in each ranking range. Newest snapshot is on the right.</p>
+          <h3 className="text-sm font-medium text-nexo-text">Distribuição de posições ao longo do tempo</h3>
+          <p className="mt-0.5 text-[11px] text-nexo-faint">Proporção de pontos da grade em cada faixa de posição. A varredura mais recente fica à direita.</p>
         </div>
         <div className="flex flex-wrap gap-x-3 gap-y-1 text-[10px] font-medium text-nexo-dim">
           {bands.map((band) => <span key={band.key} className="inline-flex items-center gap-1.5"><i className="h-2 w-2 rounded-sm" style={{ backgroundColor: band.color }} />{band.label}</span>)}
@@ -64,7 +64,7 @@ export default function GridPositionTrend({ points, selectedId }: Props) {
       </div>
 
       <div className="mt-3 overflow-hidden rounded-nexo-lg bg-white/[0.02] p-2">
-        <svg viewBox={`0 0 ${width} ${height}`} className="h-auto w-full" role="img" aria-label="Position distribution trend by ranking range">
+        <svg viewBox={`0 0 ${width} ${height}`} className="h-auto w-full" role="img" aria-label="Tendência da distribuição de posições por faixa">
           {[0, 25, 50, 75, 100].map((tick) => <g key={tick}><line x1={left} x2={width - right} y1={y(tick)} y2={y(tick)} stroke="currentColor" strokeOpacity="0.10" /><text x={left - 7} y={y(tick) + 3} textAnchor="end" fontSize="9" fill="currentColor" opacity="0.48">{tick}%</text></g>)}
           {points.length === 1 ? bands.map((band, index) => {
             const lower = bands.slice(0, index).reduce((sum, previousBand) => sum + percentage(points[0], previousBand.key), 0);
@@ -78,7 +78,7 @@ export default function GridPositionTrend({ points, selectedId }: Props) {
           {tickIndexes.map((index) => <text key={index} x={positionX(index)} y={height - 10} textAnchor={index === 0 ? 'start' : index === points.length - 1 ? 'end' : 'middle'} fontSize="9" fill="currentColor" opacity="0.55">{formatDate(points[index].ts)}</text>)}
         </svg>
       </div>
-      {points.length === 1 && <p className="mt-2 text-[10px] text-nexo-faint">Run this monitor again to draw its trend.</p>}
+      {points.length === 1 && <p className="mt-2 text-[10px] text-nexo-faint">Execute este monitor novamente para traçar a tendência.</p>}
     </section>
   );
 }

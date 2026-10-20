@@ -9,7 +9,7 @@ import { NAV_SECTIONS, NAV_FOOTER, type NavColor } from '@/lib/nav';
 // Same list as the sidebar, minus the Dashboard link itself; Spending and Settings close the page
 const sections = [
   ...NAV_SECTIONS.map((s) => ({ ...s, items: s.items.filter((i) => i.href !== '/dashboard') })),
-  { key: 'account', label: 'Account', color: 'slate' as NavColor, items: NAV_FOOTER },
+  { key: 'account', label: 'Conta', color: 'slate' as NavColor, items: NAV_FOOTER },
 ].filter((s) => s.items.length > 0);
 
 const colorMap: Record<NavColor, { badge: string; icon: string; hover: string }> = {
@@ -29,19 +29,19 @@ async function DashboardPage() {
   if (!creds) {
     return (
       <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-10 max-w-lg mx-auto mt-10">
-        <h2 className="text-2xl font-medium text-nexo-text mb-2 tracking-tight">DataForSEO Login</h2>
-        <p className="text-nexo-dim text-sm mb-8">Enter your DataForSEO API credentials to get started. Stored locally only.</p>
+        <h2 className="text-2xl font-medium text-nexo-text mb-2 tracking-tight">Login no DataForSEO</h2>
+        <p className="text-nexo-dim text-sm mb-8">Digite suas credenciais da API do DataForSEO para começar. Elas ficam armazenadas só localmente.</p>
         <form action={saveCredentialsAction} className="space-y-4">
           <div>
-            <label className="nexo-label block mb-1.5">API Login</label>
+            <label className="nexo-label block mb-1.5">Login da API</label>
             <input type="text" name="login" required className="nexo-input min-w-0 w-full px-4 py-3 text-sm focus:ring-2 focus:ring-nexo-sky outline-none transition-all" />
           </div>
           <div>
-            <label className="nexo-label block mb-1.5">API Password</label>
+            <label className="nexo-label block mb-1.5">Senha da API</label>
             <input type="password" name="password" required className="nexo-input min-w-0 w-full px-4 py-3 text-sm focus:ring-2 focus:ring-nexo-sky outline-none transition-all" />
           </div>
           <button type="submit" className="w-full bg-nexo-blue text-white font-medium uppercase text-xs tracking-widest py-3.5 rounded-nexo-lg hover:bg-nexo-sky transition-colors">
-            Save
+            Salvar
           </button>
         </form>
       </div>
@@ -51,8 +51,8 @@ async function DashboardPage() {
   return (
     <div className="space-y-10">
       <div>
-        <h1 className="nexo-h1">Dashboard</h1>
-        <p className="text-sm text-nexo-faint mt-1">Pick a tool to get started.</p>
+        <h1 className="nexo-h1">Painel</h1>
+        <p className="text-sm text-nexo-faint mt-1">Escolha uma ferramenta para começar.</p>
       </div>
 
       {sections.map((section) => {

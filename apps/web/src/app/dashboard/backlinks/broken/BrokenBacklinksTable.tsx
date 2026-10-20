@@ -16,7 +16,7 @@ function DRBadge({ value }: { value?: number }) {
 }
 
 function StatusBadge({ code }: { code?: number | null }) {
-  if (!code) return <span className="text-[10px] font-mono text-nexo-faint bg-nexo-surface-2 px-1.5 py-0.5 rounded" title="Not crawled yet">n/a</span>;
+  if (!code) return <span className="text-[10px] font-mono text-nexo-faint bg-nexo-surface-2 px-1.5 py-0.5 rounded" title="Ainda não rastreado">n/d</span>;
   const color = code >= 500
     ? 'text-nexo-warn-text bg-nexo-warn/10'
     : 'text-nexo-danger-text bg-nexo-danger/10';
@@ -35,7 +35,7 @@ function formatSeen(s?: string) {
   if (!s) return '—';
   const d = new Date(s.replace(' +00:00', 'Z').replace(' ', 'T'));
   if (Number.isNaN(d.getTime())) return s.split(' ')[0];
-  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+  return d.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
 }
 
 function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
@@ -93,7 +93,7 @@ function Anchor({ link }: { link: BrokenLink }) {
       {link.anchor ? (
         <span className="text-xs text-nexo-text font-medium truncate">{link.anchor}</span>
       ) : link.image_url ? (
-        <span className="text-[10px] text-nexo-faint italic">Image</span>
+        <span className="text-[10px] text-nexo-faint italic">Imagem</span>
       ) : (
         <span className="text-nexo-faint text-xs">—</span>
       )}
@@ -128,12 +128,12 @@ function PagesView({ pages }: { pages: BrokenPage[] }) {
     <table className="w-full text-sm">
       <thead>
         <tr className="border-b border-nexo-border bg-white/[0.02]">
-          <th className={`${TH} text-left`}>Broken page</th>
+          <th className={`${TH} text-left`}>Página quebrada</th>
           <th className={`${TH} text-center w-16`}>Status</th>
-          <SortHeader label="Domains" k="domains" sort={sort} align="right" className="w-24" />
+          <SortHeader label="Domínios" k="domains" sort={sort} align="right" className="w-24" />
           <SortHeader label="Links" k="links" sort={sort} align="right" className="w-20" />
           <SortHeader label="Dofollow" k="dofollow" sort={sort} align="right" className="w-24 hidden sm:table-cell" />
-          <SortHeader label="Best DR" k="dr" sort={sort} align="center" className="w-24" />
+          <SortHeader label="Melhor DR" k="dr" sort={sort} align="center" className="w-24" />
         </tr>
       </thead>
       <tbody className="divide-y divide-nexo-border">
@@ -145,7 +145,7 @@ function PagesView({ pages }: { pages: BrokenPage[] }) {
                 <td className="px-4 py-3 max-w-0 w-full">
                   <div className="flex items-center gap-1.5 min-w-0">
                     <button type="button" onClick={() => toggle(p.url)} aria-expanded={isOpen}
-                      aria-label={`${isOpen ? 'Hide' : 'Show'} the ${p.links.length} links to ${p.url}`}
+                      aria-label={`${isOpen ? 'Ocultar' : 'Mostrar'} os ${p.links.length} links para ${p.url}`}
                       className="shrink-0 p-0.5 rounded text-nexo-faint hover:text-white hover:bg-white/[0.04]">
                       <ChevronRight className={`w-3.5 h-3.5 transition-transform ${isOpen ? 'rotate-90' : ''}`} />
                     </button>
@@ -158,9 +158,9 @@ function PagesView({ pages }: { pages: BrokenPage[] }) {
                 <td className="px-4 py-3 text-center whitespace-nowrap">
                   {p.statuses.length ? p.statuses.map((s) => <StatusBadge key={s} code={s} />) : <StatusBadge />}
                 </td>
-                <td className="px-4 py-3 text-right font-mono font-medium text-nexo-dim tabular-nums">{p.domains.toLocaleString('en-GB')}</td>
-                <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">{p.links.length.toLocaleString('en-GB')}</td>
-                <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums hidden sm:table-cell">{p.dofollow.toLocaleString('en-GB')}</td>
+                <td className="px-4 py-3 text-right font-mono font-medium text-nexo-dim tabular-nums">{p.domains.toLocaleString('pt-BR')}</td>
+                <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">{p.links.length.toLocaleString('pt-BR')}</td>
+                <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums hidden sm:table-cell">{p.dofollow.toLocaleString('pt-BR')}</td>
                 <td className="px-4 py-3 text-center"><DRBadge value={p.bestDr} /></td>
               </tr>
               {isOpen && (
@@ -205,10 +205,10 @@ function LinksView({ links }: { links: BrokenLink[] }) {
       <thead>
         <tr className="border-b border-nexo-border bg-white/[0.02]">
           <SortHeader label="DR" k="dr" sort={sort} align="center" className="w-16" />
-          <SortHeader label="Source page" k="source" sort={sort} />
-          <th className={`${TH} text-left w-48 hidden md:table-cell`}>Anchor</th>
-          <SortHeader label="Broken page" k="target" sort={sort} />
-          <SortHeader label="First seen" k="seen" sort={sort} align="right" className="w-32 hidden lg:table-cell" />
+          <SortHeader label="Página de origem" k="source" sort={sort} />
+          <th className={`${TH} text-left w-48 hidden md:table-cell`}>Âncora</th>
+          <SortHeader label="Página quebrada" k="target" sort={sort} />
+          <SortHeader label="Visto pela primeira vez" k="seen" sort={sort} align="right" className="w-32 hidden lg:table-cell" />
         </tr>
       </thead>
       <tbody className="divide-y divide-nexo-border">
@@ -243,19 +243,19 @@ export default function BrokenBacklinksTable({ links }: { links: BrokenLink[] })
   const tab = (v: View, label: string, count: number) => (
     <button type="button" role="tab" aria-selected={view === v} onClick={() => setView(v)}
       className="transition-colors hover:text-white">
-      {label} <span className="font-mono opacity-60 ml-0.5">{count.toLocaleString('en-GB')}</span>
+      {label} <span className="font-mono opacity-60 ml-0.5">{count.toLocaleString('pt-BR')}</span>
     </button>
   );
 
   return (
     <div>
       <div className="px-6 py-3 border-b border-nexo-border flex items-center gap-3 flex-wrap">
-        <div role="tablist" aria-label="Group results" className="nexo-seg">
-          {tab('pages', 'By broken page', pages.length)}
-          {tab('links', 'All links', links.length)}
+        <div role="tablist" aria-label="Agrupar resultados" className="nexo-seg">
+          {tab('pages', 'Por página quebrada', pages.length)}
+          {tab('links', 'Todos os links', links.length)}
         </div>
         <p className="text-[11px] text-nexo-faint">
-          {view === 'pages' ? 'Fix the pages with the most referring domains first.' : 'Every live link landing on a 4xx/5xx page.'}
+          {view === 'pages' ? 'Corrija primeiro as páginas com mais domínios de referência.' : 'Todos os links ativos que chegam a uma página 4xx/5xx.'}
         </p>
       </div>
       <div className="overflow-x-auto">

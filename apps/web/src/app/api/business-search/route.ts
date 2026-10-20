@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json() as Record<string, unknown>;
   } catch {
-    return NextResponse.json({ results: [], error: 'Invalid JSON body.' }, { status: 400 });
+    return NextResponse.json({ results: [], error: 'Corpo JSON inválido.' }, { status: 400 });
   }
   const query = typeof body.q === 'string' ? body.q.trim() : '';
   if (!query) return NextResponse.json({ results: [] });
@@ -50,12 +50,12 @@ export async function POST(request: NextRequest) {
   const coordinate = parseMapsCoordinate(typeof body.location_coordinate === 'string' ? body.location_coordinate : null);
   const locationCode = Number(body.location_code);
   if (!coordinate && !(Number.isInteger(locationCode) && locationCode > 0)) {
-    return NextResponse.json({ results: [], error: 'A map location (location_coordinate or location_code) is required.' }, { status: 400 });
+    return NextResponse.json({ results: [], error: 'Informe um local no mapa (location_coordinate ou location_code).' }, { status: 400 });
   }
   const requestedLanguage = typeof body.language === 'string' ? body.language.trim() : undefined;
-  const language = LANGUAGES.find((item) => item.value.toLowerCase() === requestedLanguage?.toLowerCase())?.value ?? 'English';
+  const language = LANGUAGES.find((item) => item.value.toLowerCase() === requestedLanguage?.toLowerCase())?.value ?? 'Portuguese';
   const credentials = getCredentials();
-  if (!credentials) return NextResponse.json({ results: [], error: 'DataForSEO credentials are not configured.' }, { status: 503 });
+  if (!credentials) return NextResponse.json({ results: [], error: 'As credenciais da DataForSEO não estão configuradas.' }, { status: 503 });
 
   try {
     const response = await fetch('https://api.dataforseo.com/v3/serp/google/maps/live/advanced', {
@@ -76,13 +76,13 @@ export async function POST(request: NextRequest) {
     const data = await response.json() as { tasks?: Array<{ status_code?: number; status_message?: string; result?: Array<{ items?: MapsItem[] }> }> };
     const task = data.tasks?.[0];
     if (!task || task.status_code !== 20000) {
-      return NextResponse.json({ results: [], error: task?.status_message ?? 'No response from DataForSEO.' }, { status: 502 });
+      return NextResponse.json({ results: [], error: task?.status_message ?? 'Sem resposta da DataForSEO.' }, { status: 502 });
     }
     const results = (task.result?.[0]?.items ?? [])
       .filter((item) => item.type === 'maps_search' && item.cid && item.latitude != null && item.longitude != null)
       .slice(0, 8)
       .map((item) => ({
-        title: item.title ?? 'Unnamed business',
+        title: item.title ?? 'Empresa sem nome',
         address: item.address ?? '',
         lat: item.latitude as number,
         lng: item.longitude as number,
@@ -94,6 +94,6 @@ export async function POST(request: NextRequest) {
       }));
     return NextResponse.json({ results });
   } catch (error) {
-    return NextResponse.json({ results: [], error: error instanceof Error ? error.message : 'Business search failed.' }, { status: 502 });
+    return NextResponse.json({ results: [], error: error instanceof Error ? error.message : 'A busca de empresas falhou.' }, { status: 502 });
   }
 }

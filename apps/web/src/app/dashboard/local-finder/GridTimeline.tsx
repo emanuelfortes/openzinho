@@ -29,8 +29,8 @@ function metricDelta(current: number | null, previous: number | null, inverse = 
   const raw = inverse ? previous - current : current - previous;
   // Round to 1 decimal to avoid floating-point artifacts (e.g. 9.3 - 9.5 = -0.19999999999999929).
   const value = Math.round(raw * 10) / 10;
-  if (value === 0) return 'No change';
-  return `${value > 0 ? '+' : ''}${value}`;
+  if (value === 0) return 'Sem mudança';
+  return `${value > 0 ? '+' : ''}${value.toLocaleString('pt-BR')}`;
 }
 
 export default function GridTimeline({ entry, results, previousResults, snapshots, schedule, brandName, brandLogoUrl, brandColor, brandFooter, brandStyle, trend, distanceUnit }: Props) {
@@ -38,10 +38,10 @@ export default function GridTimeline({ entry, results, previousResults, snapshot
   const previous = previousResults ? computeGridSummary(previousResults) : null;
   const mapId = `geo-grid-report-map-${entry.id}`;
   const metrics = [
-    { label: 'Visibility', value: `${current.ato}%`, delta: metricDelta(current.ato, previous?.ato ?? null), good: (current.ato - (previous?.ato ?? current.ato)) >= 0 },
-    { label: 'Average rank', value: current.avgRank == null ? '—' : `#${current.avgRank}`, delta: metricDelta(current.avgRank, previous?.avgRank ?? null, true), good: (previous?.avgRank ?? current.avgRank ?? 0) - (current.avgRank ?? 0) >= 0 },
+    { label: 'Visibilidade', value: `${current.ato}%`, delta: metricDelta(current.ato, previous?.ato ?? null), good: (current.ato - (previous?.ato ?? current.ato)) >= 0 },
+    { label: 'Posição média', value: current.avgRank == null ? '—' : `#${current.avgRank.toLocaleString('pt-BR')}`, delta: metricDelta(current.avgRank, previous?.avgRank ?? null, true), good: (previous?.avgRank ?? current.avgRank ?? 0) - (current.avgRank ?? 0) >= 0 },
     { label: 'Top 3', value: String(current.top3Count), delta: metricDelta(current.top3Count, previous?.top3Count ?? null), good: (current.top3Count - (previous?.top3Count ?? current.top3Count)) >= 0 },
-    { label: 'Found', value: `${current.foundCount}/${current.totalPoints}`, delta: metricDelta(current.foundCount, previous?.foundCount ?? null), good: (current.foundCount - (previous?.foundCount ?? current.foundCount)) >= 0 },
+    { label: 'Encontrados', value: `${current.foundCount}/${current.totalPoints}`, delta: metricDelta(current.foundCount, previous?.foundCount ?? null), good: (current.foundCount - (previous?.foundCount ?? current.foundCount)) >= 0 },
   ];
 
   return (
@@ -50,13 +50,13 @@ export default function GridTimeline({ entry, results, previousResults, snapshot
       <div className="border-b border-nexo-border bg-white/[0.02] px-5 py-4 sm:px-6">
         <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-start">
           <div>
-            <p className="nexo-section">Ranking monitor</p>
+            <p className="nexo-section">Monitor de posições</p>
             <h2 className="mt-1 text-xl font-medium tracking-tight text-nexo-text">{entry.keyword}</h2>
-            <p className="mt-1 text-xs text-nexo-dim">{entry.target} · {entry.grid_size}×{entry.grid_size} points · {formatDistance(entry.spacing_km, distanceUnit)} spacing</p>
+            <p className="mt-1 text-xs text-nexo-dim">{entry.target} · {entry.grid_size}×{entry.grid_size} pontos · espaçamento de {formatDistance(entry.spacing_km, distanceUnit)}</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <a href={`/dashboard/geo-grid?keyword=${encodeURIComponent(entry.keyword)}&location_coordinate=${encodeURIComponent(entry.center)}&grid_size=${entry.grid_size}&spacing_km=${entry.spacing_km}&grid_target=${encodeURIComponent(entry.target)}&language=${encodeURIComponent(entry.language)}&queue_mode=${entry.queue_mode}&mode=grid`} className="nexo-section inline-flex items-center rounded-nexo-lg border border-nexo-border-strong bg-nexo-surface px-3 py-2 transition-colors hover:bg-nexo-blue/15">
-              Run now
+              Executar agora
             </a>
             <GridSelectedSnapshotExportButton snapshots={snapshots} fallbackResults={results} fallbackTs={entry.ts} gridSize={entry.grid_size} spacingKm={entry.spacing_km} keyword={entry.keyword} target={entry.target} language={entry.language} brandName={brandName} brandLogoUrl={brandLogoUrl} brandColor={brandColor} brandFooter={brandFooter} brandStyle={brandStyle} mapElementId={mapId} />
             <DeleteMonitorButton runId={entry.id} />
@@ -69,7 +69,7 @@ export default function GridTimeline({ entry, results, previousResults, snapshot
           {metrics.map((metric) => (
             <div key={metric.label}>
               <p className="nexo-label">{metric.label}</p>
-              <div className="mt-1 flex items-baseline gap-2"><span className="text-xl font-medium tabular-nums text-nexo-text">{metric.value}</span>{metric.delta && <span className={`text-[10px] font-medium ${metric.delta === 'No change' ? 'text-nexo-faint' : metric.good ? 'text-nexo-ice' : 'text-nexo-danger-text'}`}>{metric.delta}</span>}</div>
+              <div className="mt-1 flex items-baseline gap-2"><span className="text-xl font-medium tabular-nums text-nexo-text">{metric.value}</span>{metric.delta && <span className={`text-[10px] font-medium ${metric.delta === 'Sem mudança' ? 'text-nexo-faint' : metric.good ? 'text-nexo-ice' : 'text-nexo-danger-text'}`}>{metric.delta}</span>}</div>
             </div>
           ))}
         </div>

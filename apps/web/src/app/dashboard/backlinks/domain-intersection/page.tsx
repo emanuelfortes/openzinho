@@ -43,7 +43,7 @@ async function fetchDomInt(target1: string, target2: string, login: string, pass
   return { items, cost };
 }
 
-function formatDate(ts: number) { return new Date(ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); }
+function formatDate(ts: number) { return new Date(ts).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' }); }
 
 async function DomainIntersectionPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const creds = getCredentials();
@@ -61,14 +61,14 @@ async function DomainIntersectionPage({ searchParams }: { searchParams: Promise<
   if (historyId) {
     const saved = getBlDomIntResults<DomIntItem>(historyId);
     if (saved) { items = saved; activeEntry = getBlDomIntHistory().find((e) => e.id === historyId) ?? null; }
-    else error = 'Search no longer available.';
+    else error = 'Esta busca não está mais disponível.';
   } else if (rawTarget1 && rawTarget2) {
     const dedupeId = stableSearchId(['bl-domain-intersection', rawTarget1, rawTarget2]);
     const cached = getBlDomIntResults<DomIntItem>(dedupeId);
     if (cached) {
       items = cached;
       cost = getBlDomIntHistory().find((e) => e.id === dedupeId)?.cost;
-    } else if (!creds) { error = 'DataForSEO credentials missing. Configure them in Settings.'; }
+    } else if (!creds) { error = 'Credenciais do DataForSEO ausentes. Configure-as em Configurações.'; }
     else {
       const result = await fetchDomInt(rawTarget1, rawTarget2, creds.login, creds.pass);
       items = result.items; cost = result.cost; error = result.error ?? null;
@@ -97,22 +97,22 @@ async function DomainIntersectionPage({ searchParams }: { searchParams: Promise<
         <div className="nexo-label flex items-center gap-2 mb-1">
           <a href="/dashboard/backlinks" className="hover:text-white transition-colors">Backlinks</a>
           <span className="text-nexo-text">/</span>
-          <span className="text-nexo-dim">Domain Intersection</span>
+          <span className="text-nexo-dim">Interseção de domínios</span>
         </div>
-        <h1 className="nexo-h1">Domain Intersection</h1>
-        <p className="text-sm text-nexo-faint mt-1">Domains that link to both your site and a competitor simultaneously.</p>
+        <h1 className="nexo-h1">Interseção de domínios</h1>
+        <p className="text-sm text-nexo-faint mt-1">Domínios que apontam ao mesmo tempo para o seu site e para um concorrente.</p>
       </div>
 
-      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Compare" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
+      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Comparar" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="nexo-label block mb-1.5">Your domain</label>
-            <input type="text" name="target1" defaultValue={t1 || defaultDomain} placeholder="yourdomain.com" required
+            <label className="nexo-label block mb-1.5">Seu domínio</label>
+            <input type="text" name="target1" defaultValue={t1 || defaultDomain} placeholder="seudominio.com.br" required
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky font-mono" />
           </div>
           <div>
-            <label className="nexo-label block mb-1.5">Competitor domain</label>
-            <input type="text" name="target2" defaultValue={t2} placeholder="competitor.com" required
+            <label className="nexo-label block mb-1.5">Domínio do concorrente</label>
+            <input type="text" name="target2" defaultValue={t2} placeholder="concorrente.com.br" required
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky font-mono" />
           </div>
         </div>
@@ -124,7 +124,7 @@ async function DomainIntersectionPage({ searchParams }: { searchParams: Promise<
         <div id="results" className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="nexo-label">{items.length} shared linking domains</span>
+              <span className="nexo-label">{items.length} {items.length === 1 ? 'domínio em comum que aponta' : 'domínios em comum que apontam'}</span>
               {t1 && t2 && (
                 <span className="text-[11px] text-nexo-faint">
                   <span className="font-mono text-nexo-sky">{t1}</span> ∩ <span className="font-mono text-nexo-sky">{t2}</span>
@@ -132,13 +132,13 @@ async function DomainIntersectionPage({ searchParams }: { searchParams: Promise<
               )}
             </div>
             <div className="flex items-center gap-3">
-              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">cost: ${cost.toFixed(4)}</span>}
-              {items.length > 0 && <CopyMarkdownButton data={csvData} columns={[{key:'domain_from',label:'Linking Domain'},{key:'domain_from_rank',label:'DR'},{key:'backlinks_to_target1',label:`BL → ${t1}`},{key:'backlinks_to_target2',label:`BL → ${t2}`},{key:'first_seen',label:'First Seen'}]} />}
-              {items.length > 0 && <ExportCSVButton data={csvData} filename={`domain-intersection-${t1}-${t2}.csv`} columns={[{key:'domain_from',label:'Linking Domain'},{key:'domain_from_rank',label:'DR'},{key:'backlinks_to_target1',label:`BL → ${t1}`},{key:'backlinks_to_target2',label:`BL → ${t2}`},{key:'first_seen',label:'First Seen'}]} />}
+              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">custo: US$ {cost.toFixed(4).replace('.', ',')}</span>}
+              {items.length > 0 && <CopyMarkdownButton data={csvData} columns={[{key:'domain_from',label:'Domínio de origem'},{key:'domain_from_rank',label:'DR'},{key:'backlinks_to_target1',label:`BL → ${t1}`},{key:'backlinks_to_target2',label:`BL → ${t2}`},{key:'first_seen',label:'Visto pela primeira vez'}]} />}
+              {items.length > 0 && <ExportCSVButton data={csvData} filename={`domain-intersection-${t1}-${t2}.csv`} columns={[{key:'domain_from',label:'Domínio de origem'},{key:'domain_from_rank',label:'DR'},{key:'backlinks_to_target1',label:`BL → ${t1}`},{key:'backlinks_to_target2',label:`BL → ${t2}`},{key:'first_seen',label:'Visto pela primeira vez'}]} />}
             </div>
           </div>
           {items.length === 0 ? (
-            <div className="px-6 py-12 text-center text-sm text-nexo-faint">No common linking domains found.</div>
+            <div className="px-6 py-12 text-center text-sm text-nexo-faint">Nenhum domínio em comum encontrado.</div>
           ) : (
             <DomainIntersectionTable items={items} t1={t1} t2={t2} />
           )}
@@ -148,7 +148,7 @@ async function DomainIntersectionPage({ searchParams }: { searchParams: Promise<
       {history.length > 0 && (
         <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border">
-            <h2 className="nexo-label">History</h2>
+            <h2 className="nexo-label">Histórico</h2>
           </div>
           <div className="divide-y divide-nexo-border">
             {history.map((entry) => {
@@ -160,7 +160,7 @@ async function DomainIntersectionPage({ searchParams }: { searchParams: Promise<
                     <p className={`text-sm font-medium font-mono truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>
                       {entry.target1} ∩ {entry.target2}
                     </p>
-                    <p className="text-[11px] text-nexo-faint mt-0.5">{entry.count} common domains{entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}</p>
+                    <p className="text-[11px] text-nexo-faint mt-0.5">{entry.count} {entry.count === 1 ? 'domínio em comum' : 'domínios em comum'}{entry.cost !== undefined ? ` · US$ ${entry.cost.toFixed(4).replace('.', ',')}` : ''}</p>
                   </div>
                   <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>
                 </a>

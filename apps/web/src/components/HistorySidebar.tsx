@@ -38,7 +38,7 @@ export default function HistorySidebar({ title, items, perPage = 8 }: HistorySid
               disabled={safePage === 0}
               className="nexo-label inline-flex items-center gap-1 hover:text-white disabled:opacity-30 disabled:hover:text-nexo-dim transition-colors"
             >
-              <ChevronLeft className="w-3.5 h-3.5" /> Prev
+              <ChevronLeft className="w-3.5 h-3.5" /> Anterior
             </button>
             <span className="text-[11px] tabular-nums text-nexo-faint">
               {safePage + 1} / {pageCount}
@@ -49,7 +49,7 @@ export default function HistorySidebar({ title, items, perPage = 8 }: HistorySid
               disabled={safePage >= pageCount - 1}
               className="nexo-label inline-flex items-center gap-1 hover:text-white disabled:opacity-30 disabled:hover:text-nexo-dim transition-colors"
             >
-              Next <ChevronRight className="w-3.5 h-3.5" />
+              Próxima <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
         )}

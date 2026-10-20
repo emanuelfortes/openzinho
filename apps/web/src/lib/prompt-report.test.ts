@@ -48,7 +48,7 @@ describe('calendarMarkdown', () => {
   });
 
   it('says so when there are no checks', () => {
-    expect(calendarMarkdown([])).toContain('No checks yet');
+    expect(calendarMarkdown([])).toContain('Nenhuma verificação ainda');
   });
 });
 
@@ -66,12 +66,12 @@ describe('promptMarkdown', () => {
       prompt, checks: [check('2026-10-05', { mentioned: true, brandMentions: 2, answer: 'Acme | is **great**\nreally' })],
       total: 1, mentioned: 1, generatedAt: Date.UTC(2026, 9, 8, 12),
     });
-    expect(md).toContain('# Prompt report');
-    expect(md).toContain('ChatGPT · gpt-5.5 · web search on · FR');
-    expect(md).toContain('brand "Acme" and domain acme.com');
-    expect(md).toContain('**Mention rate:** 1 / 1 (100%)');
-    expect(md).toContain('## Calendar');
-    expect(md).toContain('| 2026-10-05 | 🟢 Cited | 2 | no | $0.0100 | Acme \\| is **great** really |');
+    expect(md).toContain('# Relatório do prompt');
+    expect(md).toContain('ChatGPT · gpt-5.5 · busca na web ativada · FR');
+    expect(md).toContain('marca "Acme" e domínio acme.com');
+    expect(md).toContain('**Taxa de menção:** 1 / 1 (100%)');
+    expect(md).toContain('## Calendário');
+    expect(md).toContain('| 2026-10-05 | 🟢 Citado | 2 | não | US$ 0,0100 | Acme \\| is **great** really |');
   });
 });
 
@@ -79,22 +79,22 @@ describe('overviewMarkdown and promptPdf', () => {
   it('lists every prompt with its latest status', () => {
     const latest = check('2026-10-05', { mentioned: true });
     const md = overviewMarkdown([{ prompt, checks: [latest], total: 1, mentioned: 1, latest }], Date.UTC(2026, 9, 8));
-    expect(md).toContain('| Best plumber in Paris? | ChatGPT gpt-5.5 | Acme · acme.com | 🟢 Cited | 1 / 1 (100%) | 🟢 |');
+    expect(md).toContain('| Best plumber in Paris? | ChatGPT gpt-5.5 | Acme · acme.com | 🟢 Citado | 1 / 1 (100%) | 🟢 |');
   });
 
   it('builds the single prompt PDF with a status card per check and a calendar', () => {
     const checks = [check('2026-10-05', { mentioned: true, brandMentions: 2, domainCited: true }), check('2026-10-07', { error: 'rate limit' })];
     const pdf = promptPdf({ prompt, checks, total: 1, mentioned: 1, generatedAt: 0 });
-    expect(pdf.metrics[0]).toMatchObject({ label: 'Latest result', value: 'Error', status: 'error' });
-    expect(pdf.metrics[1]).toMatchObject({ label: 'Mention rate', value: '100%' });
-    const calendar = pdf.sections.find((s) => s.title === 'Calendar')?.calendar;
+    expect(pdf.metrics[0]).toMatchObject({ label: 'Último resultado', value: 'Erro', status: 'error' });
+    expect(pdf.metrics[1]).toMatchObject({ label: 'Taxa de menção', value: '100%' });
+    const calendar = pdf.sections.find((s) => s.title === 'Calendário')?.calendar;
     expect(calendar?.weeks).toHaveLength(1);
     expect(calendar?.weeks[0].days.slice(0, 3)).toEqual([
       { day: 5, status: 'cited' }, { day: 6, status: null }, { day: 7, status: 'error' },
     ]);
-    const cards = pdf.sections.find((s) => s.title === 'Check history')?.statusItems;
-    expect(cards?.[0]).toEqual({ status: 'error', title: 'Wed 7 Oct 2026', subtitle: 'rate limit', badge: 'Error' });
-    expect(cards?.[1]).toEqual({ status: 'cited', title: 'Mon 5 Oct 2026', subtitle: '2 brand mentions - domain cited', badge: 'Cited' });
+    const cards = pdf.sections.find((s) => s.title === 'Histórico de verificações')?.statusItems;
+    expect(cards?.[0]).toEqual({ status: 'error', title: 'Qua 7 out 2026', subtitle: 'rate limit', badge: 'Erro' });
+    expect(cards?.[1]).toEqual({ status: 'cited', title: 'Seg 5 out 2026', subtitle: '2 menções à marca - domínio citado', badge: 'Citado' });
   });
 
   it('shows only the latest result of each prompt in the overview PDF', () => {
@@ -108,12 +108,12 @@ describe('overviewMarkdown and promptPdf', () => {
     expect(pdf.metrics.map((m) => m.value)).toEqual(['2', '1 / 2', '0 / 2']);
     const cards = pdf.sections[0].statusItems!;
     expect(cards).toHaveLength(2);
-    expect(cards[0]).toMatchObject({ status: 'cited', title: 'Best plumber in Paris?', badge: 'Cited', note: '5 Oct 2026' });
-    expect(cards[1]).toMatchObject({ status: 'none', badge: 'Not checked' });
+    expect(cards[0]).toMatchObject({ status: 'cited', title: 'Best plumber in Paris?', badge: 'Citado', note: '5 out 2026' });
+    expect(cards[1]).toMatchObject({ status: 'none', badge: 'Não verificado' });
   });
 
   it('formats days without a locale', () => {
-    expect(formatDay('2026-10-08')).toBe('8 Oct 2026');
-    expect(formatDay('2026-10-08', true)).toBe('Thu 8 Oct 2026');
+    expect(formatDay('2026-10-08')).toBe('8 out 2026');
+    expect(formatDay('2026-10-08', true)).toBe('Qui 8 out 2026');
   });
 });

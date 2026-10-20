@@ -117,7 +117,7 @@ export default function GridPdfExportButton(props: Props) {
       const brand = brandPalette(props.brandColor);
       const style = resolveBrandStyle(props.brandStyle);
       const mapImage = await mapDataUrl(props.mapElementId);
-      const formatDate = new Intl.DateTimeFormat(undefined, {
+      const formatDate = new Intl.DateTimeFormat('pt-BR', {
         dateStyle: 'long', timeStyle: 'short',
       }).format(new Date(props.searchedAt));
 
@@ -147,10 +147,10 @@ export default function GridPdfExportButton(props: Props) {
       pdf.setFont('helvetica', 'bold');
       pdf.setFontSize(7.5);
       pdf.setTextColor(...brand.subtle);
-      text('LOCAL SEARCH INTELLIGENCE', width - margin, 15, { align: 'right' });
+      text('INTELIGÊNCIA DE BUSCA LOCAL', width - margin, 15, { align: 'right' });
       pdf.setFontSize(16);
       pdf.setTextColor(...brand.text);
-      text('Geo-grid ranking report', width - margin, 24, { align: 'right' });
+      text('Relatório de ranking Geo-Grid', width - margin, 24, { align: 'right' });
       pdf.setFont('helvetica', 'normal');
       pdf.setFontSize(8);
       pdf.setTextColor(...brand.subtle);
@@ -163,13 +163,13 @@ export default function GridPdfExportButton(props: Props) {
       pdf.setFont('helvetica', 'normal');
       pdf.setFontSize(9);
       setColor(palette.muted);
-      text(`Target: ${props.target}  /  ${props.gridSize} x ${props.gridSize} points  /  ${formatDistance(props.spacingKm, distanceUnit)} spacing  /  ${props.language}`, margin, 60);
+      text(`Alvo: ${props.target}  /  ${props.gridSize} x ${props.gridSize} pontos  /  espaçamento de ${formatDistance(props.spacingKm, distanceUnit)}  /  ${props.language}`, margin, 60);
 
       const metrics = [
-        ['ATO SCORE', `${summary.ato}%`, 'Local visibility'],
-        ['AVERAGE RANK', summary.avgRank == null ? '-' : `#${summary.avgRank}`, `${summary.foundCount}/${summary.totalPoints} points found`],
-        ['TOP 3', `${summary.top3Count}`, `of ${summary.totalPoints} points`],
-        ['TOP 10', `${summary.top10Count}`, `of ${summary.totalPoints} points`],
+        ['PONTUAÇÃO ATO', `${summary.ato}%`, 'Visibilidade local'],
+        ['POSIÇÃO MÉDIA', summary.avgRank == null ? '-' : `#${String(summary.avgRank).replace('.', ',')}`, `${summary.foundCount}/${summary.totalPoints} pontos encontrados`],
+        ['TOP 3', `${summary.top3Count}`, `de ${summary.totalPoints} pontos`],
+        ['TOP 10', `${summary.top10Count}`, `de ${summary.totalPoints} pontos`],
       ];
       const cardGap = 3;
       const cardWidth = (width - margin * 2 - cardGap * 3) / 4;
@@ -195,11 +195,11 @@ export default function GridPdfExportButton(props: Props) {
       pdf.setFont('helvetica', 'bold');
       pdf.setFontSize(11);
       setColor(palette.ink);
-      text(mapImage ? 'Ranking map' : 'Ranking coverage', margin, gridY);
+      text(mapImage ? 'Mapa de posições' : 'Cobertura de posições', margin, gridY);
       pdf.setFont('helvetica', 'normal');
       pdf.setFontSize(7.5);
       setColor(palette.muted);
-      text(mapImage ? 'Map markers mirror the selected Geo-grid snapshot. The dashed marker is the center.' : 'Each square represents one local search point. The dashed square is the center.', margin, gridY + 5);
+      text(mapImage ? 'Os marcadores refletem a varredura Geo-Grid selecionada. O marcador tracejado é o centro.' : 'Cada quadrado representa um ponto de busca local. O quadrado tracejado é o centro.', margin, gridY + 5);
 
       const gridTop = gridY + 11;
       let legendY = gridTop;
@@ -270,11 +270,11 @@ export default function GridPdfExportButton(props: Props) {
         pdf.setFont('helvetica', 'bold');
         pdf.setFontSize(11);
         setColor(palette.ink);
-        text('Competitive landscape', margin, y);
+        text('Cenário competitivo', margin, y);
         pdf.setFont('helvetica', 'normal');
         pdf.setFontSize(7.5);
         setColor(palette.muted);
-        text('The businesses most frequently visible in the local pack.', margin, y + 5);
+        text('As empresas que aparecem com mais frequência no pacote local.', margin, y + 5);
         y += 11;
         const columns = [margin, margin + 9, margin + 76, margin + 112, margin + 143, width - margin];
         fill(palette.ink);
@@ -283,10 +283,10 @@ export default function GridPdfExportButton(props: Props) {
         pdf.setFontSize(6.5);
         pdf.setTextColor(255, 255, 255);
         text('#', columns[0] + 3, y + 4.6);
-        text('BUSINESS', columns[1], y + 4.6);
-        text('PRESENCE', columns[2], y + 4.6);
-        text('AVG. RANK', columns[3], y + 4.6);
-        text('VISIBILITY', columns[4], y + 4.6);
+        text('EMPRESA', columns[1], y + 4.6);
+        text('PRESENÇA', columns[2], y + 4.6);
+        text('POSIÇÃO MÉD.', columns[3], y + 4.6);
+        text('VISIBILIDADE', columns[4], y + 4.6);
         y += 7;
         competitors.forEach((competitor, index) => {
           if (index % 2 === 0) {
@@ -299,14 +299,14 @@ export default function GridPdfExportButton(props: Props) {
           text(String(index + 1), columns[0] + 3, y + 4.7);
           text(competitor.name, columns[1], y + 4.7, { maxWidth: 63 });
           text(`${competitor.appearances}/${competitor.totalPoints}`, columns[2], y + 4.7);
-          text(`#${competitor.avgRank}`, columns[3], y + 4.7);
+          text(`#${String(competitor.avgRank).replace('.', ',')}`, columns[3], y + 4.7);
           text(`${competitor.visibilityScore}%`, columns[4], y + 4.7);
           y += 7.2;
         });
       }
 
       drawFooter(pdf, {
-        text: props.brandFooter?.trim() || `Prepared by ${props.brandName}`,
+        text: props.brandFooter?.trim() || `Preparado por ${props.brandName}`,
         style,
         pageWidth: width,
         pageHeight: height,
@@ -319,7 +319,7 @@ export default function GridPdfExportButton(props: Props) {
       pdf.setFontSize(6.5);
       const footerText = footerPalette(style).text;
       pdf.setTextColor(footerText[0], footerText[1], footerText[2]);
-      text('Geo-grid ranking report', width - margin, height - 9, { align: 'right' });
+      text('Relatório de ranking Geo-Grid', width - margin, height - 9, { align: 'right' });
       pdf.save(`geo-grid-${filenamePart(props.keyword)}-${new Date(props.searchedAt).toISOString().slice(0, 10)}.pdf`);
     } finally {
       setIsExporting(false);
@@ -334,7 +334,7 @@ export default function GridPdfExportButton(props: Props) {
       className="nexo-label inline-flex items-center gap-2 rounded-nexo-lg bg-white px-3 py-2 text-nexo-bg transition-colors hover:bg-nexo-ice disabled:cursor-wait disabled:opacity-70"
     >
       {isExporting ? <LoaderCircle className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}
-      {isExporting ? 'Preparing PDF…' : 'Export PDF'}
+      {isExporting ? 'Preparando PDF…' : 'Exportar PDF'}
     </button>
   );
 }

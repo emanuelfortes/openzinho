@@ -14,7 +14,7 @@ const th = 'nexo-label px-3 py-2.5 whitespace-nowrap';
 const td = 'px-3 py-2.5 text-sm tabular-nums text-nexo-dim whitespace-nowrap';
 
 export function formatDay(ms: number, timeZone?: string): string {
-  return new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone }).format(new Date(ms));
+  return new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'short', year: 'numeric', timeZone }).format(new Date(ms));
 }
 
 function SectionHeader({ title, hint, children }: { title: string; hint?: string; children?: React.ReactNode }) {
@@ -33,14 +33,14 @@ function ListingName({ listing }: { listing: Pick<ListingResult, 'title' | 'isSe
   return (
     <span className="inline-flex items-center gap-1.5 max-w-[260px]">
       <span className={`truncate ${listing.isSelf ? 'font-medium text-nexo-text' : 'font-semibold text-nexo-text'}`}>{listing.title}</span>
-      {listing.isSelf && <span className="shrink-0 text-[9px] font-medium uppercase tracking-widest text-nexo-sky bg-nexo-blue/10 px-1.5 py-0.5 rounded">You</span>}
-      {listing.partial && <span title="The data does not reach back to the start of the period" className="shrink-0 text-nexo-warn-text"><AlertTriangle className="w-3.5 h-3.5" /></span>}
+      {listing.isSelf && <span className="shrink-0 text-[9px] font-medium uppercase tracking-widest text-nexo-sky bg-nexo-blue/10 px-1.5 py-0.5 rounded">Você</span>}
+      {listing.partial && <span title="Os dados não chegam até o início do período" className="shrink-0 text-nexo-warn-text"><AlertTriangle className="w-3.5 h-3.5" /></span>}
     </span>
   );
 }
 
 function RankChip({ rank, count }: { rank: number | null; count: number }) {
-  if (rank === null) return <span className="text-[10px] text-nexo-faint">n/a</span>;
+  if (rank === null) return <span className="text-[10px] text-nexo-faint">n/d</span>;
   return (
     <span className="inline-flex items-center justify-center min-w-6 h-6 px-1 rounded-md text-[11px] font-medium text-white tabular-nums" style={{ background: rgbCss(rankColor(rank, count)) }}>
       {rank}
@@ -78,19 +78,19 @@ export function OverviewView({ report, series }: { report: ComparisonReport; ser
       <KpiStrip report={report} />
 
       <section className={`${card} overflow-hidden`}>
-        <SectionHeader title="Review pace" hint="Sorted by overall score. Click the Report tab for every criterion." />
+        <SectionHeader title="Ritmo de avaliações" hint="Ordenado pela pontuação geral. Abra a aba Relatório para ver todos os critérios." />
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-white/[0.02]">
               <tr className="text-left">
-                <th className={th}>#</th><th className={th}>Listing</th>
+                <th className={th}>#</th><th className={th}>Perfil</th>
                 <th className={`${th} text-right`}>Google</th>
-                <th className={`${th} text-right`}>Per week</th>
-                <th className={`${th} text-right`}>Per month</th>
-                <th className={`${th} text-right`}>Momentum</th>
-                <th className={`${th} text-right`}>Regularity</th>
-                <th className={`${th} text-right`}>Last review</th>
-                <th className={`${th} text-right`}>Reply rate</th>
+                <th className={`${th} text-right`}>Por semana</th>
+                <th className={`${th} text-right`}>Por mês</th>
+                <th className={`${th} text-right`}>Tendência</th>
+                <th className={`${th} text-right`}>Regularidade</th>
+                <th className={`${th} text-right`}>Última avaliação</th>
+                <th className={`${th} text-right`}>Taxa de resposta</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-nexo-border">
@@ -99,7 +99,7 @@ export function OverviewView({ report, series }: { report: ComparisonReport; ser
                   <td className={td}><RankChip rank={l.overallRank} count={n} /></td>
                   <td className={td}><ListingName listing={l} /></td>
                   <td className={`${td} text-right`}>
-                    {l.googleRating !== null ? <span className="font-semibold">{l.googleRating.toFixed(1)}★</span> : '—'}
+                    {l.googleRating !== null ? <span className="font-semibold">{l.googleRating.toFixed(1).replace('.', ',')}★</span> : '—'}
                     <span className="text-nexo-faint"> · {l.googleTotal ?? '—'}</span>
                   </td>
                   <td className={`${td} text-right font-medium text-nexo-text `}><Value listing={l} id="perWeek4" /></td>
@@ -116,14 +116,14 @@ export function OverviewView({ report, series }: { report: ComparisonReport; ser
       </section>
 
       <section className={`${card} overflow-hidden`}>
-        <SectionHeader title="New reviews over time" />
+        <SectionHeader title="Novas avaliações ao longo do tempo" />
         <div className="px-6 py-5">
           <VelocityChart weekLabels={completeWeeks.map((w) => w.label)} monthLabels={report.months.slice(0, -1).map((m) => m.label)} series={series} />
         </div>
       </section>
 
       <section className={`${card} overflow-hidden`}>
-        <SectionHeader title="Weekly heatmap" hint="New reviews per complete ISO week. Hatched = not covered by the data." />
+        <SectionHeader title="Mapa de calor semanal" hint="Novas avaliações por semana ISO completa. Hachurado = sem dados." />
         <div className="overflow-x-auto px-6 py-5">
           <table className="border-separate border-spacing-1">
             <thead>
@@ -137,7 +137,7 @@ export function OverviewView({ report, series }: { report: ComparisonReport; ser
                 <tr key={l.id}>
                   <td className="pr-3 text-xs whitespace-nowrap"><ListingName listing={l} /></td>
                   {l.weekly.slice(0, -1).map((v, i) => (
-                    <td key={completeWeeks[i].key} title={`${l.title} · week of ${completeWeeks[i].label}: ${v ?? 'not covered'}`}
+                    <td key={completeWeeks[i].key} title={`${l.title} · semana de ${completeWeeks[i].label}: ${v ?? 'sem dados'}`}
                       className="w-9 h-8 rounded-md text-center text-[11px] font-medium tabular-nums"
                       style={v === null
                         ? { background: 'repeating-linear-gradient(45deg, rgb(241 245 249), rgb(241 245 249) 3px, rgb(226 232 240) 3px, rgb(226 232 240) 6px)' }
@@ -164,8 +164,8 @@ export function ReportView({ report, context, exportBar }: { report: ComparisonR
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4 border-y border-nexo-border py-3">
         <p className="text-[11px] text-nexo-dim">
-          <span className="nexo-label">Period</span>{' '}
-          {formatDay(report.periodStart, report.timeZone)} – {formatDay(report.periodEnd, report.timeZone)} · {n} listings · {context.keyword}, {context.area}
+          <span className="nexo-label">Período</span>{' '}
+          {formatDay(report.periodStart, report.timeZone)} – {formatDay(report.periodEnd, report.timeZone)} · {n} {n === 1 ? 'perfil' : 'perfis'} · {context.keyword}, {context.area}
         </p>
         <div className="flex items-center gap-4">{exportBar}</div>
       </div>
@@ -178,7 +178,7 @@ export function ReportView({ report, context, exportBar }: { report: ComparisonR
         </div>
         {report.summary.targets.length > 0 && (
           <div>
-            <h3 className="nexo-label mb-2">Targets and gaps</h3>
+            <h3 className="nexo-label mb-2">Metas e lacunas</h3>
             <ul className="space-y-1.5">
               {report.summary.targets.map((t) => <li key={t} className="text-sm text-nexo-dim pl-4 relative before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-nexo-blue">{t}</li>)}
             </ul>
@@ -187,36 +187,36 @@ export function ReportView({ report, context, exportBar }: { report: ComparisonR
         {self && (report.summary.strengths.length > 0 || report.summary.weaknesses.length > 0) && (
           <div className="grid sm:grid-cols-2 gap-6 pt-1">
             <div>
-              <h3 className="text-[10px] font-medium uppercase tracking-widest text-nexo-ice mb-2">Strengths · top third</h3>
+              <h3 className="text-[10px] font-medium uppercase tracking-widest text-nexo-ice mb-2">Pontos fortes · terço superior</h3>
               {report.summary.strengths.length ? (
                 <ul className="space-y-1">{report.summary.strengths.map((s) => <li key={s} className="text-sm text-nexo-dim">{s}</li>)}</ul>
-              ) : <p className="text-sm text-nexo-faint">None yet.</p>}
+              ) : <p className="text-sm text-nexo-faint">Nenhum ainda.</p>}
             </div>
             <div>
-              <h3 className="text-[10px] font-medium uppercase tracking-widest text-nexo-danger-text mb-2">Weaknesses · bottom third</h3>
+              <h3 className="text-[10px] font-medium uppercase tracking-widest text-nexo-danger-text mb-2">Pontos fracos · terço inferior</h3>
               {report.summary.weaknesses.length ? (
                 <ul className="space-y-1">{report.summary.weaknesses.map((s) => <li key={s} className="text-sm text-nexo-dim">{s}</li>)}</ul>
-              ) : <p className="text-sm text-nexo-faint">None.</p>}
+              ) : <p className="text-sm text-nexo-faint">Nenhum.</p>}
             </div>
           </div>
         )}
       </section>
 
       <section className={`${card} overflow-hidden`}>
-        <SectionHeader title="Rank matrix" hint="Rank on each criterion, 1 = best. Weighted criteria make up the overall score." />
+        <SectionHeader title="Matriz de posições" hint="Posição em cada critério, 1 = melhor. Os critérios com peso compõem a pontuação geral." />
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="bg-white/[0.02]">
-                <th className={`${th} text-left sticky left-0 bg-white/[0.02] `} rowSpan={2}>Listing</th>
-                <th className={`${th} text-center`} rowSpan={2}>Overall</th>
+                <th className={`${th} text-left sticky left-0 bg-white/[0.02] `} rowSpan={2}>Perfil</th>
+                <th className={`${th} text-center`} rowSpan={2}>Geral</th>
                 {CRITERION_GROUPS.map((g) => (
                   <th key={g} colSpan={CRITERIA.filter((c) => c.group === g).length} className={`${th} text-center border-l border-nexo-border `}>{g}</th>
                 ))}
               </tr>
               <tr className="bg-white/[0.02]">
                 {CRITERIA.map((c, i) => (
-                  <th key={c.id} title={`${c.label}: ${c.description}${c.weight ? ` Weight ${c.weight}%.` : ''}`}
+                  <th key={c.id} title={`${c.label}: ${c.description}${c.weight ? ` Peso ${c.weight}%.` : ''}`}
                     className={`text-[9px] leading-tight font-medium text-nexo-dim px-1 pb-2 text-center align-bottom min-w-9 ${i === 0 || CRITERIA[i - 1].group !== c.group ? 'border-l border-nexo-border' : ''}`}>
                     {c.short}{c.weight > 0 && <span className="text-nexo-sky">*</span>}
                   </th>
@@ -243,7 +243,7 @@ export function ReportView({ report, context, exportBar }: { report: ComparisonR
           </table>
         </div>
         <p className="px-6 py-3 text-[11px] text-nexo-faint border-t border-nexo-border">
-          <span className="text-nexo-sky">*</span> In the score: {CRITERIA.filter((c) => c.weight > 0).map((c) => `${c.short} ${c.weight}%`).join(' · ')}. n/a = fewer than 5 reviews in the period (3 negative reviews for negative replies); its weight is redistributed.
+          <span className="text-nexo-sky">*</span> Na pontuação: {CRITERIA.filter((c) => c.weight > 0).map((c) => `${c.short} ${c.weight}%`).join(' · ')}. n/d = menos de 5 avaliações no período (3 avaliações negativas para respostas a negativas); o peso é redistribuído.
         </p>
       </section>
 
@@ -256,7 +256,7 @@ export function ReportView({ report, context, exportBar }: { report: ComparisonR
               <table className="w-full">
                 <thead className="bg-white/[0.02]">
                   <tr>
-                    <th className={`${th} text-left`}>Listing</th>
+                    <th className={`${th} text-left`}>Perfil</th>
                     {criteria.map((c) => <th key={c.id} className={`${th} text-right`} title={c.description}>{c.label}</th>)}
                   </tr>
                 </thead>
@@ -283,8 +283,8 @@ export function ReportView({ report, context, exportBar }: { report: ComparisonR
       })}
 
       <section className="text-[11px] text-nexo-faint space-y-1 px-1">
-        <p><span className="nexo-label">Method</span> Google reviews via DataForSEO, fetched newest first and dated by publication time. ISO weeks (Monday to Sunday) in {report.timeZone}; the current week and month are excluded from averages.</p>
-        <p>Reply rate only counts reviews older than 7 days. Reviews analysed: {report.listings.map((l) => `${l.title} ${l.reviewsInPeriod}`).join(' · ')}.</p>
+        <p><span className="nexo-label">Método</span> Avaliações do Google via DataForSEO, coletadas das mais recentes para as mais antigas e datadas pela publicação. Semanas ISO (segunda a domingo) no fuso {report.timeZone}; a semana e o mês atuais ficam fora das médias.</p>
+        <p>A taxa de resposta só conta avaliações com mais de 7 dias. Avaliações analisadas: {report.listings.map((l) => `${l.title} ${l.reviewsInPeriod}`).join(' · ')}.</p>
       </section>
     </div>
   );
@@ -293,9 +293,9 @@ export function ReportView({ report, context, exportBar }: { report: ComparisonR
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
 function coverageLabel(listing: BenchmarkListing, timeZone: string): string {
-  if (listing.lastFetchAt === null) return 'Not fetched yet';
-  if (listing.coverage.complete) return 'Full history';
-  return listing.coverage.from !== null ? `Since ${formatDay(listing.coverage.from, timeZone)}` : 'Unknown';
+  if (listing.lastFetchAt === null) return 'Ainda não coletado';
+  if (listing.coverage.complete) return 'Histórico completo';
+  return listing.coverage.from !== null ? `Desde ${formatDay(listing.coverage.from, timeZone)}` : 'Desconhecido';
 }
 
 export function DataView({ benchmarkId, listings, tasks, report, timeZone }: {
@@ -309,23 +309,23 @@ export function DataView({ benchmarkId, listings, tasks, report, timeZone }: {
   return (
     <div className="space-y-6">
       <section className={`${card} overflow-hidden`}>
-        <SectionHeader title="Listings">
+        <SectionHeader title="Perfis">
           <form action={setSelfListingAction} className="flex items-center gap-2">
             <input type="hidden" name="id" value={benchmarkId} />
-            <label htmlFor="rv-self" className="nexo-label inline-flex items-center gap-1"><Star className="w-3 h-3" /> My listing</label>
+            <label htmlFor="rv-self" className="nexo-label inline-flex items-center gap-1"><Star className="w-3 h-3" /> Meu perfil</label>
             <select id="rv-self" name="listing_id" defaultValue={self ? String(self.id) : ''} className="nexo-input min-w-0 text-xs px-2 py-1.5 max-w-56">
-              <option value="">None</option>
+              <option value="">Nenhum</option>
               {listings.map((l) => <option key={l.id} value={l.id}>{l.title}</option>)}
             </select>
-            <button type="submit" className="nexo-section hover:text-white">Save</button>
+            <button type="submit" className="nexo-section hover:text-white">Salvar</button>
           </form>
         </SectionHeader>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-white/[0.02]">
               <tr className="text-left">
-                <th className={th}>Listing</th><th className={th}>Address</th><th className={`${th} text-right`}>Maps pos.</th>
-                <th className={`${th} text-right`}>Google</th><th className={th}>Coverage</th><th className={`${th} text-right`}>Reviews in period</th><th className={th}>Last fetch</th>
+                <th className={th}>Perfil</th><th className={th}>Endereço</th><th className={`${th} text-right`}>Posição no Maps</th>
+                <th className={`${th} text-right`}>Google</th><th className={th}>Cobertura</th><th className={`${th} text-right`}>Avaliações no período</th><th className={th}>Última coleta</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-nexo-border">
@@ -334,7 +334,7 @@ export function DataView({ benchmarkId, listings, tasks, report, timeZone }: {
                   <td className={td}><ListingName listing={{ title: l.title, isSelf: l.isSelf, partial: partial.has(l.id) }} /></td>
                   <td className={`${td} text-xs text-nexo-dim max-w-64 truncate`} title={l.address ?? ''}>{l.address ?? '—'}</td>
                   <td className={`${td} text-right`}>{l.mapsRank ? `#${l.mapsRank}` : '—'}</td>
-                  <td className={`${td} text-right`}>{l.rating !== null ? `${l.rating.toFixed(1)}★` : '—'} <span className="text-nexo-faint">· {l.totalReviews ?? '—'}</span></td>
+                  <td className={`${td} text-right`}>{l.rating !== null ? `${l.rating.toFixed(1).replace('.', ',')}★` : '—'} <span className="text-nexo-faint">· {l.totalReviews ?? '—'}</span></td>
                   <td className={`${td} ${partial.has(l.id) ? 'text-nexo-warn-text' : ''}`}>{coverageLabel(l, timeZone)}</td>
                   <td className={`${td} text-right`}>{inPeriod.get(l.id) ?? '—'}</td>
                   <td className={`${td} text-xs text-nexo-dim`}>{l.lastFetchAt ? formatDay(l.lastFetchAt, timeZone) : '—'}</td>
@@ -346,29 +346,29 @@ export function DataView({ benchmarkId, listings, tasks, report, timeZone }: {
       </section>
 
       <section className={`${card} overflow-hidden`}>
-        <SectionHeader title="DataForSEO tasks" hint={`${tasks.length} tasks · $${totalCost.toFixed(4)} in total`} />
+        <SectionHeader title="Tarefas da DataForSEO" hint={`${tasks.length} ${tasks.length === 1 ? 'tarefa' : 'tarefas'} · US$ ${totalCost.toFixed(4).replace('.', ',')} no total`} />
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-white/[0.02]">
               <tr className="text-left">
-                <th className={th}>Created</th><th className={th}>Listing</th><th className={th}>Kind</th>
-                <th className={`${th} text-right`}>Depth</th><th className={th}>Status</th><th className={`${th} text-right`}>Cost</th>
+                <th className={th}>Criada em</th><th className={th}>Perfil</th><th className={th}>Tipo</th>
+                <th className={`${th} text-right`}>Profundidade</th><th className={th}>Status</th><th className={`${th} text-right`}>Custo</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-nexo-border">
               {tasks.map((t) => (
                 <tr key={t.taskId}>
-                  <td className={`${td} text-xs text-nexo-dim`}>{new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium', timeStyle: 'short', timeZone }).format(new Date(t.createdAt))}</td>
+                  <td className={`${td} text-xs text-nexo-dim`}>{new Intl.DateTimeFormat('pt-BR', { dateStyle: 'medium', timeStyle: 'short', timeZone }).format(new Date(t.createdAt))}</td>
                   <td className={td}>{titles.get(t.listingId) ?? '—'}</td>
-                  <td className={`${td} capitalize`}>{t.kind}</td>
+                  <td className={`${td} capitalize`}>{({ backfill: 'coleta inicial', relaunch: 'nova tentativa', refresh: 'atualização' } as Record<string, string>)[t.kind] ?? t.kind}</td>
                   <td className={`${td} text-right`}>{t.depth}</td>
                   <td className={td}>
                     <span className={`text-[10px] font-medium uppercase tracking-widest px-2 py-0.5 rounded-nexo ${
                       t.status === 'ready' ? 'text-nexo-ice bg-nexo-ice/10' : t.status === 'error' ? 'text-nexo-danger-text bg-nexo-danger/10' : 'text-nexo-warn-text bg-nexo-warn/10'
-                    }`} title={t.errorMessage ?? undefined}>{t.status}</span>
+                    }`} title={t.errorMessage ?? undefined}>{({ posting: 'enviando', pending: 'pendente', ready: 'pronto', error: 'erro' } as Record<string, string>)[t.status] ?? t.status}</span>
                     {t.errorMessage && <span className="ml-2 text-xs text-nexo-danger-text">{t.errorMessage}</span>}
                   </td>
-                  <td className={`${td} text-right`}>{t.cost !== null ? `$${t.cost.toFixed(5)}` : '—'}</td>
+                  <td className={`${td} text-right`}>{t.cost !== null ? `US$ ${t.cost.toFixed(5).replace('.', ',')}` : '—'}</td>
                 </tr>
               ))}
             </tbody>

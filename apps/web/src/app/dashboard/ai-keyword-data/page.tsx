@@ -57,7 +57,7 @@ async function fetchAiKeywordData(
 // ---- UI helpers ----
 
 function formatDate(ts: number) {
-  return new Date(ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  return new Date(ts).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 // ---- Page ----
@@ -67,8 +67,8 @@ async function AiKeywordDataPage({ searchParams }: { searchParams: Promise<Searc
   const params = await searchParams;
   const historyId = params.history_id;
 
-  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'France');
-  const defaultLanguage = getSetting('default_language') ?? 'French';
+  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'Brazil');
+  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
 
   const keywords = params.keywords?.trim() ?? '';
   const location = params.location ?? defaultLocation;
@@ -87,7 +87,7 @@ async function AiKeywordDataPage({ searchParams }: { searchParams: Promise<Searc
       isFromHistory = true;
       activeEntry = getAiKwDataHistory().find((e) => e.id === historyId) ?? null;
     } else {
-      error = 'Search no longer available.';
+      error = 'Esta busca não está mais disponível.';
     }
   }
 
@@ -103,7 +103,7 @@ async function AiKeywordDataPage({ searchParams }: { searchParams: Promise<Searc
       const cachedEntry = getAiKwDataHistory().find((e) => e.id === dedupeId);
       cost = cachedEntry?.cost;
     } else if (!creds) {
-      error = 'DataForSEO credentials missing. Configure them in Settings.';
+      error = 'Credenciais da DataForSEO ausentes. Configure-as em Configurações.';
     } else {
       const result = await fetchAiKeywordData(kwList, location, language, creds.login, creds.pass);
       items = result.items;
@@ -139,9 +139,9 @@ async function AiKeywordDataPage({ searchParams }: { searchParams: Promise<Searc
         <div className="flex-1 min-w-0">
           <p className={`text-sm font-medium truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.keywords}</p>
           <p className="text-[11px] text-nexo-faint mt-0.5">
-            {entry.count} keyword{entry.count !== 1 ? 's' : ''}
+            {entry.count} {entry.count === 1 ? 'palavra-chave' : 'palavras-chave'}
             {' · '}{entry.location}
-            {entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}
+            {entry.cost !== undefined ? ` · US$ ${entry.cost.toFixed(4).replace('.', ',')}` : ''}
           </p>
         </div>
         <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>
@@ -152,14 +152,14 @@ async function AiKeywordDataPage({ searchParams }: { searchParams: Promise<Searc
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="nexo-h1">AI Keyword Data</h1>
-        <p className="text-sm text-nexo-faint mt-1">Search volume estimates reflecting keyword usage in AI tools (ChatGPT, Gemini, etc.), via DataForSEO.</p>
+        <h1 className="nexo-h1">Dados de palavras-chave em IA</h1>
+        <p className="text-sm text-nexo-faint mt-1">Estimativas de volume de buscas que refletem o uso de palavras-chave em ferramentas de IA (ChatGPT, Gemini etc.), via DataForSEO.</p>
       </div>
 
       {!creds && (
         <div className="bg-nexo-warn/10 border border-nexo-warn/40 text-nexo-warn-text text-sm rounded-nexo-lg px-4 py-3">
-          DataForSEO credentials missing. Configure them in{' '}
-          <a href="/dashboard/settings" className="underline font-semibold">settings</a>.
+          Credenciais da DataForSEO ausentes. Configure-as em{' '}
+          <a href="/dashboard/settings" className="underline font-semibold">Configurações</a>.
         </div>
       )}
 
@@ -167,21 +167,21 @@ async function AiKeywordDataPage({ searchParams }: { searchParams: Promise<Searc
         <div className="flex-1 min-w-0 space-y-6">
           <SearchForm
             className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4"
-            btnLabel="Analyze"
+            btnLabel="Analisar"
             btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-sky transition-colors"
-            loadingLabel="Fetching AI search volume…"
+            loadingLabel="Buscando volume de buscas em IA…"
             disabled={!creds}
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="sm:col-span-2">
                 <label className="nexo-label block mb-1.5">
-                  Keywords <span className="text-nexo-faint font-normal normal-case tracking-normal">(one per line, max 1000)</span>
+                  Palavras-chave <span className="text-nexo-faint font-normal normal-case tracking-normal">(uma por linha, máx. 1000)</span>
                 </label>
                 <textarea
                   name="keywords"
                   defaultValue={activeEntry ? '' : keywords}
                   rows={6}
-                  placeholder={'plumber paris\nbest italian restaurant\nseo agi'}
+                  placeholder={'encanador são paulo\nmelhor restaurante italiano\nagência de seo'}
                   required
                   className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky transition-all font-mono resize-y"
                 />
@@ -199,12 +199,12 @@ async function AiKeywordDataPage({ searchParams }: { searchParams: Promise<Searc
           {hasQuery && !error && items.length > 0 && (
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
-                <p className="nexo-label">Keywords</p>
+                <p className="nexo-label">Palavras-chave</p>
                 <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{items.length}</p>
               </div>
               <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
-                <p className="nexo-label">Total AI volume</p>
-                <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{totalVolume.toLocaleString('en-GB')}</p>
+                <p className="nexo-label">Volume total em IA</p>
+                <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{totalVolume.toLocaleString('pt-BR')}</p>
               </div>
             </div>
           )}
@@ -213,22 +213,22 @@ async function AiKeywordDataPage({ searchParams }: { searchParams: Promise<Searc
             <div id="results" className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
               <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <h2 className="nexo-label">Results</h2>
-                  {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>}
+                  <h2 className="nexo-label">Resultados</h2>
+                  {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">Histórico</span>}
                 </div>
                 <div className="flex items-center gap-3">
-                  {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">cost: ${cost.toFixed(4)}</span>}
-                  <span className="text-xs font-medium text-nexo-faint">{items.length} keyword{items.length !== 1 ? 's' : ''}</span>
+                  {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">custo: US$ {cost.toFixed(4).replace('.', ',')}</span>}
+                  <span className="text-xs font-medium text-nexo-faint">{items.length} {items.length === 1 ? 'palavra-chave' : 'palavras-chave'}</span>
                   {items.length > 0 && (
                     <CopyMarkdownButton
                       data={items.map((i) => ({ keyword: i.keyword ?? '', ai_search_volume: i.ai_search_volume ?? '' }))}
-                      columns={[{ key: 'keyword', label: 'Keyword' }, { key: 'ai_search_volume', label: 'AI Volume' }]}
+                      columns={[{ key: 'keyword', label: 'Palavra-chave' }, { key: 'ai_search_volume', label: 'Volume em IA' }]}
                     />
                   )}
                 </div>
               </div>
               {items.length === 0 ? (
-                <div className="px-6 py-12 text-center text-sm text-nexo-faint">No results found.</div>
+                <div className="px-6 py-12 text-center text-sm text-nexo-faint">Nenhum resultado encontrado.</div>
               ) : (
                 <AiKeywordDataTable items={items} />
               )}
@@ -237,14 +237,14 @@ async function AiKeywordDataPage({ searchParams }: { searchParams: Promise<Searc
 
           {!hasQuery && !error && (
             <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-6 py-16 text-center">
-              <p className="text-nexo-faint text-sm">Enter keywords above to see their estimated search volume inside AI tools.</p>
-              <p className="text-nexo-faint text-xs mt-1">Powered by DataForSEO AI Keyword Data API.</p>
+              <p className="text-nexo-faint text-sm">Digite palavras-chave acima para ver o volume de buscas estimado em ferramentas de IA.</p>
+              <p className="text-nexo-faint text-xs mt-1">Dados da API DataForSEO AI Keyword Data.</p>
             </div>
           )}
         </div>
 
         {history.length > 0 && (
-          <HistorySidebar title="History" items={historyItems} />
+          <HistorySidebar title="Histórico" items={historyItems} />
         )}
       </div>
     </div>

@@ -11,8 +11,8 @@ import { getTopResultsAction } from './actions';
 function PositionBadge({ pos }: { pos: number | null }) {
   if (pos === null)
     return (
-      <span title="The domain was not in the results returned for this check" className="px-2 py-0.5 rounded-nexo text-[10px] font-medium bg-nexo-danger/10 text-nexo-danger-text border border-nexo-danger/40 whitespace-nowrap">
-        Not found
+      <span title="O domínio não estava nos resultados retornados nesta verificação" className="px-2 py-0.5 rounded-nexo text-[10px] font-medium bg-nexo-danger/10 text-nexo-danger-text border border-nexo-danger/40 whitespace-nowrap">
+        Não encontrado
       </span>
     );
   const cls =
@@ -25,15 +25,15 @@ function PositionBadge({ pos }: { pos: number | null }) {
 
 function AiOverviewBadge() {
   return (
-    <span title="Cited as a source in Google's AI Overview for this check" className="px-1.5 py-0.5 rounded-nexo text-[9px] font-medium uppercase tracking-wider bg-nexo-blue/10 text-nexo-sky border border-nexo-border-strong">
-      AI
+    <span title="Citado como fonte no AI Overview do Google nesta verificação" className="px-1.5 py-0.5 rounded-nexo text-[9px] font-medium uppercase tracking-wider bg-nexo-blue/10 text-nexo-sky border border-nexo-border-strong">
+      IA
     </span>
   );
 }
 
 function TrendBadge({ current, previous }: { current: number | null; previous: number | null }) {
   if (current === null && previous === null) return null;
-  if (previous === null || current === null) return <span className="text-[10px] font-medium text-nexo-faint">new</span>;
+  if (previous === null || current === null) return <span className="text-[10px] font-medium text-nexo-faint">novo</span>;
   const diff = previous - current;
   if (diff === 0) return <span className="text-[11px] text-nexo-faint">—</span>;
   if (diff > 0) return <span className="text-[10px] font-medium text-nexo-ice">↑{diff}</span>;
@@ -104,13 +104,13 @@ function HistoryChart({ history, keywordId, topDates, selectedDate, onSelect }: 
   const sorted = [...history].sort((a, b) => a.date.localeCompare(b.date));
 
   if (sorted.length === 0)
-    return <div className="py-6 text-center text-nexo-faint text-xs">No checks recorded yet.</div>;
+    return <div className="py-6 text-center text-nexo-faint text-xs">Nenhuma verificação registrada ainda.</div>;
 
   const positions = sorted.map((h) => h.position).filter((p): p is number => p !== null);
 
   // A domain that was never found has no point to plot, but its days still have a top 10 to open.
   if (positions.length === 0 && !topDates)
-    return <div className="py-6 text-center text-nexo-faint text-xs">No ranking data recorded yet.</div>;
+    return <div className="py-6 text-center text-nexo-faint text-xs">Nenhum dado de posição registrado ainda.</div>;
 
   const W = 600, H = 150;
   const PAD = { l: 44, r: 20, t: 20, b: 36 };
@@ -214,7 +214,7 @@ function HistoryChart({ history, keywordId, topDates, selectedDate, onSelect }: 
 
         {positions.length === 0 && (
           <text x={W / 2} y={PAD.t + chartH / 2} textAnchor="middle" fontSize="10" fill="#94a3b8">
-            Domain not found in these checks — click a day to see who ranks
+            Domínio não encontrado nestas verificações — clique em um dia para ver quem ranqueia
           </text>
         )}
 
@@ -266,7 +266,7 @@ function HistoryChart({ history, keywordId, topDates, selectedDate, onSelect }: 
         {/* Tooltip */}
         {tooltip && (() => {
           const hasUrl = !!tooltip.url;
-          const hint = tooltip.hasTop === null ? null : tooltip.hasTop ? 'Click to see the top 10' : 'No top 10 saved';
+          const hint = tooltip.hasTop === null ? null : tooltip.hasTop ? 'Clique para ver o top 10' : 'Nenhum top 10 salvo';
           const tipW = 180, tipH = 38 + (hasUrl ? 16 : 0) + (hint ? 14 : 0);
           const tipX = Math.max(PAD.l, Math.min(tooltip.x - tipW / 2, W - PAD.r - tipW));
           const tipY = Math.max(PAD.t, tooltip.y - tipH - 12);
@@ -276,7 +276,7 @@ function HistoryChart({ history, keywordId, topDates, selectedDate, onSelect }: 
                 style={{ filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.08))' }} />
               <text x={tipX + 10} y={tipY + 15} fontSize="9" fill="#64748b" fontWeight="600">{tooltip.date}</text>
               <text x={tipX + 10} y={tipY + 30} fontSize="12" fill={stroke} fontWeight="800">
-                {tooltip.position !== null ? `#${tooltip.position}` : 'Not ranked'}
+                {tooltip.position !== null ? `#${tooltip.position}` : 'Sem posição'}
               </text>
               {hasUrl && (
                 <text x={tipX + 10} y={tipY + 46} fontSize="8.5" fill="#94a3b8">
@@ -299,13 +299,13 @@ function HistoryChart({ history, keywordId, topDates, selectedDate, onSelect }: 
 // ─── Keyword row ──────────────────────────────────────────────────────────────
 
 function formatDay(date: string) {
-  return new Date(`${date}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' });
+  return new Date(`${date}T00:00:00Z`).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', timeZone: 'UTC' });
 }
 
 // The server's timezone is not the browser's, so the first render pins UTC on
 // both sides and the local time is swapped in once hydration is done.
 function formatDate(ts: number, timeZone?: string) {
-  return new Date(ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone });
+  return new Date(ts).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone });
 }
 
 const subscribeNever = () => () => {};
@@ -366,7 +366,7 @@ export default function KeywordRow({ kw, history, latest, previous, hasCreds, pe
           <div className="text-[10px] text-nexo-faint pl-4">{kw.location} · {kw.language}</div>
         </td>
         <td className="px-3 py-3.5 text-center">
-          {pending ? <span className="text-[9px] font-medium uppercase tracking-wider text-nexo-warn-text">Queued</span> : !latest ? <span className="text-[10px] text-nexo-faint">—</span> : (
+          {pending ? <span className="text-[9px] font-medium uppercase tracking-wider text-nexo-warn-text">Na fila</span> : !latest ? <span className="text-[10px] text-nexo-faint">—</span> : (
             <div className="flex flex-col items-center gap-1">
               <div className="flex items-center justify-center gap-1">
                 <PositionBadge pos={currPos} />
@@ -374,7 +374,7 @@ export default function KeywordRow({ kw, history, latest, previous, hasCreds, pe
               </div>
               {lastRanked && (
                 <span className="text-[9px] font-semibold text-nexo-faint whitespace-nowrap">
-                  last #{lastRanked.position} · {formatDay(lastRanked.date)}
+                  última #{lastRanked.position} · {formatDay(lastRanked.date)}
                 </span>
               )}
             </div>
@@ -425,12 +425,12 @@ export default function KeywordRow({ kw, history, latest, previous, hasCreds, pe
           {/* max-w-0: this cell must not size the table. A long unbreakable URL would otherwise stretch it past the page. */}
           <td colSpan={6} className="px-5 pt-1 pb-5 max-w-0">
             <div className="nexo-label mb-2">
-              Position history — last 30 days
+              Histórico de posição — últimos 30 dias
             </div>
             <HistoryChart history={history} keywordId={kw.id} topDates={topDates} selectedDate={selectedDate} onSelect={setPickedDate} />
             {latest?.url && (
               <div className="mt-2 flex items-center gap-2">
-                <span className="text-[10px] text-nexo-faint font-semibold shrink-0">Ranked URL:</span>
+                <span className="text-[10px] text-nexo-faint font-semibold shrink-0">URL ranqueada:</span>
                 <a
                   href={latest.url}
                   target="_blank"

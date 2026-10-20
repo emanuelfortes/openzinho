@@ -19,20 +19,21 @@ interface SearchParams {
   queued?: string;
 }
 
-const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const weekdays = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
+const everyWeekday = ['Todo domingo', 'Toda segunda-feira', 'Toda terça-feira', 'Toda quarta-feira', 'Toda quinta-feira', 'Toda sexta-feira', 'Todo sábado'];
 
 function describeSchedule(campaign: GridCampaign): string {
-  const at = `at ${campaign.time_of_day}`;
+  const at = `às ${campaign.time_of_day}`;
   switch (campaign.frequency) {
-    case 'daily': return `Every day ${at}`;
-    case 'weekly': return `Every ${weekdays[campaign.weekday ?? 1]} ${at}`;
-    case 'biweekly': return `Every other ${weekdays[campaign.weekday ?? 1]} ${at}`;
-    case 'monthly': return `Monthly on day ${campaign.month_day ?? 1} ${at}`;
+    case 'daily': return `Todo dia ${at}`;
+    case 'weekly': return `${everyWeekday[campaign.weekday ?? 1]} ${at}`;
+    case 'biweekly': return `A cada duas semanas, ${weekdays[campaign.weekday ?? 1]} ${at}`;
+    case 'monthly': return `Todo mês no dia ${campaign.month_day ?? 1} ${at}`;
   }
 }
 
 function formatWhen(ts: number, timeZone: string): string {
-  return new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium', timeStyle: 'short', timeZone }).format(new Date(ts));
+  return new Intl.DateTimeFormat('pt-BR', { dateStyle: 'medium', timeStyle: 'short', timeZone }).format(new Date(ts));
 }
 
 function monthStart(): number {
@@ -54,15 +55,15 @@ function CampaignCard({ campaign, queued, distanceUnit }: { campaign: GridCampai
           <div className="flex items-center gap-2">
             <h2 className="truncate text-base font-medium text-nexo-text">{campaign.name}</h2>
             <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider ${campaign.active ? 'bg-nexo-ice/10 text-nexo-ice' : 'bg-nexo-surface-2 text-nexo-dim'}`}>
-              {campaign.active ? 'Active' : 'Paused'}
+              {campaign.active ? 'Ativa' : 'Pausada'}
             </span>
           </div>
           <p className="mt-0.5 truncate text-xs text-nexo-dim">
-            {campaign.target} · {campaign.grid_size}×{campaign.grid_size} · {formatDistance(campaign.spacing_km, distanceUnit)} spacing · {campaign.queue_mode} queue
+            {campaign.target} · {campaign.grid_size}×{campaign.grid_size} · espaçamento de {formatDistance(campaign.spacing_km, distanceUnit)} · fila {campaign.queue_mode === 'priority' ? 'prioritária' : 'padrão'}
           </p>
           <p className="mt-0.5 text-xs text-nexo-dim">
             {describeSchedule(campaign)} ({campaign.time_zone.replace(/_/g, ' ')})
-            {campaign.active && nextRun !== null && <> · next {formatWhen(nextRun, campaign.time_zone)}</>}
+            {campaign.active && nextRun !== null && <> · próxima: {formatWhen(nextRun, campaign.time_zone)}</>}
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-3">
@@ -70,18 +71,18 @@ function CampaignCard({ campaign, queued, distanceUnit }: { campaign: GridCampai
             <form action={runCampaignNowAction}>
               <input type="hidden" name="id" value={campaign.id} />
               <button type="submit" className="nexo-section rounded-nexo-lg border border-nexo-border-strong bg-nexo-surface px-3 py-2 transition-colors hover:bg-nexo-blue/15">
-                Run now
+                Executar agora
               </button>
             </form>
           )}
-          <Link href={`/dashboard/campaigns?edit=${campaign.id}`} className="nexo-section hover:text-white">Edit</Link>
+          <Link href={`/dashboard/campaigns?edit=${campaign.id}`} className="nexo-section hover:text-white">Editar</Link>
           <DeleteCampaignButton id={campaign.id} />
         </div>
       </div>
 
       {queued && (
         <p className="mt-3 rounded-nexo-lg bg-nexo-blue/10 px-3 py-2 text-[11px] font-semibold text-nexo-sky">
-          Queued. The worker posts every keyword on its next pass (about a minute) and the results arrive as DataForSEO finishes them.
+          Na fila. O worker envia todas as palavras-chave na próxima passagem (cerca de um minuto) e os resultados chegam conforme o DataForSEO os conclui.
         </p>
       )}
 
@@ -89,11 +90,11 @@ function CampaignCard({ campaign, queued, distanceUnit }: { campaign: GridCampai
         <table className="w-full min-w-[520px] text-left text-xs">
           <thead>
             <tr className="nexo-label border-b border-nexo-border">
-              <th className="py-2 pr-3">Keyword</th>
-              <th className="py-2 pr-3 text-right">Avg position</th>
+              <th className="py-2 pr-3">Palavra-chave</th>
+              <th className="py-2 pr-3 text-right">Posição média</th>
               <th className="py-2 pr-3 text-right">Share of Voice</th>
               <th className="py-2 pr-3 text-right">Top 3</th>
-              <th className="py-2">Last run</th>
+              <th className="py-2">Última execução</th>
             </tr>
           </thead>
           <tbody>
@@ -107,13 +108,13 @@ function CampaignCard({ campaign, queued, distanceUnit }: { campaign: GridCampai
                       ? <Link href={`/dashboard/geo-grid?grid_history_id=${keyword.latestDoneRunId}#results`} className="hover:text-nexo-sky">{keyword.keyword}</Link>
                       : keyword.keyword}
                   </td>
-                  <td className="py-2 pr-3 text-right font-medium tabular-nums text-nexo-text">{metrics?.avgPosition ?? '—'}</td>
+                  <td className="py-2 pr-3 text-right font-medium tabular-nums text-nexo-text">{metrics?.avgPosition?.toLocaleString('pt-BR') ?? '—'}</td>
                   <td className="py-2 pr-3 text-right tabular-nums text-nexo-dim">{metrics ? `${metrics.shareOfVoice}%` : '—'}</td>
                   <td className="py-2 pr-3 text-right tabular-nums text-nexo-dim">{metrics ? `${metrics.bands.top3}%` : '—'}</td>
                   <td className="py-2 text-nexo-dim">
                     {keyword.latestRun
-                      ? <>{formatWhen(keyword.latestRun.ts, campaign.time_zone)}{keyword.latestRun.status === 'pending' && <span className="ml-1 font-medium text-nexo-warn-text">· running</span>}</>
-                      : 'Not run yet'}
+                      ? <>{formatWhen(keyword.latestRun.ts, campaign.time_zone)}{keyword.latestRun.status === 'pending' && <span className="ml-1 font-medium text-nexo-warn-text">· em execução</span>}</>
+                      : 'Ainda não executada'}
                   </td>
                 </tr>
               );
@@ -123,7 +124,7 @@ function CampaignCard({ campaign, queued, distanceUnit }: { campaign: GridCampai
       </div>
 
       <p className="mt-3 text-[11px] text-nexo-faint">
-        Spent this month: <b className="tabular-nums text-nexo-dim">${spent.toFixed(3)}</b> · estimate ${estimate.perMonthUsd.toFixed(2)}/month
+        Gasto neste mês: <b className="tabular-nums text-nexo-dim">US$ {spent.toFixed(3).replace('.', ',')}</b> · estimativa de US$ {estimate.perMonthUsd.toFixed(2).replace('.', ',')}/mês
       </p>
     </section>
   );
@@ -137,7 +138,7 @@ async function CampaignsPage({ searchParams }: { searchParams: Promise<SearchPar
   const { distanceUnit } = getGridPreferences();
   const defaults = {
     center: getSetting('default_coordinates') ?? '',
-    language: getSetting('default_language') ?? 'English',
+    language: getSetting('default_language') ?? 'Portuguese',
     target: getSetting('default_domain') ?? '',
   };
 
@@ -149,22 +150,22 @@ async function CampaignsPage({ searchParams }: { searchParams: Promise<SearchPar
             <CalendarClock className="h-4 w-4" />
           </span>
           <div>
-            <h1 className="nexo-h1">Grid campaigns</h1>
+            <h1 className="nexo-h1">Campanhas de grade</h1>
             <p className="mt-1 max-w-2xl text-sm text-nexo-dim">
-              Track several keywords for one business on the same grid and schedule. Each keyword keeps its own Geo-grid timeline.
+              Acompanhe várias palavras-chave de uma empresa na mesma grade e no mesmo agendamento. Cada palavra-chave mantém sua própria linha do tempo Geo-Grid.
             </p>
           </div>
         </div>
         {!showForm && (
           <Link href="/dashboard/campaigns?new=1" className="rounded-nexo-lg bg-nexo-blue px-4 py-2.5 text-xs font-medium uppercase tracking-widest text-white hover:bg-nexo-sky">
-            New campaign
+            Nova campanha
           </Link>
         )}
       </div>
 
       {showForm && (
         <section className="rounded-nexo-lg border border-nexo-border bg-nexo-surface p-5 sm:p-6">
-          <h2 className="mb-4 text-sm font-medium text-nexo-text">{editing ? `Edit “${editing.name}”` : 'New campaign'}</h2>
+          <h2 className="mb-4 text-sm font-medium text-nexo-text">{editing ? `Editar “${editing.name}”` : 'Nova campanha'}</h2>
           <CampaignForm key={editing?.id ?? 'new'} campaign={editing} defaults={defaults} distanceUnit={distanceUnit} />
         </section>
       )}
@@ -173,7 +174,7 @@ async function CampaignsPage({ searchParams }: { searchParams: Promise<SearchPar
         <CampaignCard key={campaign.id} campaign={campaign} queued={params.queued === campaign.id} distanceUnit={distanceUnit} />
       ))}
 
-      <p className="text-[11px] text-nexo-faint">Scheduled runs are posted by the Geo-grid worker, which <code>npm run dev</code> and <code>npm start</code> launch alongside the app.</p>
+      <p className="text-[11px] text-nexo-faint">As execuções agendadas são enviadas pelo worker do Geo-Grid, que <code>npm run dev</code> e <code>npm start</code> iniciam junto com o app.</p>
     </div>
   );
 }

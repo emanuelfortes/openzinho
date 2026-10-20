@@ -83,7 +83,7 @@ async function fetchKeywordOverview(
 // ---- UI helpers ----
 
 function formatDate(ts: number) {
-  return new Date(ts).toLocaleDateString("en-GB", { day: 'numeric', month: 'short', year: 'numeric' });
+  return new Date(ts).toLocaleDateString("pt-BR", { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 // ---- Page ----
@@ -94,8 +94,8 @@ async function KeywordOverviewPage({ searchParams }: { searchParams: Promise<Sea
   const historyId = params.history_id;
 
   const rawKeywords = params.keywords ?? '';
-  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'France');
-  const defaultLanguage = getSetting('default_language') ?? 'French';
+  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'Brazil');
+  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
   const location = params.location ?? defaultLocation;
   const language = params.language ?? defaultLanguage;
 
@@ -113,7 +113,7 @@ async function KeywordOverviewPage({ searchParams }: { searchParams: Promise<Sea
       const history = getKwOverviewHistory();
       activeEntry = history.find((e) => e.id === historyId) ?? null;
     } else {
-      error = 'This search is no longer available.';
+      error = 'Esta busca não está mais disponível.';
     }
   }
 
@@ -128,7 +128,7 @@ async function KeywordOverviewPage({ searchParams }: { searchParams: Promise<Sea
       const cachedEntry = getKwOverviewHistory().find((e) => e.id === dedupeId);
       cost = cachedEntry?.cost;
     } else if (!creds) {
-      error = 'DataForSEO credentials missing. Configure them in Settings.';
+      error = 'Credenciais da DataForSEO ausentes. Configure-as em Configurações.';
     } else {
       const res = await fetchKeywordOverview(keywords, location, language, creds.login, creds.pass);
       items = res.items;
@@ -169,33 +169,33 @@ async function KeywordOverviewPage({ searchParams }: { searchParams: Promise<Sea
     cpc: item.keyword_info?.cpc != null ? item.keyword_info.cpc.toFixed(2) : '',
   }));
   const csvColumns = [
-    { key: 'keyword', label: 'Keyword' },
+    { key: 'keyword', label: 'Palavra-chave' },
     { key: 'search_volume', label: 'Volume' },
     { key: 'kd', label: 'KD' },
-    { key: 'intent', label: 'Intent' },
-    { key: 'competition_level', label: 'Competition' },
+    { key: 'intent', label: 'Intenção' },
+    { key: 'competition_level', label: 'Concorrência' },
     { key: 'cpc', label: 'CPC' },
   ];
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="nexo-h1">Keyword Overview</h1>
-        <p className="text-sm text-nexo-faint mt-1">Detailed SEO metrics per keyword via DataForSEO Labs.</p>
+        <h1 className="nexo-h1">Visão geral de palavras-chave</h1>
+        <p className="text-sm text-nexo-faint mt-1">Métricas de SEO detalhadas por palavra-chave via DataForSEO Labs.</p>
       </div>
 
       {/* Form */}
-      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Analyze" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
+      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Analisar" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="sm:col-span-2">
             <label className="nexo-label block mb-1.5">
-              Keywords <span className="text-nexo-faint normal-case font-normal">(one per line, max 1000)</span>
+              Palavras-chave <span className="text-nexo-faint normal-case font-normal">(uma por linha, máx. 1000)</span>
             </label>
             <textarea
               name="keywords"
               defaultValue={activeEntry ? '' : rawKeywords}
               rows={5}
-              placeholder={"plumber paris\nsink unclogging\nplumbing leak"}
+              placeholder={"encanador são paulo\ndesentupimento de pia\nvazamento hidráulico"}
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky font-mono resize-y"
             />
           </div>
@@ -213,15 +213,15 @@ async function KeywordOverviewPage({ searchParams }: { searchParams: Promise<Sea
       {hasQuery && !error && items.length > 0 && (
         <div className="grid grid-cols-3 gap-3">
           <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
-            <p className="nexo-label">Keywords</p>
+            <p className="nexo-label">Palavras-chave</p>
             <p className="text-2xl font-medium text-nexo-text mt-1">{items.length}</p>
           </div>
           <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
-            <p className="nexo-label">Total volume</p>
-            <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{totalVolume.toLocaleString("en-GB")}</p>
+            <p className="nexo-label">Volume total</p>
+            <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{totalVolume.toLocaleString("pt-BR")}</p>
           </div>
           <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
-            <p className="nexo-label">Avg KD</p>
+            <p className="nexo-label">KD médio</p>
             <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{avgDifficulty ?? '—'}</p>
           </div>
         </div>
@@ -232,12 +232,12 @@ async function KeywordOverviewPage({ searchParams }: { searchParams: Promise<Sea
         <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <h2 className="nexo-label">Results</h2>
-              {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>}
+              <h2 className="nexo-label">Resultados</h2>
+              {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">Histórico</span>}
             </div>
             <div className="flex items-center gap-3">
-              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">cost: ${cost.toFixed(4)}</span>}
-              <span className="text-xs font-medium text-nexo-faint">{items.length} keyword{items.length !== 1 ? 's' : ''}</span>
+              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">custo: US$ {cost.toFixed(4).replace('.', ',')}</span>}
+              <span className="text-xs font-medium text-nexo-faint">{items.length} {items.length !== 1 ? 'palavras-chave' : 'palavra-chave'}</span>
               {items.length > 0 && (
                 <div className="flex items-center gap-2">
                   <CopyMarkdownButton data={csvData} columns={csvColumns} />
@@ -248,7 +248,7 @@ async function KeywordOverviewPage({ searchParams }: { searchParams: Promise<Sea
           </div>
 
           {items.length === 0 ? (
-            <div className="px-6 py-12 text-center text-sm text-nexo-faint">No results.</div>
+            <div className="px-6 py-12 text-center text-sm text-nexo-faint">Sem resultados.</div>
           ) : (
             <KeywordOverviewTable items={items} />
           )}
@@ -259,7 +259,7 @@ async function KeywordOverviewPage({ searchParams }: { searchParams: Promise<Sea
       {history.length > 0 && (
         <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border">
-            <h2 className="nexo-label">History</h2>
+            <h2 className="nexo-label">Histórico</h2>
           </div>
           <div className="divide-y divide-nexo-border">
             {history.map((entry) => {
@@ -270,8 +270,8 @@ async function KeywordOverviewPage({ searchParams }: { searchParams: Promise<Sea
                   <div className="flex-1 min-w-0">
                     <p className={`text-sm font-medium truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.keywords}</p>
                     <p className="text-[11px] text-nexo-faint mt-0.5">
-                      {entry.location} · {entry.count} keyword{entry.count !== 1 ? 's' : ''}
-                      {entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}
+                      {entry.location} · {entry.count} {entry.count !== 1 ? 'palavras-chave' : 'palavra-chave'}
+                      {entry.cost !== undefined ? ` · US$ ${entry.cost.toFixed(4).replace('.', ',')}` : ''}
                     </p>
                   </div>
                   <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>

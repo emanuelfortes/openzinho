@@ -57,7 +57,7 @@ export async function discoverListings(
     const data = await response.json() as { cost?: number; tasks?: Array<{ status_code?: number; status_message?: string; cost?: number; result?: Array<{ items?: MapsItem[] | null }> | null }> };
     const task = data.tasks?.[0];
     const cost = task?.cost ?? data.cost ?? null;
-    if (!task || task.status_code !== 20000) return { results: [], cost, error: task?.status_message ?? 'No response from DataForSEO.' };
+    if (!task || task.status_code !== 20000) return { results: [], cost, error: task?.status_message ?? 'Sem resposta da DataForSEO.' };
 
     const seen = new Set<string>();
     const results: DiscoveredListing[] = [];
@@ -84,6 +84,6 @@ export async function discoverListings(
     }
     return { results, cost };
   } catch (error) {
-    return { results: [], cost: null, error: error instanceof Error ? error.message : 'Google Maps search failed.' };
+    return { results: [], cost: null, error: error instanceof Error ? error.message : 'A busca no Google Maps falhou.' };
   }
 }

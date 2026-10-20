@@ -105,7 +105,7 @@ export default function IntersectionTable({
   }));
 
   const csvColumns = [
-    { key: 'keyword', label: 'Keyword' },
+    { key: 'keyword', label: 'Palavra-chave' },
     { key: 'volume', label: 'Volume' },
     { key: 'kd', label: 'KD' },
     { key: 'pos_target1', label: `Pos ${target1}` },
@@ -123,7 +123,7 @@ export default function IntersectionTable({
         <table className="w-full text-xs">
           <thead>
             <tr className="border-b border-nexo-border">
-              <Header label="Keyword" sortK="keyword" align="left" className="!px-5" />
+              <Header label="Palavra-chave" sortK="keyword" align="left" className="!px-5" />
               <Header label="Vol." sortK="volume" align="right" />
               <Header label="KD" sortK="kd" align="center" />
               <Header label="D1" sortK="pos1" align="center" className="!text-blue-400" />
@@ -135,7 +135,7 @@ export default function IntersectionTable({
               <tr key={i} className="hover:bg-white/[0.04]">
                 <td className="px-5 py-3 font-medium text-nexo-text">{item.keyword_data.keyword}</td>
                 <td className="px-3 py-3 text-right font-mono text-nexo-dim">
-                  {(item.keyword_data.keyword_info?.search_volume ?? 0).toLocaleString('en-GB')}
+                  {(item.keyword_data.keyword_info?.search_volume ?? 0).toLocaleString('pt-BR')}
                 </td>
                 <td className="px-3 py-3 text-center">
                   <KdBadge kd={item.keyword_data.keyword_properties?.keyword_difficulty} />

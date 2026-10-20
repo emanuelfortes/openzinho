@@ -122,55 +122,55 @@ interface DuplicateTagItem {
 type Sev = 'error' | 'warning' | 'info' | 'good';
 
 const PAGE_CHECKS: Record<string, { label: string; sev: Sev }> = {
-  no_title: { label: 'Missing title', sev: 'error' },
-  no_description: { label: 'Missing description', sev: 'error' },
-  no_h1_tag: { label: 'Missing H1', sev: 'error' },
-  is_4xx_code: { label: '4XX error', sev: 'error' },
-  is_5xx_code: { label: '5XX error', sev: 'error' },
-  is_broken: { label: 'Broken', sev: 'error' },
-  duplicate_title_tag: { label: 'Duplicate title', sev: 'error' },
-  has_micromarkup_errors: { label: 'Microdata errors', sev: 'error' },
-  high_loading_time: { label: 'High load time', sev: 'warning' },
-  high_waiting_time: { label: 'High TTFB', sev: 'warning' },
-  https_to_http_links: { label: 'HTTPS→HTTP links', sev: 'warning' },
-  no_image_alt: { label: 'Missing alt text', sev: 'warning' },
-  no_favicon: { label: 'No favicon', sev: 'warning' },
-  title_too_long: { label: 'Title too long', sev: 'warning' },
-  title_too_short: { label: 'Title too short', sev: 'warning' },
-  low_content_rate: { label: 'Low text rate', sev: 'warning' },
-  has_render_blocking_resources: { label: 'Render-blocking', sev: 'warning' },
-  large_page_size: { label: 'Large page', sev: 'warning' },
-  low_character_count: { label: 'Low char count', sev: 'warning' },
-  deprecated_html_tags: { label: 'Deprecated HTML', sev: 'warning' },
-  duplicate_meta_tags: { label: 'Duplicate meta', sev: 'warning' },
-  no_encoding_meta_tag: { label: 'Missing charset', sev: 'warning' },
-  irrelevant_description: { label: 'Irrelevant desc.', sev: 'warning' },
-  irrelevant_title: { label: 'Irrelevant title', sev: 'warning' },
+  no_title: { label: 'Título ausente', sev: 'error' },
+  no_description: { label: 'Descrição ausente', sev: 'error' },
+  no_h1_tag: { label: 'H1 ausente', sev: 'error' },
+  is_4xx_code: { label: 'Erro 4XX', sev: 'error' },
+  is_5xx_code: { label: 'Erro 5XX', sev: 'error' },
+  is_broken: { label: 'Quebrada', sev: 'error' },
+  duplicate_title_tag: { label: 'Título duplicado', sev: 'error' },
+  has_micromarkup_errors: { label: 'Erros de microdados', sev: 'error' },
+  high_loading_time: { label: 'Carregamento lento', sev: 'warning' },
+  high_waiting_time: { label: 'TTFB alto', sev: 'warning' },
+  https_to_http_links: { label: 'Links HTTPS→HTTP', sev: 'warning' },
+  no_image_alt: { label: 'Sem texto alt', sev: 'warning' },
+  no_favicon: { label: 'Sem favicon', sev: 'warning' },
+  title_too_long: { label: 'Título longo demais', sev: 'warning' },
+  title_too_short: { label: 'Título curto demais', sev: 'warning' },
+  low_content_rate: { label: 'Pouco texto', sev: 'warning' },
+  has_render_blocking_resources: { label: 'Bloqueio de renderização', sev: 'warning' },
+  large_page_size: { label: 'Página pesada', sev: 'warning' },
+  low_character_count: { label: 'Poucos caracteres', sev: 'warning' },
+  deprecated_html_tags: { label: 'HTML obsoleto', sev: 'warning' },
+  duplicate_meta_tags: { label: 'Meta duplicada', sev: 'warning' },
+  no_encoding_meta_tag: { label: 'Charset ausente', sev: 'warning' },
+  irrelevant_description: { label: 'Descr. irrelevante', sev: 'warning' },
+  irrelevant_title: { label: 'Título irrelevante', sev: 'warning' },
   is_https: { label: 'HTTPS', sev: 'good' },
   has_html_doctype: { label: 'DOCTYPE', sev: 'good' },
-  has_micromarkup: { label: 'Structured data', sev: 'good' },
-  seo_friendly_url: { label: 'SEO URL', sev: 'good' },
-  canonical: { label: 'Canonical set', sev: 'info' },
-  is_redirect: { label: 'Has redirect', sev: 'info' },
+  has_micromarkup: { label: 'Dados estruturados', sev: 'good' },
+  seo_friendly_url: { label: 'URL amigável', sev: 'good' },
+  canonical: { label: 'Canonical definida', sev: 'info' },
+  is_redirect: { label: 'Tem redirecionamento', sev: 'info' },
 };
 
 const DOMAIN_CHECKS: Record<string, string> = {
   sitemap: 'Sitemap.xml',
   robots_txt: 'Robots.txt',
-  ssl: 'SSL Certificate',
+  ssl: 'Certificado SSL',
   is_https: 'HTTPS',
   http2: 'HTTP/2',
-  www_redirect: 'WWW redirect',
+  www_redirect: 'Redirecionamento WWW',
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function auth(login: string, pass: string) { return `Basic ${btoa(`${login}:${pass}`)}`; }
 
-function fmt(n?: number) { return n !== undefined && n !== null ? n.toLocaleString('en-GB') : '—'; }
+function fmt(n?: number) { return n !== undefined && n !== null ? n.toLocaleString('pt-BR') : '—'; }
 
 function formatDate(ts: number) {
-  return new Date(ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  return new Date(ts).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 
 function scoreColor(score?: number) {
@@ -215,7 +215,7 @@ async function createAuditTask(
   if (!res.ok) return { taskId: '', error: `HTTP ${res.status}` };
   const data = await res.json() as { tasks?: Array<{ id?: string; status_code?: number; status_message?: string; cost?: number }> };
   const task = data?.tasks?.[0];
-  if (!task) return { taskId: '', error: 'Empty API response.' };
+  if (!task) return { taskId: '', error: 'Resposta vazia da API.' };
   if (task.status_code !== 20100 && task.status_code !== 20000) return { taskId: '', error: `DataForSEO: ${task.status_message}` };
   return { taskId: task.id ?? '', cost: task.cost };
 }
@@ -376,14 +376,14 @@ async function SiteAuditPage({ searchParams }: { searchParams: Promise<SearchPar
   if (params.target?.trim() && !params.task_id) {
     const target = params.target.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/\/$/, '');
     if (!target) {
-      createError = 'Invalid domain.';
+      createError = 'Domínio inválido.';
     } else if (!creds) {
-      createError = 'DataForSEO credentials missing. Configure them in Settings.';
+      createError = 'Credenciais da DataForSEO ausentes. Configure-as em Configurações.';
     } else {
       const maxPages = 50;
       const { taskId, cost, error } = await createAuditTask(target, undefined, maxPages, creds.login, creds.pass);
       if (error || !taskId) {
-        createError = error ?? 'Failed to create task.';
+        createError = error ?? 'Falha ao criar a tarefa.';
       } else {
         upsertSiteAuditTask({ id: taskId, ts: Date.now(), target, maxCrawlPages: maxPages, status: 'pending', cost });
         redirect(`/dashboard/on-page/site-audit?task_id=${taskId}`);
@@ -512,18 +512,18 @@ async function SiteAuditPage({ searchParams }: { searchParams: Promise<SearchPar
     };
   });
   const pageExportColumns = [
-    { key: 'url', label: 'URL' }, { key: 'status_code', label: 'Status' }, { key: 'onpage_score', label: 'Score' },
-    { key: 'title', label: 'Title' }, { key: 'title_length', label: 'Title Length' }, { key: 'description', label: 'Description' },
-    { key: 'errors', label: 'Errors' }, { key: 'warnings', label: 'Warnings' }, { key: 'load_time_ms', label: 'Load Time (ms)' }, { key: 'word_count', label: 'Word Count' },
+    { key: 'url', label: 'URL' }, { key: 'status_code', label: 'Status' }, { key: 'onpage_score', label: 'Nota' },
+    { key: 'title', label: 'Título' }, { key: 'title_length', label: 'Tamanho do título' }, { key: 'description', label: 'Descrição' },
+    { key: 'errors', label: 'Erros' }, { key: 'warnings', label: 'Avisos' }, { key: 'load_time_ms', label: 'Tempo de carregamento (ms)' }, { key: 'word_count', label: 'Palavras' },
   ];
   const auditFileStem = activeTask?.target.replace(/[^a-z0-9]+/gi, '-').replace(/(^-|-$)/g, '').toLowerCase() || 'site-audit';
   const auditOverviewRows = summary ? [
-    { metric: 'On-page score', value: score?.toFixed(1) ?? '' },
-    { metric: 'Pages crawled', value: String(summary.crawl_status.pages_crawled) },
-    { metric: 'Broken links', value: String(summary.page_metrics?.broken_links ?? '') },
-    { metric: 'Non-indexable pages', value: String(summary.page_metrics?.non_indexable ?? '') },
-    { metric: 'Duplicate titles', value: String(summary.page_metrics?.duplicate_title ?? '') },
-    { metric: 'Duplicate descriptions', value: String(summary.page_metrics?.duplicate_description ?? '') },
+    { metric: 'Nota on-page', value: score?.toFixed(1) ?? '' },
+    { metric: 'Páginas rastreadas', value: String(summary.crawl_status.pages_crawled) },
+    { metric: 'Links quebrados', value: String(summary.page_metrics?.broken_links ?? '') },
+    { metric: 'Páginas não indexáveis', value: String(summary.page_metrics?.non_indexable ?? '') },
+    { metric: 'Títulos duplicados', value: String(summary.page_metrics?.duplicate_title ?? '') },
+    { metric: 'Descrições duplicadas', value: String(summary.page_metrics?.duplicate_description ?? '') },
   ] : [];
 
   return (
@@ -531,26 +531,26 @@ async function SiteAuditPage({ searchParams }: { searchParams: Promise<SearchPar
       {/* Header */}
       <div>
         <div className="nexo-label flex items-center gap-2 mb-1">
-          <a href="/dashboard/on-page" className="hover:text-white transition-colors">On Page</a>
+          <a href="/dashboard/on-page" className="hover:text-white transition-colors">On-page</a>
           <span className="text-nexo-text">/</span>
-          <span className="text-nexo-dim">Site Audit</span>
+          <span className="text-nexo-dim">Auditoria do site</span>
         </div>
-        <h1 className="nexo-h1">Site Audit</h1>
-        <p className="text-sm text-nexo-faint mt-1">Full site crawl — global score, all pages, SEO issues, SSL, sitemap, links.</p>
+        <h1 className="nexo-h1">Auditoria do site</h1>
+        <p className="text-sm text-nexo-faint mt-1">Rastreamento completo do site: nota geral, todas as páginas, problemas de SEO, SSL, sitemap e links.</p>
       </div>
 
       {/* Form */}
       <SearchForm
         className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4"
-        btnLabel="Start audit"
+        btnLabel="Iniciar auditoria"
         btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors"
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="sm:col-span-2">
-            <label className="nexo-label block mb-1.5">Target domain</label>
+            <label className="nexo-label block mb-1.5">Domínio alvo</label>
             <input
               type="text" name="target"
-              placeholder="example.com"
+              placeholder="exemplo.com.br"
               required
               defaultValue={activeTask?.target ?? ''}
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky font-mono"
@@ -559,8 +559,8 @@ async function SiteAuditPage({ searchParams }: { searchParams: Promise<SearchPar
         </div>
         <div className="bg-nexo-warn/10 border border-nexo-warn/40 rounded-nexo-lg px-4 py-3">
           <p className="text-[11px] text-nexo-warn-text">
-            Cost: <span className="font-medium">~$0.003/page crawled</span> — 50 pages max by default → estimated <span className="font-medium">~$0.15</span>.
-            The crawl can take a few minutes depending on site size.
+            Custo: <span className="font-medium">~US$ 0,003/página rastreada</span>. Por padrão, até 50 páginas → estimativa de <span className="font-medium">~US$ 0,15</span>.
+            O rastreamento pode levar alguns minutos, conforme o tamanho do site.
           </p>
         </div>
       </SearchForm>
@@ -584,15 +584,15 @@ async function SiteAuditPage({ searchParams }: { searchParams: Promise<SearchPar
                 <span className="text-sm font-mono font-medium text-nexo-dim">{activeTask.target}</span>
               </div>
               <p className="text-[11px] text-nexo-faint mt-1">
-                Started {formatDate(activeTask.ts)}
-                {activeTask.cost !== undefined && ` · creation $${activeTask.cost.toFixed(5)}`}
-                {activeTask.pagesCrawled !== undefined && ` · ${activeTask.pagesCrawled} pages crawled`}
+                Iniciado em {formatDate(activeTask.ts)}
+                {activeTask.cost !== undefined && ` · criação US$ ${activeTask.cost.toFixed(5).replace('.', ',')}`}
+                {activeTask.pagesCrawled !== undefined && ` · ${activeTask.pagesCrawled} ${activeTask.pagesCrawled === 1 ? 'página rastreada' : 'páginas rastreadas'}`}
               </p>
             </div>
             {activeTask.status !== 'finished' && (
               <a href={`/dashboard/on-page/site-audit?task_id=${activeTask.id}`}
                 className="nexo-section shrink-0 hover:text-white border border-nexo-border-strong hover:border-nexo-border-strong px-3 py-1.5 rounded-nexo transition-all bg-nexo-blue/10">
-                Refresh ↺
+                Atualizar ↺
               </a>
             )}
           </div>
@@ -603,12 +603,12 @@ async function SiteAuditPage({ searchParams }: { searchParams: Promise<SearchPar
               <AutoRefresh intervalMs={15000} />
               <div className="inline-flex items-center gap-2 text-sm text-nexo-dim">
                 <span className="inline-block w-4 h-4 border-2 border-nexo-sky border-t-transparent rounded-full animate-spin" />
-                Crawling in progress…
+                Rastreamento em andamento…
               </div>
               {activeTask.pagesCrawled !== undefined && (
-                <p className="text-xs text-nexo-faint">{activeTask.pagesCrawled} / {activeTask.maxCrawlPages} pages crawled</p>
+                <p className="text-xs text-nexo-faint">{activeTask.pagesCrawled} / {activeTask.maxCrawlPages} páginas rastreadas</p>
               )}
-              <p className="text-xs text-nexo-faint">Checking automatically every 15 seconds.</p>
+              <p className="text-xs text-nexo-faint">Verificando automaticamente a cada 15 segundos.</p>
             </div>
           )}
 
@@ -617,13 +617,13 @@ async function SiteAuditPage({ searchParams }: { searchParams: Promise<SearchPar
             <>
               <div className="px-4 pt-3 flex gap-0.5 flex-wrap border-b border-nexo-border overflow-x-auto">
                 {([
-                  ['overview',       'Overview'],
-                  ['pages',          `Pages (${auditPages?.length ?? 0})`],
+                  ['overview',       'Visão geral'],
+                  ['pages',          `Páginas (${auditPages?.length ?? 0})`],
                   ['links',          'Links'],
-                  ['resources',      'Resources'],
-                  ['duplicate_tags', 'Dup. Tags'],
-                  ['non_indexable',  'Non-indexable'],
-                  ['keyword_density','Keyword Density'],
+                  ['resources',      'Recursos'],
+                  ['duplicate_tags', 'Tags dup.'],
+                  ['non_indexable',  'Não indexáveis'],
+                  ['keyword_density','Densidade de palavras-chave'],
                 ] as const).map(([t, label]) => (
                   <a key={t} href={`/dashboard/on-page/site-audit?task_id=${activeTask!.id}&view=${t}`}
                     className={`px-3 py-2 text-[11px] font-medium uppercase tracking-widest rounded-t-nexo transition-colors whitespace-nowrap ${
@@ -640,25 +640,25 @@ async function SiteAuditPage({ searchParams }: { searchParams: Promise<SearchPar
               {view === 'overview' && summary && (
                 <div className="p-6 space-y-6">
                   <div className="flex items-center justify-between gap-4 border-b border-nexo-border pb-4">
-                    <p className="nexo-label">Export audit report</p>
+                    <p className="nexo-label">Exportar relatório da auditoria</p>
                     <div className="flex items-center gap-3">
                       <ReportPdfExportButton brandName={brandName} brandLogoUrl={brandLogoUrl} brandColor={brand.color} brandFooter={brand.footer} brandStyle={brand} filename={`${auditFileStem}-site-audit-report.pdf`}
-                        title="Site audit report" subject={activeTask!.target} generatedAt={activeTask!.ts}
+                        title="Relatório de auditoria do site" subject={activeTask!.target} generatedAt={activeTask!.ts}
                         metrics={[
-                          { label: 'On-page score', value: score?.toFixed(1) ?? '—', detail: 'out of 100' },
-                          { label: 'Pages crawled', value: fmt(summary.crawl_status.pages_crawled), detail: `${fmt(summary.crawl_status.max_crawl_pages)} maximum` },
-                          { label: 'Critical errors', value: String(errors.reduce((total, issue) => total + issue.count, 0)), detail: `${errors.length} issue types` },
-                          { label: 'Warnings', value: String(warnings.reduce((total, issue) => total + issue.count, 0)), detail: `${warnings.length} issue types` },
+                          { label: 'Nota on-page', value: score?.toFixed(1) ?? '—', detail: 'de 100' },
+                          { label: 'Páginas rastreadas', value: fmt(summary.crawl_status.pages_crawled), detail: `máximo de ${fmt(summary.crawl_status.max_crawl_pages)}` },
+                          { label: 'Erros críticos', value: String(errors.reduce((total, issue) => total + issue.count, 0)), detail: `${errors.length} ${errors.length === 1 ? 'tipo de problema' : 'tipos de problema'}` },
+                          { label: 'Avisos', value: String(warnings.reduce((total, issue) => total + issue.count, 0)), detail: `${warnings.length} ${warnings.length === 1 ? 'tipo de problema' : 'tipos de problema'}` },
                         ]}
                         sections={[
-                          { title: 'Critical issues', rows: errors.slice(0, 15).map((issue) => [issue.label, `${issue.count} pages`]) },
-                          { title: 'Warnings', rows: warnings.slice(0, 15).map((issue) => [issue.label, `${issue.count} pages`]) },
-                          { title: 'Domain health', rows: [[ 'CMS', summary.domain_info?.cms ?? '—' ], [ 'Server', summary.domain_info?.server ?? '—' ], [ 'SSL certificate', summary.domain_info?.ssl_info?.valid_certificate ? 'Valid' : 'Not verified' ]].filter((row) => row[1] !== '—') as Array<[string, string]> },
+                          { title: 'Problemas críticos', rows: errors.slice(0, 15).map((issue) => [issue.label, `${issue.count} ${issue.count === 1 ? 'página' : 'páginas'}`]) },
+                          { title: 'Avisos', rows: warnings.slice(0, 15).map((issue) => [issue.label, `${issue.count} ${issue.count === 1 ? 'página' : 'páginas'}`]) },
+                          { title: 'Saúde do domínio', rows: [[ 'CMS', summary.domain_info?.cms ?? '—' ], [ 'Servidor', summary.domain_info?.server ?? '—' ], [ 'Certificado SSL', summary.domain_info?.ssl_info?.valid_certificate ? 'Válido' : 'Não verificado' ]].filter((row) => row[1] !== '—') as Array<[string, string]> },
                         ]} />
                       <ExportExcelButton filename={`${auditFileStem}-site-audit.xls`} sheets={[
-                        { name: 'Overview', columns: [{ key: 'metric', label: 'Metric' }, { key: 'value', label: 'Value' }], data: auditOverviewRows },
-                        { name: 'Issues', columns: [{ key: 'severity', label: 'Severity' }, { key: 'issue', label: 'Issue' }, { key: 'pages', label: 'Affected pages' }], data: issuesList.map((issue) => ({ severity: issue.sev, issue: issue.label, pages: issue.count })) },
-                        { name: 'Pages', columns: pageExportColumns, data: csvData },
+                        { name: 'Visão geral', columns: [{ key: 'metric', label: 'Métrica' }, { key: 'value', label: 'Valor' }], data: auditOverviewRows },
+                        { name: 'Problemas', columns: [{ key: 'severity', label: 'Gravidade' }, { key: 'issue', label: 'Problema' }, { key: 'pages', label: 'Páginas afetadas' }], data: issuesList.map((issue) => ({ severity: issue.sev === 'error' ? 'Erro' : issue.sev === 'warning' ? 'Aviso' : issue.sev === 'good' ? 'Ok' : 'Info', issue: issue.label, pages: issue.count })) },
+                        { name: 'Páginas', columns: pageExportColumns, data: csvData },
                       ]} />
                       <ExportCSVButton data={csvData} columns={pageExportColumns} filename={`${auditFileStem}-site-audit-pages.csv`} />
                     </div>
@@ -667,28 +667,28 @@ async function SiteAuditPage({ searchParams }: { searchParams: Promise<SearchPar
                   <div className="flex gap-4 items-start flex-wrap">
                     {score !== undefined && (
                       <div className={`shrink-0 rounded-nexo-lg border-2 px-8 py-5 text-center ${scoreBg(score)}`}>
-                        <p className="nexo-label mb-1">OnPage Score</p>
+                        <p className="nexo-label mb-1">Nota OnPage</p>
                         <p className={`text-4xl font-medium ${scoreColor(score)}`}>{score.toFixed(1)}</p>
                         <p className="text-[11px] text-nexo-faint">/ 100</p>
                       </div>
                     )}
                     <div className="flex-1 grid grid-cols-2 sm:grid-cols-3 gap-3">
-                      <StatCard label="Pages crawled" value={fmt(summary.crawl_status.pages_crawled)} sub={`/ ${fmt(summary.crawl_status.max_crawl_pages)} max`} />
+                      <StatCard label="Páginas rastreadas" value={fmt(summary.crawl_status.pages_crawled)} sub={`/ máx. ${fmt(summary.crawl_status.max_crawl_pages)}`} />
                       {summary.page_metrics?.broken_links !== undefined && (
-                        <StatCard label="Broken links" value={fmt(summary.page_metrics.broken_links)}
+                        <StatCard label="Links quebrados" value={fmt(summary.page_metrics.broken_links)}
                           accent={summary.page_metrics.broken_links > 0 ? 'bg-nexo-danger/10 border-nexo-danger/40' : 'bg-nexo-ice/10 border-nexo-ice/30'} />
                       )}
                       {summary.page_metrics?.non_indexable !== undefined && (
-                        <StatCard label="Non-indexable" value={fmt(summary.page_metrics.non_indexable)} />
+                        <StatCard label="Não indexáveis" value={fmt(summary.page_metrics.non_indexable)} />
                       )}
                       {summary.page_metrics?.duplicate_title !== undefined && (
-                        <StatCard label="Duplicate titles" value={fmt(summary.page_metrics.duplicate_title)} />
+                        <StatCard label="Títulos duplicados" value={fmt(summary.page_metrics.duplicate_title)} />
                       )}
                       {summary.page_metrics?.duplicate_description !== undefined && (
-                        <StatCard label="Duplicate desc." value={fmt(summary.page_metrics.duplicate_description)} />
+                        <StatCard label="Descrições duplicadas" value={fmt(summary.page_metrics.duplicate_description)} />
                       )}
                       {summary.page_metrics?.internal_links_count !== undefined && (
-                        <StatCard label="Internal links" value={fmt(summary.page_metrics.internal_links_count)} />
+                        <StatCard label="Links internos" value={fmt(summary.page_metrics.internal_links_count)} />
                       )}
                     </div>
                   </div>
@@ -696,11 +696,11 @@ async function SiteAuditPage({ searchParams }: { searchParams: Promise<SearchPar
                   {/* Domain health */}
                   {summary.domain_info && (
                     <div>
-                      <h3 className="nexo-label mb-3">Domain health</h3>
+                      <h3 className="nexo-label mb-3">Saúde do domínio</h3>
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                         {summary.domain_info.server && (
                           <div className="bg-white/[0.02] rounded-nexo-lg border border-nexo-border px-4 py-3">
-                            <p className="nexo-label">Server</p>
+                            <p className="nexo-label">Servidor</p>
                             <p className="text-sm font-mono font-medium text-nexo-dim mt-0.5">{summary.domain_info.server}</p>
                           </div>
                         )}
@@ -720,10 +720,10 @@ async function SiteAuditPage({ searchParams }: { searchParams: Promise<SearchPar
                           <div className={`rounded-nexo-lg border px-4 py-3 ${summary.domain_info.ssl_info.valid_certificate ? 'bg-nexo-ice/10 border-nexo-ice/30' : 'bg-nexo-danger/10 border-nexo-danger/40'}`}>
                             <p className="nexo-label">SSL</p>
                             <p className={`text-sm font-medium mt-0.5 ${summary.domain_info.ssl_info.valid_certificate ? 'text-nexo-ice' : 'text-nexo-danger-text'}`}>
-                              {summary.domain_info.ssl_info.valid_certificate ? '✓ Valid' : '✕ Invalid'}
+                              {summary.domain_info.ssl_info.valid_certificate ? '✓ Válido' : '✕ Inválido'}
                             </p>
                             {summary.domain_info.ssl_info.certificate_expiration_date && (
-                              <p className="text-[10px] text-nexo-faint mt-0.5">Exp: {summary.domain_info.ssl_info.certificate_expiration_date.slice(0, 10)}</p>
+                              <p className="text-[10px] text-nexo-faint mt-0.5">Expira: {summary.domain_info.ssl_info.certificate_expiration_date.slice(0, 10)}</p>
                             )}
                           </div>
                         )}
@@ -733,7 +733,7 @@ async function SiteAuditPage({ searchParams }: { searchParams: Promise<SearchPar
                           return (
                             <div key={k} className={`rounded-nexo-lg border px-4 py-3 ${val ? 'bg-nexo-ice/10 border-nexo-ice/30' : 'bg-white/[0.02] border-nexo-border'}`}>
                               <p className="nexo-label">{label}</p>
-                              <p className={`text-sm font-medium mt-0.5 ${val ? 'text-nexo-ice' : 'text-nexo-dim'}`}>{val ? '✓ Present' : '✕ Absent'}</p>
+                              <p className={`text-sm font-medium mt-0.5 ${val ? 'text-nexo-ice' : 'text-nexo-dim'}`}>{val ? '✓ Presente' : '✕ Ausente'}</p>
                             </div>
                           );
                         })}
@@ -746,7 +746,7 @@ async function SiteAuditPage({ searchParams }: { searchParams: Promise<SearchPar
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {errors.length > 0 && (
                         <div>
-                          <h3 className="text-[10px] font-medium uppercase tracking-widest text-nexo-danger-text mb-3">Critical errors</h3>
+                          <h3 className="text-[10px] font-medium uppercase tracking-widest text-nexo-danger-text mb-3">Erros críticos</h3>
                           <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-4 py-2">
                             {errors.map((i) => <IssueRow key={i.key} label={i.label} count={i.count} sev={i.sev} />)}
                           </div>
@@ -754,7 +754,7 @@ async function SiteAuditPage({ searchParams }: { searchParams: Promise<SearchPar
                       )}
                       {warnings.length > 0 && (
                         <div>
-                          <h3 className="text-[10px] font-medium uppercase tracking-widest text-nexo-warn-text mb-3">Warnings</h3>
+                          <h3 className="text-[10px] font-medium uppercase tracking-widest text-nexo-warn-text mb-3">Avisos</h3>
                           <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-4 py-2">
                             {warnings.slice(0, 15).map((i) => <IssueRow key={i.key} label={i.label} count={i.count} sev={i.sev} />)}
                           </div>
@@ -779,11 +779,11 @@ async function SiteAuditPage({ searchParams }: { searchParams: Promise<SearchPar
                             ? 'bg-nexo-surface-2 text-white border-nexo-border-strong'
                             : 'text-nexo-faint border-nexo-border hover:border-nexo-border-strong'
                         }`}>
-                        {n === 1 ? 'Unigram' : n === 2 ? 'Bigram' : 'Trigram'}
+                        {n === 1 ? 'Unigrama' : n === 2 ? 'Bigrama' : 'Trigrama'}
                       </a>
                     ))}
                     {kwDensityItems && (
-                      <span className="ml-auto text-[11px] text-nexo-faint">{kwDensityItems.length} keywords</span>
+                      <span className="ml-auto text-[11px] text-nexo-faint">{kwDensityItems.length} {kwDensityItems.length === 1 ? 'palavra-chave' : 'palavras-chave'}</span>
                     )}
                   </div>
 
@@ -792,11 +792,11 @@ async function SiteAuditPage({ searchParams }: { searchParams: Promise<SearchPar
                   )}
 
                   {!kwDensityItems && !kwDensityError && (
-                    <div className="px-6 py-12 text-center text-sm text-nexo-faint">Loading…</div>
+                    <div className="px-6 py-12 text-center text-sm text-nexo-faint">Carregando…</div>
                   )}
 
                   {kwDensityItems && kwDensityItems.length === 0 && (
-                    <div className="px-6 py-12 text-center text-sm text-nexo-faint">No keyword density data: this audit was crawled without DataForSEO&apos;s keyword density option.</div>
+                    <div className="px-6 py-12 text-center text-sm text-nexo-faint">Sem dados de densidade de palavras-chave: esta auditoria foi rastreada sem a opção de densidade de palavras-chave da DataForSEO.</div>
                   )}
 
                   {kwDensityItems && kwDensityItems.length > 0 && (
@@ -809,7 +809,7 @@ async function SiteAuditPage({ searchParams }: { searchParams: Promise<SearchPar
               {view === 'pages' && auditPages && (
                 <div>
                   <div className="px-6 py-3 border-b border-nexo-border flex items-center justify-between">
-                    <span className="text-xs font-medium text-nexo-faint">{auditPages.length} page{auditPages.length !== 1 ? 's' : ''} HTML</span>
+                    <span className="text-xs font-medium text-nexo-faint">{auditPages.length} {auditPages.length !== 1 ? 'páginas' : 'página'} HTML</span>
                     {auditPages.length > 0 && (
                       <div className="flex items-center gap-2">
                         <CopyMarkdownButton
@@ -825,7 +825,7 @@ async function SiteAuditPage({ searchParams }: { searchParams: Promise<SearchPar
                     )}
                   </div>
                   {auditPages.length === 0 ? (
-                    <div className="px-6 py-12 text-center text-sm text-nexo-faint">No HTML pages found.</div>
+                    <div className="px-6 py-12 text-center text-sm text-nexo-faint">Nenhuma página HTML encontrada.</div>
                   ) : (
                     <SiteAuditPagesTable pages={auditPages} />
                   )}
@@ -835,10 +835,10 @@ async function SiteAuditPage({ searchParams }: { searchParams: Promise<SearchPar
               {view === 'links' && (
                 <div>
                   {linksError && <div className="px-6 py-4 text-sm text-nexo-danger-text">{linksError}</div>}
-                  {!linkItems && !linksError && <div className="px-6 py-12 text-center text-sm text-nexo-faint">Loading…</div>}
+                  {!linkItems && !linksError && <div className="px-6 py-12 text-center text-sm text-nexo-faint">Carregando…</div>}
                   {linkItems && (
                     linkItems.length === 0 ? (
-                      <div className="px-6 py-12 text-center text-sm text-nexo-faint">No links found.</div>
+                      <div className="px-6 py-12 text-center text-sm text-nexo-faint">Nenhum link encontrado.</div>
                     ) : (
                       <LinksTable links={linkItems} />
                     )
@@ -850,10 +850,10 @@ async function SiteAuditPage({ searchParams }: { searchParams: Promise<SearchPar
               {view === 'resources' && (
                 <div>
                   {resourcesError && <div className="px-6 py-4 text-sm text-nexo-danger-text">{resourcesError}</div>}
-                  {!resourceItems && !resourcesError && <div className="px-6 py-12 text-center text-sm text-nexo-faint">Loading…</div>}
+                  {!resourceItems && !resourcesError && <div className="px-6 py-12 text-center text-sm text-nexo-faint">Carregando…</div>}
                   {resourceItems && (
                     resourceItems.length === 0 ? (
-                      <div className="px-6 py-12 text-center text-sm text-nexo-faint">No resources found.</div>
+                      <div className="px-6 py-12 text-center text-sm text-nexo-faint">Nenhum recurso encontrado.</div>
                     ) : (
                       <ResourcesTable resources={resourceItems} />
                     )
@@ -865,11 +865,11 @@ async function SiteAuditPage({ searchParams }: { searchParams: Promise<SearchPar
               {view === 'duplicate_tags' && (
                 <div>
                   {dupTagsError && <div className="px-6 py-4 text-sm text-nexo-danger-text">{dupTagsError}</div>}
-                  {!dupTagItems && !dupTagsError && <div className="px-6 py-12 text-center text-sm text-nexo-faint">Loading…</div>}
+                  {!dupTagItems && !dupTagsError && <div className="px-6 py-12 text-center text-sm text-nexo-faint">Carregando…</div>}
                   {dupTagItems && dupTagItems.length === 0 && (
                     <div className="px-6 py-12 text-center">
-                      <p className="text-nexo-ice font-medium text-sm">No duplicate tags found.</p>
-                      <p className="text-nexo-faint text-xs mt-1">All pages have unique title and description tags.</p>
+                      <p className="text-nexo-ice font-medium text-sm">Nenhuma tag duplicada encontrada.</p>
+                      <p className="text-nexo-faint text-xs mt-1">Todas as páginas têm tags de título e descrição únicas.</p>
                     </div>
                   )}
                   {dupTagItems && dupTagItems.length > 0 && (
@@ -878,9 +878,9 @@ async function SiteAuditPage({ searchParams }: { searchParams: Promise<SearchPar
                         <div key={i} className="px-6 py-4">
                           <div className="flex items-center gap-2 mb-3">
                             <span className="text-[10px] font-medium uppercase tracking-widest px-2 py-0.5 rounded bg-nexo-danger/10 text-nexo-danger-text border border-nexo-danger/40">
-                              {group.type === 'duplicate_title' ? 'Duplicate Title' : 'Duplicate Description'}
+                              {group.type === 'duplicate_title' ? 'Título duplicado' : 'Descrição duplicada'}
                             </span>
-                            <span className="text-[11px] text-nexo-faint">{group.pages?.length ?? 0} pages</span>
+                            <span className="text-[11px] text-nexo-faint">{group.pages?.length ?? 0} {(group.pages?.length ?? 0) === 1 ? 'página' : 'páginas'}</span>
                           </div>
                           {group.tag && (
                             <p className="text-xs font-mono text-nexo-dim bg-white/[0.02] px-3 py-2 rounded-nexo mb-3 truncate">
@@ -906,11 +906,11 @@ async function SiteAuditPage({ searchParams }: { searchParams: Promise<SearchPar
               {view === 'non_indexable' && (
                 <div>
                   {nonIndexError && <div className="px-6 py-4 text-sm text-nexo-danger-text">{nonIndexError}</div>}
-                  {!nonIndexItems && !nonIndexError && <div className="px-6 py-12 text-center text-sm text-nexo-faint">Loading…</div>}
+                  {!nonIndexItems && !nonIndexError && <div className="px-6 py-12 text-center text-sm text-nexo-faint">Carregando…</div>}
                   {nonIndexItems && nonIndexItems.length === 0 && (
                     <div className="px-6 py-12 text-center">
-                      <p className="text-nexo-ice font-medium text-sm">No non-indexable pages found.</p>
-                      <p className="text-nexo-faint text-xs mt-1">All crawled pages appear to be indexable.</p>
+                      <p className="text-nexo-ice font-medium text-sm">Nenhuma página não indexável encontrada.</p>
+                      <p className="text-nexo-faint text-xs mt-1">Todas as páginas rastreadas parecem ser indexáveis.</p>
                     </div>
                   )}
                   {nonIndexItems && nonIndexItems.length > 0 && (
@@ -928,7 +928,7 @@ async function SiteAuditPage({ searchParams }: { searchParams: Promise<SearchPar
       {history.length > 0 && (
         <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border">
-            <h2 className="nexo-label">History</h2>
+            <h2 className="nexo-label">Histórico</h2>
           </div>
           <div className="divide-y divide-nexo-border">
             {history.map((entry) => {
@@ -944,8 +944,8 @@ async function SiteAuditPage({ searchParams }: { searchParams: Promise<SearchPar
                       </p>
                     </div>
                     <p className="text-[11px] text-nexo-faint mt-0.5">
-                      {entry.pagesCrawled !== undefined ? `${entry.pagesCrawled} pages crawled` : `${entry.maxCrawlPages} max`}
-                      {entry.cost !== undefined ? ` · $${entry.cost.toFixed(5)}` : ''}
+                      {entry.pagesCrawled !== undefined ? `${entry.pagesCrawled} ${entry.pagesCrawled === 1 ? 'página rastreada' : 'páginas rastreadas'}` : `máx. ${entry.maxCrawlPages}`}
+                      {entry.cost !== undefined ? ` · US$ ${entry.cost.toFixed(5).replace('.', ',')}` : ''}
                     </p>
                   </div>
                   <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>
@@ -967,7 +967,7 @@ function StatusBadge({ status }: { status: SiteAuditEntry['status'] }) {
     error: 'text-nexo-danger-text bg-nexo-danger/10 border border-nexo-danger/40',
   };
   const labels: Record<SiteAuditEntry['status'], string> = {
-    pending: 'Pending', in_progress: 'In progress', finished: 'Finished', error: 'Error',
+    pending: 'Pendente', in_progress: 'Em andamento', finished: 'Concluído', error: 'Erro',
   };
   return <span className={`text-[10px] font-medium uppercase tracking-widest px-2 py-0.5 rounded-md ${map[status]}`}>{labels[status]}</span>;
 }

@@ -18,13 +18,14 @@ interface KeywordItem {
 type SortKey = 'keyword' | 'volume' | 'competition' | 'index' | 'cpc' | 'bid_low' | 'bid_high';
 type SortDir = 'asc' | 'desc';
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const MONTHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+const COMPETITION_LABELS: Record<string, string> = { LOW: 'Baixa', MEDIUM: 'Média', HIGH: 'Alta' };
 
 function CompetitionBadge({ value }: { value?: string | number }) {
   if (value === undefined || value === null) return <span className="text-nexo-faint">—</span>;
   const label = typeof value === 'string' ? value : value > 0.66 ? 'HIGH' : value > 0.33 ? 'MEDIUM' : 'LOW';
   const color = label === 'HIGH' ? 'text-nexo-danger-text bg-nexo-danger/10' : label === 'MEDIUM' ? 'text-nexo-warn-text bg-nexo-warn/10' : 'text-nexo-ice bg-nexo-ice/10';
-  return <span className={`px-2 py-0.5 rounded-md text-[10px] font-medium uppercase ${color}`}>{label}</span>;
+  return <span className={`px-2 py-0.5 rounded-md text-[10px] font-medium uppercase ${color}`}>{COMPETITION_LABELS[label] ?? label}</span>;
 }
 
 function competitionSortValue(value?: string | number): number {
@@ -100,13 +101,13 @@ export default function KeywordDataTable({ items }: { items: KeywordItem[] }) {
         <CopyMarkdownButton
           data={csvData}
           columns={[
-            { key: 'keyword', label: 'Keyword' },
+            { key: 'keyword', label: 'Palavra-chave' },
             { key: 'volume', label: 'Volume' },
-            { key: 'competition', label: 'Competition' },
-            { key: 'index', label: 'Index' },
+            { key: 'competition', label: 'Concorrência' },
+            { key: 'index', label: 'Índice' },
             { key: 'cpc', label: 'CPC' },
-            { key: 'bid_low', label: 'Bid Low' },
-            { key: 'bid_high', label: 'Bid High' },
+            { key: 'bid_low', label: 'Lance mínimo' },
+            { key: 'bid_high', label: 'Lance máximo' },
           ]}
         />
       </div>
@@ -114,14 +115,14 @@ export default function KeywordDataTable({ items }: { items: KeywordItem[] }) {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-nexo-border bg-white/[0.02]">
-              <Header label="Keyword" sortK="keyword" align="left" className="!px-6" />
+              <Header label="Palavra-chave" sortK="keyword" align="left" className="!px-6" />
               <Header label="Vol." sortK="volume" align="right" />
-              <Header label="Competition" sortK="competition" align="center" />
-              <Header label="Index" sortK="index" align="right" />
+              <Header label="Concorrência" sortK="competition" align="center" />
+              <Header label="Índice" sortK="index" align="right" />
               <Header label="CPC" sortK="cpc" align="right" />
-              <Header label="Bid Low" sortK="bid_low" align="right" />
-              <Header label="Bid High" sortK="bid_high" align="right" />
-              <th className="nexo-label px-4 py-3 text-left hidden xl:table-cell">Trend</th>
+              <Header label="Lance mínimo" sortK="bid_low" align="right" />
+              <Header label="Lance máximo" sortK="bid_high" align="right" />
+              <th className="nexo-label px-4 py-3 text-left hidden xl:table-cell">Tendência</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-nexo-border">
@@ -131,17 +132,17 @@ export default function KeywordDataTable({ items }: { items: KeywordItem[] }) {
               return (
                 <tr key={i} className="hover:bg-white/[0.04] transition-colors">
                   <td className="px-6 py-3 font-medium text-nexo-text max-w-xs">{item.keyword ?? '—'}</td>
-                  <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">{item.search_volume?.toLocaleString("en-GB") ?? '—'}</td>
+                  <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">{item.search_volume?.toLocaleString("pt-BR") ?? '—'}</td>
                   <td className="px-4 py-3 text-center"><CompetitionBadge value={item.competition} /></td>
                   <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">{item.competition_index ?? '—'}</td>
-                  <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">{item.cpc != null ? `$${item.cpc.toFixed(2)}` : '—'}</td>
-                  <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">{item.low_top_of_page_bid != null ? `$${item.low_top_of_page_bid.toFixed(2)}` : '—'}</td>
-                  <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">{item.high_top_of_page_bid != null ? `$${item.high_top_of_page_bid.toFixed(2)}` : '—'}</td>
+                  <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">{item.cpc != null ? `US$ ${item.cpc.toFixed(2).replace('.', ',')}` : '—'}</td>
+                  <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">{item.low_top_of_page_bid != null ? `US$ ${item.low_top_of_page_bid.toFixed(2).replace('.', ',')}` : '—'}</td>
+                  <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">{item.high_top_of_page_bid != null ? `US$ ${item.high_top_of_page_bid.toFixed(2).replace('.', ',')}` : '—'}</td>
                   <td className="px-4 py-3 hidden xl:table-cell">
                     {monthly.length > 0 ? (
                       <div className="flex items-end gap-0.5 h-7">
                         {monthly.map((m, j) => (
-                          <div key={j} title={`${MONTHS[m.month - 1]} ${m.year}: ${m.search_volume?.toLocaleString("en-GB")}`}
+                          <div key={j} title={`${MONTHS[m.month - 1]} ${m.year}: ${m.search_volume?.toLocaleString("pt-BR")}`}
                             className="w-2.5 bg-nexo-sky/40 rounded-sm hover:bg-nexo-sky transition-colors"
                             style={{ height: `${Math.max(2, Math.round(((m.search_volume ?? 0) / maxVol) * 28))}px` }} />
                         ))}

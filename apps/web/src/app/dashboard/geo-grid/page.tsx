@@ -29,7 +29,7 @@ interface SearchParams {
 }
 
 function formatDate(ts: number) {
-  return new Date(ts).toLocaleString('en-GB', {
+  return new Date(ts).toLocaleString('pt-BR', {
     day: 'numeric', month: 'short', year: 'numeric',
     hour: '2-digit', minute: '2-digit', hour12: false,
   });
@@ -54,7 +54,7 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
   const params = await searchParams;
   const gridHistoryId = params.grid_history_id;
 
-  const defaultLanguage = getSetting('default_language') ?? 'English';
+  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
   const defaultCoordinates = getSetting('default_coordinates') ?? '';
   const defaultDomain = getSetting('default_domain') ?? '';
   const brand = getBrandSettings();
@@ -72,7 +72,7 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
   if (gridHistoryId) {
     const entry = getGridEntry(gridHistoryId);
     if (!entry) {
-      gridError = 'Monitor not found.';
+      gridError = 'Monitor não encontrado.';
     } else if (entry.status === 'pending') {
       gridEntry = entry;
       gridPending = { id: entry.id, totalPoints: entry.grid_size ** 2, queueMode: entry.queue_mode };
@@ -85,7 +85,7 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
   // Fresh grid search
   if (!gridHistoryId && params.keyword?.trim() && params.location_coordinate && params.grid_target) {
     if (!creds) {
-      gridError = 'DataForSEO credentials missing. Configure them in Settings.';
+      gridError = 'Credenciais do DataForSEO ausentes. Configure-as em Configurações.';
     } else {
       const gridSize = Math.min(Math.max(parseInt(params.grid_size ?? '5', 10), 3), 11);
       const spacingKm = parseFloat(params.spacing_km ?? '1');
@@ -219,12 +219,12 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
             </p>
             <span className="text-[10px] font-medium text-nexo-faint bg-nexo-surface-2 px-1.5 py-0.5 rounded shrink-0">{entry.grid_size}×{entry.grid_size}</span>
             {isPending && (
-              <span className="text-[10px] font-medium text-nexo-warn-text bg-nexo-warn/10 border border-nexo-warn/40 px-1.5 py-0.5 rounded shrink-0">Pending</span>
+              <span className="text-[10px] font-medium text-nexo-warn-text bg-nexo-warn/10 border border-nexo-warn/40 px-1.5 py-0.5 rounded shrink-0">Pendente</span>
             )}
           </div>
           <p className="text-[11px] text-nexo-faint mt-0.5 truncate">
-            {entry.target} · {formatDistance(entry.spacing_km, distanceUnit)} spacing
-            {entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}
+            {entry.target} · espaçamento de {formatDistance(entry.spacing_km, distanceUnit)}
+            {entry.cost !== undefined ? ` · US$ ${entry.cost.toFixed(4).replace('.', ',')}` : ''}
           </p>
           {entry.summary && (
             <div className="flex items-center gap-2 mt-1.5">
@@ -233,7 +233,7 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
               </div>
               <span className="text-[10px] font-medium text-nexo-ice tabular-nums shrink-0">{entry.summary.ato}%</span>
               <span className="text-[10px] text-nexo-faint shrink-0">
-                {entry.summary.avgRank !== null ? `avg #${entry.summary.avgRank}` : 'not found'} · {entry.summary.foundCount}/{entry.summary.totalPoints}
+                {entry.summary.avgRank !== null ? `média #${entry.summary.avgRank.toLocaleString('pt-BR')}` : 'não encontrado'} · {entry.summary.foundCount}/{entry.summary.totalPoints}
               </span>
             </div>
           )}
@@ -245,9 +245,9 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
           <a
             href={gridRerunUrl(entry)}
             className="text-[10px] font-medium uppercase tracking-widest text-nexo-ice hover:text-nexo-ice transition-colors"
-            title="Run this monitor now"
+            title="Executar este monitor agora"
           >
-            Run now ↻
+            Executar agora ↻
           </a>
           </div>
         </div>
@@ -259,8 +259,8 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
     <GridPreferencesProvider value={gridPreferences}>
     <div className="space-y-6">
       <div>
-        <h1 className="nexo-h1">Geo-grid monitors</h1>
-        <p className="text-sm text-nexo-faint mt-1">Track a keyword and target domain across a location, then revisit its map over time.</p>
+        <h1 className="nexo-h1">Monitores Geo-Grid</h1>
+        <p className="text-sm text-nexo-faint mt-1">Acompanhe uma palavra-chave e um domínio alvo em um local e reveja o mapa ao longo do tempo.</p>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6 items-start">
@@ -269,8 +269,8 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
             <summary className="cursor-pointer list-none">
               <div className="flex items-center justify-between gap-4">
                 <div>
-                  <p className="text-sm font-medium text-nexo-text">Add a location and keyword to monitor</p>
-                  <p className="mt-0.5 text-xs text-nexo-dim">Choose the map center, keyword, and target domain or business.</p>
+                  <p className="text-sm font-medium text-nexo-text">Adicione um local e uma palavra-chave para monitorar</p>
+                  <p className="mt-0.5 text-xs text-nexo-dim">Escolha o centro do mapa, a palavra-chave e o domínio ou empresa alvo.</p>
                 </div>
                 <span className="grid h-8 w-8 shrink-0 place-items-center rounded-nexo bg-nexo-blue text-lg font-medium text-white transition-transform group-open:rotate-45">+</span>
               </div>
@@ -282,10 +282,10 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
             <section aria-labelledby="monitor-list-title">
               <div className="flex items-end justify-between gap-4">
                 <div>
-                  <p className="nexo-section">Your monitoring</p>
-                  <h2 id="monitor-list-title" className="mt-1 text-xl font-medium tracking-tight text-nexo-text">Keyword &amp; location pairs</h2>
+                  <p className="nexo-section">Seu monitoramento</p>
+                  <h2 id="monitor-list-title" className="mt-1 text-xl font-medium tracking-tight text-nexo-text">Pares de palavra-chave e local</h2>
                 </div>
-                <span className="text-xs font-medium tabular-nums text-nexo-faint">{latestBySeries.length} active</span>
+                <span className="text-xs font-medium tabular-nums text-nexo-faint">{latestBySeries.length} {latestBySeries.length === 1 ? 'ativo' : 'ativos'}</span>
               </div>
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 {latestBySeries.map((entry) => (
@@ -295,10 +295,10 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
                       <span className="shrink-0 rounded-md bg-nexo-surface-2 px-2 py-1 text-[10px] font-medium tabular-nums text-nexo-dim">{entry.grid_size}×{entry.grid_size}</span>
                     </div>
                     <div className="mt-5 flex items-end justify-between gap-3 border-t border-nexo-border pt-3">
-                      <div className="text-[11px] text-nexo-faint"><p>{entry.center}</p><p className="mt-0.5">Last run {formatDate(entry.ts)}</p></div>
-                      {entry.summary ? <div className="text-right"><p className="text-lg font-medium tabular-nums text-nexo-ice">{entry.summary.ato}%</p><p className="nexo-label">visibility</p></div> : <p className="text-[10px] font-medium uppercase tracking-widest text-nexo-warn-text">Processing</p>}
+                      <div className="text-[11px] text-nexo-faint"><p>{entry.center}</p><p className="mt-0.5">Última execução: {formatDate(entry.ts)}</p></div>
+                      {entry.summary ? <div className="text-right"><p className="text-lg font-medium tabular-nums text-nexo-ice">{entry.summary.ato}%</p><p className="nexo-label">visibilidade</p></div> : <p className="text-[10px] font-medium uppercase tracking-widest text-nexo-warn-text">Processando</p>}
                     </div>
-                    <span className="nexo-label mt-4 block transition-colors group-hover:text-nexo-sky">Open monitor →</span>
+                    <span className="nexo-label mt-4 block transition-colors group-hover:text-nexo-sky">Abrir monitor →</span>
                   </a>
                 ))}
               </div>
@@ -343,7 +343,7 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
         </div>
 
         {gridEntry && latestBySeries.length > 0 && (
-          <HistorySidebar title="Monitors" items={monitorItems} />
+          <HistorySidebar title="Monitores" items={monitorItems} />
         )}
       </div>
     </div>

@@ -115,7 +115,7 @@ function Sparkline({ monthly }: { monthly?: MonthlySearch[] }) {
   const max = Math.max(...data.map((m) => m.search_volume ?? 0), 1);
   return (
     <div className="flex items-end gap-0.5 h-5 mt-1"
-      title={data.map((m) => `${m.month}/${m.year}: ${m.search_volume?.toLocaleString('en-GB')}`).join(' · ')}>
+      title={data.map((m) => `${m.month}/${m.year}: ${m.search_volume?.toLocaleString('pt-BR')}`).join(' · ')}>
       {data.map((m, i) => (
         <div
           key={i}
@@ -133,7 +133,7 @@ function truncate(text: string, max: number) {
 
 function formatDate(iso?: string) {
   if (!iso) return null;
-  return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  return new Date(iso).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 // ---- Page ----
@@ -143,8 +143,8 @@ async function AiOptimizationPage({ searchParams }: { searchParams: Promise<Sear
   const params = await searchParams;
   const historyId = params.history_id;
 
-  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'France');
-  const defaultLanguage = getSetting('default_language') ?? 'French';
+  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'Brazil');
+  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
 
   const targetValue = (params.target ?? '').trim();
   const targetType = (params.target_type === 'domain' ? 'domain' : 'keyword') as 'keyword' | 'domain';
@@ -167,11 +167,11 @@ async function AiOptimizationPage({ searchParams }: { searchParams: Promise<Sear
       isFromHistory = true;
       activeEntry = getAiOptimizationHistory().find((e) => e.id === historyId) ?? null;
     } else {
-      error = 'This search is no longer available.';
+      error = 'Esta busca não está mais disponível.';
     }
   } else if (targetValue) {
     if (!creds) {
-      error = 'DataForSEO credentials missing. Configure them in Settings.';
+      error = 'Credenciais da DataForSEO ausentes. Configure-as em Configurações.';
     } else {
       const dedupeId = stableSearchId(['ai-optimization', targetValue, targetType, platform, location, language, limit]);
       const cached = getAiOptimizationResults<MentionItem>(dedupeId);
@@ -204,35 +204,35 @@ async function AiOptimizationPage({ searchParams }: { searchParams: Promise<Sear
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="nexo-h1">AI Optimization</h1>
-        <p className="text-sm text-nexo-faint mt-1">Track how AI models mention your keyword or domain via DataForSEO LLM Mentions.</p>
+        <h1 className="nexo-h1">Otimização para IA</h1>
+        <p className="text-sm text-nexo-faint mt-1">Acompanhe como os modelos de IA mencionam sua palavra-chave ou domínio via DataForSEO LLM Mentions.</p>
       </div>
 
       {/* Form */}
       <SearchForm
         className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4"
-        btnLabel="Analyze"
+        btnLabel="Analisar"
         btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-sky transition-colors"
-        loadingLabel="Fetching AI mentions…"
+        loadingLabel="Buscando menções em IA…"
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Target type + input */}
           <div className="sm:col-span-2 flex gap-2">
             <div className="shrink-0">
-              <label className="nexo-label block mb-1.5">Type</label>
+              <label className="nexo-label block mb-1.5">Tipo</label>
               <select name="target_type" defaultValue={targetType}
                 className="nexo-input min-w-0 w-full h-[42px] px-3 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
-                <option value="keyword">Keyword</option>
-                <option value="domain">Domain</option>
+                <option value="keyword">Palavra-chave</option>
+                <option value="domain">Domínio</option>
               </select>
             </div>
             <div className="flex-1">
-              <label className="nexo-label block mb-1.5">Target</label>
+              <label className="nexo-label block mb-1.5">Alvo</label>
               <input
                 name="target"
                 type="text"
                 defaultValue={displayTarget}
-                placeholder={targetType === 'domain' ? 'example.com' : 'plumber paris'}
+                placeholder={targetType === 'domain' ? 'exemplo.com.br' : 'encanador são paulo'}
                 className="nexo-input min-w-0 w-full h-[42px] px-4 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
               />
             </div>
@@ -255,15 +255,15 @@ async function AiOptimizationPage({ searchParams }: { searchParams: Promise<Sear
       {hasQuery && !error && items.length > 0 && (
         <div className="grid grid-cols-3 gap-3">
           <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
-            <p className="nexo-label">Mentions found</p>
+            <p className="nexo-label">Menções encontradas</p>
             <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{items.length}</p>
           </div>
           <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
-            <p className="nexo-label">Total AI volume</p>
-            <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{totalVolume.toLocaleString('en-GB')}</p>
+            <p className="nexo-label">Volume total em IA</p>
+            <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{totalVolume.toLocaleString('pt-BR')}</p>
           </div>
           <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
-            <p className="nexo-label">Models</p>
+            <p className="nexo-label">Modelos</p>
             <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{uniqueModels.length}</p>
           </div>
         </div>
@@ -274,20 +274,20 @@ async function AiOptimizationPage({ searchParams }: { searchParams: Promise<Sear
         <div id="results" className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between">
             <h2 className="nexo-label">
-              AI Mentions — {PLATFORM_LABELS[platform] ?? platform}
+              Menções em IA — {PLATFORM_LABELS[platform] ?? platform}
             </h2>
             <div className="flex items-center gap-3">
-              {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>}
+              {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">Histórico</span>}
               {cost !== undefined && (
-                <span className="text-[10px] font-mono text-nexo-faint">cost: ${cost.toFixed(4)}</span>
+                <span className="text-[10px] font-mono text-nexo-faint">custo: US$ {cost.toFixed(4).replace('.', ',')}</span>
               )}
-              <span className="text-xs font-medium text-nexo-faint">{items.length} result{items.length !== 1 ? 's' : ''}</span>
+              <span className="text-xs font-medium text-nexo-faint">{items.length} {items.length === 1 ? 'resultado' : 'resultados'}</span>
             </div>
           </div>
 
           {items.length === 0 ? (
             <div className="px-6 py-12 text-center text-sm text-nexo-faint">
-              No AI mentions found for this target.
+              Nenhuma menção em IA encontrada para este alvo.
             </div>
           ) : (
             <div className="divide-y divide-nexo-border">
@@ -298,7 +298,7 @@ async function AiOptimizationPage({ searchParams }: { searchParams: Promise<Sear
                       <ModelBadge model={item.model_name} />
                       {item.ai_search_volume != null && (
                         <span className="nexo-section bg-nexo-blue/10 border border-nexo-border-strong px-2 py-0.5 rounded-md">
-                          {item.ai_search_volume.toLocaleString('en-GB')} AI vol
+                          {item.ai_search_volume.toLocaleString('pt-BR')} vol. IA
                         </span>
                       )}
                     </div>
@@ -325,7 +325,7 @@ async function AiOptimizationPage({ searchParams }: { searchParams: Promise<Sear
                     {/* Sources */}
                     {(item.sources?.length ?? 0) > 0 && (
                       <div>
-                        <p className="nexo-label mb-1">Sources</p>
+                        <p className="nexo-label mb-1">Fontes</p>
                         <div className="flex flex-wrap gap-1">
                           {item.sources!.slice(0, 5).map((s, si) => (
                             <a
@@ -341,7 +341,7 @@ async function AiOptimizationPage({ searchParams }: { searchParams: Promise<Sear
                           ))}
                           {(item.sources?.length ?? 0) > 5 && (
                             <span className="text-[11px] text-nexo-faint px-2 py-0.5">
-                              +{item.sources!.length - 5} more
+                              +{item.sources!.length - 5} outras
                             </span>
                           )}
                         </div>
@@ -351,7 +351,7 @@ async function AiOptimizationPage({ searchParams }: { searchParams: Promise<Sear
                     {/* Fan-out queries */}
                     {(item.fan_out_queries?.length ?? 0) > 0 && (
                       <div>
-                        <p className="nexo-label mb-1">Related queries</p>
+                        <p className="nexo-label mb-1">Consultas relacionadas</p>
                         <div className="flex flex-wrap gap-1">
                           {item.fan_out_queries!.slice(0, 5).map((q, qi) => (
                             <span key={qi} className="text-[11px] text-nexo-dim bg-nexo-surface-2 px-2 py-0.5 rounded-md">
@@ -366,7 +366,7 @@ async function AiOptimizationPage({ searchParams }: { searchParams: Promise<Sear
                   {/* Trend sparkline */}
                   {(item.monthly_searches?.length ?? 0) > 0 && (
                     <div className="mt-2">
-                      <p className="nexo-label mb-0.5">AI volume trend</p>
+                      <p className="nexo-label mb-0.5">Tendência do volume em IA</p>
                       <Sparkline monthly={item.monthly_searches} />
                     </div>
                   )}
@@ -380,15 +380,15 @@ async function AiOptimizationPage({ searchParams }: { searchParams: Promise<Sear
       {/* Empty state */}
       {!hasQuery && !error && (
         <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-6 py-16 text-center">
-          <p className="text-nexo-faint text-sm">Enter a keyword or domain above to see how AI models mention it.</p>
-          <p className="text-nexo-faint text-xs mt-1">Powered by DataForSEO LLM Mentions Search API.</p>
+          <p className="text-nexo-faint text-sm">Digite uma palavra-chave ou um domínio acima para ver como os modelos de IA o mencionam.</p>
+          <p className="text-nexo-faint text-xs mt-1">Dados da API DataForSEO LLM Mentions Search.</p>
         </div>
       )}
 
       {history.length > 0 && (
         <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border">
-            <h2 className="nexo-label">History</h2>
+            <h2 className="nexo-label">Histórico</h2>
           </div>
           <div className="divide-y divide-nexo-border">
             {history.map((entry) => {
@@ -400,11 +400,11 @@ async function AiOptimizationPage({ searchParams }: { searchParams: Promise<Sear
                     <p className={`text-sm font-medium truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.target}</p>
                     <p className="text-[11px] text-nexo-faint mt-0.5">
                       {PLATFORM_LABELS[entry.platform] ?? entry.platform}
-                      {entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}
+                      {entry.cost !== undefined ? ` · US$ ${entry.cost.toFixed(4).replace('.', ',')}` : ''}
                     </p>
                   </div>
                   <span className="shrink-0 text-[11px] text-nexo-faint">
-                    {new Date(entry.ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    {new Date(entry.ts).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </span>
                 </a>
               );

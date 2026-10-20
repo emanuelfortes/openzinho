@@ -14,7 +14,7 @@ export interface NetworkItem {
 type SortKey = 'network' | 'referring_domains' | 'ip_count' | 'backlinks';
 type SortDir = 'asc' | 'desc';
 
-function fmt(n?: number) { return n != null ? n.toLocaleString('en-GB') : '—'; }
+function fmt(n?: number) { return n != null ? n.toLocaleString('pt-BR') : '—'; }
 
 function sortValue(item: NetworkItem, key: SortKey): number | string {
   switch (key) {
@@ -69,8 +69,8 @@ export default function ReferringNetworksTable({ items }: { items: NetworkItem[]
         <thead>
           <tr className="border-b border-nexo-border bg-white/[0.02]">
             <th className="nexo-label px-6 py-3 text-left">#</th>
-            <Header label="Network" sortK="network" align="left" />
-            <Header label="Ref. domains" sortK="referring_domains" align="left" className="hidden md:table-cell" />
+            <Header label="Rede" sortK="network" align="left" />
+            <Header label="Domínios de ref." sortK="referring_domains" align="left" className="hidden md:table-cell" />
             <Header label="IPs" sortK="ip_count" align="right" />
             <Header label="Backlinks" sortK="backlinks" align="right" className="hidden sm:table-cell" />
           </tr>

@@ -44,7 +44,7 @@ describe('validateCampaign', () => {
   });
 
   it('rejects missing or invalid fields', () => {
-    expect(validateCampaign({ ...base, keywords: [' '] })).toEqual({ error: 'Add at least one keyword.' });
+    expect(validateCampaign({ ...base, keywords: [' '] })).toEqual({ error: 'Adicione pelo menos uma palavra-chave.' });
     expect('error' in validateCampaign({ ...base, center: 'Fortaleza' })).toBe(true);
     expect('error' in validateCampaign({ ...base, grid_size: 6 })).toBe(true);
     expect('error' in validateCampaign({ ...base, keywords: Array.from({ length: 21 }, (_, i) => `kw ${i}`) })).toBe(true);

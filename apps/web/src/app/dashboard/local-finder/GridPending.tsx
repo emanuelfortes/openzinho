@@ -23,14 +23,14 @@ const POLL_INTERVAL: Record<GridQueueMode, number> = {
 
 const MODE_LABEL: Record<GridQueueMode, string> = {
   live:     'Live',
-  priority: 'Priority Queue',
-  standard: 'Standard Queue',
+  priority: 'Fila prioritária',
+  standard: 'Fila padrão',
 };
 
 const WAIT_HINT: Record<GridQueueMode, string> = {
-  live:     'Results in ~6 seconds',
-  priority: 'Results in ~1 minute on average',
-  standard: 'Results typically in 5–45 minutes',
+  live:     'Resultados em ~6 segundos',
+  priority: 'Resultados em ~1 minuto, em média',
+  standard: 'Resultados normalmente em 5–45 minutos',
 };
 
 function formatDuration(ms: number): string {
@@ -80,7 +80,7 @@ export default function GridPending({ searchId, projectId, totalPoints, queueMod
         setReady(data.ready ?? 0);
       }
     } catch {
-      setError('Network error — will retry.');
+      setError('Erro de rede — nova tentativa em breve.');
     } finally {
       checkingRef.current = false;
       setChecking(false);
@@ -115,7 +115,7 @@ export default function GridPending({ searchId, projectId, totalPoints, queueMod
       <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3">
           <div className="w-2 h-2 rounded-full bg-nexo-warn animate-pulse" />
-          <span className="nexo-label">Processing</span>
+          <span className="nexo-label">Processando</span>
           <span className="text-[10px] font-medium uppercase tracking-widest text-nexo-warn-text bg-nexo-warn/10 border border-nexo-warn/40 px-2 py-0.5 rounded-md">
             {MODE_LABEL[queueMode]}
           </span>
@@ -125,7 +125,7 @@ export default function GridPending({ searchId, projectId, totalPoints, queueMod
           disabled={checking}
           className="nexo-section hover:text-white disabled:opacity-40 transition-colors"
         >
-          {checking ? 'Checking…' : 'Check now'}
+          {checking ? 'Verificando…' : 'Verificar agora'}
         </button>
       </div>
 
@@ -134,16 +134,16 @@ export default function GridPending({ searchId, projectId, totalPoints, queueMod
         <div>
           <p className="text-sm font-medium text-nexo-text">{keyword}</p>
           <p className="text-[11px] text-nexo-faint mt-0.5">
-            Target: <span className="font-medium text-nexo-dim">{target}</span>
-            {' · '}{gridSize}×{gridSize} grid
+            Alvo: <span className="font-medium text-nexo-dim">{target}</span>
+            {' · '}grade {gridSize}×{gridSize}
           </p>
         </div>
 
         {/* Progress bar */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
-            <span className="nexo-label">Progress</span>
-            <span className="text-[11px] font-mono text-nexo-dim">{ready} / {totalPoints} points ready · {pct}%</span>
+            <span className="nexo-label">Progresso</span>
+            <span className="text-[11px] font-mono text-nexo-dim">{ready} / {totalPoints} pontos prontos · {pct}%</span>
           </div>
           <div className="h-2 bg-nexo-surface-2 rounded-full overflow-hidden">
             <div
@@ -157,11 +157,11 @@ export default function GridPending({ searchId, projectId, totalPoints, queueMod
         {/* Elapsed / ETA */}
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-white/[0.02] rounded-nexo-lg px-3 py-2">
-            <p className="text-[9px] font-medium uppercase tracking-widest text-nexo-faint">Elapsed</p>
+            <p className="text-[9px] font-medium uppercase tracking-widest text-nexo-faint">Tempo decorrido</p>
             <p className="text-sm font-medium text-nexo-text tabular-nums mt-0.5">{formatDuration(elapsedMs)}</p>
           </div>
           <div className="bg-white/[0.02] rounded-nexo-lg px-3 py-2">
-            <p className="text-[9px] font-medium uppercase tracking-widest text-nexo-faint">Est. remaining</p>
+            <p className="text-[9px] font-medium uppercase tracking-widest text-nexo-faint">Tempo restante estimado</p>
             <p className="text-sm font-medium text-nexo-text tabular-nums mt-0.5">
               {etaMs != null ? `~${formatDuration(etaMs)}` : '—'}
             </p>
@@ -179,9 +179,9 @@ export default function GridPending({ searchId, projectId, totalPoints, queueMod
           {error ? (
             <span className="text-nexo-danger-text">{error}</span>
           ) : lastChecked ? (
-            <span>Last checked at {lastChecked.toLocaleTimeString()} · auto-refreshes every {interval / 1000}s</span>
+            <span>Última verificação às {lastChecked.toLocaleTimeString('pt-BR')} · atualiza sozinho a cada {interval / 1000}s</span>
           ) : (
-            <span>Connecting to DataForSEO…</span>
+            <span>Conectando ao DataForSEO…</span>
           )}
         </div>
       </div>

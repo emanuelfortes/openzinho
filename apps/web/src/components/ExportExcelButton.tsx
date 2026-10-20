@@ -46,7 +46,7 @@ export default function ExportExcelButton({ sheets, filename }: { sheets: Export
   return (
     <button type="button" onClick={download} disabled={sheets.every((sheet) => sheet.data.length === 0)}
       className="nexo-label inline-flex items-center gap-1.5 hover:text-nexo-ice disabled:opacity-40 disabled:hover:text-nexo-dim transition-colors"
-      title="Export to Excel">
+      title="Exportar para Excel">
       <Download className="w-3.5 h-3.5" /> Excel
     </button>
   );

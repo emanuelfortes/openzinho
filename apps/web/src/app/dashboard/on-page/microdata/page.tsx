@@ -52,7 +52,7 @@ async function createTask(url: string, login: string, pass: string): Promise<{ t
   if (!res.ok) return { taskId: '', error: `HTTP ${res.status}` };
   const data = await res.json() as { tasks?: Array<{ id?: string; status_code?: number; status_message?: string; cost?: number }> };
   const task = data?.tasks?.[0];
-  if (!task) return { taskId: '', error: 'Empty API response.' };
+  if (!task) return { taskId: '', error: 'Resposta vazia da API.' };
   if (task.status_code !== 20100 && task.status_code !== 20000) return { taskId: '', error: `DataForSEO: ${task.status_message}` };
   return { taskId: task.id ?? '', cost: task.cost };
 }
@@ -89,7 +89,7 @@ async function fetchMicrodata(taskId: string, url: string, login: string, pass: 
   if (!res.ok) return { error: `HTTP ${res.status}` };
   const data = await res.json() as { tasks?: Array<{ status_code?: number; status_message?: string; result?: MicrodataResult[] }> };
   const task = data?.tasks?.[0];
-  if (!task) return { error: 'Empty API response.' };
+  if (!task) return { error: 'Resposta vazia da API.' };
   if (task.status_code && task.status_code !== 20000) return { error: `DataForSEO: ${task.status_message}` };
   return { result: task.result };
 }
@@ -129,13 +129,13 @@ function FieldTree({ fields, depth = 0 }: { fields: MicrodataField[]; depth?: nu
 
 function TestSummary({ summary }: { summary: MicrodataResult['test_summary'] }) {
   const badges = [
-    { key: 'fatal' as const, label: 'Fatal', cls: 'text-nexo-danger-text bg-nexo-danger/10 border-nexo-danger/40' },
-    { key: 'error' as const, label: 'Error', cls: 'text-nexo-danger-text bg-nexo-danger/10 border-nexo-danger/40' },
-    { key: 'warning' as const, label: 'Warning', cls: 'text-nexo-warn-text bg-nexo-warn/10 border-nexo-warn/40' },
-    { key: 'info' as const, label: 'Info', cls: 'text-nexo-sky bg-nexo-blue/10 border-nexo-border-strong' },
+    { key: 'fatal' as const, label: 'fatal', cls: 'text-nexo-danger-text bg-nexo-danger/10 border-nexo-danger/40' },
+    { key: 'error' as const, label: 'erro', cls: 'text-nexo-danger-text bg-nexo-danger/10 border-nexo-danger/40' },
+    { key: 'warning' as const, label: 'aviso', cls: 'text-nexo-warn-text bg-nexo-warn/10 border-nexo-warn/40' },
+    { key: 'info' as const, label: 'info', cls: 'text-nexo-sky bg-nexo-blue/10 border-nexo-border-strong' },
   ];
   const total = badges.reduce((acc, { key }) => acc + summary[key], 0);
-  if (total === 0) return <span className="text-[10px] font-medium uppercase tracking-widest text-nexo-ice bg-nexo-ice/10 border border-nexo-ice/30 px-2 py-0.5 rounded-md">No errors</span>;
+  if (total === 0) return <span className="text-[10px] font-medium uppercase tracking-widest text-nexo-ice bg-nexo-ice/10 border border-nexo-ice/30 px-2 py-0.5 rounded-md">Sem erros</span>;
   return (
     <div className="flex items-center gap-1.5 flex-wrap">
       {badges.filter(({ key }) => summary[key] > 0).map(({ key, label, cls }) => (
@@ -146,7 +146,7 @@ function TestSummary({ summary }: { summary: MicrodataResult['test_summary'] }) 
 }
 
 function formatDate(ts: number) {
-  return new Date(ts).toLocaleDateString("en-GB", { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  return new Date(ts).toLocaleDateString("pt-BR", { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 
 function statusBadge(status: OnpageTask['status']) {
@@ -156,7 +156,7 @@ function statusBadge(status: OnpageTask['status']) {
     finished: 'text-nexo-ice bg-nexo-ice/10 border border-nexo-ice/30',
     error: 'text-nexo-danger-text bg-nexo-danger/10 border border-nexo-danger/40',
   };
-  const labels: Record<OnpageTask['status'], string> = { pending: 'Pending', in_progress: 'In progress', finished: 'Finished', error: 'Error' };
+  const labels: Record<OnpageTask['status'], string> = { pending: 'Pendente', in_progress: 'Em andamento', finished: 'Concluído', error: 'Erro' };
   return <span className={`text-[10px] font-medium uppercase tracking-widest px-2 py-0.5 rounded-md ${map[status]}`}>{labels[status]}</span>;
 }
 
@@ -174,13 +174,13 @@ async function MicrodataPage({ searchParams }: { searchParams: Promise<SearchPar
     try { new URL(rawUrl); validUrl = true; } catch { /* noop */ }
 
     if (!validUrl) {
-      createError = 'Invalid URL.';
+      createError = 'URL inválida.';
     } else if (!creds) {
-      createError = 'DataForSEO credentials missing. Configure them in Settings.';
+      createError = 'Credenciais da DataForSEO ausentes. Configure-as em Configurações.';
     } else {
       const { taskId, cost, error } = await createTask(rawUrl, creds.login, creds.pass);
       if (error || !taskId) {
-        createError = error ?? 'Failed to create task.';
+        createError = error ?? 'Falha ao criar a tarefa.';
       } else {
         const urlObj = new URL(rawUrl);
         upsertOnpageTask({ id: taskId, ts: Date.now(), url: rawUrl, target: urlObj.hostname, status: 'pending', cost });
@@ -209,7 +209,7 @@ async function MicrodataPage({ searchParams }: { searchParams: Promise<SearchPar
       const status = await checkSummary(params.task_id, creds.login, creds.pass);
       if (status === 'error') {
         // Transient API failure — keep in_progress so the user can retry via Refresh
-        taskError = 'Error checking task status. The task may still be queued — try refreshing.';
+        taskError = 'Erro ao verificar o status da tarefa. Ela ainda pode estar na fila; tente atualizar.';
         if (activeTask.status === 'pending') {
           activeTask = { ...activeTask, status: 'in_progress' };
           upsertOnpageTask(activeTask);
@@ -240,15 +240,15 @@ async function MicrodataPage({ searchParams }: { searchParams: Promise<SearchPar
     <div className="space-y-6">
       <div>
         <div className="nexo-label flex items-center gap-2 mb-1">
-          <span>On Page</span><span className="text-nexo-text">/</span><span className="text-nexo-dim">Microdata</span>
+          <span>On-page</span><span className="text-nexo-text">/</span><span className="text-nexo-dim">Microdados</span>
         </div>
-        <h1 className="nexo-h1">Microdata Analysis</h1>
-        <p className="text-sm text-nexo-faint mt-1">JSON-LD and Microdata structured data validation for a page.</p>
+        <h1 className="nexo-h1">Análise de microdados</h1>
+        <p className="text-sm text-nexo-faint mt-1">Validação dos dados estruturados JSON-LD e Microdata de uma página.</p>
       </div>
 
-      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-3" btnLabel="Analyze" btnClassName="nexo-label w-full bg-white text-nexo-bg py-2.5 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
-        <label className="nexo-label block mb-1.5">URL to analyze</label>
-        <input type="url" name="url" placeholder="https://example.com/my-page" required
+      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-3" btnLabel="Analisar" btnClassName="nexo-label w-full bg-white text-nexo-bg py-2.5 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
+        <label className="nexo-label block mb-1.5">URL para analisar</label>
+        <input type="url" name="url" placeholder="https://exemplo.com.br/minha-pagina" required
           className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky font-mono" />
       </SearchForm>
 
@@ -265,15 +265,15 @@ async function MicrodataPage({ searchParams }: { searchParams: Promise<SearchPar
                 <span className="text-xs text-nexo-faint font-mono truncate max-w-md">{activeTask.url}</span>
               </div>
               <p className="text-[11px] text-nexo-faint mt-1">
-                Started {formatDate(activeTask.ts)}
-                {activeTask.cost !== undefined && ` · cost $${activeTask.cost.toFixed(5)}`}
+                Iniciado em {formatDate(activeTask.ts)}
+                {activeTask.cost !== undefined && ` · custo US$ ${activeTask.cost.toFixed(5).replace('.', ',')}`}
                 {' · '}<span className="font-mono">{activeTask.id}</span>
               </p>
             </div>
             {activeTask.status !== 'finished' && (
               <a href={`/dashboard/on-page/microdata?task_id=${activeTask.id}`}
                 className="nexo-section shrink-0 hover:text-white border border-nexo-border-strong hover:border-nexo-border-strong px-3 py-1.5 rounded-nexo transition-all bg-nexo-blue/10">
-                Refresh ↺
+                Atualizar ↺
               </a>
             )}
           </div>
@@ -282,9 +282,9 @@ async function MicrodataPage({ searchParams }: { searchParams: Promise<SearchPar
             <div className="px-6 py-12 text-center space-y-3">
               <div className="inline-flex items-center gap-2 text-sm text-nexo-dim">
                 <span className="inline-block w-4 h-4 border-2 border-nexo-sky border-t-transparent rounded-full animate-spin" />
-                Crawling…
+                Rastreando…
               </div>
-              <p className="text-xs text-nexo-faint">Refresh in a few moments.</p>
+              <p className="text-xs text-nexo-faint">Atualize em alguns instantes.</p>
             </div>
           )}
 
@@ -292,13 +292,13 @@ async function MicrodataPage({ searchParams }: { searchParams: Promise<SearchPar
             <div key={ri}>
               <div className="px-6 py-3 bg-white/[0.02] border-b border-nexo-border flex items-center justify-between flex-wrap gap-3">
                 <div className="flex items-center gap-4">
-                  <span className="nexo-label">{res.items_count} block{res.items_count !== 1 ? 's' : ''} detected</span>
+                  <span className="nexo-label">{res.items_count} {res.items_count !== 1 ? 'blocos detectados' : 'bloco detectado'}</span>
                   <TestSummary summary={res.test_summary} />
                 </div>
-                <div className="text-[11px] text-nexo-faint">{res.crawl_status.pages_crawled} page{res.crawl_status.pages_crawled !== 1 ? 's' : ''} crawled</div>
+                <div className="text-[11px] text-nexo-faint">{res.crawl_status.pages_crawled} {res.crawl_status.pages_crawled !== 1 ? 'páginas rastreadas' : 'página rastreada'}</div>
               </div>
               {res.items_count === 0 ? (
-                <div className="px-6 py-12 text-center text-sm text-nexo-faint">No structured data detected.</div>
+                <div className="px-6 py-12 text-center text-sm text-nexo-faint">Nenhum dado estruturado detectado.</div>
               ) : (
                 <div className="divide-y divide-nexo-border">
                   {res.items.map((item, ii) => (
@@ -322,7 +322,7 @@ async function MicrodataPage({ searchParams }: { searchParams: Promise<SearchPar
       {historyIndex.length > 0 && (
         <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border">
-            <h2 className="nexo-label">Analysis history</h2>
+            <h2 className="nexo-label">Histórico de análises</h2>
           </div>
           <div className="divide-y divide-nexo-border">
             {historyIndex.map((entry) => {

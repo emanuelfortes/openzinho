@@ -45,7 +45,7 @@ function authOptions(db: Database.Database, secret: string) {
           // /api/auth/sign-up/email stays reachable (it is how /setup works) but refuses everyone else.
           before: async () => {
             if (db.prepare('SELECT 1 FROM "user" LIMIT 1').get()) {
-              throw new APIError('FORBIDDEN', { message: 'Registration is closed.' });
+              throw new APIError('FORBIDDEN', { message: 'O cadastro está fechado.' });
             }
           },
         },

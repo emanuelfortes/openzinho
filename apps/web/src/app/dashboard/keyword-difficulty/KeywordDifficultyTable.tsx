@@ -47,7 +47,7 @@ function DifficultyBar({ value }: { value?: number }) {
 
 function fmt(n?: number) {
   if (n === undefined || n === null) return '—';
-  return n.toLocaleString("en-GB");
+  return n.toLocaleString("pt-BR");
 }
 
 function sortValue(item: DifficultyItem, key: SortKey): number | string {
@@ -114,12 +114,12 @@ export default function KeywordDifficultyTable({ items }: { items: DifficultyIte
         <CopyMarkdownButton
           data={csvData}
           columns={[
-            { key: 'keyword', label: 'Keyword' },
-            { key: 'difficulty', label: 'Difficulty' },
+            { key: 'keyword', label: 'Palavra-chave' },
+            { key: 'difficulty', label: 'Dificuldade' },
             { key: 'volume', label: 'Volume' },
             { key: 'cpc', label: 'CPC' },
-            { key: 'ref_domains', label: 'Ref. Domains' },
-            { key: 'results', label: 'Results' },
+            { key: 'ref_domains', label: 'Domínios de referência' },
+            { key: 'results', label: 'Resultados' },
           ]}
         />
       </div>
@@ -127,12 +127,12 @@ export default function KeywordDifficultyTable({ items }: { items: DifficultyIte
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-nexo-border bg-white/[0.02]">
-              <Header label="Keyword" sortK="keyword" align="left" className="!px-6" />
-              <Header label="Difficulty" sortK="difficulty" align="left" />
+              <Header label="Palavra-chave" sortK="keyword" align="left" className="!px-6" />
+              <Header label="Dificuldade" sortK="difficulty" align="left" />
               <Header label="Vol." sortK="volume" align="right" />
               <Header label="CPC" sortK="cpc" align="right" />
-              <Header label="Ref. domains" sortK="ref_domains" align="right" className="hidden md:table-cell" />
-              <Header label="Results" sortK="results" align="right" className="hidden lg:table-cell" />
+              <Header label="Dom. de referência" sortK="ref_domains" align="right" className="hidden md:table-cell" />
+              <Header label="Resultados" sortK="results" align="right" className="hidden lg:table-cell" />
             </tr>
           </thead>
           <tbody className="divide-y divide-nexo-border">
@@ -148,14 +148,14 @@ export default function KeywordDifficultyTable({ items }: { items: DifficultyIte
                   {fmt(item.keyword_info?.search_volume)}
                 </td>
                 <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">
-                  {item.keyword_info?.cpc != null ? `$${item.keyword_info.cpc.toFixed(2)}` : '—'}
+                  {item.keyword_info?.cpc != null ? `US$ ${item.keyword_info.cpc.toFixed(2).replace('.', ',')}` : '—'}
                 </td>
                 <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums hidden md:table-cell">
                   {fmt(item.avg_backlinks_info?.referring_domains)}
                 </td>
                 <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums hidden lg:table-cell">
                   {item.serp_info?.se_results_count != null
-                    ? item.serp_info.se_results_count.toLocaleString("en-GB")
+                    ? item.serp_info.se_results_count.toLocaleString("pt-BR")
                     : '—'}
                 </td>
               </tr>

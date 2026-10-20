@@ -77,11 +77,11 @@ export default function ReferringDomainsTable({ items }: { items: RefDomain[] })
     <table className="w-full text-xs">
       <thead>
         <tr className="border-b border-nexo-border">
-          <Header label="Domain" sortK="domain" align="left" />
+          <Header label="Domínio" sortK="domain" align="left" />
           <Header label="DR" sortK="dr" align="center" />
           <Header label="Links" sortK="backlinks" align="right" />
-          <Header label="Broken" sortK="broken" align="right" />
-          <Header label="First Seen" sortK="first_seen" align="left" />
+          <Header label="Quebrados" sortK="broken" align="right" />
+          <Header label="Visto pela primeira vez" sortK="first_seen" align="left" />
         </tr>
       </thead>
       <tbody className="divide-y divide-nexo-border">
@@ -90,12 +90,12 @@ export default function ReferringDomainsTable({ items }: { items: RefDomain[] })
             <td className="px-5 py-3">
               <div className="font-medium text-nexo-text flex items-center gap-2">
                 <a href={`https://${item.domain}`} target="_blank" rel="noopener noreferrer" className="hover:text-nexo-sky transition-colors">{item.domain}</a>
-                {item.is_redirect && <span className="text-[9px] font-medium uppercase tracking-wider text-nexo-faint border border-nexo-border rounded px-1">redirect</span>}
-                {item.is_broken && <span className="text-[9px] font-medium uppercase tracking-wider text-nexo-danger-text border border-nexo-danger/40 rounded px-1">broken</span>}
+                {item.is_redirect && <span className="text-[9px] font-medium uppercase tracking-wider text-nexo-faint border border-nexo-border rounded px-1">redirecionamento</span>}
+                {item.is_broken && <span className="text-[9px] font-medium uppercase tracking-wider text-nexo-danger-text border border-nexo-danger/40 rounded px-1">quebrado</span>}
               </div>
             </td>
             <td className="px-3 py-3 text-center"><DRBadge rank={item.domain_from_rank} /></td>
-            <td className="px-3 py-3 text-right font-mono font-medium text-nexo-dim">{item.backlinks.toLocaleString('en-GB')}</td>
+            <td className="px-3 py-3 text-right font-mono font-medium text-nexo-dim">{item.backlinks.toLocaleString('pt-BR')}</td>
             <td className="px-3 py-3 text-right font-mono text-nexo-faint">{item.broken_backlinks > 0 ? item.broken_backlinks : '—'}</td>
             <td className="px-3 py-3 text-nexo-faint">{item.first_seen?.split('T')[0] ?? '—'}</td>
           </tr>

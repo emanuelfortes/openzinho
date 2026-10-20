@@ -56,13 +56,13 @@ function StarRating({ rating }: { rating?: Rating }) {
         <div className="absolute inset-0 overflow-hidden text-nexo-warn-text" style={{ width: `${pct}%` }}>{'★★★★★'}</div>
       </div>
       <span className="text-xs font-medium text-nexo-dim">{rating.value.toFixed(1)}</span>
-      {rating.votes_count !== undefined && <span className="text-[11px] text-nexo-faint">({rating.votes_count.toLocaleString('en-GB')})</span>}
+      {rating.votes_count !== undefined && <span className="text-[11px] text-nexo-faint">({rating.votes_count.toLocaleString('pt-BR')})</span>}
     </div>
   );
 }
 
 function formatDate(ts: number) {
-  return new Date(ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  return new Date(ts).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 function lfRerunUrl(entry: LfHistoryEntry) {
@@ -76,8 +76,8 @@ async function LocalFinderPage({ searchParams }: { searchParams: Promise<SearchP
   const params = await searchParams;
   const historyId = params.history_id;
 
-  const defaultLocation = getSetting('default_location') ?? 'France';
-  const defaultLanguage = getSetting('default_language') ?? 'English';
+  const defaultLocation = getSetting('default_location') ?? 'Brazil';
+  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
   const defaultCoordinates = getSetting('default_coordinates') ?? '';
 
   let items: LocalPackItem[] = [];
@@ -94,14 +94,14 @@ async function LocalFinderPage({ searchParams }: { searchParams: Promise<SearchP
       isFromHistory = true;
       activeEntry = getLfHistory().find((e) => e.id === historyId) ?? null;
     } else {
-      error = 'Search not found.';
+      error = 'Busca não encontrada.';
     }
   }
 
   const hasQuery = historyId || params.keyword?.trim();
   if (!historyId && params.keyword?.trim()) {
     if (!creds) {
-      error = 'DataForSEO credentials missing. Configure them in Settings.';
+      error = 'Credenciais do DataForSEO ausentes. Configure-as em Configurações.';
     } else {
       const lfId = stableSearchId(['local-finder', params.keyword, params.location_coordinate ?? params.location, params.language, params.device]);
 
@@ -153,7 +153,7 @@ async function LocalFinderPage({ searchParams }: { searchParams: Promise<SearchP
     <div className="space-y-6">
       <div>
         <h1 className="nexo-h1">Local Finder</h1>
-        <p className="text-sm text-nexo-faint mt-1">Google local pack results for any keyword and location.</p>
+        <p className="text-sm text-nexo-faint mt-1">Resultados do pacote local do Google para qualquer palavra-chave e local.</p>
       </div>
 
       <LocalFinderForm defaults={formDefaults} />
@@ -164,23 +164,23 @@ async function LocalFinderPage({ searchParams }: { searchParams: Promise<SearchP
         <div id="results" className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between flex-wrap gap-2">
             <div className="flex items-center gap-3">
-              <h2 className="nexo-label">Results</h2>
-              {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>}
+              <h2 className="nexo-label">Resultados</h2>
+              {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">Histórico</span>}
             </div>
             <div className="flex items-center gap-3">
-              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">cost: ${cost.toFixed(4)}</span>}
+              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">custo: US$ {cost.toFixed(4).replace('.', ',')}</span>}
               {checkUrl && (
                 <a href={checkUrl} target="_blank" rel="noopener noreferrer"
                   className="nexo-section hover:text-white transition-colors">
-                  Verify ↗
+                  Verificar ↗
                 </a>
               )}
-              <span className="text-xs font-medium text-nexo-faint">{items.length} result{items.length !== 1 ? 's' : ''}</span>
+              <span className="text-xs font-medium text-nexo-faint">{items.length} {items.length === 1 ? 'resultado' : 'resultados'}</span>
             </div>
           </div>
 
           {items.length === 0 ? (
-            <div className="px-6 py-12 text-center text-sm text-nexo-faint">No results found.</div>
+            <div className="px-6 py-12 text-center text-sm text-nexo-faint">Nenhum resultado encontrado.</div>
           ) : (
             <div className="divide-y divide-nexo-border">
               {items.map((item, i) => (
@@ -194,7 +194,7 @@ async function LocalFinderPage({ searchParams }: { searchParams: Promise<SearchP
                         <div>
                           <div className="flex items-center gap-2 flex-wrap">
                             <h3 className="text-sm font-medium text-nexo-text">{item.title ?? '—'}</h3>
-                            {item.is_paid && <span className="text-[9px] font-medium uppercase tracking-widest text-nexo-warn-text bg-nexo-warn/10 border border-nexo-warn/40 px-1.5 py-0.5 rounded">Sponsored</span>}
+                            {item.is_paid && <span className="text-[9px] font-medium uppercase tracking-widest text-nexo-warn-text bg-nexo-warn/10 border border-nexo-warn/40 px-1.5 py-0.5 rounded">Patrocinado</span>}
                           </div>
                           {item.rating && <StarRating rating={item.rating} />}
                         </div>
@@ -208,7 +208,7 @@ async function LocalFinderPage({ searchParams }: { searchParams: Promise<SearchP
                             {item.domain ?? item.url}
                           </a>
                         )}
-                        {item.booking_url && <a href={item.booking_url} target="_blank" rel="noopener noreferrer" className="text-[10px] font-medium uppercase tracking-widest text-nexo-ice hover:text-nexo-ice transition-colors">Book ↗</a>}
+                        {item.booking_url && <a href={item.booking_url} target="_blank" rel="noopener noreferrer" className="text-[10px] font-medium uppercase tracking-widest text-nexo-ice hover:text-nexo-ice transition-colors">Reservar ↗</a>}
                         {item.cid && <a href={`https://www.google.com/maps?cid=${item.cid}`} target="_blank" rel="noopener noreferrer" className="nexo-label hover:text-white transition-colors">Maps ↗</a>}
                       </div>
                     </div>
@@ -223,7 +223,7 @@ async function LocalFinderPage({ searchParams }: { searchParams: Promise<SearchP
       {historyIndex.length > 0 && (
         <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border">
-            <h2 className="nexo-label">History</h2>
+            <h2 className="nexo-label">Histórico</h2>
           </div>
           <div className="divide-y divide-nexo-border">
             {historyIndex.map((entry) => {
@@ -233,13 +233,13 @@ async function LocalFinderPage({ searchParams }: { searchParams: Promise<SearchP
                   <a href={`/dashboard/local-finder?history_id=${entry.id}#results`} className="flex-1 min-w-0">
                     <p className={`text-sm font-medium truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.keyword}</p>
                     <p className="text-[11px] text-nexo-faint mt-0.5 truncate">
-                      {entry.location} · {entry.count} result{entry.count !== 1 ? 's' : ''}
-                      {entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}
+                      {entry.location} · {entry.count} {entry.count === 1 ? 'resultado' : 'resultados'}
+                      {entry.cost !== undefined ? ` · US$ ${entry.cost.toFixed(4).replace('.', ',')}` : ''}
                     </p>
                   </a>
                   <div className="flex items-center gap-3 shrink-0">
                     <span className="text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>
-                    <a href={lfRerunUrl(entry)} className="text-[10px] font-medium uppercase tracking-widest text-nexo-ice hover:text-nexo-ice transition-colors" title="Run again">Re-run ↻</a>
+                    <a href={lfRerunUrl(entry)} className="text-[10px] font-medium uppercase tracking-widest text-nexo-ice hover:text-nexo-ice transition-colors" title="Executar novamente">Executar de novo ↻</a>
                   </div>
                 </div>
               );

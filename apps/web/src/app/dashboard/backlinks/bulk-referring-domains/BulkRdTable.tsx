@@ -16,7 +16,7 @@ interface BulkRdItem {
 type SortKey = 'target' | 'referring_domains' | 'referring_main_domains' | 'referring_ips' | 'referring_domains_nofollow' | 'broken_backlinks';
 type SortDir = 'asc' | 'desc';
 
-function fmt(n?: number) { return n != null ? n.toLocaleString('en-GB') : '—'; }
+function fmt(n?: number) { return n != null ? n.toLocaleString('pt-BR') : '—'; }
 
 function sortValue(item: BulkRdItem, key: SortKey): number | string {
   switch (key) {
@@ -74,12 +74,12 @@ export default function BulkRdTable({ items }: { items: BulkRdItem[] }) {
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-nexo-border bg-white/[0.02]">
-            <Header label="Domain" sortK="target" align="left" />
-            <Header label="Ref. Domains" sortK="referring_domains" align="left" />
-            <Header label="Main RD" sortK="referring_main_domains" align="right" className="hidden sm:table-cell" />
-            <Header label="Ref. IPs" sortK="referring_ips" align="right" className="hidden md:table-cell" />
-            <Header label="Nofollow RD" sortK="referring_domains_nofollow" align="right" className="hidden lg:table-cell" />
-            <Header label="Broken BL" sortK="broken_backlinks" align="right" className="hidden lg:table-cell" />
+            <Header label="Domínio" sortK="target" align="left" />
+            <Header label="Domínios de ref." sortK="referring_domains" align="left" />
+            <Header label="Domínios principais" sortK="referring_main_domains" align="right" className="hidden sm:table-cell" />
+            <Header label="IPs de ref." sortK="referring_ips" align="right" className="hidden md:table-cell" />
+            <Header label="Domínios nofollow" sortK="referring_domains_nofollow" align="right" className="hidden lg:table-cell" />
+            <Header label="BL quebrados" sortK="broken_backlinks" align="right" className="hidden lg:table-cell" />
           </tr>
         </thead>
         <tbody className="divide-y divide-nexo-border">

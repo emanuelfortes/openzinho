@@ -67,12 +67,12 @@ async function fetchKeywordData(
 
 const SE_LABELS: Record<string, string> = { google_ads: 'Google Ads', bing: 'Bing Ads' };
 const TYPE_LABELS: Record<string, string> = {
-  search_volume: 'Search Volume', keywords_for_site: 'Keywords For Site',
-  keywords_for_keywords: 'Keywords For Keywords', ad_traffic_by_keywords: 'Ad Traffic', keyword_performance: 'Performance',
+  search_volume: 'Volume de buscas', keywords_for_site: 'Palavras-chave do site',
+  keywords_for_keywords: 'Palavras-chave relacionadas', ad_traffic_by_keywords: 'Tráfego de anúncios', keyword_performance: 'Desempenho',
 };
 
 function formatDate(ts: number) {
-  return new Date(ts).toLocaleDateString("en-GB", { day: 'numeric', month: 'short', year: 'numeric' });
+  return new Date(ts).toLocaleDateString("pt-BR", { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 async function KeywordDataPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
@@ -94,7 +94,7 @@ async function KeywordDataPage({ searchParams }: { searchParams: Promise<SearchP
       const index = getKdHistory();
       activeEntry = index.find((e) => e.id === historyId) ?? null;
     } else {
-      error = 'This search is no longer available.';
+      error = 'Esta busca não está mais disponível.';
     }
   }
 
@@ -111,7 +111,7 @@ async function KeywordDataPage({ searchParams }: { searchParams: Promise<SearchP
       items = cachedItems;
       cost = getKdHistory().find((e) => e.id === dedupeId)?.cost;
     } else if (!creds) {
-      error = 'DataForSEO credentials missing. Configure them in Settings.';
+      error = 'Credenciais da DataForSEO ausentes. Configure-as em Configurações.';
     } else {
       const result = await fetchKeywordData(se, seType, body, creds.login, creds.pass);
       items = result.items;
@@ -141,8 +141,8 @@ async function KeywordDataPage({ searchParams }: { searchParams: Promise<SearchP
   const formDefaults = {
     se: sourceParams.se ?? 'google_ads', seType: sourceParams.se_type ?? 'search_volume',
     keywords: sourceParams.keywords ?? '', target: sourceParams.target ?? '',
-    targetType: sourceParams.target_type ?? 'site', location: sourceParams.location ?? getSetting('default_location') ?? 'France',
-    language: sourceParams.language ?? getSetting('default_language') ?? 'French', searchPartners: sourceParams.search_partners ?? 'false',
+    targetType: sourceParams.target_type ?? 'site', location: sourceParams.location ?? getSetting('default_location') ?? 'Brazil',
+    language: sourceParams.language ?? getSetting('default_language') ?? 'Portuguese', searchPartners: sourceParams.search_partners ?? 'false',
     includeAdult: sourceParams.include_adult_keywords ?? 'false', device: sourceParams.device ?? 'all',
     dateFrom: sourceParams.date_from ?? '', dateTo: sourceParams.date_to ?? '',
     sortBy: sourceParams.sort_by ?? 'relevance',
@@ -151,8 +151,8 @@ async function KeywordDataPage({ searchParams }: { searchParams: Promise<SearchP
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="nexo-h1">Keyword Data</h1>
-        <p className="text-sm text-nexo-faint mt-1">Search volume, CPC and competition data via DataForSEO.</p>
+        <h1 className="nexo-h1">Dados de palavras-chave</h1>
+        <p className="text-sm text-nexo-faint mt-1">Volume de buscas, CPC e concorrência via DataForSEO.</p>
       </div>
 
       <KeywordDataForm defaults={formDefaults} />
@@ -163,16 +163,16 @@ async function KeywordDataPage({ searchParams }: { searchParams: Promise<SearchP
         <div id="results" className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <h2 className="nexo-label">Results</h2>
-              {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>}
+              <h2 className="nexo-label">Resultados</h2>
+              {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">Histórico</span>}
             </div>
             <div className="flex items-center gap-3">
-              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">cost: ${cost.toFixed(4)}</span>}
-              <span className="text-xs font-medium text-nexo-faint">{items.length} keyword{items.length !== 1 ? 's' : ''}</span>
+              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">custo: US$ {cost.toFixed(4).replace('.', ',')}</span>}
+              <span className="text-xs font-medium text-nexo-faint">{items.length} {items.length !== 1 ? 'palavras-chave' : 'palavra-chave'}</span>
             </div>
           </div>
           {items.length === 0 ? (
-            <div className="px-6 py-12 text-center text-sm text-nexo-faint">No results found.</div>
+            <div className="px-6 py-12 text-center text-sm text-nexo-faint">Nenhum resultado encontrado.</div>
           ) : (
             <KeywordDataTable items={items} />
           )}
@@ -182,7 +182,7 @@ async function KeywordDataPage({ searchParams }: { searchParams: Promise<SearchP
       {historyIndex.length > 0 && (
         <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border">
-            <h2 className="nexo-label">Search history</h2>
+            <h2 className="nexo-label">Histórico de buscas</h2>
           </div>
           <div className="divide-y divide-nexo-border">
             {historyIndex.map((entry) => {
@@ -197,7 +197,7 @@ async function KeywordDataPage({ searchParams }: { searchParams: Promise<SearchP
                   <div className="flex-1 min-w-0">
                     <p className={`text-sm font-medium truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.label}</p>
                     <p className="text-[11px] text-nexo-faint mt-0.5">
-                      {entry.count} result{entry.count !== 1 ? 's' : ''}{entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}
+                      {entry.count} {entry.count !== 1 ? 'resultados' : 'resultado'}{entry.cost !== undefined ? ` · US$ ${entry.cost.toFixed(4).replace('.', ',')}` : ''}
                     </p>
                   </div>
                   <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>

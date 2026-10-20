@@ -144,7 +144,7 @@ describe('spending aggregates', () => {
   const to = new Date(2030, 0, 3).getTime();
 
   it('sums known costs per tool within the range and counts unknown-cost calls separately', () => {
-    const serpSpend = getSpendByTool(from, to).find((t) => t.tool === 'SERP Checker');
+    const serpSpend = getSpendByTool(from, to).find((t) => t.tool === 'Verificador de SERP');
     expect(serpSpend).toMatchObject({ calls: 3, unknownCalls: 1 });
     expect(serpSpend!.knownCost).toBeCloseTo(0.006);
     expect(serpSpend!.avgKnownCost).not.toBeNull();

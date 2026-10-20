@@ -41,7 +41,7 @@ export async function queueStandardRankChecksForProject(
         signal: AbortSignal.timeout(60_000),
       });
       if (!response.ok) {
-        markReservationsFailed(projectId, batch, `API error ${response.status}: ${response.statusText}`);
+        markReservationsFailed(projectId, batch, `Erro da API ${response.status}: ${response.statusText}`);
         failed = true;
         continue;
       }
@@ -52,7 +52,7 @@ export async function queueStandardRankChecksForProject(
         continue;
       }
       if (!Array.isArray(data.tasks)) {
-        markReservationsFailed(projectId, batch, 'Empty response from DataForSEO.');
+        markReservationsFailed(projectId, batch, 'Resposta vazia da DataForSEO.');
         failed = true;
         continue;
       }
@@ -69,7 +69,7 @@ export async function queueStandardRankChecksForProject(
     } catch (error) {
       // Ambiguous: DataForSEO may still have accepted and billed the task_post. Keep a failed
       // reservation rather than silently retrying and risking a second charge.
-      markReservationsFailed(projectId, batch, error instanceof Error ? error.message : 'Could not reach DataForSEO.');
+      markReservationsFailed(projectId, batch, error instanceof Error ? error.message : 'Não foi possível conectar à DataForSEO.');
       failed = true;
     }
   }

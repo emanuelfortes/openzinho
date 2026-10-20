@@ -29,8 +29,8 @@ async function RankTrackerPage({ searchParams }: { searchParams: Promise<SearchP
   const params = await searchParams;
 
   const creds = getCredentials();
-  const defaultLocation = getSetting('default_location') ?? 'France';
-  const defaultLanguage = getSetting('default_language') ?? 'French';
+  const defaultLocation = getSetting('default_location') ?? 'Brazil';
+  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
   const rankDepth = getSetting('rank_tracker_depth') ?? '20';
 
   // Merge target_domains table with unique domains from tracked keywords
@@ -64,16 +64,16 @@ async function RankTrackerPage({ searchParams }: { searchParams: Promise<SearchP
     previous_position: previous?.position ?? '',
     checked_at: latest ? new Date(latest.checkedAt).toISOString().split('T')[0] : '',
     url: latest?.url ?? '',
-    ai_overview: latest?.aiOverview == null ? '' : latest.aiOverview ? 'Cited' : 'Not cited',
+    ai_overview: latest?.aiOverview == null ? '' : latest.aiOverview ? 'Citado' : 'Não citado',
   }));
   const csvColumns = [
-    { key: 'keyword', label: 'Keyword' },
-    { key: 'location', label: 'Location' },
-    { key: 'language', label: 'Language' },
-    { key: 'position', label: 'Position' },
-    { key: 'previous_position', label: 'Previous Position' },
-    { key: 'checked_at', label: 'Checked' },
-    { key: 'url', label: 'Ranked URL' },
+    { key: 'keyword', label: 'Palavra-chave' },
+    { key: 'location', label: 'Local' },
+    { key: 'language', label: 'Idioma' },
+    { key: 'position', label: 'Posição' },
+    { key: 'previous_position', label: 'Posição anterior' },
+    { key: 'checked_at', label: 'Verificado em' },
+    { key: 'url', label: 'URL ranqueada' },
     { key: 'ai_overview', label: 'AI Overview' },
   ];
 
@@ -85,7 +85,7 @@ async function RankTrackerPage({ searchParams }: { searchParams: Promise<SearchP
         <div>
           <h1 className="nexo-h1">Rank Tracker</h1>
           <p className="text-nexo-dim text-sm mt-1 font-medium">
-            {allKeywords.length} keyword{allKeywords.length !== 1 ? 's' : ''} across {domains.length} domain{domains.length !== 1 ? 's' : ''}
+            {allKeywords.length} {allKeywords.length !== 1 ? 'palavras-chave' : 'palavra-chave'} em {domains.length} {domains.length !== 1 ? 'domínios' : 'domínio'}
           </p>
         </div>
         <div className="flex items-center gap-3 shrink-0">
@@ -102,7 +102,7 @@ async function RankTrackerPage({ searchParams }: { searchParams: Promise<SearchP
               ))}
             </select>
             <button type="submit" className="px-3 py-2 text-[9px] font-medium uppercase tracking-widest rounded-nexo-lg bg-nexo-surface-2 text-nexo-dim hover:bg-white/[0.04] transition-all">
-              Save
+              Salvar
             </button>
           </form>
 
@@ -113,9 +113,9 @@ async function RankTrackerPage({ searchParams }: { searchParams: Promise<SearchP
                 type="submit"
                 className="nexo-label px-5 py-3 bg-white text-nexo-bg rounded-nexo-lg hover:bg-nexo-ice transition-all"
                 pendingClassName="px-5 py-3 bg-white/30 text-white text-[10px] font-medium uppercase tracking-widest rounded-nexo-lg cursor-not-allowed"
-                pendingChildren={`Queuing ${allKeywords.length}…`}
+                pendingChildren={`Enfileirando ${allKeywords.length}…`}
               >
-                Queue All ({allKeywords.length})
+                Enfileirar todas ({allKeywords.length})
               </PendingButton>
             </form>
           )}
@@ -126,7 +126,7 @@ async function RankTrackerPage({ searchParams }: { searchParams: Promise<SearchP
 
       {!creds && (
         <div className="bg-nexo-warn/10 border border-nexo-warn/40 text-nexo-warn-text rounded-nexo-lg px-6 py-4 text-sm font-medium">
-          Configure your DataForSEO credentials in Settings to enable rank checking.
+          Configure suas credenciais da DataForSEO em Configurações para ativar a verificação de posições.
         </div>
       )}
 
@@ -154,7 +154,7 @@ async function RankTrackerPage({ searchParams }: { searchParams: Promise<SearchP
                 <input type="hidden" name="domain" value={domain} />
                 <button
                   type="submit"
-                  title="Remove domain"
+                  title="Remover domínio"
                   className={`px-1.5 py-2 text-[10px] rounded-nexo transition-all ${
                     isActive
                       ? 'text-nexo-faint hover:text-nexo-danger-text hover:bg-nexo-danger/15'
@@ -173,14 +173,14 @@ async function RankTrackerPage({ searchParams }: { searchParams: Promise<SearchP
           <input
             name="domain"
             type="text"
-            placeholder="newdomain.com"
+            placeholder="novodominio.com"
             className="nexo-input min-w-0 px-3 py-2 border-dashed text-xs font-medium focus:ring-4 focus:ring-nexo-sky outline-none w-40 transition-all"
           />
           <button
             type="submit"
             className="nexo-label px-3 py-2 bg-nexo-surface border border-nexo-border rounded-nexo-lg hover:bg-white/10 hover:text-white hover:border-nexo-border-strong transition-all"
           >
-            + Add
+            + Adicionar
           </button>
         </form>
       </div>
@@ -188,8 +188,8 @@ async function RankTrackerPage({ searchParams }: { searchParams: Promise<SearchP
       {/* ── Empty state: no domains ─────────────────────────────────────────── */}
       {domains.length === 0 && (
         <div className="bg-nexo-surface border border-dashed border-nexo-border rounded-nexo-lg p-16 text-center">
-          <p className="font-medium text-nexo-dim mb-1">No domains yet</p>
-          <p className="text-nexo-faint text-sm">Add a domain above to start tracking keyword rankings.</p>
+          <p className="font-medium text-nexo-dim mb-1">Nenhum domínio ainda</p>
+          <p className="text-nexo-faint text-sm">Adicione um domínio acima para começar a monitorar as posições das palavras-chave.</p>
         </div>
       )}
 
@@ -201,17 +201,17 @@ async function RankTrackerPage({ searchParams }: { searchParams: Promise<SearchP
           <div className="xl:col-span-2">
             {rows.length === 0 ? (
               <div className="bg-nexo-surface border border-dashed border-nexo-border rounded-nexo-lg p-12 text-center">
-                <p className="text-nexo-dim font-semibold mb-1">No keywords for {activeDomain}</p>
-                <p className="text-nexo-faint text-xs">Add some keywords using the form on the right.</p>
+                <p className="text-nexo-dim font-semibold mb-1">Nenhuma palavra-chave para {activeDomain}</p>
+                <p className="text-nexo-faint text-xs">Adicione palavras-chave pelo formulário ao lado.</p>
               </div>
             ) : (
               <div id="results" className="bg-nexo-surface border border-nexo-border rounded-nexo-lg overflow-x-auto">
                 <div className="px-5 py-3.5 border-b border-nexo-border flex items-center justify-between gap-4">
                   <span className="nexo-label">
-                    {activeDomain} — {rows.length} keyword{rows.length !== 1 ? 's' : ''}
+                    {activeDomain} — {rows.length} {rows.length !== 1 ? 'palavras-chave' : 'palavra-chave'}
                   </span>
                   <div className="flex items-center gap-3">
-                    <span className="text-[10px] text-nexo-faint hidden sm:block">Click a row to see history</span>
+                    <span className="text-[10px] text-nexo-faint hidden sm:block">Clique em uma linha para ver o histórico</span>
                     <CopyMarkdownButton data={csvData} columns={csvColumns} />
                     {creds && (
                       <form action={checkDomainAction}>
@@ -220,9 +220,9 @@ async function RankTrackerPage({ searchParams }: { searchParams: Promise<SearchP
                           type="submit"
                           className="px-3 py-1.5 bg-nexo-blue text-white text-[9px] font-medium uppercase tracking-widest rounded-nexo hover:bg-nexo-sky transition-all"
                           pendingClassName="px-3 py-1.5 bg-nexo-sky/40 text-white text-[9px] font-medium uppercase tracking-widest rounded-nexo cursor-not-allowed"
-                          pendingChildren={`Queuing ${rows.length}…`}
+                          pendingChildren={`Enfileirando ${rows.length}…`}
                         >
-                          Queue {rows.length}
+                          Enfileirar {rows.length}
                         </PendingButton>
                       </form>
                     )}
@@ -242,31 +242,31 @@ async function RankTrackerPage({ searchParams }: { searchParams: Promise<SearchP
           {/* Add keywords form */}
           <div>
             <div className="bg-nexo-surface border border-nexo-border rounded-nexo-lg p-6 sticky top-6">
-              <h2 className="text-xs font-medium text-nexo-text uppercase tracking-widest mb-1">Add Keywords</h2>
-              <p className="text-[10px] text-nexo-faint font-medium mb-5">for {activeDomain}</p>
+              <h2 className="text-xs font-medium text-nexo-text uppercase tracking-widest mb-1">Adicionar palavras-chave</h2>
+              <p className="text-[10px] text-nexo-faint font-medium mb-5">para {activeDomain}</p>
               <form action={addKeywordAction} className="space-y-4">
                 <input type="hidden" name="domain" value={activeDomain} />
 
                 <div className="space-y-1.5">
                   <label className="nexo-label">
-                    Keywords <span className="text-nexo-faint normal-case font-normal tracking-normal">(one per line, max 50)</span>
+                    Palavras-chave <span className="text-nexo-faint normal-case font-normal tracking-normal">(uma por linha, máx. 50)</span>
                   </label>
                   <textarea
                     name="keywords"
                     required
                     rows={5}
-                    placeholder={"plumber paris\nemergency plumber\ndrain unclogging"}
+                    placeholder={"encanador são paulo\nencanador 24 horas\ndesentupimento de ralo"}
                     className={`${inputCls} resize-y font-mono`}
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="nexo-label">Location</label>
+                  <label className="nexo-label">Local</label>
                   <LocationPicker name="location" defaultValue={defaultLocation} className={inputCls} />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="nexo-label">Language</label>
+                  <label className="nexo-label">Idioma</label>
                   <select name="language" defaultValue={defaultLanguage} className={inputCls}>
                     {LANGUAGES.map((l) => (
                       <option key={l.value} value={l.value}>{l.label}</option>
@@ -278,9 +278,9 @@ async function RankTrackerPage({ searchParams }: { searchParams: Promise<SearchP
                   type="submit"
                   className="w-full bg-nexo-blue text-white py-3 rounded-nexo-lg font-medium uppercase text-[10px] tracking-[0.2em] hover:bg-nexo-sky transition-all active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
                   pendingClassName="w-full bg-nexo-sky/40 text-white py-3 rounded-nexo-lg font-medium uppercase text-[10px] tracking-[0.2em] cursor-not-allowed"
-                  pendingChildren="Adding…"
+                  pendingChildren="Adicionando…"
                 >
-                  Add
+                  Adicionar
                 </PendingButton>
               </form>
             </div>

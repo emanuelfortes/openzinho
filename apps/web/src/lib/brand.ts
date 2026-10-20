@@ -95,8 +95,8 @@ export function cleanBrandFooter(value: string | null | undefined): string {
 
 /** Returns an error message for an unacceptable logo upload, or null when it can be stored. */
 export function validateLogoUpload(type: string, size: number): string | null {
-  if (!(LOGO_ACCEPTED_TYPES as readonly string[]).includes(type)) return 'Logo must be a PNG or JPEG image.';
-  if (size > LOGO_MAX_BYTES) return `Logo must be smaller than ${LOGO_MAX_BYTES / 1024} KB.`;
+  if (!(LOGO_ACCEPTED_TYPES as readonly string[]).includes(type)) return 'O logo precisa ser uma imagem PNG ou JPEG.';
+  if (size > LOGO_MAX_BYTES) return `O logo precisa ter menos de ${LOGO_MAX_BYTES / 1024} KB.`;
   return null;
 }
 

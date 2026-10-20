@@ -99,7 +99,7 @@ export async function fetchGridSearch(
 ): Promise<{ results: GridPoint[]; cost: number; error?: string }> {
   const parts = center.split(',').map(Number);
   if (parts.length < 2 || isNaN(parts[0]) || isNaN(parts[1])) {
-    return { results: [], cost: 0, error: 'Invalid coordinates.' };
+    return { results: [], cost: 0, error: 'Coordenadas inválidas.' };
   }
   const [centerLat, centerLng] = parts;
   const coords = generateGridCoords(centerLat, centerLng, gridSize, spacingKm);
@@ -139,7 +139,7 @@ export async function postGridTasksQueue(
 ): Promise<{ taskPoints: GridTaskPoint[]; cost: number; error?: string }> {
   const parts = center.split(',').map(Number);
   if (parts.length < 2 || isNaN(parts[0]) || isNaN(parts[1])) {
-    return { taskPoints: [], cost: 0, error: 'Invalid coordinates.' };
+    return { taskPoints: [], cost: 0, error: 'Coordenadas inválidas.' };
   }
   const [centerLat, centerLng] = parts;
   const coords = generateGridCoords(centerLat, centerLng, gridSize, spacingKm);
@@ -170,12 +170,12 @@ export async function postGridTasksQueue(
         body: JSON.stringify(body),
         signal: AbortSignal.timeout(60_000),
       });
-      if (!res.ok) return { taskPoints: allTaskPoints, cost: totalCost, error: `API error ${res.status}` };
+      if (!res.ok) return { taskPoints: allTaskPoints, cost: totalCost, error: `Erro da API ${res.status}` };
       data = await res.json();
     } catch (error) {
-      return { taskPoints: allTaskPoints, cost: totalCost, error: error instanceof Error ? error.message : 'Could not reach DataForSEO.' };
+      return { taskPoints: allTaskPoints, cost: totalCost, error: error instanceof Error ? error.message : 'Não foi possível acessar o DataForSEO.' };
     }
-    if (!data.tasks) return { taskPoints: allTaskPoints, cost: totalCost, error: 'Empty response from DataForSEO.' };
+    if (!data.tasks) return { taskPoints: allTaskPoints, cost: totalCost, error: 'Resposta vazia do DataForSEO.' };
     data.tasks.forEach((task, j) => {
       const coord = chunk[j];
       if (task.id) {

@@ -11,11 +11,11 @@ interface NonIndexableItem {
 }
 
 const REASONS: Record<string, string> = {
-  robots_txt: 'Blocked by robots.txt',
-  meta_tag: 'noindex meta tag',
-  http_header: 'X-Robots-Tag header',
-  attribute: 'nofollow / noindex attribute',
-  too_many_redirects: 'Too many redirects',
+  robots_txt: 'Bloqueada pelo robots.txt',
+  meta_tag: 'Meta tag noindex',
+  http_header: 'Cabeçalho X-Robots-Tag',
+  attribute: 'Atributo nofollow / noindex',
+  too_many_redirects: 'Redirecionamentos demais',
 };
 
 function reasonLabel(reason?: string) {
@@ -66,7 +66,7 @@ export default function NonIndexableTable({ pages }: { pages: NonIndexableItem[]
   const csvData = sorted.map((page) => ({ url: page.url ?? '', reason: reasonLabel(page.reason) }));
   const columns = [
     { key: 'url', label: 'URL' },
-    { key: 'reason', label: 'Reason' },
+    { key: 'reason', label: 'Motivo' },
   ];
 
   return (
@@ -81,7 +81,7 @@ export default function NonIndexableTable({ pages }: { pages: NonIndexableItem[]
             <tr className="border-b border-nexo-border bg-white/[0.02]">
               <th className="nexo-label px-4 py-3 text-left">#</th>
               <Header label="URL" sortK="url" align="left" />
-              <Header label="Reason" sortK="reason" align="left" />
+              <Header label="Motivo" sortK="reason" align="left" />
             </tr>
           </thead>
           <tbody className="divide-y divide-nexo-border">

@@ -11,7 +11,7 @@ export default async function SetupPage() {
   if (await hasUsers()) redirect('/login');
 
   return (
-    <AuthShell title="Create your account" subtitle="This is the only account. Registration closes once it exists.">
+    <AuthShell title="Crie sua conta" subtitle="Esta é a única conta. O cadastro é fechado assim que ela existir.">
       <AuthForm mode="setup" next="/dashboard" />
     </AuthShell>
   );

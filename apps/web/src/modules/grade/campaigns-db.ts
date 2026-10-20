@@ -74,14 +74,14 @@ export function validateCampaign(input: GridCampaignInput): { campaign: GridCamp
   const target = input.target.trim();
   const keywords = normalizeKeywords(input.keywords);
   const center = parseCenter(input.center);
-  if (!name) return { error: 'Give the campaign a name.' };
-  if (!target) return { error: 'Choose the business to track (pick it on the map or type its name or domain).' };
-  if (!center) return { error: 'Set the grid center on the map, or type it as lat,lng.' };
-  if (keywords.length === 0) return { error: 'Add at least one keyword.' };
-  if (keywords.length > MAX_CAMPAIGN_KEYWORDS) return { error: `A campaign can track up to ${MAX_CAMPAIGN_KEYWORDS} keywords.` };
-  if (!(CAMPAIGN_GRID_SIZES as readonly number[]).includes(input.grid_size)) return { error: 'Choose a grid size.' };
-  if (!(input.spacing_km > 0 && input.spacing_km <= 10)) return { error: 'Choose the distance between points.' };
-  if (!GRID_SCHEDULE_FREQUENCIES.includes(input.frequency)) return { error: 'Choose how often the campaign runs.' };
+  if (!name) return { error: 'Dê um nome à campanha.' };
+  if (!target) return { error: 'Escolha a empresa a acompanhar (selecione no mapa ou digite o nome ou domínio).' };
+  if (!center) return { error: 'Defina o centro da grade no mapa ou digite-o como lat,lng.' };
+  if (keywords.length === 0) return { error: 'Adicione pelo menos uma palavra-chave.' };
+  if (keywords.length > MAX_CAMPAIGN_KEYWORDS) return { error: `Uma campanha pode acompanhar até ${MAX_CAMPAIGN_KEYWORDS} palavras-chave.` };
+  if (!(CAMPAIGN_GRID_SIZES as readonly number[]).includes(input.grid_size)) return { error: 'Escolha o tamanho da grade.' };
+  if (!(input.spacing_km > 0 && input.spacing_km <= 10)) return { error: 'Escolha a distância entre os pontos.' };
+  if (!GRID_SCHEDULE_FREQUENCIES.includes(input.frequency)) return { error: 'Escolha com que frequência a campanha é executada.' };
   const usesWeekday = input.frequency === 'weekly' || input.frequency === 'biweekly';
   return {
     campaign: {
@@ -90,7 +90,7 @@ export function validateCampaign(input: GridCampaignInput): { campaign: GridCamp
       target,
       keywords,
       center: `${center.lat},${center.lng}`,
-      language: input.language.trim() || 'English',
+      language: input.language.trim() || 'Portuguese',
       weekday: usesWeekday ? (input.weekday != null && input.weekday >= 0 && input.weekday <= 6 ? input.weekday : 1) : null,
       month_day: input.frequency === 'monthly' ? clampMonthDay(input.month_day) : null,
     },

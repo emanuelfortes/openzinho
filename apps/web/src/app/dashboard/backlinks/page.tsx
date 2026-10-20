@@ -114,7 +114,7 @@ async function fetchLinks(
 
 function fmt(n?: number) {
   if (n === undefined || n === null) return '—';
-  return n.toLocaleString("en-GB");
+  return n.toLocaleString("pt-BR");
 }
 
 function SpamBadge({ score }: { score?: number }) {
@@ -142,20 +142,20 @@ function StatCard({ label, value, new: newVal, lost, href, hrefLabel }: { label:
       <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{fmt(value)}</p>
       {(newVal !== undefined || lost !== undefined) && (
         <p className="text-[11px] mt-0.5 text-nexo-faint">
-          {newVal !== undefined && <><Delta value={newVal} /> new</>}
+          {newVal !== undefined && <><Delta value={newVal} /> novos</>}
           {newVal !== undefined && lost !== undefined && ' · '}
-          {lost !== undefined && <><Delta value={-lost} invert /> lost</>}
+          {lost !== undefined && <><Delta value={-lost} invert /> perdidos</>}
         </p>
       )}
       {href && (
-        <a href={href} className="inline-block text-[11px] font-medium text-nexo-sky hover:underline mt-0.5">{hrefLabel ?? 'View'} →</a>
+        <a href={href} className="inline-block text-[11px] font-medium text-nexo-sky hover:underline mt-0.5">{hrefLabel ?? 'Ver'} →</a>
       )}
     </div>
   );
 }
 
 function formatDate(ts: number) {
-  return new Date(ts).toLocaleDateString("en-GB", { day: 'numeric', month: 'short', year: 'numeric' });
+  return new Date(ts).toLocaleDateString("pt-BR", { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 // ---- Page ----
@@ -190,7 +190,7 @@ async function BacklinksPage({ searchParams }: { searchParams: Promise<SearchPar
       activeEntry = history.find((e) => e.id === historyId) ?? null;
       linksTotal = activeEntry?.linksTotal ?? links.length;
     } else {
-      error = 'This search is no longer available.';
+      error = 'Esta busca não está mais disponível.';
     }
   }
 
@@ -206,7 +206,7 @@ async function BacklinksPage({ searchParams }: { searchParams: Promise<SearchPar
       linksTotal = cachedEntry?.linksTotal ?? links.length;
       cost = cachedEntry?.cost;
     } else if (!creds) {
-      error = 'DataForSEO credentials missing. Configure them in Settings.';
+      error = 'Credenciais do DataForSEO ausentes. Configure-as em Configurações.';
     } else {
       const [summaryRes, linksRes] = await Promise.all([
         fetchSummary(clean, creds.login, creds.pass),
@@ -214,7 +214,7 @@ async function BacklinksPage({ searchParams }: { searchParams: Promise<SearchPar
       ]);
 
       if (summaryRes.error || linksRes.error) {
-        error = summaryRes.error ?? linksRes.error ?? 'Unknown error.';
+        error = summaryRes.error ?? linksRes.error ?? 'Erro desconhecido.';
       } else {
         summary = summaryRes.result ?? null;
         links = linksRes.items;
@@ -252,43 +252,43 @@ async function BacklinksPage({ searchParams }: { searchParams: Promise<SearchPar
     <div className="space-y-6">
       <div>
         <h1 className="nexo-h1">Backlinks</h1>
-        <p className="text-sm text-nexo-faint mt-1">Inbound link profile of a domain via DataForSEO.</p>
+        <p className="text-sm text-nexo-faint mt-1">Perfil de links recebidos de um domínio via DataForSEO.</p>
       </div>
 
       {/* Form */}
-      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Analyze" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
+      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Analisar" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="sm:col-span-2">
-            <label className="nexo-label block mb-1.5">Target domain</label>
+            <label className="nexo-label block mb-1.5">Domínio alvo</label>
             <input
               type="text" name="target"
               defaultValue={displayTarget}
-              placeholder="e.g. example.com"
+              placeholder="ex.: exemplo.com"
               required
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky font-mono transition-all"
             />
           </div>
           <div>
-            <label className="nexo-label block mb-1.5">Sort by</label>
+            <label className="nexo-label block mb-1.5">Ordenar por</label>
             <select name="order_by" defaultValue={orderBy}
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
-              <option value="domain_from_rank,desc">Source domain DR (high)</option>
-              <option value="page_from_rank,desc">Source page rank (high)</option>
-              <option value="first_seen,desc">Most recent</option>
-              <option value="first_seen,asc">Oldest</option>
+              <option value="domain_from_rank,desc">DR do domínio de origem (maior)</option>
+              <option value="page_from_rank,desc">Rank da página de origem (maior)</option>
+              <option value="first_seen,desc">Mais recentes</option>
+              <option value="first_seen,asc">Mais antigos</option>
             </select>
           </div>
           <div>
-            <label className="nexo-label block mb-1.5">Filter</label>
+            <label className="nexo-label block mb-1.5">Filtrar</label>
             <select name="dofollow" defaultValue={dofollowParam ?? ''}
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
-              <option value="">All links</option>
-              <option value="true">Dofollow only</option>
-              <option value="false">Nofollow only</option>
+              <option value="">Todos os links</option>
+              <option value="true">Somente dofollow</option>
+              <option value="false">Somente nofollow</option>
             </select>
           </div>
           <div>
-            <label className="nexo-label block mb-1.5">Number of links</label>
+            <label className="nexo-label block mb-1.5">Número de links</label>
             <select name="limit" defaultValue={String(limit)}
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
               <option value="50">50</option>
@@ -308,9 +308,9 @@ async function BacklinksPage({ searchParams }: { searchParams: Promise<SearchPar
           {/* Header */}
           <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-2">
-              <span className="nexo-label">Domain</span>
+              <span className="nexo-label">Domínio</span>
               <span className="font-mono font-medium text-nexo-text">{displayTarget}</span>
-              {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>}
+              {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">Histórico</span>}
             </div>
             {summary?.rank !== undefined && (
               <div className="flex items-center gap-2">
@@ -324,7 +324,7 @@ async function BacklinksPage({ searchParams }: { searchParams: Promise<SearchPar
                 <SpamBadge score={summary.spam_score} />
               </div>
             )}
-            {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint ml-auto">cost: ${cost.toFixed(4)}</span>}
+            {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint ml-auto">custo: US$ {cost.toFixed(4).replace('.', ',')}</span>}
           </div>
 
           {/* Summary stats */}
@@ -332,15 +332,15 @@ async function BacklinksPage({ searchParams }: { searchParams: Promise<SearchPar
             <>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <StatCard label="Backlinks" value={summary.backlinks} new={summary.new_backlinks} lost={summary.lost_backlinks} />
-                <StatCard label="Referring domains" value={summary.referring_domains} new={summary.new_referring_domains} lost={summary.lost_referring_domains} />
-                <StatCard label="Referring IPs" value={summary.referring_ips} />
-                <StatCard label="Referring pages" value={summary.referring_pages} />
+                <StatCard label="Domínios de referência" value={summary.referring_domains} new={summary.new_referring_domains} lost={summary.lost_referring_domains} />
+                <StatCard label="IPs de referência" value={summary.referring_ips} />
+                <StatCard label="Páginas de referência" value={summary.referring_pages} />
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                <StatCard label="Broken backlinks" value={summary.broken_backlinks}
-                  href={summary.broken_backlinks ? `/dashboard/backlinks/broken?target=${encodeURIComponent(displayTarget)}` : undefined} hrefLabel="See broken links" />
-                <StatCard label="Broken pages" value={summary.broken_pages} />
-                <StatCard label="Referring subnets" value={summary.referring_subnets} />
+                <StatCard label="Backlinks quebrados" value={summary.broken_backlinks}
+                  href={summary.broken_backlinks ? `/dashboard/backlinks/broken?target=${encodeURIComponent(displayTarget)}` : undefined} hrefLabel="Ver links quebrados" />
+                <StatCard label="Páginas quebradas" value={summary.broken_pages} />
+                <StatCard label="Sub-redes de referência" value={summary.referring_subnets} />
               </div>
 
               {/* Link types + TLD */}
@@ -348,7 +348,7 @@ async function BacklinksPage({ searchParams }: { searchParams: Promise<SearchPar
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {linkTypeEntries.length > 0 && (
                     <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-5">
-                      <h2 className="nexo-label mb-4">Link types</h2>
+                      <h2 className="nexo-label mb-4">Tipos de link</h2>
                       <div className="space-y-2">
                         {linkTypeEntries.map(([type, count]) => {
                           const pct = Math.round(((count ?? 0) / (summary.backlinks ?? 1)) * 100);
@@ -369,7 +369,7 @@ async function BacklinksPage({ searchParams }: { searchParams: Promise<SearchPar
                   )}
                   {tldEntries.length > 0 && (
                     <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-5">
-                      <h2 className="nexo-label mb-4">Referring domains TLD</h2>
+                      <h2 className="nexo-label mb-4">TLDs dos domínios de referência</h2>
                       <div className="space-y-2">
                         {tldEntries.map(([tld, count]) => {
                           const pct = Math.round((count / tldTotal) * 100);
@@ -396,11 +396,11 @@ async function BacklinksPage({ searchParams }: { searchParams: Promise<SearchPar
           {/* Backlinks list */}
           <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
             <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between">
-              <h2 className="nexo-label">Backlinks list</h2>
+              <h2 className="nexo-label">Lista de backlinks</h2>
               <div className="flex items-center gap-3">
                 <span className="text-xs font-medium text-nexo-faint">
-                  {links.length} shown
-                  {linksTotal > links.length && <span className="text-nexo-faint"> / {fmt(linksTotal)} total</span>}
+                  {links.length} exibidos
+                  {linksTotal > links.length && <span className="text-nexo-faint"> / {fmt(linksTotal)} no total</span>}
                 </span>
                 {links.length > 0 && (
                   <>
@@ -416,14 +416,14 @@ async function BacklinksPage({ searchParams }: { searchParams: Promise<SearchPar
                         first_seen: l.first_seen?.split('T')[0] ?? '',
                       }))}
                       columns={[
-                        { key: 'source', label: 'Source URL' },
-                        { key: 'domain_from', label: 'Source Domain' },
-                        { key: 'anchor', label: 'Anchor' },
-                        { key: 'target', label: 'Target URL' },
+                        { key: 'source', label: 'URL de origem' },
+                        { key: 'domain_from', label: 'Domínio de origem' },
+                        { key: 'anchor', label: 'Âncora' },
+                        { key: 'target', label: 'URL de destino' },
                         { key: 'dr', label: 'DR' },
                         { key: 'dofollow', label: 'Dofollow' },
-                        { key: 'broken', label: 'Broken' },
-                        { key: 'first_seen', label: 'First Seen' },
+                        { key: 'broken', label: 'Quebrado' },
+                        { key: 'first_seen', label: 'Visto pela primeira vez' },
                       ]}
                     />
                     <ExportCSVButton
@@ -439,14 +439,14 @@ async function BacklinksPage({ searchParams }: { searchParams: Promise<SearchPar
                       }))}
                       filename={`backlinks-${target}.csv`}
                       columns={[
-                        { key: 'source', label: 'Source URL' },
-                        { key: 'domain_from', label: 'Source Domain' },
-                        { key: 'anchor', label: 'Anchor' },
-                        { key: 'target', label: 'Target URL' },
+                        { key: 'source', label: 'URL de origem' },
+                        { key: 'domain_from', label: 'Domínio de origem' },
+                        { key: 'anchor', label: 'Âncora' },
+                        { key: 'target', label: 'URL de destino' },
                         { key: 'dr', label: 'DR' },
                         { key: 'dofollow', label: 'Dofollow' },
-                        { key: 'broken', label: 'Broken' },
-                        { key: 'first_seen', label: 'First Seen' },
+                        { key: 'broken', label: 'Quebrado' },
+                        { key: 'first_seen', label: 'Visto pela primeira vez' },
                       ]}
                     />
                   </>
@@ -455,7 +455,7 @@ async function BacklinksPage({ searchParams }: { searchParams: Promise<SearchPar
             </div>
 
             {links.length === 0 ? (
-              <div className="px-6 py-12 text-center text-sm text-nexo-faint">No backlinks found.</div>
+              <div className="px-6 py-12 text-center text-sm text-nexo-faint">Nenhum backlink encontrado.</div>
             ) : (
               <BacklinksTable links={links} />
             )}
@@ -467,7 +467,7 @@ async function BacklinksPage({ searchParams }: { searchParams: Promise<SearchPar
       {history.length > 0 && (
         <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border">
-            <h2 className="nexo-label">History</h2>
+            <h2 className="nexo-label">Histórico</h2>
           </div>
           <div className="divide-y divide-nexo-border">
             {history.map((entry) => {
@@ -479,7 +479,7 @@ async function BacklinksPage({ searchParams }: { searchParams: Promise<SearchPar
                     <p className={`text-sm font-medium font-mono truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.target}</p>
                     <p className="text-[11px] text-nexo-faint mt-0.5">
                       {entry.linksTotal !== undefined ? `${fmt(entry.linksTotal)} backlinks` : ''}
-                      {entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}
+                      {entry.cost !== undefined ? ` · US$ ${entry.cost.toFixed(4).replace('.', ',')}` : ''}
                     </p>
                   </div>
                   <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>

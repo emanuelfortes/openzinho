@@ -26,7 +26,7 @@ function campaignFromForm(formData: FormData): GridCampaignInput {
     center: text(formData, 'center'),
     grid_size: Number(text(formData, 'grid_size', '5')),
     spacing_km: Number(text(formData, 'spacing_km', '0.5')),
-    language: text(formData, 'language', 'English'),
+    language: text(formData, 'language', 'Portuguese'),
     queue_mode: text(formData, 'queue_mode') === 'priority' ? 'priority' : 'standard',
     frequency: text(formData, 'frequency', 'biweekly') as GridScheduleFrequency,
     weekday: Number(text(formData, 'weekday', '1')),

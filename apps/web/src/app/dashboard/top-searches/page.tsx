@@ -68,11 +68,11 @@ async function fetchTopSearches(
 
 function fmt(n?: number) {
   if (n === undefined || n === null) return '—';
-  return n.toLocaleString('en-GB');
+  return n.toLocaleString('pt-BR');
 }
 
 function formatDate(ts: number) {
-  return new Date(ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  return new Date(ts).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 const COST_PER_1000 = 0.05;
@@ -82,8 +82,8 @@ async function TopSearchesPage({ searchParams }: { searchParams: Promise<SearchP
   const params = await searchParams;
   const historyId = params.history_id;
 
-  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'France');
-  const defaultLanguage = getSetting('default_language') ?? 'French';
+  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'Brazil');
+  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
 
   const location = params.location ?? defaultLocation;
   const language = params.language ?? defaultLanguage;
@@ -107,7 +107,7 @@ async function TopSearchesPage({ searchParams }: { searchParams: Promise<SearchP
       totalCount = activeEntry?.totalCount;
       cost = activeEntry?.cost;
     } else {
-      error = 'This search is no longer available.';
+      error = 'Esta busca não está mais disponível.';
     }
   }
 
@@ -125,7 +125,7 @@ async function TopSearchesPage({ searchParams }: { searchParams: Promise<SearchP
       totalCount = cachedEntry?.totalCount;
       cost = cachedEntry?.cost;
     } else if (!creds) {
-      error = 'DataForSEO credentials missing. Configure them in Settings.';
+      error = 'Credenciais da DataForSEO ausentes. Configure-as em Configurações.';
     } else {
       const result = await fetchTopSearches(location, language, limit, ignoreSynonyms, creds.login, creds.pass);
       items = result.items;
@@ -170,11 +170,11 @@ async function TopSearchesPage({ searchParams }: { searchParams: Promise<SearchP
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="nexo-h1">Top Searches</h1>
-        <p className="text-sm text-nexo-faint mt-1">The most searched keywords for a given location and language, via DataForSEO Labs.</p>
+        <h1 className="nexo-h1">Principais buscas</h1>
+        <p className="text-sm text-nexo-faint mt-1">As palavras-chave mais buscadas para um local e idioma, via DataForSEO Labs.</p>
       </div>
 
-      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Search" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
+      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Buscar" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <LabsLocationLanguageFields
             defaultLocation={displayLocation}
@@ -182,7 +182,7 @@ async function TopSearchesPage({ searchParams }: { searchParams: Promise<SearchP
             className="w-full px-4 py-2.5 border border-nexo-border rounded-nexo-lg text-sm text-nexo-text focus:outline-none focus:ring-2 focus:ring-nexo-sky bg-nexo-surface"
           />
           <div>
-            <label className="nexo-label block mb-1.5">Number of results</label>
+            <label className="nexo-label block mb-1.5">Número de resultados</label>
             <select name="limit" defaultValue={String(displayLimit)}
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
               <option value="50">50</option>
@@ -196,14 +196,14 @@ async function TopSearchesPage({ searchParams }: { searchParams: Promise<SearchP
             <label className="flex items-center gap-3 cursor-pointer pb-2.5">
               <input type="checkbox" name="ignore_synonyms" value="true" defaultChecked={ignoreSynonyms}
                 className="w-4 h-4 rounded border-nexo-border text-nexo-sky focus:ring-nexo-sky" />
-              <span className="text-sm text-nexo-dim font-medium">Ignore synonyms</span>
+              <span className="text-sm text-nexo-dim font-medium">Ignorar sinônimos</span>
             </label>
           </div>
         </div>
         <div className="bg-nexo-warn/10 border border-nexo-warn/40 rounded-nexo-lg px-4 py-3">
           <p className="text-[11px] text-nexo-warn-text">
-            Cost: <span className="font-medium">${COST_PER_1000} / 1,000 keywords</span> — estimated for {limit} results:{' '}
-            <span className="font-medium">${estimatedCost}</span>
+            Custo: <span className="font-medium">US$ {String(COST_PER_1000).replace('.', ',')} / 1.000 palavras-chave</span> — estimativa para {limit} resultados:{' '}
+            <span className="font-medium">US$ {estimatedCost.replace('.', ',')}</span>
           </p>
         </div>
       </SearchForm>
@@ -214,42 +214,42 @@ async function TopSearchesPage({ searchParams }: { searchParams: Promise<SearchP
         <div id="results" className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <h2 className="nexo-label">Results</h2>
-              {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>}
+              <h2 className="nexo-label">Resultados</h2>
+              {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">Histórico</span>}
               {totalCount !== undefined && (
-                <span className="text-[10px] text-nexo-faint font-mono">{fmt(totalCount)} total</span>
+                <span className="text-[10px] text-nexo-faint font-mono">{fmt(totalCount)} no total</span>
               )}
             </div>
             <div className="flex items-center gap-3">
-              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">cost: ${cost.toFixed(4)}</span>}
-              <span className="text-xs font-medium text-nexo-faint">{items.length} keyword{items.length !== 1 ? 's' : ''}</span>
+              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">custo: US$ {cost.toFixed(4).replace('.', ',')}</span>}
+              <span className="text-xs font-medium text-nexo-faint">{items.length} {items.length !== 1 ? 'palavras-chave' : 'palavra-chave'}</span>
               {items.length > 0 && (
                 <div className="flex items-center gap-2">
                   <CopyMarkdownButton
                     data={csvData}
                     columns={[
-                      { key: 'keyword', label: 'Keyword' },
-                      { key: 'search_volume', label: 'Search Volume' },
+                      { key: 'keyword', label: 'Palavra-chave' },
+                      { key: 'search_volume', label: 'Volume de buscas' },
                       { key: 'cpc', label: 'CPC' },
-                      { key: 'competition_level', label: 'Competition' },
+                      { key: 'competition_level', label: 'Concorrência' },
                       { key: 'keyword_difficulty', label: 'KD' },
-                      { key: 'word_count', label: 'Word Count' },
-                      { key: 'intent', label: 'Intent' },
-                      { key: 'ref_domains', label: 'Avg Ref. Domains' },
+                      { key: 'word_count', label: 'Nº de palavras' },
+                      { key: 'intent', label: 'Intenção' },
+                      { key: 'ref_domains', label: 'Média de domínios de referência' },
                     ]}
                   />
                   <ExportCSVButton
                     data={csvData}
                     filename={`top-searches-${displayLocation}-${displayLanguage}.csv`}
                     columns={[
-                      { key: 'keyword', label: 'Keyword' },
-                      { key: 'search_volume', label: 'Search Volume' },
+                      { key: 'keyword', label: 'Palavra-chave' },
+                      { key: 'search_volume', label: 'Volume de buscas' },
                       { key: 'cpc', label: 'CPC' },
-                      { key: 'competition_level', label: 'Competition' },
+                      { key: 'competition_level', label: 'Concorrência' },
                       { key: 'keyword_difficulty', label: 'KD' },
-                      { key: 'word_count', label: 'Word Count' },
-                      { key: 'intent', label: 'Intent' },
-                      { key: 'ref_domains', label: 'Avg Ref. Domains' },
+                      { key: 'word_count', label: 'Nº de palavras' },
+                      { key: 'intent', label: 'Intenção' },
+                      { key: 'ref_domains', label: 'Média de domínios de referência' },
                     ]}
                   />
                 </div>
@@ -257,7 +257,7 @@ async function TopSearchesPage({ searchParams }: { searchParams: Promise<SearchP
             </div>
           </div>
           {items.length === 0 ? (
-            <div className="px-6 py-12 text-center text-sm text-nexo-faint">No results found.</div>
+            <div className="px-6 py-12 text-center text-sm text-nexo-faint">Nenhum resultado encontrado.</div>
           ) : (
             <TopSearchesTable items={items} />
           )}
@@ -267,7 +267,7 @@ async function TopSearchesPage({ searchParams }: { searchParams: Promise<SearchP
       {history.length > 0 && (
         <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border">
-            <h2 className="nexo-label">History</h2>
+            <h2 className="nexo-label">Histórico</h2>
           </div>
           <div className="divide-y divide-nexo-border">
             {history.map((entry) => {
@@ -280,9 +280,9 @@ async function TopSearchesPage({ searchParams }: { searchParams: Promise<SearchP
                       {entry.location} · {entry.language}
                     </p>
                     <p className="text-[11px] text-nexo-faint mt-0.5">
-                      {entry.count} keywords
-                      {entry.totalCount !== undefined ? ` / ${fmt(entry.totalCount)} total` : ''}
-                      {entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}
+                      {entry.count} {entry.count !== 1 ? 'palavras-chave' : 'palavra-chave'}
+                      {entry.totalCount !== undefined ? ` / ${fmt(entry.totalCount)} no total` : ''}
+                      {entry.cost !== undefined ? ` · US$ ${entry.cost.toFixed(4).replace('.', ',')}` : ''}
                     </p>
                   </div>
                   <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>

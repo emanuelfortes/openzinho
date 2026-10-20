@@ -68,12 +68,12 @@ interface SearchParams {
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function formatDate(ts: number) {
-  return new Date(ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  return new Date(ts).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 function formatDateTime(iso: string) {
   try {
-    return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    return new Date(iso).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' });
   } catch { return iso; }
 }
 
@@ -141,10 +141,10 @@ function MonthlyChart({ reviews }: { reviews: Review[] }) {
 
   const entries = Object.entries(monthMap).sort(([a], [b]) => a.localeCompare(b));
   if (entries.length < 2) {
-    return <p className="text-sm text-nexo-faint py-4 text-center">Not enough data to display monthly chart.</p>;
+    return <p className="text-sm text-nexo-faint py-4 text-center">Dados insuficientes para exibir o gráfico mensal.</p>;
   }
 
-  const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const MONTHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
   const W = 600, H = 160;
   const PAD = { top: 12, right: 10, bottom: 24, left: 32 };
   const chartW = W - PAD.left - PAD.right;
@@ -182,10 +182,10 @@ function MonthlyChart({ reviews }: { reviews: Review[] }) {
           <g key={month}>
             {/* Invisible wider hit area — native browser tooltip via <title> child */}
             <rect x={PAD.left + i * step} y={PAD.top} width={step} height={chartH} fill="transparent">
-              <title>{`${label}: ${count} review${count !== 1 ? 's' : ''}`}</title>
+              <title>{`${label}: ${count} ${count !== 1 ? 'avaliações' : 'avaliação'}`}</title>
             </rect>
             <rect x={x} y={y} width={barW} height={barH} rx="3" fill="#3b82f6" opacity="0.8">
-              <title>{`${label}: ${count} review${count !== 1 ? 's' : ''}`}</title>
+              <title>{`${label}: ${count} ${count !== 1 ? 'avaliações' : 'avaliação'}`}</title>
             </rect>
             {barH > 16 && (
               <text x={cx} y={y + barH - 4} textAnchor="middle" fontSize="8" fill="white" fontWeight="700">
@@ -241,8 +241,8 @@ function RatingGauge({ avg, total }: { avg: number; total: number }) {
         style={{ top: '60%', transform: 'translateY(-50%)' }}
       >
         <span className="nexo-metric font-mono text-2xl leading-none tabular-nums">{avg.toFixed(1)}</span>
-        <span className="text-[9px] text-nexo-faint mt-1">out of 5</span>
-        <span className="text-[9px] text-nexo-faint">{total} reviews</span>
+        <span className="text-[9px] text-nexo-faint mt-1">de 5</span>
+        <span className="text-[9px] text-nexo-faint">{total} {total === 1 ? 'avaliação' : 'avaliações'}</span>
       </div>
     </div>
   );
@@ -273,25 +273,25 @@ function GoalCalculator({ reviews }: { reviews: Review[] }) {
   }
 
   if (targetsTenths.length === 0) return (
-    <p className="text-xs text-nexo-dim">Already displaying 5.0★ — nothing higher to reach.</p>
+    <p className="text-xs text-nexo-dim">Já exibe 5,0★: não há nota mais alta a alcançar.</p>
   );
 
   return (
     <div className="space-y-3">
       <p className="text-xs text-nexo-dim">
-        Current average: <strong className="text-nexo-dim">{avg.toFixed(2)}★</strong>{' '}
-        (Google shows <strong className="text-nexo-dim">{displayed.toFixed(1)}★</strong>) based on{' '}
-        <strong className="text-nexo-dim">{n}</strong> fetched reviews. Assumes all new reviews are{' '}
-        <strong className="text-nexo-dim">5★</strong>; counts reach the rating Google would display.
+        Média atual: <strong className="text-nexo-dim">{avg.toFixed(2).replace('.', ',')}★</strong>{' '}
+        (o Google mostra <strong className="text-nexo-dim">{displayed.toFixed(1).replace('.', ',')}★</strong>), com base em{' '}
+        <strong className="text-nexo-dim">{n}</strong> avaliações coletadas. Supõe que todas as novas avaliações sejam{' '}
+        <strong className="text-nexo-dim">5★</strong>; as contagens alcançam a nota que o Google exibiria.
       </p>
 
       <div className="overflow-x-auto rounded-nexo-lg border border-nexo-border">
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-white/[0.02] border-b border-nexo-border">
-              <th className="nexo-label text-left px-4 py-2.5">Target rating</th>
-              <th className="nexo-label text-right px-4 py-2.5">5★ reviews needed</th>
-              <th className="nexo-label text-right px-4 py-2.5 hidden sm:table-cell">Total reviews after</th>
+              <th className="nexo-label text-left px-4 py-2.5">Nota alvo</th>
+              <th className="nexo-label text-right px-4 py-2.5">Avaliações 5★ necessárias</th>
+              <th className="nexo-label text-right px-4 py-2.5 hidden sm:table-cell">Total de avaliações depois</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-nexo-border">
@@ -308,16 +308,16 @@ function GoalCalculator({ reviews }: { reviews: Review[] }) {
               return (
                 <tr key={t} className="hover:bg-white/[0.04] transition-colors">
                   <td className="px-4 py-2.5">
-                    <span className="font-medium text-nexo-text">{target.toFixed(1)}</span>
+                    <span className="font-medium text-nexo-text">{target.toFixed(1).replace('.', ',')}</span>
                     <span className="text-nexo-warn-text ml-1">★</span>
                   </td>
                   <td className="px-4 py-2.5 text-right">
                     <span className={`font-medium tabular-nums text-base ${easy ? 'text-nexo-ice' : medium ? 'text-nexo-sky' : 'text-nexo-dim'}`}>
-                      {needed > 0 ? needed.toLocaleString() : '0'}
+                      {needed > 0 ? needed.toLocaleString('pt-BR') : '0'}
                     </span>
                   </td>
                   <td className="px-4 py-2.5 text-right text-xs text-nexo-faint tabular-nums hidden sm:table-cell">
-                    {(n + needed).toLocaleString()}
+                    {(n + needed).toLocaleString('pt-BR')}
                   </td>
                 </tr>
               );
@@ -354,18 +354,18 @@ function BusinessInfoCard({ meta }: { meta: BusinessMeta }) {
   return (
     <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
       <div className="px-6 py-4 border-b border-nexo-border">
-        <h2 className="nexo-label">Business info</h2>
+        <h2 className="nexo-label">Dados da empresa</h2>
       </div>
       <div className="px-6 py-5 space-y-3">
         {meta.category && (
           <div className="flex items-start gap-3">
-            <span className="nexo-label w-32 shrink-0 pt-0.5">Primary category</span>
+            <span className="nexo-label w-32 shrink-0 pt-0.5">Categoria principal</span>
             <span className="text-sm font-semibold text-nexo-text">{meta.category}</span>
           </div>
         )}
         {meta.additional_categories && meta.additional_categories.length > 0 && (
           <div className="flex items-start gap-3">
-            <span className="nexo-label w-32 shrink-0 pt-0.5">Also in</span>
+            <span className="nexo-label w-32 shrink-0 pt-0.5">Também em</span>
             <div className="flex flex-wrap gap-1.5">
               {meta.additional_categories.map((c, i) => (
                 <span key={i} className="text-xs text-nexo-dim bg-nexo-surface-2 border border-nexo-border px-2 py-0.5 rounded-nexo">{c}</span>
@@ -375,25 +375,25 @@ function BusinessInfoCard({ meta }: { meta: BusinessMeta }) {
         )}
         {meta.description && (
           <div className="flex items-start gap-3">
-            <span className="nexo-label w-32 shrink-0 pt-0.5">Description</span>
+            <span className="nexo-label w-32 shrink-0 pt-0.5">Descrição</span>
             <p className="text-sm text-nexo-dim leading-relaxed">{meta.description}</p>
           </div>
         )}
         {meta.address && (
           <div className="flex items-start gap-3">
-            <span className="nexo-label w-32 shrink-0 pt-0.5">Address</span>
+            <span className="nexo-label w-32 shrink-0 pt-0.5">Endereço</span>
             <span className="text-sm text-nexo-dim">{meta.address}</span>
           </div>
         )}
         {meta.phone && (
           <div className="flex items-start gap-3">
-            <span className="nexo-label w-32 shrink-0 pt-0.5">Phone</span>
+            <span className="nexo-label w-32 shrink-0 pt-0.5">Telefone</span>
             <span className="text-sm text-nexo-dim">{meta.phone}</span>
           </div>
         )}
         {(meta.website || meta.url) && (
           <div className="flex items-start gap-3">
-            <span className="nexo-label w-32 shrink-0 pt-0.5">Website</span>
+            <span className="nexo-label w-32 shrink-0 pt-0.5">Site</span>
             <a href={meta.website ?? meta.url} target="_blank" rel="noopener noreferrer" className="text-sm text-nexo-sky hover:underline truncate max-w-xs">{meta.website ?? meta.url}</a>
           </div>
         )}
@@ -411,8 +411,8 @@ function BusinessInfoCard({ meta }: { meta: BusinessMeta }) {
 // ─── Popular times chart (single day) ────────────────────────────────────────
 
 const DAY_LABELS: Record<string, string> = {
-  monday: 'Mon', tuesday: 'Tue', wednesday: 'Wed', thursday: 'Thu',
-  friday: 'Fri', saturday: 'Sat', sunday: 'Sun',
+  monday: 'Seg', tuesday: 'Ter', wednesday: 'Qua', thursday: 'Qui',
+  friday: 'Sex', saturday: 'Sáb', sunday: 'Dom', today: 'Hoje',
 };
 const DAY_ORDER = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
@@ -436,7 +436,7 @@ function PopularTimesDay({ dayKey, hours }: { dayKey: string; hours: PopularHour
       <div className="flex items-center justify-between px-1">
         <span className="nexo-label">{DAY_LABELS[dayKey] ?? dayKey}</span>
         {peakHour.value > 0 && (
-          <span className="text-[10px] text-nexo-faint">Peak {peakHour.hour}h</span>
+          <span className="text-[10px] text-nexo-faint">Pico às {peakHour.hour}h</span>
         )}
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: `${H}px` }}>
@@ -472,8 +472,8 @@ function PopularTimesByDaySection({ byDay }: { byDay: Record<string, PopularHour
   return (
     <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
       <div className="px-6 py-4 border-b border-nexo-border">
-        <h2 className="nexo-label">Popular times by day</h2>
-        <p className="text-[11px] text-nexo-faint mt-0.5">Hover a bar to see the hour and busyness level.</p>
+        <h2 className="nexo-label">Horários de pico por dia</h2>
+        <p className="text-[11px] text-nexo-faint mt-0.5">Passe o mouse sobre uma barra para ver a hora e o nível de movimento.</p>
       </div>
       <div className="px-6 py-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
         {days.map((day) => (
@@ -489,17 +489,17 @@ function PopularTimesByDaySection({ byDay }: { byDay: Record<string, PopularHour
 function StatusBadge({ status }: { status: ReviewsTask['status'] }) {
   if (status === 'ready') return (
     <span className="inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-widest text-nexo-ice bg-nexo-ice/10 border border-nexo-ice/30 px-2 py-0.5 rounded-nexo">
-      <CheckCircle className="w-2.5 h-2.5" /> Ready
+      <CheckCircle className="w-2.5 h-2.5" /> Pronto
     </span>
   );
   if (status === 'error') return (
     <span className="inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-widest text-nexo-danger-text bg-nexo-danger/10 border border-nexo-danger/40 px-2 py-0.5 rounded-nexo">
-      <AlertCircle className="w-2.5 h-2.5" /> Error
+      <AlertCircle className="w-2.5 h-2.5" /> Erro
     </span>
   );
   return (
     <span className="inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-widest text-nexo-warn-text bg-nexo-warn/10 border border-nexo-warn/40 px-2 py-0.5 rounded-nexo">
-      <Clock className="w-2.5 h-2.5" /> Pending
+      <Clock className="w-2.5 h-2.5" /> Pendente
     </span>
   );
 }
@@ -521,8 +521,8 @@ function StatCard({ label, value, sub }: { label: string; value: string; sub?: s
 async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const creds = getCredentials();
   const params = await searchParams;
-  const defaultLocation = getSetting('default_location') ?? 'France';
-  const defaultLanguage = getSetting('default_language') ?? 'French';
+  const defaultLocation = getSetting('default_location') ?? 'Brazil';
+  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
   const brand = getBrandSettings();
   const brandName = brand.name;
   const brandLogoUrl = brand.logo ?? undefined;
@@ -625,28 +625,28 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
     date: r.timestamp ?? r.time_ago ?? '',
     rating: r.rating?.value ?? '',
     author: r.profile_name ?? '',
-    local_guide: r.local_guide ? 'yes' : 'no',
+    local_guide: r.local_guide ? 'sim' : 'não',
     review: (r.review_text ?? '').replace(/<br\s*\/?>/gi, ' '),
     owner_response: (r.owner_answer ?? '').replace(/<br\s*\/?>/gi, ' '),
   }));
   const reviewsCsvColumns = [
-    { key: 'date', label: 'Date' },
-    { key: 'rating', label: 'Rating' },
-    { key: 'author', label: 'Author' },
-    { key: 'local_guide', label: 'Local guide' },
-    { key: 'review', label: 'Review' },
-    { key: 'owner_response', label: 'Owner response' },
+    { key: 'date', label: 'Data' },
+    { key: 'rating', label: 'Nota' },
+    { key: 'author', label: 'Autor' },
+    { key: 'local_guide', label: 'Local Guide' },
+    { key: 'review', label: 'Avaliação' },
+    { key: 'owner_response', label: 'Resposta do proprietário' },
   ];
   const reviewsExcelData = reviews.map((r) => ({
     date: r.timestamp ?? r.time_ago ?? '', rating: r.rating?.value ?? '', author: r.profile_name ?? '',
-    local_guide: r.local_guide ? 'Yes' : 'No', author_review_count: r.reviews_count ?? '',
+    local_guide: r.local_guide ? 'Sim' : 'Não', author_review_count: r.reviews_count ?? '',
     review: (r.review_text ?? '').replace(/<br\s*\/?>/gi, '\n'),
     owner_response: (r.owner_answer ?? '').replace(/<br\s*\/?>/gi, '\n'), owner_reply_date: r.owner_time_ago ?? '',
   }));
   const reviewFileStem = (activeTask?.business || 'reviews').replace(/[^a-z0-9]+/gi, '-').replace(/^-+|-+$/g, '').toLowerCase();
   const distributionRows = [5, 4, 3, 2, 1].map((stars) => {
     const count = ratings.filter((value) => value >= stars - 0.5 && value < stars + 0.5).length;
-    return [`${stars} stars`, `${count} (${ratings.length ? Math.round((count / ratings.length) * 100) : 0}%)`] as [string, string];
+    return [`${stars} ${stars === 1 ? 'estrela' : 'estrelas'}`, `${count} (${ratings.length ? Math.round((count / ratings.length) * 100) : 0}%)`] as [string, string];
   });
 
   const pendingCount = tasks.filter((t) => t.status === 'pending').length;
@@ -666,9 +666,9 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
             {t.business}
           </p>
           <p className="text-[11px] text-nexo-faint mt-0.5">
-            {t.location} · {t.language} · {t.depth} reviews · {formatDate(t.ts)}
-            {t.resultCount ? ` · ${t.resultCount} results` : ''}
-            {t.cost !== undefined ? ` · $${t.cost.toFixed(5)}` : ''}
+            {t.location} · {t.language} · {t.depth} avaliações · {formatDate(t.ts)}
+            {t.resultCount ? ` · ${t.resultCount} ${t.resultCount === 1 ? 'resultado' : 'resultados'}` : ''}
+            {t.cost !== undefined ? ` · US$ ${t.cost.toFixed(5).replace('.', ',')}` : ''}
           </p>
         </div>
         <StatusBadge status={t.status} />
@@ -680,14 +680,14 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="nexo-h1">Google Reviews</h1>
-        <p className="text-sm text-nexo-faint mt-1">Analyse reviews for a business — distribution, monthly trend, and rating goals.</p>
+        <h1 className="nexo-h1">Avaliações do Google</h1>
+        <p className="text-sm text-nexo-faint mt-1">Analise as avaliações de uma empresa: distribuição, tendência mensal e metas de nota.</p>
       </div>
 
       {!creds && (
         <div className="bg-nexo-warn/10 border border-nexo-warn/40 text-nexo-warn-text text-sm rounded-nexo-lg px-4 py-3">
-          DataForSEO credentials missing. Configure them in{' '}
-          <a href="/dashboard/settings" className="underline font-semibold">settings</a>.
+          Credenciais da DataForSEO ausentes. Configure-as em{' '}
+          <a href="/dashboard/settings" className="underline font-semibold">Configurações</a>.
         </div>
       )}
 
@@ -697,58 +697,58 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
       <form action={submitReviewsTaskAction} className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="sm:col-span-2">
-            <label className="nexo-label block mb-1.5">Business name</label>
+            <label className="nexo-label block mb-1.5">Nome da empresa</label>
             <input
               type="text"
               name="keyword"
               required
-              placeholder="e.g. Joe's Plumbing New York"
+              placeholder="ex.: Padaria Pão Quente São Paulo"
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
             />
           </div>
           <div>
-            <label className="nexo-label block mb-1.5">Location</label>
+            <label className="nexo-label block mb-1.5">Local</label>
             <LocationPicker
               name="location"
               defaultValue={defaultLocation}
-              placeholder="e.g. France, Paris"
+              placeholder="ex.: Brazil, São Paulo"
               className="w-full px-4 py-2.5 border border-nexo-border rounded-nexo-lg text-sm text-nexo-text placeholder-white/30 bg-nexo-surface focus:outline-none focus:ring-2 focus:ring-nexo-sky"
             />
           </div>
           <div>
-            <label className="nexo-label block mb-1.5">Language</label>
+            <label className="nexo-label block mb-1.5">Idioma</label>
             <input
               type="text"
               name="language"
               defaultValue={defaultLanguage}
-              placeholder="e.g. French"
+              placeholder="ex.: Portuguese"
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
             />
           </div>
           <div>
-            <label className="nexo-label block mb-1.5">Depth</label>
+            <label className="nexo-label block mb-1.5">Profundidade</label>
             <select
               name="depth"
               defaultValue="100"
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
             >
-              <option value="50">50 reviews</option>
-              <option value="100">100 reviews</option>
-              <option value="200">200 reviews</option>
-              <option value="500">500 reviews</option>
+              <option value="50">50 avaliações</option>
+              <option value="100">100 avaliações</option>
+              <option value="200">200 avaliações</option>
+              <option value="500">500 avaliações</option>
             </select>
           </div>
           <div>
-            <label className="nexo-label block mb-1.5">Sort by</label>
+            <label className="nexo-label block mb-1.5">Ordenar por</label>
             <select
               name="sort_by"
               defaultValue="newest"
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
             >
-              <option value="newest">Newest</option>
-              <option value="relevant">Most relevant</option>
-              <option value="highest_rating">Highest rating</option>
-              <option value="lowest_rating">Lowest rating</option>
+              <option value="newest">Mais recentes</option>
+              <option value="relevant">Mais relevantes</option>
+              <option value="highest_rating">Nota mais alta</option>
+              <option value="lowest_rating">Nota mais baixa</option>
             </select>
           </div>
         </div>
@@ -756,10 +756,10 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
           type="submit"
           disabled={!creds}
           className="nexo-label w-full bg-white text-nexo-bg py-2.5 rounded-nexo-lg hover:bg-nexo-ice transition-colors disabled:opacity-40"
-          pendingChildren="Submitting task…"
+          pendingChildren="Enviando tarefa…"
           pendingClassName="w-full bg-white/30 text-white font-medium uppercase tracking-widest text-xs py-2.5 rounded-nexo-lg cursor-not-allowed"
         >
-          Fetch reviews
+          Buscar avaliações
         </PendingButton>
       </form>
 
@@ -771,8 +771,8 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
           </svg>
           <span>
-            <strong>{pendingCount}</strong> task{pendingCount > 1 ? 's' : ''} being processed by DataForSEO.
-            Reload the page to check progress.
+            <strong>{pendingCount}</strong> {pendingCount > 1 ? 'tarefas sendo processadas' : 'tarefa sendo processada'} pela DataForSEO.
+            Recarregue a página para ver o andamento.
           </span>
         </div>
       )}
@@ -781,25 +781,25 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
       {activeTask && activeTask.status === 'ready' && reviews.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-4 border-y border-nexo-border py-3">
-            <p className="nexo-label">Export reputation report</p>
+            <p className="nexo-label">Exportar relatório de reputação</p>
             <div className="flex items-center gap-3">
               <ReportPdfExportButton brandName={brandName} brandLogoUrl={brandLogoUrl} brandColor={brand.color} brandFooter={brand.footer} brandStyle={brand} filename={`${reviewFileStem}-reputation-report.pdf`}
-                title="Google reviews report" subject={meta?.title || activeTask.business} generatedAt={activeTask.ts}
+                title="Relatório de avaliações do Google" subject={meta?.title || activeTask.business} generatedAt={activeTask.ts}
                 metrics={[
-                  { label: 'Average rating', value: avgRating?.toFixed(2) ?? '—', detail: 'out of 5 stars' },
-                  { label: 'Reviews analysed', value: String(reviews.length), detail: meta?.total_count ? `${meta.total_count} available` : undefined },
-                  { label: 'Positive reviews', value: positivePct !== null ? `${positivePct}%` : '—', detail: '4 stars and above' },
-                  { label: 'Owner replies', value: ownerReplyPct !== null ? `${ownerReplyPct}%` : '—', detail: `${ownerRepliedCount} replies` },
+                  { label: 'Nota média', value: avgRating?.toFixed(2).replace('.', ',') ?? '—', detail: 'de 5 estrelas' },
+                  { label: 'Avaliações analisadas', value: String(reviews.length), detail: meta?.total_count ? `${meta.total_count} disponíveis` : undefined },
+                  { label: 'Avaliações positivas', value: positivePct !== null ? `${positivePct}%` : '—', detail: '4 estrelas ou mais' },
+                  { label: 'Respostas do proprietário', value: ownerReplyPct !== null ? `${ownerReplyPct}%` : '—', detail: `${ownerRepliedCount} ${ownerRepliedCount === 1 ? 'resposta' : 'respostas'}` },
                 ]}
                 sections={[
-                  { title: 'Rating distribution', rows: distributionRows },
-                  { title: 'Business details', rows: [[ 'Category', meta?.category ?? '—' ], [ 'Address', meta?.address ?? '—' ], [ 'Website', meta?.website ?? '—' ]].filter((row) => row[1] !== '—') as Array<[string, string]> },
+                  { title: 'Distribuição das notas', rows: distributionRows },
+                  { title: 'Dados da empresa', rows: [[ 'Categoria', meta?.category ?? '—' ], [ 'Endereço', meta?.address ?? '—' ], [ 'Site', meta?.website ?? '—' ]].filter((row) => row[1] !== '—') as Array<[string, string]> },
                 ]} />
               <ExportExcelButton filename={`${reviewFileStem}-reviews.xls`} sheets={[{
-                name: 'Reviews', columns: [
-                  { key: 'date', label: 'Date' }, { key: 'rating', label: 'Rating' }, { key: 'author', label: 'Author' },
-                  { key: 'local_guide', label: 'Local guide' }, { key: 'author_review_count', label: 'Author review count' },
-                  { key: 'review', label: 'Review' }, { key: 'owner_response', label: 'Owner response' }, { key: 'owner_reply_date', label: 'Owner reply date' },
+                name: 'Avaliações', columns: [
+                  { key: 'date', label: 'Data' }, { key: 'rating', label: 'Nota' }, { key: 'author', label: 'Autor' },
+                  { key: 'local_guide', label: 'Local Guide' }, { key: 'author_review_count', label: 'Avaliações do autor' },
+                  { key: 'review', label: 'Avaliação' }, { key: 'owner_response', label: 'Resposta do proprietário' }, { key: 'owner_reply_date', label: 'Data da resposta do proprietário' },
                 ], data: reviewsExcelData,
               }]} />
               <DownloadCsvButton reviews={reviews} filename={`${reviewFileStem}-reviews.csv`} />
@@ -814,21 +814,21 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
                 </div>
               )}
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 flex-1 min-w-0">
-                <StatCard label="Reviews fetched" value={reviews.length.toString()} />
+                <StatCard label="Avaliações coletadas" value={reviews.length.toString()} />
                 {avgRating !== null && (
-                  <StatCard label="Avg rating" value={avgRating.toFixed(2)} sub="out of 5 stars" />
+                  <StatCard label="Nota média" value={avgRating.toFixed(2).replace('.', ',')} sub="de 5 estrelas" />
                 )}
                 {fiveStarPct !== null && (
-                  <StatCard label="5★ reviews" value={`${fiveStarPct}%`} sub="4.5+ stars" />
+                  <StatCard label="Avaliações 5★" value={`${fiveStarPct}%`} sub="4,5+ estrelas" />
                 )}
                 {positivePct !== null && (
-                  <StatCard label="Positive" value={`${positivePct}%`} sub="4+ stars" />
+                  <StatCard label="Positivas" value={`${positivePct}%`} sub="4+ estrelas" />
                 )}
                 {ownerReplyPct !== null && (
-                  <StatCard label="Owner replies" value={`${ownerReplyPct}%`} sub={`${ownerRepliedCount} of ${reviews.length}`} />
+                  <StatCard label="Respostas do proprietário" value={`${ownerReplyPct}%`} sub={`${ownerRepliedCount} de ${reviews.length}`} />
                 )}
                 {activeTask.cost !== undefined && (
-                  <StatCard label="API cost" value={`$${activeTask.cost.toFixed(5)}`} />
+                  <StatCard label="Custo da API" value={`US$ ${activeTask.cost.toFixed(5).replace('.', ',')}`} />
                 )}
               </div>
             </div>
@@ -840,7 +840,7 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
           {/* Distribution */}
           <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
             <div className="px-6 py-4 border-b border-nexo-border">
-              <h2 className="nexo-label">Rating distribution</h2>
+              <h2 className="nexo-label">Distribuição das notas</h2>
             </div>
             <div className="px-6 py-5">
               <DistributionChart reviews={reviews} />
@@ -850,8 +850,8 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
           {/* Monthly chart */}
           <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
             <div className="px-6 py-4 border-b border-nexo-border">
-              <h2 className="nexo-label">Reviews per month</h2>
-              <p className="text-[11px] text-nexo-faint mt-0.5">Hover a bar to see the exact month and count.</p>
+              <h2 className="nexo-label">Avaliações por mês</h2>
+              <p className="text-[11px] text-nexo-faint mt-0.5">Passe o mouse sobre uma barra para ver o mês e a contagem exata.</p>
             </div>
             <div className="px-6 py-4">
               <MonthlyChart reviews={reviews} />
@@ -865,7 +865,7 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
           {meta?.popular_times && meta.popular_times.length > 0 && !meta.popular_times_by_day && (
             <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
               <div className="px-6 py-4 border-b border-nexo-border">
-                <h2 className="nexo-label">Popular times</h2>
+                <h2 className="nexo-label">Horários de pico</h2>
               </div>
               <div className="px-6 py-5">
                 <PopularTimesDay dayKey="today" hours={meta.popular_times} />
@@ -876,8 +876,8 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
           {/* Goal calculator */}
           <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
             <div className="px-6 py-4 border-b border-nexo-border">
-              <h2 className="nexo-label">Rating goal</h2>
-              <p className="text-[11px] text-nexo-faint mt-0.5">5★ reviews needed for each 0.1 increment.</p>
+              <h2 className="nexo-label">Meta de nota</h2>
+              <p className="text-[11px] text-nexo-faint mt-0.5">Avaliações 5★ necessárias para cada aumento de 0,1.</p>
             </div>
             <div className="px-6 py-5">
               <GoalCalculator reviews={reviews} />
@@ -887,9 +887,9 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
           {/* Reviews list */}
           <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
             <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between gap-3">
-              <h2 className="nexo-label">Reviews</h2>
+              <h2 className="nexo-label">Avaliações</h2>
               <div className="flex items-center gap-4">
-                <span className="text-xs text-nexo-faint">{reviews.length} fetched</span>
+                <span className="text-xs text-nexo-faint">{reviews.length} {reviews.length === 1 ? 'coletada' : 'coletadas'}</span>
                 <CopyMarkdownButton data={reviewsCsvData} columns={reviewsCsvColumns} />
                 <DownloadCsvButton
                   reviews={reviews}
@@ -902,7 +902,7 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
                 <div key={i} className="px-6 py-4 space-y-1.5">
                   <div className="flex items-center gap-2 flex-wrap">
                     {r.rating?.value !== undefined && <StarRow value={r.rating.value} />}
-                    <span className="text-xs font-semibold text-nexo-dim">{r.profile_name ?? 'Anonymous'}</span>
+                    <span className="text-xs font-semibold text-nexo-dim">{r.profile_name ?? 'Anônimo'}</span>
                     {r.local_guide && (
                       <span className="nexo-section bg-nexo-blue/10 border border-nexo-border-strong px-1.5 py-0.5 rounded">
                         Local Guide
@@ -922,7 +922,7 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
                   )}
                   {r.owner_answer && (
                     <div className="mt-2 ml-4 pl-3 border-l-2 border-nexo-border-strong">
-                      <p className="nexo-section mb-0.5">Owner response</p>
+                      <p className="nexo-section mb-0.5">Resposta do proprietário</p>
                       <p className="text-xs text-nexo-dim leading-relaxed">
                         <TextWithBreaks text={r.owner_answer} />
                       </p>
@@ -932,7 +932,7 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
               ))}
               {reviews.length > 100 && (
                 <div className="px-6 py-4 text-center text-xs text-nexo-faint">
-                  {reviews.length - 100} more reviews not shown.
+                  {reviews.length - 100} avaliações a mais não exibidas.
                 </div>
               )}
             </div>
@@ -942,13 +942,13 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
 
       {activeTask && activeTask.status === 'pending' && (
         <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-6 py-10 text-center text-sm text-nexo-faint">
-          Task is being processed by DataForSEO. Reload the page in a few seconds.
+          A tarefa está sendo processada pela DataForSEO. Recarregue a página em alguns segundos.
         </div>
       )}
         </div>
 
         {tasks.length > 0 && (
-          <HistorySidebar title="History" items={historyItems} />
+          <HistorySidebar title="Histórico" items={historyItems} />
         )}
       </div>
     </div>

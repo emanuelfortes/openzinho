@@ -134,8 +134,8 @@ export function drawStatusItems(ctx: BlockContext, items: StatusItem[], startY: 
   return y;
 }
 
-const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-const LEGEND: Array<[PdfStatus, string]> = [['cited', 'Cited'], ['not-cited', 'Not cited'], ['error', 'Error'], ['none', 'No check']];
+const WEEKDAYS = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+const LEGEND: Array<[PdfStatus, string]> = [['cited', 'Citado'], ['not-cited', 'Não citado'], ['error', 'Erro'], ['none', 'Sem verificação']];
 
 /** Weekly heat-map: one coloured cell per day, numbered with the day of the month. */
 export function drawCalendar(ctx: BlockContext, calendar: PdfCalendar, startY: number): number {

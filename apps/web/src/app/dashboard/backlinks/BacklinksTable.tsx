@@ -15,7 +15,7 @@ function DRBadge({ value }: { value?: number }) {
 
 function formatSeenDate(s?: string) {
   if (!s) return '—';
-  return new Date(s).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+  return new Date(s).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
 }
 
 function sortValue(item: BacklinkItem, key: SortKey): number | string {
@@ -70,11 +70,11 @@ export default function BacklinksTable({ links }: { links: BacklinkItem[] }) {
         <thead>
           <tr className="border-b border-nexo-border bg-white/[0.02]">
             <Header label="DR" sortK="dr" align="center" width="w-12" />
-            <Header label="Source page" sortK="source" align="left" />
-            <Header label="Anchor" sortK="anchor" align="left" />
-            <th className="nexo-label px-4 py-3 text-left hidden lg:table-cell">Target page</th>
-            <Header label="Type" sortK="type" align="center" className="hidden sm:table-cell" />
-            <Header label="Seen" sortK="seen" align="right" className="hidden md:table-cell" />
+            <Header label="Página de origem" sortK="source" align="left" />
+            <Header label="Âncora" sortK="anchor" align="left" />
+            <th className="nexo-label px-4 py-3 text-left hidden lg:table-cell">Página de destino</th>
+            <Header label="Tipo" sortK="type" align="center" className="hidden sm:table-cell" />
+            <Header label="Visto em" sortK="seen" align="right" className="hidden md:table-cell" />
           </tr>
         </thead>
         <tbody className="divide-y divide-nexo-border">
@@ -97,14 +97,14 @@ export default function BacklinksTable({ links }: { links: BacklinkItem[] }) {
                     {link.anchor ? (
                       <span className="text-xs text-nexo-text font-medium truncate">{link.anchor}</span>
                     ) : link.image_url ? (
-                      <span className="text-[10px] text-nexo-faint italic">Image</span>
+                      <span className="text-[10px] text-nexo-faint italic">Imagem</span>
                     ) : (
                       <span className="text-nexo-faint text-xs">—</span>
                     )}
                     <span className={`shrink-0 text-[9px] font-medium uppercase px-1.5 py-0.5 rounded ${link.dofollow ? 'text-nexo-ice bg-nexo-ice/10' : 'text-nexo-faint bg-nexo-surface-2'}`}>
                       {link.dofollow ? 'do' : 'no'}
                     </span>
-                    {isBroken && <span className="shrink-0 text-[9px] font-medium uppercase px-1.5 py-0.5 rounded text-nexo-danger-text bg-nexo-danger/10">broken</span>}
+                    {isBroken && <span className="shrink-0 text-[9px] font-medium uppercase px-1.5 py-0.5 rounded text-nexo-danger-text bg-nexo-danger/10">quebrado</span>}
                   </div>
                 </td>
                 <td className="px-4 py-3 max-w-[200px] hidden lg:table-cell">

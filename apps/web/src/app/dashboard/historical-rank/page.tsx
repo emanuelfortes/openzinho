@@ -55,7 +55,7 @@ async function fetchHistRank(target: string, location: string, language: string,
 }
 
 function formatMonth(year: number, month: number) {
-  return new Date(year, month - 1, 1).toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
+  return new Date(year, month - 1, 1).toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' });
 }
 
 function todayIso() {
@@ -77,7 +77,7 @@ function Bar({ value, max, color }: { value: number; max: number; color: string 
       <div className="flex-1 h-2 bg-nexo-surface-2 rounded-full overflow-hidden">
         <div className={`h-full rounded-full ${color}`} style={{ width: `${pct}%` }} />
       </div>
-      <span className="text-[10px] font-mono font-medium text-nexo-dim w-10 text-right">{value.toLocaleString()}</span>
+      <span className="text-[10px] font-mono font-medium text-nexo-dim w-10 text-right">{value.toLocaleString('pt-BR')}</span>
     </div>
   );
 }
@@ -85,8 +85,8 @@ function Bar({ value, max, color }: { value: number; max: number; color: string 
 async function HistoricalRankPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const creds = getCredentials();
   const history = getHistRankHistory();
-  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'France');
-  const defaultLanguage = getSetting('default_language') ?? 'French';
+  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'Brazil');
+  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
   const defaultDomain = getSetting('default_domain') ?? '';
 
   const params = await searchParams;
@@ -104,7 +104,7 @@ async function HistoricalRankPage({ searchParams }: { searchParams: Promise<Sear
   let cost = 0;
 
   if (dateFrom > dateTo) {
-    error = 'Choose a start date on or before the end date.';
+    error = 'Escolha uma data inicial igual ou anterior à data final.';
   } else if (historyId) {
     items = getHistRankResults<HistRankItem>(historyId) ?? [];
   } else if (target && creds) {
@@ -148,16 +148,16 @@ async function HistoricalRankPage({ searchParams }: { searchParams: Promise<Sear
   return (
     <div className="space-y-6 pb-12">
       <div>
-        <h1 className="nexo-h1">Historical Rank Overview</h1>
-        <p className="text-nexo-dim text-sm mt-1 font-medium">Monthly keyword count and SERP-position mix for a domain</p>
+        <h1 className="nexo-h1">Histórico de ranking</h1>
+        <p className="text-nexo-dim text-sm mt-1 font-medium">Quantidade mensal de palavras-chave e distribuição de posições na SERP de um domínio</p>
       </div>
 
       <div className="grid gap-6 grid-cols-[repeat(auto-fit,minmax(320px,1fr))]">
         <div className="xl:col-span-2 space-y-5">
-          <SearchForm className="bg-nexo-surface border border-nexo-border rounded-nexo-lg p-6 space-y-4" btnLabel="Analyze" btnClassName="w-full bg-nexo-blue text-white py-3 rounded-nexo-lg font-medium uppercase text-[10px] tracking-widest hover:bg-nexo-sky transition-all disabled:opacity-40" disabled={!creds}>
+          <SearchForm className="bg-nexo-surface border border-nexo-border rounded-nexo-lg p-6 space-y-4" btnLabel="Analisar" btnClassName="w-full bg-nexo-blue text-white py-3 rounded-nexo-lg font-medium uppercase text-[10px] tracking-widest hover:bg-nexo-sky transition-all disabled:opacity-40" disabled={!creds}>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="md:col-span-3 space-y-1.5">
-                <label className="nexo-label">Target Domain</label>
+                <label className="nexo-label">Domínio alvo</label>
                 <input name="target" type="text" defaultValue={target || defaultDomain} placeholder="example.com" className="nexo-input min-w-0 w-full px-4 py-3 outline-none focus:ring-4 focus:ring-nexo-sky text-sm font-medium transition-all" />
               </div>
               <LabsLocationLanguageFields
@@ -169,17 +169,17 @@ async function HistoricalRankPage({ searchParams }: { searchParams: Promise<Sear
               />
               <div className="md:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-nexo-border pt-4">
                 <div className="space-y-1.5">
-                  <label className="nexo-label">From</label>
+                  <label className="nexo-label">De</label>
                   <input name="date_from" type="date" defaultValue={dateFrom} min={HISTORICAL_RANK_START} max={maxDate} className="nexo-input min-w-0 w-full px-4 py-3 outline-none focus:ring-4 focus:ring-nexo-sky text-sm font-medium transition-all" />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="nexo-label">To</label>
+                  <label className="nexo-label">Até</label>
                   <input name="date_to" type="date" defaultValue={dateTo} min={HISTORICAL_RANK_START} max={maxDate} className="nexo-input min-w-0 w-full px-4 py-3 outline-none focus:ring-4 focus:ring-nexo-sky text-sm font-medium transition-all" />
                 </div>
               </div>
             </div>
-            <p className="text-[11px] leading-relaxed text-nexo-faint">Historical Rank data is available from October 2020. The full period is selected by default.</p>
-            {!creds && <p className="text-xs text-nexo-warn-text font-medium">Configure API credentials in Settings first.</p>}
+            <p className="text-[11px] leading-relaxed text-nexo-faint">Os dados do histórico de ranking estão disponíveis a partir de outubro de 2020. O período completo vem selecionado por padrão.</p>
+            {!creds && <p className="text-xs text-nexo-warn-text font-medium">Configure primeiro as credenciais da API em Configurações.</p>}
           </SearchForm>
 
           {error && <div className="bg-nexo-danger/10 border border-nexo-danger/40 text-nexo-danger-text rounded-nexo-lg px-5 py-3 text-sm">{error}</div>}
@@ -189,8 +189,8 @@ async function HistoricalRankPage({ searchParams }: { searchParams: Promise<Sear
               {/* Sparkline card */}
               <div className="bg-nexo-surface border border-nexo-border rounded-nexo-lg p-6">
                 <p className="nexo-label mb-3">
-                  Total Keywords in Google Top 100
-                  {cost > 0 && <span className="ml-3 text-nexo-faint">· ${cost.toFixed(4)}</span>}
+                  Total de palavras-chave no Top 100 do Google
+                  {cost > 0 && <span className="ml-3 text-nexo-faint">· US$ {cost.toFixed(4).replace('.', ',')}</span>}
                 </p>
                 <div className="flex items-end gap-6">
                   <svg width={W} height={H} className="overflow-visible">
@@ -200,8 +200,8 @@ async function HistoricalRankPage({ searchParams }: { searchParams: Promise<Sear
                     {sparkData.length > 1 && <path d={sparkPath} fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />}
                   </svg>
                   <div>
-                    <div className="text-3xl font-medium text-nexo-text">{(sorted[sorted.length - 1]?.metrics.organic?.count ?? 0).toLocaleString()}</div>
-                    <div className="nexo-label">Latest ({formatMonth(sorted[sorted.length - 1].year, sorted[sorted.length - 1].month)})</div>
+                    <div className="text-3xl font-medium text-nexo-text">{(sorted[sorted.length - 1]?.metrics.organic?.count ?? 0).toLocaleString('pt-BR')}</div>
+                    <div className="nexo-label">Mais recente ({formatMonth(sorted[sorted.length - 1].year, sorted[sorted.length - 1].month)})</div>
                   </div>
                 </div>
               </div>
@@ -213,8 +213,8 @@ async function HistoricalRankPage({ searchParams }: { searchParams: Promise<Sear
                 <table className="w-full text-xs">
                   <thead>
                     <tr className="border-b border-nexo-border">
-                      <th className="nexo-label text-left px-5 py-3.5">Month</th>
-                      <th className="nexo-label text-left px-3 py-3.5">Total KWs</th>
+                      <th className="nexo-label text-left px-5 py-3.5">Mês</th>
+                      <th className="nexo-label text-left px-3 py-3.5">Total de palavras-chave</th>
                       <th className="nexo-label text-right px-3 py-3.5">#1</th>
                       <th className="nexo-label text-right px-3 py-3.5">2–3</th>
                       <th className="nexo-label text-right px-3 py-3.5">4–10</th>
@@ -231,11 +231,11 @@ async function HistoricalRankPage({ searchParams }: { searchParams: Promise<Sear
                           <td className="px-3 py-3">
                             <Bar value={m.count ?? 0} max={maxCount} color="bg-nexo-sky/40" />
                           </td>
-                          <td className="px-3 py-3 text-right font-mono font-medium text-nexo-ice">{(m.pos_1 ?? 0).toLocaleString()}</td>
-                          <td className="px-3 py-3 text-right font-mono text-nexo-sky">{(m.pos_2_3 ?? 0).toLocaleString()}</td>
-                          <td className="px-3 py-3 text-right font-mono text-nexo-dim">{(m.pos_4_10 ?? 0).toLocaleString()}</td>
-                          <td className="px-3 py-3 text-right font-mono text-nexo-faint">{((m.pos_11_20 ?? 0) + (m.pos_21_30 ?? 0)).toLocaleString()}</td>
-                          <td className="px-3 py-3 text-right font-mono text-nexo-dim">{Math.round(m.etv ?? 0).toLocaleString()}</td>
+                          <td className="px-3 py-3 text-right font-mono font-medium text-nexo-ice">{(m.pos_1 ?? 0).toLocaleString('pt-BR')}</td>
+                          <td className="px-3 py-3 text-right font-mono text-nexo-sky">{(m.pos_2_3 ?? 0).toLocaleString('pt-BR')}</td>
+                          <td className="px-3 py-3 text-right font-mono text-nexo-dim">{(m.pos_4_10 ?? 0).toLocaleString('pt-BR')}</td>
+                          <td className="px-3 py-3 text-right font-mono text-nexo-faint">{((m.pos_11_20 ?? 0) + (m.pos_21_30 ?? 0)).toLocaleString('pt-BR')}</td>
+                          <td className="px-3 py-3 text-right font-mono text-nexo-dim">{Math.round(m.etv ?? 0).toLocaleString('pt-BR')}</td>
                         </tr>
                       );
                     })}
@@ -249,16 +249,16 @@ async function HistoricalRankPage({ searchParams }: { searchParams: Promise<Sear
         {/* History */}
         <div>
           <div className="bg-nexo-surface border border-nexo-border rounded-nexo-lg p-5 sticky top-6">
-            <h2 className="nexo-label mb-4">History</h2>
+            <h2 className="nexo-label mb-4">Histórico</h2>
             {history.length === 0 ? (
-              <p className="text-xs text-nexo-faint">No searches yet.</p>
+              <p className="text-xs text-nexo-faint">Nenhuma busca ainda.</p>
             ) : (
               <div className="space-y-2">
                 {history.map((h) => (
                   <a key={h.id} href={`?history_id=${h.id}`} className="block rounded-nexo-lg px-3 py-2.5 hover:bg-white/[0.04] transition-colors border border-transparent hover:border-nexo-border">
                     <div className="font-medium text-xs text-nexo-text">{h.target}</div>
                     <div className="text-[10px] text-nexo-faint mt-0.5">
-                      {h.location} · {h.dateFrom && h.dateTo ? `${h.dateFrom} → ${h.dateTo}` : new Date(h.ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                      {h.location} · {h.dateFrom && h.dateTo ? `${h.dateFrom} → ${h.dateTo}` : new Date(h.ts).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' })}
                     </div>
                   </a>
                 ))}

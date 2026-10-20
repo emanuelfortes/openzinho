@@ -76,10 +76,10 @@ export default function PageIntersectionTable({ items }: { items: PageIntItem[] 
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-nexo-border bg-white/[0.02]">
-            <Header label="From URL" sortK="url_from" align="left" className="!px-6" />
+            <Header label="URL de origem" sortK="url_from" align="left" className="!px-6" />
             <Header label="DR" sortK="page_from_rank" align="center" />
             <Header label="Spam" sortK="spam" align="center" className="hidden sm:table-cell" />
-            <Header label="Targets linked" sortK="targets_linked" align="right" className="hidden md:table-cell" />
+            <Header label="Alvos vinculados" sortK="targets_linked" align="right" className="hidden md:table-cell" />
           </tr>
         </thead>
         <tbody className="divide-y divide-nexo-border">

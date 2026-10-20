@@ -14,7 +14,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   if (await getSession(await headers())) redirect(next);
 
   return (
-    <AuthShell title="Sign in" subtitle="Enter your email and password to open the dashboard.">
+    <AuthShell title="Entrar" subtitle="Digite seu e-mail e sua senha para abrir o painel.">
       <AuthForm mode="login" next={next} />
     </AuthShell>
   );

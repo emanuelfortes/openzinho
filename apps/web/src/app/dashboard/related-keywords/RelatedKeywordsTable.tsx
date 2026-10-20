@@ -33,7 +33,7 @@ function DifficultyBadge({ value }: { value?: number }) {
 
 function fmt(n?: number) {
   if (n === undefined || n === null) return '—';
-  return n.toLocaleString('en-GB');
+  return n.toLocaleString('pt-BR');
 }
 
 function sortValue(item: RelatedKeywordItem, key: SortKey): number | string {
@@ -92,13 +92,13 @@ export default function RelatedKeywordsTable({ items }: { items: RelatedKeywordI
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-nexo-border bg-white/[0.02]">
-            <Header label="Keyword" sortK="keyword" align="left" className="!px-6" />
+            <Header label="Palavra-chave" sortK="keyword" align="left" className="!px-6" />
             <Header label="KD" sortK="kd" align="center" />
             <Header label="Vol." sortK="volume" align="right" />
             <Header label="CPC" sortK="cpc" align="right" />
             <Header label="Comp." sortK="competition" align="right" className="hidden sm:table-cell" />
-            <Header label="Ref. domains" sortK="ref_domains" align="right" className="hidden md:table-cell" />
-            <Header label="Related" sortK="related" align="right" className="hidden lg:table-cell" />
+            <Header label="Dom. de referência" sortK="ref_domains" align="right" className="hidden md:table-cell" />
+            <Header label="Relacionadas" sortK="related" align="right" className="hidden lg:table-cell" />
           </tr>
         </thead>
         <tbody className="divide-y divide-nexo-border">
@@ -116,7 +116,7 @@ export default function RelatedKeywordsTable({ items }: { items: RelatedKeywordI
                   {fmt(kd?.search_volume)}
                 </td>
                 <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">
-                  {kd?.cpc != null ? `$${kd.cpc.toFixed(2)}` : '—'}
+                  {kd?.cpc != null ? `US$ ${kd.cpc.toFixed(2).replace('.', ',')}` : '—'}
                 </td>
                 <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums hidden sm:table-cell">
                   {kd?.competition_index ?? '—'}

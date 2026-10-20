@@ -9,7 +9,7 @@ interface TrafficItem { target?: string; metrics?: { organic?: TrafficMetrics; p
 type SortKey = 'target' | 'traffic' | 'keywords' | 'paid_keywords';
 type SortDir = 'asc' | 'desc';
 
-function fmt(n?: number) { return n != null ? n.toLocaleString('en-GB') : '—'; }
+function fmt(n?: number) { return n != null ? n.toLocaleString('pt-BR') : '—'; }
 
 function TrafficBar({ value, max }: { value?: number; max: number }) {
   if (!value || max === 0) return <span className="text-nexo-faint text-xs">0</span>;
@@ -78,10 +78,10 @@ export default function TrafficEstimationTable({ items }: { items: TrafficItem[]
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-nexo-border bg-white/[0.02]">
-            <Header label="Domain" sortK="target" align="left" className="!px-6" />
-            <Header label="Est. traffic (ETV)" sortK="traffic" align="left" />
-            <Header label="Keywords" sortK="keywords" align="right" />
-            <Header label="Paid KWs" sortK="paid_keywords" align="right" className="hidden sm:table-cell" />
+            <Header label="Domínio" sortK="target" align="left" className="!px-6" />
+            <Header label="Tráfego estimado (ETV)" sortK="traffic" align="left" />
+            <Header label="Palavras-chave" sortK="keywords" align="right" />
+            <Header label="Palavras-chave pagas" sortK="paid_keywords" align="right" className="hidden sm:table-cell" />
           </tr>
         </thead>
         <tbody className="divide-y divide-nexo-border">

@@ -1,6 +1,6 @@
 # Nexo: estado do trabalho e próximos passos
 
-Documento de passagem para continuar o rebranding em outra máquina. Atualizado em 19/10/2026 (passos 4 e 5 concluídos).
+Documento de passagem para continuar o rebranding em outra máquina. Atualizado em 19/10/2026 (passos 4 a 6 concluídos).
 
 ## Como começar na máquina nova
 
@@ -24,7 +24,7 @@ Referências visuais: `docs/Nexo Dashboard.dc.html`, `docs/Nexo Studio.dc.html` 
 | 3. Shell (layout, sidebar, header, login) | Feito | `4d95a8f` |
 | 4. Páginas | Feito | ver git log |
 | 5. Pins do Geo-grid | Feito | ver git log |
-| 6. Tradução pt-BR | **Falta** | – |
+| 6. Tradução pt-BR | Feito | ver git log |
 | 7. Studio (`src/` + `index.html` na raiz) | **Falta** | – |
 
 O pedido é um commit por passo, nesta ordem, e no fim rodar `npm run lint` e `npm run build` em `apps/web`.
@@ -93,13 +93,16 @@ A escala fica num só lugar: [apps/web/src/lib/rank-scale.ts](../apps/web/src/li
 - Usam a escala: `GridMap`, legenda e grade de reserva do `GridResults`, PDF (grade de reserva e legenda; o mapa do PDF é uma captura do `GridMap`), prévia em Configurações, `GradeMetricsPanel`, `GridPositionTrend`, `RankDistributionChart` e `MapPicker`.
 - Pendente, fora do Geo-grid: cores hex fixas em gráficos SVG de outros módulos (Google Reviews, Rank Tracker `KeywordRow`, Backlinks History, Historical Rank, mapa do Review Velocity). O codemod só trata classes Tailwind.
 
-### Passo 6: tradução para pt-BR
+### Passo 6: tradução para pt-BR (feito)
 
-- Traduzir toda a interface: `lib/nav.ts`, as páginas, os componentes, as mensagens de erro e os textos de PDF.
-- Manter os nomes de produto e de API: DataForSEO, SERP, Rank Tracker, Geo-Grid, Local Finder, Backlinks.
-- Trocar `en-GB` e `en-US` por `pt-BR` em `toLocaleString` e `Intl.DateTimeFormat`, e usar `<html lang="pt-BR">` em `app/layout.tsx`.
-- Atenção: `pdfText()` em `GridPdfExportButton.tsx` remove os acentos (as fontes padrão do PDF são WinAnsi). Os textos em pt-BR saem sem acento no PDF, a menos que se embuta uma fonte.
-- São cerca de 150 arquivos `.tsx`. Dá para dividir por pasta entre vários agentes.
+Regra do projeto: tudo em Next.js e toda a interface em português do Brasil. Termos em [docs/GLOSSARIO-PTBR.md](GLOSSARIO-PTBR.md).
+- Interface, erros que chegam à tela, PDF e Excel traduzidos; datas e números em `pt-BR`; dólar exibido como "US$ 1.234,56". CSV, chaves, valores enviados à DataForSEO e nomes de idioma/local da API continuam como a API espera (por exemplo `Portuguese`, `Brazil`).
+- PDF com acentos: `pdfSafeText` mantém as letras Latin-1 do WinAnsi; não precisou embutir fonte.
+- Padrões do Brasil: local `Brazil`, idioma `Portuguese` e mapa centrado em São Paulo, no lugar de França/Paris/inglês. O ChatGPT segue `English`/Estados Unidos porque a API só aceita isso.
+- Projeto inicial de bancos novos: "Projeto padrão". Bancos existentes mantêm o nome gravado.
+- Aviso de atualização: desligado por padrão. Só liga com `UPDATE_CHECK_REPO=dono/repositorio` apontando para os releases do Nexo; nunca consulta o SEO Playground original.
+- Menu com nomes curtos dentro de cada seção (Visão geral, Ideias, Volume e CPC…); títulos das páginas e Gastos mantêm o nome completo.
+- Pendente: o `seo-playground.db` e textos de lib que vêm crus da API (mensagens de status da DataForSEO) continuam em inglês.
 
 ### Passo 7: Studio
 

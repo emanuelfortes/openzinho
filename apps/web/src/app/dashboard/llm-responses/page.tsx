@@ -27,12 +27,12 @@ interface SearchParams {
 // ---- UI helpers ----
 
 function formatDate(ts: number) {
-  return new Date(ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  return new Date(ts).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 function ResponseText({ items }: { items?: ResponseItem[] }) {
   const messageItems = (items ?? []).filter((it) => it.type !== 'reasoning');
-  if (messageItems.length === 0) return <p className="text-sm text-nexo-faint">No response text.</p>;
+  if (messageItems.length === 0) return <p className="text-sm text-nexo-faint">Sem texto de resposta.</p>;
 
   const allAnnotations = messageItems.flatMap((it) => it.sections ?? []).flatMap((s) => s.annotations ?? []);
 
@@ -43,7 +43,7 @@ function ResponseText({ items }: { items?: ResponseItem[] }) {
       <MarkdownAnswer>{answerMarkdown}</MarkdownAnswer>
       {allAnnotations.length > 0 && (
         <div>
-          <p className="nexo-label mb-1.5">Sources</p>
+          <p className="nexo-label mb-1.5">Fontes</p>
           <div className="flex flex-wrap gap-1.5">
             {allAnnotations.map((a, ai) => (
               <a
@@ -100,7 +100,7 @@ async function LlmResponsesPage({ searchParams }: { searchParams: Promise<Search
       isFromHistory = true;
       activeEntry = getLlmResponseHistory().find((e) => e.id === historyId) ?? null;
     } else {
-      error = 'Search no longer available.';
+      error = 'Esta busca não está mais disponível.';
     }
   }
 
@@ -115,7 +115,7 @@ async function LlmResponsesPage({ searchParams }: { searchParams: Promise<Search
       const cachedEntry = getLlmResponseHistory().find((e) => e.id === dedupeId);
       cost = cachedEntry?.cost;
     } else if (!creds) {
-      error = 'DataForSEO credentials missing. Configure them in Settings.';
+      error = 'Credenciais da DataForSEO ausentes. Configure-as em Configurações.';
     } else {
       const res = await fetchLlmResponse(platform, prompt, model, webSearch, countryCode, systemMessage, creds);
       result = res.result ?? null;
@@ -151,7 +151,7 @@ async function LlmResponsesPage({ searchParams }: { searchParams: Promise<Search
           <p className={`text-sm font-medium truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.prompt}</p>
           <p className="text-[11px] text-nexo-faint mt-0.5">
             {PLATFORM_LABELS[entry.platform] ?? entry.platform} · {entry.model}
-            {entry.cost !== undefined ? ` · $${entry.cost.toFixed(5)}` : ''}
+            {entry.cost !== undefined ? ` · US$ ${entry.cost.toFixed(5).replace('.', ',')}` : ''}
           </p>
         </div>
         <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>
@@ -162,14 +162,14 @@ async function LlmResponsesPage({ searchParams }: { searchParams: Promise<Search
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="nexo-h1">AI Prompt Test</h1>
-        <p className="text-sm text-nexo-faint mt-1">Ask ChatGPT, Claude, Gemini or Perplexity a question and see exactly what they answer — with sources.</p>
+        <h1 className="nexo-h1">Teste de prompt em IA</h1>
+        <p className="text-sm text-nexo-faint mt-1">Faça uma pergunta ao ChatGPT, Claude, Gemini ou Perplexity e veja exatamente o que eles respondem — com as fontes.</p>
       </div>
 
       {!creds && (
         <div className="bg-nexo-warn/10 border border-nexo-warn/40 text-nexo-warn-text text-sm rounded-nexo-lg px-4 py-3">
-          DataForSEO credentials missing. Configure them in{' '}
-          <a href="/dashboard/settings" className="underline font-semibold">settings</a>.
+          Credenciais da DataForSEO ausentes. Configure-as em{' '}
+          <a href="/dashboard/settings" className="underline font-semibold">Configurações</a>.
         </div>
       )}
 
@@ -190,9 +190,9 @@ async function LlmResponsesPage({ searchParams }: { searchParams: Promise<Search
                     {PLATFORM_LABELS[displayPlatform] ?? displayPlatform}
                   </span>
                   <span className="text-xs font-mono text-nexo-dim">{result.model_name ?? displayModel}</span>
-                  {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>}
+                  {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">Histórico</span>}
                 </div>
-                {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">cost: ${cost.toFixed(5)}</span>}
+                {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">custo: US$ {cost.toFixed(5).replace('.', ',')}</span>}
               </div>
 
               <div className="px-6 py-5 space-y-5">
@@ -202,13 +202,13 @@ async function LlmResponsesPage({ searchParams }: { searchParams: Promise<Search
                 </div>
 
                 <div>
-                  <p className="nexo-label mb-1.5">Response</p>
+                  <p className="nexo-label mb-1.5">Resposta</p>
                   <ResponseText items={result.items} />
                 </div>
 
                 {(result.fan_out_queries?.length ?? 0) > 0 && (
                   <div>
-                    <p className="nexo-label mb-1.5">Related queries</p>
+                    <p className="nexo-label mb-1.5">Consultas relacionadas</p>
                     <div className="flex flex-wrap gap-1.5">
                       {result.fan_out_queries!.map((q, qi) => (
                         <span key={qi} className="text-[11px] text-nexo-dim bg-nexo-surface-2 px-2 py-0.5 rounded-md">
@@ -220,12 +220,12 @@ async function LlmResponsesPage({ searchParams }: { searchParams: Promise<Search
                 )}
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-nexo-border">
-                  <StatChip label="Input tokens" value={(result.input_tokens ?? 0).toLocaleString('en-GB')} />
-                  <StatChip label="Output tokens" value={(result.output_tokens ?? 0).toLocaleString('en-GB')} />
+                  <StatChip label="Tokens de entrada" value={(result.input_tokens ?? 0).toLocaleString('pt-BR')} />
+                  <StatChip label="Tokens de saída" value={(result.output_tokens ?? 0).toLocaleString('pt-BR')} />
                   {result.reasoning_tokens !== undefined && (
-                    <StatChip label="Reasoning tokens" value={result.reasoning_tokens.toLocaleString('en-GB')} />
+                    <StatChip label="Tokens de raciocínio" value={result.reasoning_tokens.toLocaleString('pt-BR')} />
                   )}
-                  <StatChip label="Web search" value={result.web_search ? 'Yes' : 'No'} />
+                  <StatChip label="Pesquisa na web" value={result.web_search ? 'Sim' : 'Não'} />
                 </div>
               </div>
             </div>
@@ -233,14 +233,14 @@ async function LlmResponsesPage({ searchParams }: { searchParams: Promise<Search
 
           {!hasQuery && !error && (
             <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-6 py-16 text-center">
-              <p className="text-nexo-faint text-sm">Ask a question above to see how an AI model actually answers it.</p>
-              <p className="text-nexo-faint text-xs mt-1">Powered by DataForSEO LLM Responses API.</p>
+              <p className="text-nexo-faint text-sm">Faça uma pergunta acima para ver como um modelo de IA realmente responde.</p>
+              <p className="text-nexo-faint text-xs mt-1">Dados da API DataForSEO LLM Responses.</p>
             </div>
           )}
         </div>
 
         {history.length > 0 && (
-          <HistorySidebar title="History" items={historyItems} />
+          <HistorySidebar title="Histórico" items={historyItems} />
         )}
       </div>
     </div>

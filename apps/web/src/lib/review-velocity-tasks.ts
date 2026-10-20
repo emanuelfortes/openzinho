@@ -100,7 +100,7 @@ export async function postReviewTasks(projectId: string, credentials: Credential
     if (!response.ok) return failAll(`DataForSEO HTTP ${response.status}`);
     data = await response.json();
   } catch (error) {
-    return failAll(error instanceof Error ? error.message : 'Could not reach DataForSEO.');
+    return failAll(error instanceof Error ? error.message : 'Não foi possível conectar à DataForSEO.');
   }
 
   const tasks = data.tasks ?? [];
@@ -110,7 +110,7 @@ export async function postReviewTasks(projectId: string, credentials: Credential
     if (task?.id && task.status_code === 20100) {
       if (confirmTask(reservationId, task.id, typeof task.cost === 'number' ? task.cost : null, projectId)) posted++;
     } else {
-      const message = task?.status_message ?? data.status_message ?? 'Task was not accepted.';
+      const message = task?.status_message ?? data.status_message ?? 'A tarefa não foi aceita.';
       failTask(reservationId, message, projectId);
       errors.push(`${request.listing.title}: ${message}`);
     }
@@ -208,7 +208,7 @@ export async function collectReviewTasks(projectId: string, credentials: Credent
 
     const listing = getListing(task.listingId, projectId);
     const benchmark = getBenchmark(task.benchmarkId, projectId);
-    if (!listing || !benchmark) { failTask(task.taskId, 'Listing no longer exists', projectId); outcome.failed++; continue; }
+    if (!listing || !benchmark) { failTask(task.taskId, 'O perfil não existe mais', projectId); outcome.failed++; continue; }
     if (code !== 20000 && code !== NO_RESULTS) { failTask(task.taskId, apiTask.status_message ?? `DataForSEO status ${code}`, projectId); outcome.failed++; continue; }
 
     const result = code === 20000 ? apiTask.result?.[0] ?? null : null;

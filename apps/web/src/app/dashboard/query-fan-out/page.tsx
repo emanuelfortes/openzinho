@@ -175,7 +175,7 @@ async function runFanOut(
 // ---- UI helpers ----
 
 function formatDate(ts: number) {
-  return new Date(ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  return new Date(ts).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 // ---- Page ----
@@ -185,8 +185,8 @@ async function QueryFanOutPage({ searchParams }: { searchParams: Promise<SearchP
   const params = await searchParams;
   const historyId = params.history_id;
 
-  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'France');
-  const defaultLanguage = getSetting('default_language') ?? 'French';
+  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'Brazil');
+  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
 
   const seedsRaw = params.seeds?.trim() ?? '';
   const platform = ['google', 'chat_gpt'].includes(params.platform ?? '') ? params.platform! : 'google';
@@ -215,7 +215,7 @@ async function QueryFanOutPage({ searchParams }: { searchParams: Promise<SearchP
       activeEntry = getFanOutHistory().find((e) => e.id === historyId) ?? null;
       cost = activeEntry?.cost;
     } else {
-      error = 'Search no longer available.';
+      error = 'Esta busca não está mais disponível.';
     }
   }
 
@@ -233,7 +233,7 @@ async function QueryFanOutPage({ searchParams }: { searchParams: Promise<SearchP
       const cachedEntry = getFanOutHistory().find((e) => e.id === dedupeId);
       cost = cachedEntry?.cost;
     } else if (!creds) {
-      error = 'DataForSEO credentials missing. Configure them in Settings.';
+      error = 'Credenciais da DataForSEO ausentes. Configure-as em Configurações.';
     } else {
       const result = await runFanOut(seeds, platform, location, language, limit, creds.login, creds.pass);
       items = result.items;
@@ -273,9 +273,9 @@ async function QueryFanOutPage({ searchParams }: { searchParams: Promise<SearchP
         <div className="flex-1 min-w-0">
           <p className={`text-sm font-medium truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.seeds}</p>
           <p className="text-[11px] text-nexo-faint mt-0.5">
-            {entry.seedCount} seed{entry.seedCount !== 1 ? 's' : ''} → {entry.queryCount} quer{entry.queryCount !== 1 ? 'ies' : 'y'}
+            {entry.seedCount} {entry.seedCount === 1 ? 'semente' : 'sementes'} → {entry.queryCount} {entry.queryCount === 1 ? 'consulta' : 'consultas'}
             {' · '}{entry.location}
-            {entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}
+            {entry.cost !== undefined ? ` · US$ ${entry.cost.toFixed(4).replace('.', ',')}` : ''}
           </p>
         </div>
         <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>
@@ -288,14 +288,14 @@ async function QueryFanOutPage({ searchParams }: { searchParams: Promise<SearchP
       <div>
         <h1 className="nexo-h1">Query Fan-Out</h1>
         <p className="text-sm text-nexo-faint mt-1">
-          Discover the hidden sub-queries AI models generate when answering prompts related to your seed keywords, and their AI search volume.
+          Descubra as subconsultas ocultas que os modelos de IA geram ao responder prompts relacionados às suas palavras-chave semente, e o volume de buscas em IA delas.
         </p>
       </div>
 
       {!creds && (
         <div className="bg-nexo-warn/10 border border-nexo-warn/40 text-nexo-warn-text text-sm rounded-nexo-lg px-4 py-3">
-          DataForSEO credentials missing. Configure them in{' '}
-          <a href="/dashboard/settings" className="underline font-semibold">settings</a>.
+          Credenciais da DataForSEO ausentes. Configure-as em{' '}
+          <a href="/dashboard/settings" className="underline font-semibold">Configurações</a>.
         </div>
       )}
 
@@ -303,21 +303,21 @@ async function QueryFanOutPage({ searchParams }: { searchParams: Promise<SearchP
         <div className="flex-1 min-w-0 space-y-6">
           <SearchForm
             className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4"
-            btnLabel="Analyze"
+            btnLabel="Analisar"
             btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-sky transition-colors"
-            loadingLabel="Fetching fan-out queries…"
+            loadingLabel="Buscando consultas de fan-out…"
             disabled={!creds}
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="sm:col-span-2">
                 <label className="nexo-label block mb-1.5">
-                  Seed keywords <span className="text-nexo-faint font-normal normal-case tracking-normal">(one word per line, max {MAX_SEEDS} — each seed is a separate billed lookup)</span>
+                  Palavras-chave semente <span className="text-nexo-faint font-normal normal-case tracking-normal">(uma por linha, máx. {MAX_SEEDS} — cada semente é uma consulta cobrada à parte)</span>
                 </label>
                 <textarea
                   name="seeds"
                   defaultValue={activeEntry ? '' : seedsRaw}
                   rows={5}
-                  placeholder={'plumber\ndrain cleaning\nleak'}
+                  placeholder={'encanador\ndesentupimento\nvazamento'}
                   required
                   className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky transition-all font-mono resize-y"
                 />
@@ -337,22 +337,22 @@ async function QueryFanOutPage({ searchParams }: { searchParams: Promise<SearchP
           {hasQuery && !error && seedStats.length > 0 && (
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
-                <p className="nexo-label">Seeds analyzed</p>
+                <p className="nexo-label">Sementes analisadas</p>
                 <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{seedStats.length}</p>
               </div>
               <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
-                <p className="nexo-label">Triggered fan-out</p>
+                <p className="nexo-label">Geraram fan-out</p>
                 <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">
                   {seedsTriggered}{triggerRate !== null && <span className="text-sm text-nexo-faint font-semibold"> ({triggerRate}%)</span>}
                 </p>
               </div>
               <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
-                <p className="nexo-label">Fan-out queries found</p>
+                <p className="nexo-label">Consultas de fan-out encontradas</p>
                 <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{items.length}</p>
               </div>
               <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
-                <p className="nexo-label">Total AI volume</p>
-                <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{totalVolume.toLocaleString('en-GB')}</p>
+                <p className="nexo-label">Volume total em IA</p>
+                <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{totalVolume.toLocaleString('pt-BR')}</p>
               </div>
             </div>
           )}
@@ -369,12 +369,12 @@ async function QueryFanOutPage({ searchParams }: { searchParams: Promise<SearchP
             <div id="results" className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
               <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <h2 className="nexo-label">Discovered fan-out queries</h2>
-                  {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>}
+                  <h2 className="nexo-label">Consultas de fan-out descobertas</h2>
+                  {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">Histórico</span>}
                 </div>
                 <div className="flex items-center gap-3">
-                  {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">cost: ${cost.toFixed(4)}</span>}
-                  <span className="text-xs font-medium text-nexo-faint">{items.length} quer{items.length !== 1 ? 'ies' : 'y'}</span>
+                  {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">custo: US$ {cost.toFixed(4).replace('.', ',')}</span>}
+                  <span className="text-xs font-medium text-nexo-faint">{items.length} {items.length === 1 ? 'consulta' : 'consultas'}</span>
                   {items.length > 0 && (
                     <CopyMarkdownButton
                       data={items.map((i) => ({
@@ -384,10 +384,10 @@ async function QueryFanOutPage({ searchParams }: { searchParams: Promise<SearchP
                         seeds: i.seeds.join(', '),
                       }))}
                       columns={[
-                        { key: 'keyword', label: 'Fan-out query' },
-                        { key: 'ai_search_volume', label: 'AI Volume' },
-                        { key: 'mentions', label: 'Mentions' },
-                        { key: 'seeds', label: 'From seed(s)' },
+                        { key: 'keyword', label: 'Consulta de fan-out' },
+                        { key: 'ai_search_volume', label: 'Volume em IA' },
+                        { key: 'mentions', label: 'Menções' },
+                        { key: 'seeds', label: 'Da(s) semente(s)' },
                       ]}
                     />
                   )}
@@ -395,8 +395,8 @@ async function QueryFanOutPage({ searchParams }: { searchParams: Promise<SearchP
               </div>
               {items.length === 0 ? (
                 <div className="px-6 py-12 text-center text-sm text-nexo-faint space-y-1">
-                  <p>No fan-out queries surfaced for these seeds within the checked mentions.</p>
-                  <p className="text-xs text-nexo-faint">Across ChatGPT prompts generally, only about 47.5% trigger fan-out — try raising &quot;mentions checked per seed&quot; or broadening the seed keywords.</p>
+                  <p>Nenhuma consulta de fan-out apareceu para essas sementes nas menções verificadas.</p>
+                  <p className="text-xs text-nexo-faint">Em geral, só cerca de 47,5% dos prompts do ChatGPT geram fan-out — tente aumentar &quot;menções verificadas por semente&quot; ou ampliar as palavras-chave semente.</p>
                 </div>
               ) : (
                 <FanOutQueryTable items={items} />
@@ -406,18 +406,18 @@ async function QueryFanOutPage({ searchParams }: { searchParams: Promise<SearchP
 
           {!hasQuery && !error && (
             <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-6 py-16 text-center space-y-2">
-              <p className="text-nexo-faint text-sm">Enter seed keywords above to uncover the sub-queries AI models fan out to, and how often people search for them.</p>
+              <p className="text-nexo-faint text-sm">Digite palavras-chave semente acima para descobrir as subconsultas que os modelos de IA geram e com que frequência as pessoas as buscam.</p>
               <p className="text-nexo-faint text-xs max-w-lg mx-auto">
-                When an AI model can&apos;t fully answer a prompt from what it already knows, it silently issues extra searches — &quot;fan-out queries&quot; — to gather context before responding.
-                These never reach the user, but they shape which sources get cited. This tool asks DataForSEO&apos;s LLM Mentions API to surface fan-out queries matching your seeds, then looks up their AI search volume.
+                Quando um modelo de IA não consegue responder totalmente a um prompt com o que já sabe, ele faz buscas extras em silêncio — as &quot;consultas de fan-out&quot; — para reunir contexto antes de responder.
+                Elas nunca chegam ao usuário, mas definem quais fontes são citadas. Esta ferramenta pede à API LLM Mentions da DataForSEO as consultas de fan-out que correspondem às suas sementes e depois busca o volume de buscas em IA delas.
               </p>
-              <p className="text-nexo-faint text-xs">Powered by DataForSEO LLM Mentions Search + AI Keyword Data APIs.</p>
+              <p className="text-nexo-faint text-xs">Dados das APIs DataForSEO LLM Mentions Search e AI Keyword Data.</p>
             </div>
           )}
         </div>
 
         {history.length > 0 && (
-          <HistorySidebar title="History" items={historyItems} />
+          <HistorySidebar title="Histórico" items={historyItems} />
         )}
       </div>
     </div>

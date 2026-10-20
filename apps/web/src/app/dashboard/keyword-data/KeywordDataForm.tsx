@@ -18,32 +18,32 @@ const SE_OPTIONS: { value: SE; label: string }[] = [
 
 const SE_TYPES: Record<SE, { value: SEType; label: string }[]> = {
   google_ads: [
-    { value: 'search_volume', label: 'Search Volume' },
-    { value: 'keywords_for_site', label: 'Keywords For Site' },
-    { value: 'keywords_for_keywords', label: 'Keywords For Keywords' },
-    { value: 'ad_traffic_by_keywords', label: 'Ad Traffic By Keywords' },
+    { value: 'search_volume', label: 'Volume de buscas' },
+    { value: 'keywords_for_site', label: 'Palavras-chave do site' },
+    { value: 'keywords_for_keywords', label: 'Palavras-chave relacionadas' },
+    { value: 'ad_traffic_by_keywords', label: 'Tráfego de anúncios por palavra-chave' },
   ],
   bing: [
-    { value: 'search_volume', label: 'Search Volume' },
-    { value: 'keywords_for_site', label: 'Keywords For Site' },
-    { value: 'keywords_for_keywords', label: 'Keywords For Keywords' },
-    { value: 'keyword_performance', label: 'Keyword Performance' },
+    { value: 'search_volume', label: 'Volume de buscas' },
+    { value: 'keywords_for_site', label: 'Palavras-chave do site' },
+    { value: 'keywords_for_keywords', label: 'Palavras-chave relacionadas' },
+    { value: 'keyword_performance', label: 'Desempenho de palavras-chave' },
   ],
 };
 
 const SORT_BY_OPTIONS: Record<SE, { value: string; label: string }[]> = {
   google_ads: [
-    { value: 'relevance', label: 'Relevance' },
-    { value: 'search_volume', label: 'Search Volume' },
-    { value: 'competition_index', label: 'Competition Index' },
-    { value: 'low_top_of_page_bid', label: 'Low Top of Page Bid' },
-    { value: 'high_top_of_page_bid', label: 'High Top of Page Bid' },
+    { value: 'relevance', label: 'Relevância' },
+    { value: 'search_volume', label: 'Volume de buscas' },
+    { value: 'competition_index', label: 'Índice de concorrência' },
+    { value: 'low_top_of_page_bid', label: 'Lance mínimo topo da página' },
+    { value: 'high_top_of_page_bid', label: 'Lance máximo topo da página' },
   ],
   bing: [
-    { value: 'relevance', label: 'Relevance' },
-    { value: 'search_volume', label: 'Search Volume' },
+    { value: 'relevance', label: 'Relevância' },
+    { value: 'search_volume', label: 'Volume de buscas' },
     { value: 'cpc', label: 'CPC' },
-    { value: 'competition', label: 'Competition' },
+    { value: 'competition', label: 'Concorrência' },
   ],
 };
 
@@ -87,7 +87,7 @@ export default function KeywordDataForm({ defaults }: Props) {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="nexo-label block mb-1.5">
-            Search Engine
+            Buscador
           </label>
           <select
             name="se"
@@ -103,7 +103,7 @@ export default function KeywordDataForm({ defaults }: Props) {
 
         <div>
           <label className="nexo-label block mb-1.5">
-            Type
+            Tipo
           </label>
           <select
             name="se_type"
@@ -122,13 +122,13 @@ export default function KeywordDataForm({ defaults }: Props) {
       {needsKeywords && (
         <div>
           <label className="nexo-label block mb-1.5">
-            Keywords <span className="text-nexo-faint normal-case font-normal">(one per line, max 1000)</span>
+            Palavras-chave <span className="text-nexo-faint normal-case font-normal">(uma por linha, máx. 1000)</span>
           </label>
           <textarea
             name="keywords"
             defaultValue={defaults.keywords}
             rows={5}
-            placeholder={"plumber paris\nelectrician london\nheating engineer manchester"}
+            placeholder={"encanador são paulo\neletricista rio de janeiro\ntécnico de aquecedor belo horizonte"}
             className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky font-mono resize-y"
           />
         </div>
@@ -138,27 +138,27 @@ export default function KeywordDataForm({ defaults }: Props) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="nexo-label block mb-1.5">
-              Target <span className="text-nexo-faint normal-case font-normal">(domain or URL)</span>
+              Alvo <span className="text-nexo-faint normal-case font-normal">(domínio ou URL)</span>
             </label>
             <input
               type="text"
               name="target"
               defaultValue={defaults.target}
-              placeholder="example.com or https://example.com/page"
+              placeholder="exemplo.com ou https://exemplo.com/pagina"
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
             />
           </div>
           <div>
             <label className="nexo-label block mb-1.5">
-              Target Type
+              Tipo de alvo
             </label>
             <select
               name="target_type"
               defaultValue={defaults.targetType || 'site'}
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
             >
-              <option value="site">Site (whole domain)</option>
-              <option value="page">Page (exact URL)</option>
+              <option value="site">Site (domínio inteiro)</option>
+              <option value="page">Página (URL exata)</option>
             </select>
           </div>
         </div>
@@ -168,24 +168,24 @@ export default function KeywordDataForm({ defaults }: Props) {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="nexo-label block mb-1.5">
-            Location {isBing && <span className="text-nexo-danger-text">*</span>}
+            Local {isBing && <span className="text-nexo-danger-text">*</span>}
           </label>
           <LocationPicker
             name="location"
-            defaultValue={defaults.location || 'France'}
-            placeholder="e.g. France, Paris"
+            defaultValue={defaults.location || 'Brazil'}
+            placeholder="ex.: Brasil, São Paulo"
             className="w-full px-4 py-2.5 border border-nexo-border rounded-nexo-lg text-sm text-nexo-text placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-nexo-sky bg-nexo-surface"
           />
         </div>
         <div>
           <label className="nexo-label block mb-1.5">
-            Language {isBing && <span className="text-nexo-danger-text">*</span>}
+            Idioma {isBing && <span className="text-nexo-danger-text">*</span>}
           </label>
           <input
             type="text"
             name="language"
-            defaultValue={defaults.language || 'French'}
-            placeholder="e.g. French, English"
+            defaultValue={defaults.language || 'Portuguese'}
+            placeholder="ex.: Portuguese, English"
             className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
           />
         </div>
@@ -194,7 +194,7 @@ export default function KeywordDataForm({ defaults }: Props) {
       {/* Date range + Sort By */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div>
-          <label className="nexo-label block mb-1.5">Date From</label>
+          <label className="nexo-label block mb-1.5">Data inicial</label>
           <input
             type="date"
             name="date_from"
@@ -203,7 +203,7 @@ export default function KeywordDataForm({ defaults }: Props) {
           />
         </div>
         <div>
-          <label className="nexo-label block mb-1.5">Date To</label>
+          <label className="nexo-label block mb-1.5">Data final</label>
           <input
             type="date"
             name="date_to"
@@ -212,7 +212,7 @@ export default function KeywordDataForm({ defaults }: Props) {
           />
         </div>
         <div>
-          <label className="nexo-label block mb-1.5">Sort By</label>
+          <label className="nexo-label block mb-1.5">Ordenar por</label>
           <select
             name="sort_by"
             defaultValue={defaults.sortBy || 'relevance'}
@@ -229,15 +229,15 @@ export default function KeywordDataForm({ defaults }: Props) {
       {showDevice && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="nexo-label block mb-1.5">Device</label>
+            <label className="nexo-label block mb-1.5">Dispositivo</label>
             <select
               name="device"
               defaultValue={defaults.device || 'all'}
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
             >
-              <option value="all">All</option>
+              <option value="all">Todos</option>
               <option value="desktop">Desktop</option>
-              <option value="mobile">Mobile</option>
+              <option value="mobile">Celular</option>
               <option value="tablet">Tablet</option>
             </select>
           </div>
@@ -254,7 +254,7 @@ export default function KeywordDataForm({ defaults }: Props) {
             defaultChecked={defaults.searchPartners === 'true'}
             className="w-4 h-4 rounded border-nexo-border text-nexo-sky focus:ring-nexo-sky"
           />
-          <span className="text-sm text-nexo-dim font-medium">Search Partners</span>
+          <span className="text-sm text-nexo-dim font-medium">Parceiros de pesquisa</span>
         </label>
 
         {showIncludeAdult && (
@@ -266,7 +266,7 @@ export default function KeywordDataForm({ defaults }: Props) {
               defaultChecked={defaults.includeAdult === 'true'}
               className="w-4 h-4 rounded border-nexo-border text-nexo-sky focus:ring-nexo-sky"
             />
-            <span className="text-sm text-nexo-dim font-medium">Include Adult Keywords</span>
+            <span className="text-sm text-nexo-dim font-medium">Incluir palavras-chave adultas</span>
           </label>
         )}
       </div>
@@ -275,7 +275,7 @@ export default function KeywordDataForm({ defaults }: Props) {
         type="submit"
         className="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors"
       >
-        Search
+        Buscar
       </button>
     </form>
   );

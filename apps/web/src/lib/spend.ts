@@ -24,12 +24,12 @@ function addDays(d: Date, n: number): Date {
 export type SpendPreset = '7d' | '30d' | 'this-month' | 'last-month' | 'this-year' | 'all';
 
 export const SPEND_PRESETS: Array<{ key: SpendPreset; label: string }> = [
-  { key: '7d', label: 'Last 7 days' },
-  { key: '30d', label: 'Last 30 days' },
-  { key: 'this-month', label: 'This month' },
-  { key: 'last-month', label: 'Last month' },
-  { key: 'this-year', label: 'This year' },
-  { key: 'all', label: 'All time' },
+  { key: '7d', label: 'Últimos 7 dias' },
+  { key: '30d', label: 'Últimos 30 dias' },
+  { key: 'this-month', label: 'Este mês' },
+  { key: 'last-month', label: 'Mês passado' },
+  { key: 'this-year', label: 'Este ano' },
+  { key: 'all', label: 'Todo o período' },
 ];
 
 export function presetRange(preset: SpendPreset, now: Date, firstTs: number | null): { from: string; to: string } {
@@ -102,7 +102,7 @@ export interface SpendBucket {
   unknownCalls: number;
 }
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const MONTHS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
 
 /**
  * Spreads daily totals over every day (or month, for ranges longer than ~3 months) of the range,
@@ -172,7 +172,7 @@ export function totalSpend(tools: ToolSpend[]): SpendTotals {
 }
 
 export function formatUsd(n: number): string {
-  if (n === 0) return '$0.00';
-  if (n < 0.01) return `$${n.toFixed(4)}`;
-  return `$${n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  if (n === 0) return 'US$ 0,00';
+  if (n < 0.01) return `US$ ${n.toLocaleString('pt-BR', { minimumFractionDigits: 4, maximumFractionDigits: 4 })}`;
+  return `US$ ${n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }

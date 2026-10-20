@@ -10,7 +10,7 @@ import { estimateCampaign } from './estimate';
 
 const MapPicker = lazy(() => import('@/app/dashboard/local-finder/MapPicker'));
 
-const days = [['Sunday', 0], ['Monday', 1], ['Tuesday', 2], ['Wednesday', 3], ['Thursday', 4], ['Friday', 5], ['Saturday', 6]] as const;
+const days = [['Domingo', 0], ['Segunda-feira', 1], ['Terça-feira', 2], ['Quarta-feira', 3], ['Quinta-feira', 4], ['Sexta-feira', 5], ['Sábado', 6]] as const;
 
 type Props = {
   campaign: GridCampaign | null;
@@ -51,17 +51,17 @@ export default function CampaignForm({ campaign, defaults, distanceUnit }: Props
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className={label} htmlFor="campaign-name">Campaign name</label>
-          <input id="campaign-name" name="name" required defaultValue={campaign?.name ?? ''} placeholder="e.g. Clínica Sorriso · Aldeota" className={field} />
+          <label className={label} htmlFor="campaign-name">Nome da campanha</label>
+          <input id="campaign-name" name="name" required defaultValue={campaign?.name ?? ''} placeholder="ex.: Clínica Sorriso · Aldeota" className={field} />
         </div>
         <div>
-          <label className={label} htmlFor="campaign-target">Business to track</label>
-          <input id="campaign-target" name="target" required value={target} onChange={(event) => setTarget(event.target.value)} placeholder="Pick on the map, or type a name or domain" className={field} />
+          <label className={label} htmlFor="campaign-target">Empresa a acompanhar</label>
+          <input id="campaign-target" name="target" required value={target} onChange={(event) => setTarget(event.target.value)} placeholder="Escolha no mapa ou digite um nome ou domínio" className={field} />
         </div>
       </div>
 
       <div>
-        <label className={label}>Grid center</label>
+        <label className={label}>Centro da grade</label>
         <Suspense fallback={<div className="h-64 animate-pulse rounded-nexo-lg bg-nexo-surface-2" />}>
           <MapPicker
             coordinate={center}
@@ -74,57 +74,57 @@ export default function CampaignForm({ campaign, defaults, distanceUnit }: Props
             onBusinessSelect={(business) => setTarget(formatBusinessTarget(business.title, business.cid))}
           />
         </Suspense>
-        <input name="center" value={center} onChange={(event) => setCenter(event.target.value)} placeholder="Click the map, or type lat,lng" className={`${field} mt-2 font-mono`} />
+        <input name="center" value={center} onChange={(event) => setCenter(event.target.value)} placeholder="Clique no mapa ou digite lat,lng" className={`${field} mt-2 font-mono`} />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
         <div>
-          <label className={label} htmlFor="campaign-size">Grid size</label>
+          <label className={label} htmlFor="campaign-size">Tamanho da grade</label>
           <select id="campaign-size" name="grid_size" value={gridSize} onChange={(event) => setGridSize(Number(event.target.value))} className={field}>
-            {CAMPAIGN_GRID_SIZES.map((size) => <option key={size} value={size}>{size}×{size} ({size * size} points)</option>)}
+            {CAMPAIGN_GRID_SIZES.map((size) => <option key={size} value={size}>{size}×{size} ({size * size} pontos)</option>)}
           </select>
         </div>
         <div>
-          <label className={label} htmlFor="campaign-spacing">Spacing ({distanceUnit})</label>
+          <label className={label} htmlFor="campaign-spacing">Espaçamento ({distanceUnit})</label>
           <select id="campaign-spacing" name="spacing_km" value={spacingKm} onChange={(event) => setSpacingKm(Number(event.target.value))} className={field}>
             {spacingOptions(distanceUnit, spacingKm).map((option) => <option key={option.km} value={option.km}>{option.label}</option>)}
           </select>
         </div>
         <div>
-          <label className={label} htmlFor="campaign-language">Language</label>
+          <label className={label} htmlFor="campaign-language">Idioma</label>
           <input id="campaign-language" name="language" value={language} onChange={(event) => setLanguage(event.target.value)} className={field} />
         </div>
       </div>
 
       <div>
-        <label className={label} htmlFor="campaign-keywords">Keywords · one per line, up to {MAX_CAMPAIGN_KEYWORDS}</label>
+        <label className={label} htmlFor="campaign-keywords">Palavras-chave · uma por linha, até {MAX_CAMPAIGN_KEYWORDS}</label>
         <textarea id="campaign-keywords" name="keywords" rows={4} value={keywords} onChange={(event) => setKeywords(event.target.value)} placeholder={'dentista\nclareamento dental\nimplante dentário'} className={field} />
         <p className={`mt-1 text-[11px] ${keywordCount > MAX_CAMPAIGN_KEYWORDS ? 'text-nexo-danger-text' : 'text-nexo-faint'}`}>
-          {keywordCount} keyword{keywordCount === 1 ? '' : 's'}. Each one is its own monitor, with its own timeline.
+          {keywordCount} {keywordCount === 1 ? 'palavra-chave' : 'palavras-chave'}. Cada uma é um monitor próprio, com sua própria linha do tempo.
         </p>
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         <div>
-          <label className={label} htmlFor="campaign-frequency">Frequency</label>
+          <label className={label} htmlFor="campaign-frequency">Frequência</label>
           <select id="campaign-frequency" name="frequency" value={frequency} onChange={(event) => setFrequency(event.target.value as GridScheduleFrequency)} className={field}>
-            <option value="daily">Every day</option>
-            <option value="weekly">Every week</option>
-            <option value="biweekly">Every 2 weeks</option>
-            <option value="monthly">Every month</option>
+            <option value="daily">Diário</option>
+            <option value="weekly">Semanal</option>
+            <option value="biweekly">Quinzenal</option>
+            <option value="monthly">Mensal</option>
           </select>
         </div>
         <div>
           {frequency === 'monthly' ? (
             <>
-              <label className={label} htmlFor="campaign-month-day">Day</label>
+              <label className={label} htmlFor="campaign-month-day">Dia</label>
               <select id="campaign-month-day" name="month_day" defaultValue={campaign?.month_day ?? 1} className={field}>
-                {Array.from({ length: 28 }, (_, index) => index + 1).map((day) => <option key={day} value={day}>Day {day}</option>)}
+                {Array.from({ length: 28 }, (_, index) => index + 1).map((day) => <option key={day} value={day}>Dia {day}</option>)}
               </select>
             </>
           ) : (
             <>
-              <label className={label} htmlFor="campaign-weekday">Weekday</label>
+              <label className={label} htmlFor="campaign-weekday">Dia da semana</label>
               <select id="campaign-weekday" name="weekday" defaultValue={campaign?.weekday ?? 1} disabled={!usesWeekday} className={`${field} disabled:opacity-40`}>
                 {days.map(([name, value]) => <option key={value} value={value}>{name}</option>)}
               </select>
@@ -132,38 +132,38 @@ export default function CampaignForm({ campaign, defaults, distanceUnit }: Props
           )}
         </div>
         <div>
-          <label className={label} htmlFor="campaign-time">Time</label>
+          <label className={label} htmlFor="campaign-time">Horário</label>
           <input id="campaign-time" name="time_of_day" type="time" defaultValue={campaign?.time_of_day ?? '03:00'} className={field} />
         </div>
         <div>
-          <label className={label} htmlFor="campaign-queue">Queue</label>
+          <label className={label} htmlFor="campaign-queue">Fila</label>
           <select id="campaign-queue" name="queue_mode" value={queueMode} onChange={(event) => setQueueMode(event.target.value as 'standard' | 'priority')} className={field}>
-            <option value="standard">Standard</option>
-            <option value="priority">Priority</option>
+            <option value="standard">Padrão</option>
+            <option value="priority">Prioritária</option>
           </select>
         </div>
       </div>
 
       <div className="rounded-nexo-lg border border-nexo-border-strong bg-nexo-blue/10 px-4 py-3 text-xs text-nexo-dim">
-        <p className="nexo-section">Estimated DataForSEO cost</p>
+        <p className="nexo-section">Custo estimado no DataForSEO</p>
         <p className="mt-1">
-          <b className="tabular-nums">{estimate.pointsPerRun}</b> points per run × <b className="tabular-nums">{estimate.runsPerMonth.toFixed(1)}</b> runs a month ≈{' '}
-          <b className="tabular-nums text-nexo-text">${estimate.perMonthUsd.toFixed(2)}/month</b>
-          <span className="text-nexo-faint"> (${estimate.perRunUsd.toFixed(3)} per run)</span>
+          <b className="tabular-nums">{estimate.pointsPerRun.toLocaleString('pt-BR')}</b> pontos por execução × <b className="tabular-nums">{estimate.runsPerMonth.toFixed(1).replace('.', ',')}</b> execuções por mês ≈{' '}
+          <b className="tabular-nums text-nexo-text">US$ {estimate.perMonthUsd.toFixed(2).replace('.', ',')}/mês</b>
+          <span className="text-nexo-faint"> (US$ {estimate.perRunUsd.toFixed(3).replace('.', ',')} por execução)</span>
         </p>
-        <p className="mt-1 text-[10px] text-nexo-faint">Advisory estimate at list price; DataForSEO bills what it reports, and each run stores its real cost. {timeZone.replace(/_/g, ' ')} time.</p>
+        <p className="mt-1 text-[10px] text-nexo-faint">Estimativa indicativa pelo preço de tabela; o DataForSEO cobra o que ele informa, e cada execução registra seu custo real. Fuso horário: {timeZone.replace(/_/g, ' ')}.</p>
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <label className="flex items-center gap-2 text-xs font-semibold text-nexo-dim">
           <input type="checkbox" name="active" defaultChecked={campaign?.active ?? true} className="h-4 w-4 rounded border-nexo-border" />
-          Active (scheduled runs on)
+          Ativa (execuções agendadas ligadas)
         </label>
         <div className="flex items-center gap-3">
           {state?.error && <p className="text-xs font-semibold text-nexo-danger-text">{state.error}</p>}
-          <a href="/dashboard/campaigns" className="nexo-label hover:text-white">Cancel</a>
+          <a href="/dashboard/campaigns" className="nexo-label hover:text-white">Cancelar</a>
           <button type="submit" disabled={pending} className="rounded-nexo-lg bg-nexo-blue px-4 py-2.5 text-xs font-medium uppercase tracking-widest text-white transition-colors hover:bg-nexo-sky disabled:opacity-50">
-            {pending ? 'Saving…' : campaign ? 'Save campaign' : 'Create campaign'}
+            {pending ? 'Salvando…' : campaign ? 'Salvar campanha' : 'Criar campanha'}
           </button>
         </div>
       </div>

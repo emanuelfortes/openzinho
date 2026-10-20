@@ -40,7 +40,7 @@ function buildPopupHtml(point: GridPoint, target: string, highlightKey?: string)
         ? 'font-weight:500;color:#4da2ff'
         : 'font-weight:400;color:rgba(234,242,255,.85)';
     const stars = item.rating_value != null
-      ? `<span style="color:#f5a524;font-size:10px">★</span><span style="font-size:10px;color:rgba(234,242,255,.5)"> ${item.rating_value.toFixed(1)}${item.rating_votes != null ? ` (${item.rating_votes.toLocaleString()})` : ''}</span>`
+      ? `<span style="color:#f5a524;font-size:10px">★</span><span style="font-size:10px;color:rgba(234,242,255,.5)"> ${item.rating_value.toFixed(1).replace('.', ',')}${item.rating_votes != null ? ` (${item.rating_votes.toLocaleString('pt-BR')})` : ''}</span>`
       : '';
     const rowBg = item.is_target
       ? 'background:rgba(194,224,255,.08);border-left:2px solid #c2e0ff;padding-left:5px;margin-left:-5px;border-radius:2px;'
@@ -66,13 +66,13 @@ function buildPopupHtml(point: GridPoint, target: string, highlightKey?: string)
   }).join('');
 
   const emptyMsg = items.length === 0
-    ? '<p style="color:rgba(234,242,255,.45);font-size:12px;margin:8px 0">No results at this point.</p>'
+    ? '<p style="color:rgba(234,242,255,.45);font-size:12px;margin:8px 0">Nenhum resultado neste ponto.</p>'
     : '';
 
   return `
     <div style="font-family:var(--font-geist-sans),system-ui,sans-serif;min-width:230px;max-width:260px">
       <p style="font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:rgba(234,242,255,.45);margin:0 0 6px">
-        Target: <span style="color:#eaf2ff">${target}</span>
+        Alvo: <span style="color:#eaf2ff">${target}</span>
       </p>
       ${itemRows}${emptyMsg}
     </div>`;
@@ -229,8 +229,8 @@ export default function GridMap({ points, gridSize, target, highlightKey, highli
       const label = rank != null ? String(rank) : '—';
       const before = pointRank(previousByPoint.get(`${point.row}:${point.col}`) ?? { ...point, rank: null }, highlightKey);
       const movement = before === null && rank === null ? ''
-        : before === null ? 'new'
-          : rank === null ? 'lost'
+        : before === null ? 'novo'
+          : rank === null ? 'saiu'
             : before - rank === 0 ? ''
               : `${before - rank > 0 ? '+' : ''}${before - rank}`;
       const movementColor = before === null || (rank !== null && before > rank) ? GAIN_COLOR : LOSS_COLOR;
@@ -289,7 +289,7 @@ export default function GridMap({ points, gridSize, target, highlightKey, highli
       <div id={captureId} className="relative bg-nexo-surface-2">
         {highlightKey && (
           <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[1000] bg-nexo-blue text-white text-[11px] font-medium uppercase tracking-widest px-3 py-1.5 rounded-full">
-            Showing: {highlightName ?? 'competitor'}
+            Exibindo: {highlightName ?? 'concorrente'}
           </div>
         )}
         <div

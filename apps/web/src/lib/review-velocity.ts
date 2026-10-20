@@ -126,7 +126,7 @@ export interface Period {
   current: boolean;
 }
 
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const MONTHS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
 
 /** The last `count` complete weeks plus the current one, oldest first. */
 export function weekPeriods(now: number, timeZone: string, count = WINDOW_WEEKS): Period[] {

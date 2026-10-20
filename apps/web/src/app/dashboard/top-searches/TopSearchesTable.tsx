@@ -43,6 +43,9 @@ function DifficultyBadge({ value }: { value?: number }) {
   return <span className={`inline-flex items-center justify-center w-9 h-5 rounded text-[10px] font-medium ${color}`}>{value}</span>;
 }
 
+const INTENT_SHORT: Record<string, string> = { informational: 'info', navigational: 'naveg', commercial: 'comer', transactional: 'trans' };
+const COMPETITION_LABELS: Record<string, string> = { LOW: 'Baixa', MEDIUM: 'Média', HIGH: 'Alta' };
+
 function IntentBadge({ intent }: { intent?: string }) {
   if (!intent) return <span className="text-nexo-faint text-xs">—</span>;
   const map: Record<string, string> = {
@@ -52,7 +55,7 @@ function IntentBadge({ intent }: { intent?: string }) {
     transactional: 'bg-nexo-ice/10 text-nexo-ice',
   };
   const cls = map[intent] ?? 'bg-nexo-surface-2 text-nexo-dim';
-  return <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wide ${cls}`}>{intent.slice(0, 5)}</span>;
+  return <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wide ${cls}`}>{INTENT_SHORT[intent] ?? intent.slice(0, 5)}</span>;
 }
 
 function TrendSparkline({ monthly }: { monthly?: MonthlySearch[] }) {
@@ -75,7 +78,7 @@ function TrendSparkline({ monthly }: { monthly?: MonthlySearch[] }) {
 
 function fmt(n?: number) {
   if (n === undefined || n === null) return '—';
-  return n.toLocaleString('en-GB');
+  return n.toLocaleString('pt-BR');
 }
 
 function sortValue(item: TopSearchItem, key: SortKey): number | string {
@@ -134,14 +137,14 @@ export default function TopSearchesTable({ items }: { items: TopSearchItem[] }) 
         <thead>
           <tr className="border-b border-nexo-border bg-white/[0.02]">
             <th className="nexo-label px-6 py-3 text-left">#</th>
-            <Header label="Keyword" sortK="keyword" align="left" />
+            <Header label="Palavra-chave" sortK="keyword" align="left" />
             <Header label="KD" sortK="kd" align="center" />
             <Header label="Vol." sortK="volume" align="right" />
             <Header label="CPC" sortK="cpc" align="right" />
-            <Header label="Intent" sortK="intent" align="center" className="hidden sm:table-cell" />
+            <Header label="Intenção" sortK="intent" align="center" className="hidden sm:table-cell" />
             <Header label="Comp." sortK="competition" align="center" className="hidden md:table-cell" />
-            <Header label="Ref. Dom." sortK="ref_domains" align="right" className="hidden lg:table-cell" />
-            <th className="nexo-label px-4 py-3 text-right hidden xl:table-cell">Trend</th>
+            <Header label="Dom. ref." sortK="ref_domains" align="right" className="hidden lg:table-cell" />
+            <th className="nexo-label px-4 py-3 text-right hidden xl:table-cell">Tendência</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-nexo-border">
@@ -159,7 +162,7 @@ export default function TopSearchesTable({ items }: { items: TopSearchItem[] }) 
                 <td className="px-4 py-3 font-medium text-nexo-text max-w-[220px]">
                   <span className="truncate block">{item.keyword}</span>
                   {kp?.word_count !== undefined && (
-                    <span className="text-[10px] text-nexo-faint">{kp.word_count} word{kp.word_count !== 1 ? 's' : ''}</span>
+                    <span className="text-[10px] text-nexo-faint">{kp.word_count} {kp.word_count !== 1 ? 'palavras' : 'palavra'}</span>
                   )}
                 </td>
                 <td className="px-4 py-3 text-center">
@@ -169,7 +172,7 @@ export default function TopSearchesTable({ items }: { items: TopSearchItem[] }) 
                   {fmt(ki?.search_volume)}
                 </td>
                 <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">
-                  {ki?.cpc != null ? `$${ki.cpc.toFixed(2)}` : '—'}
+                  {ki?.cpc != null ? `US$ ${ki.cpc.toFixed(2).replace('.', ',')}` : '—'}
                 </td>
                 <td className="px-4 py-3 text-center hidden sm:table-cell">
                   <IntentBadge intent={item.search_intent_info?.main_intent} />
@@ -177,7 +180,7 @@ export default function TopSearchesTable({ items }: { items: TopSearchItem[] }) 
                 <td className="px-4 py-3 text-center hidden md:table-cell">
                   {compLevel ? (
                     <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium ${compColor}`}>
-                      {compLevel}
+                      {COMPETITION_LABELS[compLevel] ?? compLevel}
                     </span>
                   ) : <span className="text-nexo-faint text-xs">—</span>}
                 </td>

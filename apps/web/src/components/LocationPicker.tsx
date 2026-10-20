@@ -36,6 +36,13 @@ const LABS_SUGGESTIONS: Suggestion[] = LABS_LOCATIONS.map((l) => ({
 const DEFAULT_CLASS =
   'w-full px-4 py-2.5 border border-nexo-border rounded-nexo-lg text-sm text-nexo-text placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-nexo-sky bg-nexo-surface';
 
+// Display-only labels for DataForSEO location types; unknown types are shown as received.
+const TYPE_LABELS: Record<string, string> = {
+  Country: 'País', City: 'Cidade', Region: 'Região', State: 'Estado', Province: 'Província',
+  County: 'Condado', Municipality: 'Município', District: 'Distrito', Neighborhood: 'Bairro',
+  'DMA Region': 'Região DMA', 'Postal Code': 'CEP', Airport: 'Aeroporto', University: 'Universidade',
+};
+
 function isoToFlag(iso: string): string {
   if (iso.length !== 2) return '';
   return String.fromCodePoint(...[...iso.toUpperCase()].map((c) => 127397 + c.charCodeAt(0)));
@@ -127,7 +134,7 @@ export default function LocationPicker({ name, defaultValue = '', placeholder, r
         onChange={(e) => handleChange(e.target.value)}
         onFocus={handleFocus}
         onKeyDown={handleKeyDown}
-        placeholder={placeholder ?? (scope === 'labs' ? 'e.g. France' : 'e.g. Paris, France')}
+        placeholder={placeholder ?? (scope === 'labs' ? 'ex.: Brasil' : 'ex.: São Paulo, Brasil')}
         required={required}
         disabled={disabled}
         autoComplete="off"
@@ -148,7 +155,7 @@ export default function LocationPicker({ name, defaultValue = '', placeholder, r
                 {s.countryIso && <span className="shrink-0">{isoToFlag(s.countryIso)}</span>}
                 <span className="flex-1 truncate text-nexo-text">{s.name}</span>
                 <span className="shrink-0 text-[9px] font-medium uppercase tracking-wider text-nexo-faint bg-nexo-surface-2 rounded px-1.5 py-0.5">
-                  {s.type}
+                  {TYPE_LABELS[s.type] ?? s.type}
                 </span>
               </button>
             </li>

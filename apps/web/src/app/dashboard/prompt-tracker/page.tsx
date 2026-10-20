@@ -34,7 +34,7 @@ const BUTTON_SECONDARY = 'nexo-label rounded-nexo bg-nexo-surface-2 px-3 py-1.5 
 const BUTTON_DANGER = 'rounded-nexo px-3 py-1.5 text-[10px] font-medium uppercase tracking-widest text-nexo-danger-text transition-colors hover:bg-nexo-danger/15';
 
 function formatDateTime(ts: number) {
-  return new Date(ts).toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  return new Date(ts).toLocaleString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 
 function targetLabel(prompt: TrackedPrompt) {
@@ -42,7 +42,7 @@ function targetLabel(prompt: TrackedPrompt) {
 }
 
 function StatusBadge({ check }: { check: PromptCheck | undefined }) {
-  if (!check) return <span className="nexo-label rounded-md bg-nexo-surface-2 px-2 py-0.5">Not checked</span>;
+  if (!check) return <span className="nexo-label rounded-md bg-nexo-surface-2 px-2 py-0.5">Não verificado</span>;
   const status = checkStatus(check);
   const tone = status === 'cited'
     ? 'bg-nexo-ice/10 text-nexo-ice'
@@ -96,26 +96,26 @@ async function PromptTrackerPage({ searchParams }: { searchParams: Promise<Searc
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="nexo-h1">Prompt Tracker</h1>
+        <h1 className="nexo-h1">Monitor de prompts</h1>
         <p className="text-sm text-nexo-faint mt-1">
-          Save a prompt, re-run it whenever you want or every day, and see whether your brand or domain shows up in the answer.
+          Salve um prompt, execute-o de novo quando quiser ou todos os dias e veja se sua marca ou domínio aparece na resposta.
         </p>
       </div>
 
       {!creds && (
         <div className="bg-nexo-warn/10 border border-nexo-warn/40 text-nexo-warn-text text-sm rounded-nexo-lg px-4 py-3">
-          DataForSEO credentials missing. Configure them in{' '}
-          <a href="/dashboard/settings" className="underline font-semibold">settings</a>.
+          Credenciais da DataForSEO ausentes. Configure-as em{' '}
+          <a href="/dashboard/settings" className="underline font-semibold">Configurações</a>.
         </div>
       )}
 
       <PromptTrackerForm action={addPromptAction} />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <StatTile label="Prompts tracked" value={String(prompts.length)} />
-        <StatTile label="Mentioned in latest check" value={`${promptsMentioned} / ${prompts.length}`} />
-        <StatTile label="Checks run" value={String(checksRun)} />
-        <StatTile label="Overall mention rate" value={overall} />
+        <StatTile label="Prompts monitorados" value={String(prompts.length)} />
+        <StatTile label="Mencionados na última verificação" value={`${promptsMentioned} / ${prompts.length}`} />
+        <StatTile label="Verificações executadas" value={String(checksRun)} />
+        <StatTile label="Taxa geral de menção" value={overall} />
       </div>
 
       <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-5 flex flex-wrap items-center gap-4">
@@ -128,28 +128,28 @@ async function PromptTrackerPage({ searchParams }: { searchParams: Promise<Searc
             disabled={!creds || prompts.length === 0}
             className="nexo-label rounded-nexo-lg bg-white px-4 py-2.5 text-nexo-bg transition-colors hover:bg-nexo-sky disabled:opacity-40"
             pendingClassName="rounded-nexo-lg bg-white/30 px-4 py-2.5 text-[10px] font-medium uppercase tracking-widest text-white "
-            pendingChildren="Checking all…"
+            pendingChildren="Verificando todos…"
           >
-            Check all now
+            Verificar todos agora
           </PendingButton>
         </form>
       </div>
 
       {prompts.length === 0 ? (
         <div className="bg-nexo-surface rounded-nexo-lg border border-dashed border-nexo-border p-10 text-center">
-          <p className="text-nexo-faint text-sm">No prompts tracked yet. Add one above, then run it to see whether your brand appears.</p>
+          <p className="text-nexo-faint text-sm">Nenhum prompt monitorado ainda. Adicione um acima e execute-o para ver se sua marca aparece.</p>
         </div>
       ) : (
         <>
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-4 text-[11px] text-nexo-faint">
-              <span className="flex items-center gap-1.5"><StatusDot status="cited" size="sm" /> Cited</span>
-              <span className="flex items-center gap-1.5"><StatusDot status="not-cited" size="sm" /> Not cited</span>
-              <span className="flex items-center gap-1.5"><StatusDot status="error" size="sm" /> Error</span>
-              <span className="flex items-center gap-1.5"><StatusDot status={null} size="sm" /> No check</span>
+              <span className="flex items-center gap-1.5"><StatusDot status="cited" size="sm" /> Citado</span>
+              <span className="flex items-center gap-1.5"><StatusDot status="not-cited" size="sm" /> Não citado</span>
+              <span className="flex items-center gap-1.5"><StatusDot status="error" size="sm" /> Erro</span>
+              <span className="flex items-center gap-1.5"><StatusDot status={null} size="sm" /> Sem verificação</span>
             </div>
             <div className="flex items-center gap-2">
-              <CopyMarkdownLink href="/api/prompt-tracker/export" label="Copy overview as Markdown" />
+              <CopyMarkdownLink href="/api/prompt-tracker/export" label="Copiar visão geral em Markdown" />
               <ReportPdfExportButton
                 brandName={brandName}
                 brandLogoUrl={brandLogoUrl}
@@ -157,7 +157,7 @@ async function PromptTrackerPage({ searchParams }: { searchParams: Promise<Searc
                 brandFooter={brand.footer}
                 brandStyle={brand}
                 filename="prompt-tracker-overview.pdf"
-                title="Prompt Tracker overview"
+                title="Visão geral do monitor de prompts"
                 subject={`${prompts.length} prompt${prompts.length === 1 ? '' : 's'}`}
                 generatedAt={Date.now()}
                 metrics={overviewReport.metrics}
@@ -197,8 +197,8 @@ async function PromptTrackerPage({ searchParams }: { searchParams: Promise<Searc
                     <div className="flex flex-wrap items-center gap-2">
                       <form action={checkPromptAction}>
                         <input type="hidden" name="id" value={prompt.id} />
-                        <PendingButton type="submit" disabled={!creds} className={BUTTON_SECONDARY} pendingClassName={`${BUTTON_SECONDARY} opacity-60`} pendingChildren="Checking…">
-                          Check now
+                        <PendingButton type="submit" disabled={!creds} className={BUTTON_SECONDARY} pendingClassName={`${BUTTON_SECONDARY} opacity-60`} pendingChildren="Verificando…">
+                          Verificar agora
                         </PendingButton>
                       </form>
                       <CopyMarkdownLink href={`/api/prompt-tracker/export?id=${prompt.id}`} />
@@ -209,7 +209,7 @@ async function PromptTrackerPage({ searchParams }: { searchParams: Promise<Searc
                         brandFooter={brand.footer}
                         brandStyle={brand}
                         filename={`prompt-${prompt.id}-report.pdf`}
-                        title="Prompt report"
+                        title="Relatório do prompt"
                         subject={prompt.prompt}
                         generatedAt={Date.now()}
                         metrics={report.metrics}
@@ -217,21 +217,21 @@ async function PromptTrackerPage({ searchParams }: { searchParams: Promise<Searc
                       />
                       <form action={removePromptAction} className="ml-auto">
                         <input type="hidden" name="id" value={prompt.id} />
-                        <PendingButton type="submit" className={BUTTON_DANGER} pendingChildren="Removing…">Remove</PendingButton>
+                        <PendingButton type="submit" className={BUTTON_DANGER} pendingChildren="Removendo…">Remover</PendingButton>
                       </form>
                     </div>
 
                     <section className="space-y-2">
-                      <p className="nexo-label">Calendar</p>
+                      <p className="nexo-label">Calendário</p>
                       <PromptCalendar checks={checks} />
                     </section>
 
                     <section className="space-y-2">
                       <p className="nexo-label">
-                        Check history {checks.length > HISTORY_SHOWN && <span className="normal-case font-normal tracking-normal">(latest {HISTORY_SHOWN} of {checks.length})</span>}
+                        Histórico de verificações {checks.length > HISTORY_SHOWN && <span className="normal-case font-normal tracking-normal">(últimas {HISTORY_SHOWN} de {checks.length})</span>}
                       </p>
                       {checks.length === 0 ? (
-                        <p className="text-sm text-nexo-faint">Not checked yet. Use “Check now” to run this prompt.</p>
+                        <p className="text-sm text-nexo-faint">Ainda não verificado. Use “Verificar agora” para executar este prompt.</p>
                       ) : (
                         <ul className="divide-y divide-nexo-border">
                           {checks.slice(0, HISTORY_SHOWN).map((check) => (
@@ -242,7 +242,7 @@ async function PromptTrackerPage({ searchParams }: { searchParams: Promise<Searc
                                 <span className="text-xs text-nexo-dim">{formatDateTime(check.checkedAt)}</span>
                                 {!check.error && (
                                   <span className="text-[11px] text-nexo-faint">
-                                    {check.brandMentions} brand mention{check.brandMentions === 1 ? '' : 's'} · domain {check.domainCited ? 'cited' : 'not cited'}
+                                    {check.brandMentions} {check.brandMentions === 1 ? 'menção à marca' : 'menções à marca'} · domínio {check.domainCited ? 'citado' : 'não citado'}
                                   </span>
                                 )}
                                 <span className="ml-auto font-mono text-[11px] text-nexo-faint">{formatCost(check.cost)}</span>
@@ -252,7 +252,7 @@ async function PromptTrackerPage({ searchParams }: { searchParams: Promise<Searc
 
                               {check.answer && (
                                 <details>
-                                  <summary className="cursor-pointer text-xs font-semibold text-nexo-sky">Show answer</summary>
+                                  <summary className="cursor-pointer text-xs font-semibold text-nexo-sky">Mostrar resposta</summary>
                                   <div className="mt-2">
                                     <MarkdownAnswer>{check.answer}</MarkdownAnswer>
                                   </div>
@@ -285,11 +285,11 @@ async function PromptTrackerPage({ searchParams }: { searchParams: Promise<Searc
               );
             })}
           </div>
-          <p className="text-[11px] text-nexo-faint">Legend for exports: {legendMarkdown()}</p>
+          <p className="text-[11px] text-nexo-faint">Legenda das exportações: {legendMarkdown()}</p>
         </>
       )}
 
-      <p className="text-nexo-faint text-xs">Powered by DataForSEO LLM Responses API. Each check is billed like an AI Prompt Test run.</p>
+      <p className="text-nexo-faint text-xs">Dados da API DataForSEO LLM Responses. Cada verificação é cobrada como uma execução do Teste de prompt em IA.</p>
     </div>
   );
 }

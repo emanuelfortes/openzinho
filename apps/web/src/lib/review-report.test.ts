@@ -47,7 +47,7 @@ describe('ranking primitives', () => {
   });
 
   it('formats values and colours ranks', () => {
-    expect(formatValue('percent', null)).toBe('n/a');
+    expect(formatValue('percent', null)).toBe('n/d');
     expect(formatValue('signedPercent', 12.4)).toBe('+12%');
     expect(formatValue('duration', 5 * 3_600_000)).toBe('5 h');
     expect(formatValue('duration', 3 * DAY)).toBe('3 d');
@@ -72,7 +72,7 @@ describe('buildComparisonReport', () => {
     expect(report.weeks).toHaveLength(14);
     expect(byId.get(2)!.weekly.slice(0, -1).every((c) => c === 3)).toBe(true);
     expect(report.selfId).toBe(3);
-    expect(report.summary.targets[0]).toMatch(/\+1\.1 reviews per week to overtake Listing 2/);
+    expect(report.summary.targets[0]).toMatch(/\+1,1 avaliações por semana para ultrapassar Listing 2/);
   });
 
   it('does not penalise reviews too recent to have an answer yet', () => {
@@ -134,8 +134,8 @@ describe('buildComparisonReport', () => {
   it('writes a market summary when no listing is marked as mine', () => {
     const report = buildComparisonReport({ now: NOW, timeZone: TZ, listings: [listing(1, steady(1)), listing(2, steady(2))] });
     expect(report.selfId).toBeNull();
-    expect(report.summary.headline.join(' ')).toMatch(/Listing 2 gains the most reviews/);
-    expect(report.kpis[0].label).toBe('Listings compared');
+    expect(report.summary.headline.join(' ')).toMatch(/Listing 2 é quem mais ganha avaliações/);
+    expect(report.kpis[0].label).toBe('Perfis comparados');
   });
 
   it('projects when the self listing catches up on total reviews', () => {
@@ -146,6 +146,6 @@ describe('buildComparisonReport', () => {
         listing(2, steady(1), { googleTotal: 160 }),
       ],
     });
-    expect(report.summary.targets.join(' ')).toMatch(/overtake Listing 2's review count in about \d+ months/);
+    expect(report.summary.targets.join(' ')).toMatch(/ultrapassa o número de avaliações de Listing 2 em cerca de \d+ (mês|meses)/);
   });
 });

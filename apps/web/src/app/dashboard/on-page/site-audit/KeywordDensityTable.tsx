@@ -70,11 +70,11 @@ export default function KeywordDensityTable({ items }: { items: KwDensityItem[] 
     emphasized: item.emphasized_keyword_frequency ?? '',
   }));
   const columns = [
-    { key: 'keyword', label: 'Keyword' },
-    { key: 'frequency', label: 'Frequency' },
-    { key: 'density', label: 'Density' },
-    { key: 'pages', label: 'Pages' },
-    { key: 'emphasized', label: 'Emphasized' },
+    { key: 'keyword', label: 'Palavra-chave' },
+    { key: 'frequency', label: 'Frequência' },
+    { key: 'density', label: 'Densidade' },
+    { key: 'pages', label: 'Páginas' },
+    { key: 'emphasized', label: 'Em destaque' },
   ];
 
   return (
@@ -88,11 +88,11 @@ export default function KeywordDensityTable({ items }: { items: KwDensityItem[] 
           <thead>
             <tr className="border-b border-nexo-border bg-white/[0.02]">
               <th className="nexo-label px-4 py-3 text-left">#</th>
-              <Header label="Keyword" sortK="keyword" align="left" />
-              <Header label="Frequency" sortK="frequency" align="right" />
-              <Header label="Density" sortK="density" align="right" />
-              <Header label="Pages" sortK="pages" align="right" className="hidden sm:table-cell" />
-              <Header label="Emphasized" sortK="emphasized" align="right" className="hidden lg:table-cell" />
+              <Header label="Palavra-chave" sortK="keyword" align="left" />
+              <Header label="Frequência" sortK="frequency" align="right" />
+              <Header label="Densidade" sortK="density" align="right" />
+              <Header label="Páginas" sortK="pages" align="right" className="hidden sm:table-cell" />
+              <Header label="Em destaque" sortK="emphasized" align="right" className="hidden lg:table-cell" />
             </tr>
           </thead>
           <tbody className="divide-y divide-nexo-border">

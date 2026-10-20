@@ -41,13 +41,13 @@ export interface AggregatedMetrics {
 
 type MetricBreakdowns = Omit<AggregatedMetrics, 'total'>;
 const METRIC_DIMENSIONS: ReadonlyArray<[keyof MetricBreakdowns, string]> = [
-  ['location', 'Location'],
-  ['language', 'Language'],
-  ['platform', 'Platform'],
-  ['sources_domain', 'Source domain'],
-  ['search_results_domain', 'Search-result domain'],
-  ['brand_entities_title', 'Brand entity'],
-  ['brand_entities_category', 'Brand entity category'],
+  ['location', 'Local'],
+  ['language', 'Idioma'],
+  ['platform', 'Plataforma'],
+  ['sources_domain', 'Domínio de fonte'],
+  ['search_results_domain', 'Domínio nos resultados de busca'],
+  ['brand_entities_title', 'Entidade de marca'],
+  ['brand_entities_category', 'Categoria de entidade de marca'],
 ];
 
 interface TargetMetricsResult {
@@ -188,8 +188,8 @@ async function fetchHistorical(
 
 const PLATFORM_LABELS: Record<string, string> = { google: 'Google AI', chat_gpt: 'ChatGPT' };
 
-function fmt(n?: number) { return n != null ? n.toLocaleString('en-GB') : '—'; }
-function formatDate(ts: number) { return new Date(ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); }
+function fmt(n?: number) { return n != null ? n.toLocaleString('pt-BR') : '—'; }
+function formatDate(ts: number) { return new Date(ts).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' }); }
 
 function BreakdownList({ title, items, formatKey = String }: {
   title: string;
@@ -209,7 +209,7 @@ function BreakdownList({ title, items, formatKey = String }: {
               <div className="flex items-center justify-between mb-1 gap-2">
                 <span className="text-xs font-medium text-nexo-dim truncate">{formatKey(item.key)}</span>
                 <span className="text-[10px] font-mono text-nexo-dim shrink-0 tabular-nums">
-                  {fmt(item.mentions)} mentions · {fmt(item.ai_search_volume)} volume
+                  {fmt(item.mentions)} menções · volume {fmt(item.ai_search_volume)}
                 </span>
               </div>
               <div className="h-1.5 bg-nexo-surface-2 rounded-full overflow-hidden">
@@ -224,7 +224,7 @@ function BreakdownList({ title, items, formatKey = String }: {
 }
 
 function monthLabel(year: number, month: number) {
-  return new Date(year, month - 1, 1).toLocaleDateString('en-GB', { month: 'short', year: '2-digit' });
+  return new Date(year, month - 1, 1).toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' });
 }
 
 function MonthlyTrendChart({ title, items, metric }: { title: string; items: HistoricalItem[]; metric: 'mentions' | 'ai_search_volume' }) {
@@ -235,7 +235,7 @@ function MonthlyTrendChart({ title, items, metric }: { title: string; items: His
   const first = values[0];
   const last = values[values.length - 1];
   const delta = last - first;
-  const trendLabel = delta > 0 ? 'increasing' : delta < 0 ? 'declining' : 'flat';
+  const trendLabel = delta > 0 ? 'em alta' : delta < 0 ? 'em queda' : 'estável';
   const trendColor = delta > 0
     ? 'text-nexo-ice bg-nexo-ice/10 border-nexo-ice/30'
     : delta < 0
@@ -282,8 +282,8 @@ async function AiVisibilityPage({ searchParams }: { searchParams: Promise<Search
   const targetType = (params.target_type === 'domain' ? 'domain' : 'keyword') as 'keyword' | 'domain';
   const platform = ['google', 'chat_gpt'].includes(params.platform ?? '') ? params.platform! : 'chat_gpt';
   const limit = Math.min(Math.max(parseInt(params.limit ?? '10', 10) || 10, 1), 50);
-  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'France');
-  const defaultLanguage = getSetting('default_language') ?? 'French';
+  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'Brazil');
+  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
   const brand = getBrandSettings();
   const brandName = brand.name;
   const brandLogoUrl = brand.logo ?? undefined;
@@ -308,11 +308,11 @@ async function AiVisibilityPage({ searchParams }: { searchParams: Promise<Search
       isFromHistory = true;
       activeEntry = getAiVisibilityHistory().find((e) => e.id === historyId) ?? null;
     } else {
-      error = 'This search is no longer available.';
+      error = 'Esta busca não está mais disponível.';
     }
   } else if (targetValue) {
     if (!creds) {
-      error = 'DataForSEO credentials missing. Configure them in Settings.';
+      error = 'Credenciais da DataForSEO ausentes. Configure-as em Configurações.';
     } else {
       const dedupeId = mode === 'historical'
         ? stableSearchId(['ai-visibility', mode, targetValue, targetType, platform, location, language, dateFrom, dateTo])
@@ -351,7 +351,7 @@ async function AiVisibilityPage({ searchParams }: { searchParams: Promise<Search
   const displayTarget = activeEntry?.target ?? targetValue;
   const agg = targetResult?.aggregated_metrics;
   const formatBreakdownKey = (dimension: string, key: AggMetric['key']) =>
-    dimension === 'Location' ? labsLocationLabel(key) : String(key);
+    dimension === 'Local' ? labsLocationLabel(key) : String(key);
   const reportDate = activeEntry?.ts ?? Date.now();
   const reportSlug = displayTarget.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '').slice(0, 48) || 'report';
   let reportMetrics: ReportMetric[] = [];
@@ -362,27 +362,27 @@ async function AiVisibilityPage({ searchParams }: { searchParams: Promise<Search
 
   if (mode === 'target' && targetResult) {
     const breakdowns: Array<[string, AggMetric[] | undefined]> = [
-      ['Platform', agg?.platform], ['Location', agg?.location], ['Language', agg?.language], ['Source domain', agg?.sources_domain],
-      ['Search-result domain', agg?.search_results_domain], ['Brand entity', agg?.brand_entities_title], ['Brand entity category', agg?.brand_entities_category],
+      ['Plataforma', agg?.platform], ['Local', agg?.location], ['Idioma', agg?.language], ['Domínio de fonte', agg?.sources_domain],
+      ['Domínio nos resultados de busca', agg?.search_results_domain], ['Entidade de marca', agg?.brand_entities_title], ['Categoria de entidade de marca', agg?.brand_entities_category],
     ];
     reportMetrics = [
-      { label: 'Platform', value: PLATFORM_LABELS[platform] ?? platform },
-      { label: 'Mentions', value: fmt(agg?.total?.mentions) },
-      { label: 'AI search volume', value: fmt(agg?.total?.ai_search_volume) },
+      { label: 'Plataforma', value: PLATFORM_LABELS[platform] ?? platform },
+      { label: 'Menções', value: fmt(agg?.total?.mentions) },
+      { label: 'Volume de buscas em IA', value: fmt(agg?.total?.ai_search_volume) },
     ];
     reportSections = breakdowns.map(([title, items]) => ({
-      title: `Mentions by ${title.toLowerCase()}`,
-      rows: (items ?? []).slice(0, 12).map((item) => [formatBreakdownKey(title, item.key), `${fmt(item.mentions)} mentions`]),
+      title: `Menções por ${title.toLowerCase()}`,
+      rows: (items ?? []).slice(0, 12).map((item) => [formatBreakdownKey(title, item.key), `${fmt(item.mentions)} menções`]),
     }));
     reportSheets = [
-      { name: 'Overview', columns: [{ key: 'metric', label: 'Metric' }, { key: 'value', label: 'Value' }], data: reportMetrics.map((metric) => ({ metric: metric.label, value: metric.value })) },
+      { name: 'Visão geral', columns: [{ key: 'metric', label: 'Métrica' }, { key: 'value', label: 'Valor' }], data: reportMetrics.map((metric) => ({ metric: metric.label, value: metric.value })) },
       ...breakdowns.map(([name, items]) => ({
         name: name.slice(0, 31),
-        columns: [{ key: 'name', label: name }, { key: 'mentions', label: 'Mentions' }, { key: 'volume', label: 'AI Search Volume' }],
+        columns: [{ key: 'name', label: name }, { key: 'mentions', label: 'Menções' }, { key: 'volume', label: 'Volume de buscas em IA' }],
         data: (items ?? []).map((item) => ({ name: formatBreakdownKey(name, item.key), mentions: item.mentions, volume: item.ai_search_volume })),
       })),
     ];
-    reportCsvColumns = [{ key: 'dimension', label: 'Dimension' }, { key: 'name', label: 'Name' }, { key: 'mentions', label: 'Mentions' }, { key: 'volume', label: 'AI Search Volume' }];
+    reportCsvColumns = [{ key: 'dimension', label: 'Dimensão' }, { key: 'name', label: 'Nome' }, { key: 'mentions', label: 'Menções' }, { key: 'volume', label: 'Volume de buscas em IA' }];
     reportCsvData = breakdowns.flatMap(([dimension, items]) => (items ?? []).map((item) => ({ dimension, name: formatBreakdownKey(dimension, item.key), mentions: item.mentions, volume: item.ai_search_volume })));
   } else if (mode === 'leaderboard' && leaderboardResult) {
     const toRows = (items: LeaderboardItem[], field: 'domain' | 'brand') => items.map((item) => ({
@@ -395,29 +395,29 @@ async function AiVisibilityPage({ searchParams }: { searchParams: Promise<Search
         scope, name, dimension: label, key: formatBreakdownKey(label, item.key), mentions: item.mentions, volume: item.ai_search_volume,
       })));
     const metricDetails = [
-      ...detailedRows('Domain leaderboard', 'All domains', leaderboardResult.domainsAggregatedMetrics),
-      ...detailedRows('Brand leaderboard', 'All brands', leaderboardResult.brandsAggregatedMetrics),
-      ...leaderboardResult.domains.flatMap((item) => detailedRows('Domain', item.domain ?? '—', item)),
-      ...leaderboardResult.brands.flatMap((item) => detailedRows('Brand', item.brand ?? '—', item)),
+      ...detailedRows('Ranking de domínios', 'Todos os domínios', leaderboardResult.domainsAggregatedMetrics),
+      ...detailedRows('Ranking de marcas', 'Todas as marcas', leaderboardResult.brandsAggregatedMetrics),
+      ...leaderboardResult.domains.flatMap((item) => detailedRows('Domínio', item.domain ?? '—', item)),
+      ...leaderboardResult.brands.flatMap((item) => detailedRows('Marca', item.brand ?? '—', item)),
     ];
     reportMetrics = [
-      { label: 'Platform', value: PLATFORM_LABELS[platform] ?? platform },
-      { label: 'Domains ranked', value: String(domains.length) },
-      { label: 'Brands ranked', value: String(brands.length) },
+      { label: 'Plataforma', value: PLATFORM_LABELS[platform] ?? platform },
+      { label: 'Domínios no ranking', value: String(domains.length) },
+      { label: 'Marcas no ranking', value: String(brands.length) },
     ];
     reportSections = [
-      { title: 'Top mentioned domains', rows: domains.slice(0, 12).map((row) => [String(row.name), `${fmt(Number(row.mentions))} mentions`]) },
-      { title: 'Top mentioned brands', rows: brands.slice(0, 12).map((row) => [String(row.name), `${fmt(Number(row.mentions))} mentions`]) },
+      { title: 'Domínios mais mencionados', rows: domains.slice(0, 12).map((row) => [String(row.name), `${fmt(Number(row.mentions))} menções`]) },
+      { title: 'Marcas mais mencionadas', rows: brands.slice(0, 12).map((row) => [String(row.name), `${fmt(Number(row.mentions))} menções`]) },
     ];
     reportSheets = [
-      { name: 'Domains', columns: [{ key: 'name', label: 'Domain' }, { key: 'mentions', label: 'Mentions' }, { key: 'volume', label: 'AI Search Volume' }], data: domains },
-      { name: 'Brands', columns: [{ key: 'name', label: 'Brand' }, { key: 'mentions', label: 'Mentions' }, { key: 'volume', label: 'AI Search Volume' }], data: brands },
-      { name: 'Metric details', columns: [{ key: 'scope', label: 'Scope' }, { key: 'name', label: 'Name' }, { key: 'dimension', label: 'Dimension' }, { key: 'key', label: 'Value' }, { key: 'mentions', label: 'Mentions' }, { key: 'volume', label: 'AI Search Volume' }], data: metricDetails },
+      { name: 'Domínios', columns: [{ key: 'name', label: 'Domínio' }, { key: 'mentions', label: 'Menções' }, { key: 'volume', label: 'Volume de buscas em IA' }], data: domains },
+      { name: 'Marcas', columns: [{ key: 'name', label: 'Marca' }, { key: 'mentions', label: 'Menções' }, { key: 'volume', label: 'Volume de buscas em IA' }], data: brands },
+      { name: 'Detalhes das métricas', columns: [{ key: 'scope', label: 'Escopo' }, { key: 'name', label: 'Nome' }, { key: 'dimension', label: 'Dimensão' }, { key: 'key', label: 'Valor' }, { key: 'mentions', label: 'Menções' }, { key: 'volume', label: 'Volume de buscas em IA' }], data: metricDetails },
     ];
-    reportCsvColumns = [{ key: 'scope', label: 'Scope' }, { key: 'name', label: 'Name' }, { key: 'dimension', label: 'Dimension' }, { key: 'key', label: 'Value' }, { key: 'mentions', label: 'Mentions' }, { key: 'volume', label: 'AI Search Volume' }];
+    reportCsvColumns = [{ key: 'scope', label: 'Escopo' }, { key: 'name', label: 'Nome' }, { key: 'dimension', label: 'Dimensão' }, { key: 'key', label: 'Valor' }, { key: 'mentions', label: 'Menções' }, { key: 'volume', label: 'Volume de buscas em IA' }];
     reportCsvData = [
-      ...domains.map((row) => ({ scope: 'Domain', name: row.name, dimension: 'Total', key: '', mentions: row.mentions, volume: row.volume })),
-      ...brands.map((row) => ({ scope: 'Brand', name: row.name, dimension: 'Total', key: '', mentions: row.mentions, volume: row.volume })),
+      ...domains.map((row) => ({ scope: 'Domínio', name: row.name, dimension: 'Total', key: '', mentions: row.mentions, volume: row.volume })),
+      ...brands.map((row) => ({ scope: 'Marca', name: row.name, dimension: 'Total', key: '', mentions: row.mentions, volume: row.volume })),
       ...metricDetails,
     ];
   } else if (mode === 'historical' && historicalResult) {
@@ -425,14 +425,14 @@ async function AiVisibilityPage({ searchParams }: { searchParams: Promise<Search
       month: `${item.year}-${String(item.month).padStart(2, '0')}`, mentions: item.metrics.mentions, volume: item.metrics.ai_search_volume,
     }));
     reportMetrics = [
-      { label: 'Platform', value: PLATFORM_LABELS[platform] ?? platform },
-      { label: 'Months tracked', value: String(months.length) },
-      { label: 'Latest mentions', value: fmt(months.at(-1)?.mentions) },
-      { label: 'Latest AI volume', value: fmt(months.at(-1)?.volume) },
+      { label: 'Plataforma', value: PLATFORM_LABELS[platform] ?? platform },
+      { label: 'Meses monitorados', value: String(months.length) },
+      { label: 'Menções mais recentes', value: fmt(months.at(-1)?.mentions) },
+      { label: 'Volume em IA mais recente', value: fmt(months.at(-1)?.volume) },
     ];
-    reportSections = [{ title: 'Monthly history', rows: months.slice(-18).reverse().map((row) => [row.month, `${fmt(row.mentions)} mentions · ${fmt(row.volume)} volume`]) }];
-    reportSheets = [{ name: 'Monthly history', columns: [{ key: 'month', label: 'Month' }, { key: 'mentions', label: 'Mentions' }, { key: 'volume', label: 'AI Search Volume' }], data: months }];
-    reportCsvColumns = [{ key: 'month', label: 'Month' }, { key: 'mentions', label: 'Mentions' }, { key: 'volume', label: 'AI Search Volume' }];
+    reportSections = [{ title: 'Histórico mensal', rows: months.slice(-18).reverse().map((row) => [row.month, `${fmt(row.mentions)} menções · volume ${fmt(row.volume)}`]) }];
+    reportSheets = [{ name: 'Histórico mensal', columns: [{ key: 'month', label: 'Mês' }, { key: 'mentions', label: 'Menções' }, { key: 'volume', label: 'Volume de buscas em IA' }], data: months }];
+    reportCsvColumns = [{ key: 'month', label: 'Mês' }, { key: 'mentions', label: 'Menções' }, { key: 'volume', label: 'Volume de buscas em IA' }];
     reportCsvData = months;
   }
   const canExportReport = reportMetrics.length > 0;
@@ -440,13 +440,13 @@ async function AiVisibilityPage({ searchParams }: { searchParams: Promise<Search
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="nexo-h1">AI Visibility</h1>
-        <p className="text-sm text-nexo-faint mt-1">How often a domain/brand is mentioned by LLMs, and who dominates a topic — via DataForSEO LLM Mentions.</p>
+        <h1 className="nexo-h1">Visibilidade em IA</h1>
+        <p className="text-sm text-nexo-faint mt-1">Com que frequência um domínio ou marca é mencionado por LLMs e quem domina um tema — via DataForSEO LLM Mentions.</p>
       </div>
 
       <SearchForm
         className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4"
-        btnLabel={mode === 'target' ? 'Analyze' : mode === 'leaderboard' ? 'Get leaderboard' : 'Show trend'}
+        btnLabel={mode === 'target' ? 'Analisar' : mode === 'leaderboard' ? 'Ver ranking' : 'Mostrar tendência'}
         btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-sky transition-colors"
       >
         <div className="nexo-seg mb-2 max-w-full flex-wrap">
@@ -457,7 +457,7 @@ async function AiVisibilityPage({ searchParams }: { searchParams: Promise<Search
               aria-current={mode === m ? 'page' : undefined}
               className={`transition-colors hover:text-white ${mode === m ? 'active' : ''}`}
             >
-              {m === 'target' ? 'My domain/brand' : m === 'leaderboard' ? 'Topic leaderboard' : 'Trend over time'}
+              {m === 'target' ? 'Meu domínio/marca' : m === 'leaderboard' ? 'Ranking do tema' : 'Tendência no tempo'}
             </a>
           ))}
         </div>
@@ -466,22 +466,22 @@ async function AiVisibilityPage({ searchParams }: { searchParams: Promise<Search
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="sm:col-span-2 flex gap-2">
             <div className="shrink-0">
-              <label className="nexo-label block mb-1.5">Type</label>
+              <label className="nexo-label block mb-1.5">Tipo</label>
               <select name="target_type" defaultValue={targetType}
                 className="nexo-input min-w-0 w-full h-[42px] px-3 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
-                <option value="domain">Domain</option>
-                <option value="keyword">Keyword</option>
+                <option value="domain">Domínio</option>
+                <option value="keyword">Palavra-chave</option>
               </select>
             </div>
             <div className="flex-1">
               <label className="nexo-label block mb-1.5">
-                {mode === 'leaderboard' ? 'Topic' : 'Target'}
+                {mode === 'leaderboard' ? 'Tema' : 'Alvo'}
               </label>
               <input
                 name="target"
                 type="text"
                 defaultValue={displayTarget}
-                placeholder={targetType === 'domain' ? 'example.com' : mode === 'leaderboard' ? 'best plumber' : 'your brand name'}
+                placeholder={targetType === 'domain' ? 'exemplo.com.br' : mode === 'leaderboard' ? 'melhor encanador' : 'nome da sua marca'}
                 required
                 className="nexo-input min-w-0 w-full h-[42px] px-4 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
               />
@@ -502,7 +502,7 @@ async function AiVisibilityPage({ searchParams }: { searchParams: Promise<Search
 
               {mode === 'leaderboard' && (
                 <div>
-                  <label className="nexo-label block mb-1.5">Results per list</label>
+                  <label className="nexo-label block mb-1.5">Resultados por lista</label>
                   <select name="limit" defaultValue={String(limit)}
                     className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
                     {[10, 20, 50].map((n) => <option key={n} value={n}>{n}</option>)}
@@ -518,10 +518,10 @@ async function AiVisibilityPage({ searchParams }: { searchParams: Promise<Search
 
       {canExportReport && (
         <div className="flex items-center justify-between gap-4 border-y border-nexo-border py-3">
-          <p className="nexo-label">Export current report</p>
+          <p className="nexo-label">Exportar relatório atual</p>
           <div className="flex items-center gap-3">
             <ReportPdfExportButton brandName={brandName} brandLogoUrl={brandLogoUrl} brandColor={brand.color} brandFooter={brand.footer} brandStyle={brand} filename={`ai-visibility-${reportSlug}.pdf`}
-              title="AI visibility report" subject={displayTarget} generatedAt={reportDate} metrics={reportMetrics} sections={reportSections} />
+              title="Relatório de visibilidade em IA" subject={displayTarget} generatedAt={reportDate} metrics={reportMetrics} sections={reportSections} />
             <ExportExcelButton sheets={reportSheets} filename={`ai-visibility-${reportSlug}.xls`} />
             <ExportCSVButton data={reportCsvData} columns={reportCsvColumns} filename={`ai-visibility-${reportSlug}.csv`} />
           </div>
@@ -531,36 +531,36 @@ async function AiVisibilityPage({ searchParams }: { searchParams: Promise<Search
       {hasQuery && !error && mode === 'target' && targetResult && (
         <div id="results" className="space-y-4">
           <div className="flex items-center gap-3 flex-wrap">
-            <span className="nexo-label">Target</span>
+            <span className="nexo-label">Alvo</span>
             <span className="font-mono font-medium text-nexo-text">{displayTarget}</span>
-            {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>}
-            {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint ml-auto">cost: ${cost.toFixed(4)}</span>}
+            {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">Histórico</span>}
+            {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint ml-auto">custo: US$ {cost.toFixed(4).replace('.', ',')}</span>}
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
-              <p className="nexo-label">Total mentions</p>
+              <p className="nexo-label">Total de menções</p>
               <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{fmt(agg?.total?.mentions)}</p>
             </div>
             <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
-              <p className="nexo-label">AI search volume</p>
+              <p className="nexo-label">Volume de buscas em IA</p>
               <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{fmt(agg?.total?.ai_search_volume)}</p>
             </div>
           </div>
 
           {(!agg?.total || agg.total.mentions === 0) ? (
             <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-6 py-12 text-center text-sm text-nexo-faint">
-              No LLM mentions found for this target on {PLATFORM_LABELS[platform]}.
+              Nenhuma menção em LLMs encontrada para este alvo em {PLATFORM_LABELS[platform]}.
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <BreakdownList title="By platform" items={agg?.platform} />
-              <BreakdownList title="By location" items={agg?.location} formatKey={labsLocationLabel} />
-              <BreakdownList title="By language" items={agg?.language} />
-              <BreakdownList title="Top referring source domains" items={agg?.sources_domain} />
-              <BreakdownList title="Top search-result domains" items={agg?.search_results_domain} />
-              <BreakdownList title="Brand entities mentioned alongside" items={agg?.brand_entities_title} />
-              <BreakdownList title="Brand entity categories" items={agg?.brand_entities_category} />
+              <BreakdownList title="Por plataforma" items={agg?.platform} />
+              <BreakdownList title="Por local" items={agg?.location} formatKey={labsLocationLabel} />
+              <BreakdownList title="Por idioma" items={agg?.language} />
+              <BreakdownList title="Principais domínios de fonte" items={agg?.sources_domain} />
+              <BreakdownList title="Principais domínios nos resultados de busca" items={agg?.search_results_domain} />
+              <BreakdownList title="Entidades de marca mencionadas junto" items={agg?.brand_entities_title} />
+              <BreakdownList title="Categorias de entidades de marca" items={agg?.brand_entities_category} />
             </div>
           )}
         </div>
@@ -569,10 +569,10 @@ async function AiVisibilityPage({ searchParams }: { searchParams: Promise<Search
       {hasQuery && !error && mode === 'leaderboard' && leaderboardResult && (
         <div id="results">
           <div className="flex items-center gap-3 flex-wrap mb-4">
-            <span className="nexo-label">Topic</span>
+            <span className="nexo-label">Tema</span>
             <span className="font-mono font-medium text-nexo-text">{displayTarget}</span>
-            {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>}
-            {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint ml-auto">cost: ${cost.toFixed(4)}</span>}
+            {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">Histórico</span>}
+            {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint ml-auto">custo: US$ {cost.toFixed(4).replace('.', ',')}</span>}
           </div>
           <LeaderboardTables
             domains={leaderboardResult.domains}
@@ -589,39 +589,39 @@ async function AiVisibilityPage({ searchParams }: { searchParams: Promise<Search
       {hasQuery && !error && mode === 'historical' && historicalResult && (
         <div id="results" className="space-y-4">
           <div className="flex items-center gap-3 flex-wrap">
-            <span className="nexo-label">Target</span>
+            <span className="nexo-label">Alvo</span>
             <span className="font-mono font-medium text-nexo-text">{displayTarget}</span>
-            {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>}
-            {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint ml-auto">cost: ${cost.toFixed(4)}</span>}
+            {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">Histórico</span>}
+            {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint ml-auto">custo: US$ {cost.toFixed(4).replace('.', ',')}</span>}
           </div>
 
           {historicalResult.items.length === 0 ? (
             <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-6 py-12 text-center text-sm text-nexo-faint">
-              No historical LLM mentions found for this target on {PLATFORM_LABELS[platform]}.
+              Nenhuma menção histórica em LLMs encontrada para este alvo em {PLATFORM_LABELS[platform]}.
             </div>
           ) : (
             <>
               <div className="grid grid-cols-3 gap-3">
                 <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
-                  <p className="nexo-label">Months tracked</p>
+                  <p className="nexo-label">Meses monitorados</p>
                   <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{historicalResult.items.length}</p>
                 </div>
                 <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
-                  <p className="nexo-label">Total mentions</p>
+                  <p className="nexo-label">Total de menções</p>
                   <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">
                     {fmt(historicalResult.items.reduce((s, i) => s + i.metrics.mentions, 0))}
                   </p>
                 </div>
                 <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
-                  <p className="nexo-label">Total AI search volume</p>
+                  <p className="nexo-label">Volume total de buscas em IA</p>
                   <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">
                     {fmt(historicalResult.items.reduce((s, i) => s + i.metrics.ai_search_volume, 0))}
                   </p>
                 </div>
               </div>
 
-              <MonthlyTrendChart title="Mentions per month" items={historicalResult.items} metric="mentions" />
-              <MonthlyTrendChart title="AI search volume per month" items={historicalResult.items} metric="ai_search_volume" />
+              <MonthlyTrendChart title="Menções por mês" items={historicalResult.items} metric="mentions" />
+              <MonthlyTrendChart title="Volume de buscas em IA por mês" items={historicalResult.items} metric="ai_search_volume" />
             </>
           )}
         </div>
@@ -630,7 +630,7 @@ async function AiVisibilityPage({ searchParams }: { searchParams: Promise<Search
       {history.length > 0 && (
         <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border">
-            <h2 className="nexo-label">History</h2>
+            <h2 className="nexo-label">Histórico</h2>
           </div>
           <div className="divide-y divide-nexo-border">
             {history.map((entry) => {
@@ -642,12 +642,12 @@ async function AiVisibilityPage({ searchParams }: { searchParams: Promise<Search
                     <div className="flex items-center gap-2">
                       <p className={`text-sm font-medium truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.target}</p>
                       <span className="text-[10px] font-medium text-nexo-faint bg-nexo-surface-2 px-1.5 py-0.5 rounded shrink-0">
-                        {entry.mode === 'target' ? 'Overview' : entry.mode === 'leaderboard' ? 'Leaderboard' : 'Trend'}
+                        {entry.mode === 'target' ? 'Visão geral' : entry.mode === 'leaderboard' ? 'Ranking' : 'Tendência'}
                       </span>
                     </div>
                     <p className="text-[11px] text-nexo-faint mt-0.5">
                       {PLATFORM_LABELS[entry.platform] ?? entry.platform}
-                      {entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}
+                      {entry.cost !== undefined ? ` · US$ ${entry.cost.toFixed(4).replace('.', ',')}` : ''}
                     </p>
                   </div>
                   <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>

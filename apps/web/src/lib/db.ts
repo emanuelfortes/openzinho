@@ -126,7 +126,7 @@ function getControlDb(): Database.Database {
     db.prepare(`INSERT INTO projects
       (id, name, domain, default_location, default_language, default_coordinates, rank_tracker_depth, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`)
-      .run('default', 'Default Project', domain, legacy.default_location ?? '', legacy.default_language ?? '', legacy.default_coordinates ?? '', legacy.rank_tracker_depth ?? '100', now);
+      .run('default', 'Projeto padrão', domain, legacy.default_location ?? '', legacy.default_language ?? '', legacy.default_coordinates ?? '', legacy.rank_tracker_depth ?? '100', now);
     db.prepare('INSERT INTO app_settings (key, value) VALUES (?, ?)').run('active_project_id', 'default');
     for (const key of ['dfs-login', 'dfs-pass']) {
       if (legacy[key]) db.prepare('INSERT INTO app_settings (key, value) VALUES (?, ?)').run(key, legacy[key]);
@@ -158,13 +158,13 @@ export function getCurrentProject(): Project {
   const projectId = projectScope.getStore();
   if (projectId === undefined) return getActiveProject();
   const row = getControlDb().prepare('SELECT * FROM projects WHERE id = ?').get(projectId) as ProjectRow | undefined;
-  if (!row) throw new Error('Project not found.');
+  if (!row) throw new Error('Projeto não encontrado.');
   return projectFromRow(row);
 }
 
 /** Explicit scope for an operation; deleted projects never fall back to the UI selection. */
 export function runInProjectScope<T>(projectId: string, operation: () => T): T {
-  if (!projectExists(projectId)) throw new Error('Project not found.');
+  if (!projectExists(projectId)) throw new Error('Projeto não encontrado.');
   return projectScope.run(projectId, operation);
 }
 
@@ -186,8 +186,8 @@ export function withProjectScope<Args extends unknown[], Result>(operation: (...
 export function createProject(input: Pick<Project, 'name' | 'domain' | 'defaultLocation' | 'defaultLanguage' | 'defaultCoordinates' | 'rankTrackerDepth'>): Project {
   const name = input.name.trim();
   const domain = normalizeDomain(input.domain);
-  if (!name) throw new Error('A project name is required.');
-  if (!domain) throw new Error('A domain is required.');
+  if (!name) throw new Error('Informe o nome do projeto.');
+  if (!domain) throw new Error('Informe um domínio.');
   const id = randomUUID();
   try {
     getControlDb().prepare(`INSERT INTO projects
@@ -196,7 +196,7 @@ export function createProject(input: Pick<Project, 'name' | 'domain' | 'defaultL
       .run(id, name, domain, input.defaultLocation.trim(), input.defaultLanguage.trim(), input.defaultCoordinates.trim(), input.rankTrackerDepth || '100', Date.now());
   } catch (error) {
     if (error instanceof Error && /UNIQUE constraint failed: projects\.domain/.test(error.message)) {
-      throw new Error('A project already exists for this domain.');
+      throw new Error('Já existe um projeto para este domínio.');
     }
     throw error;
   }
@@ -206,17 +206,17 @@ export function createProject(input: Pick<Project, 'name' | 'domain' | 'defaultL
 export function updateProject(id: string, input: Pick<Project, 'name' | 'domain' | 'defaultLocation' | 'defaultLanguage' | 'defaultCoordinates' | 'rankTrackerDepth'>): void {
   const name = input.name.trim();
   const domain = normalizeDomain(input.domain);
-  if (!name) throw new Error('A project name is required.');
-  if (!domain) throw new Error('A domain is required.');
+  if (!name) throw new Error('Informe o nome do projeto.');
+  if (!domain) throw new Error('Informe um domínio.');
   try {
     const result = getControlDb().prepare(`UPDATE projects SET
       name = ?, domain = ?, default_location = ?, default_language = ?, default_coordinates = ?, rank_tracker_depth = ?
       WHERE id = ?`)
       .run(name, domain, input.defaultLocation.trim(), input.defaultLanguage.trim(), input.defaultCoordinates.trim(), input.rankTrackerDepth || '100', id);
-    if (result.changes === 0) throw new Error('Project not found.');
+    if (result.changes === 0) throw new Error('Projeto não encontrado.');
   } catch (error) {
     if (error instanceof Error && /UNIQUE constraint failed: projects\.domain/.test(error.message)) {
-      throw new Error('A project already exists for this domain.');
+      throw new Error('Já existe um projeto para este domínio.');
     }
     throw error;
   }
@@ -228,16 +228,16 @@ export function projectExists(id: string): boolean {
 
 export function setActiveProject(id: string): void {
   const exists = getControlDb().prepare('SELECT 1 FROM projects WHERE id = ?').get(id);
-  if (!exists) throw new Error('Project not found.');
+  if (!exists) throw new Error('Projeto não encontrado.');
   getControlDb().prepare('INSERT OR REPLACE INTO app_settings (key, value) VALUES (?, ?)').run('active_project_id', id);
 }
 
 export function deleteProject(id: string): void {
   const db = getControlDb();
   const projects = getProjects();
-  if (projects.length === 1) throw new Error('You need at least one project.');
+  if (projects.length === 1) throw new Error('É preciso ter pelo menos um projeto.');
   const project = projects.find((item) => item.id === id);
-  if (!project) throw new Error('Project not found.');
+  if (!project) throw new Error('Projeto não encontrado.');
   const active = getActiveProject();
   if (active.id === id) db.prepare('INSERT OR REPLACE INTO app_settings (key, value) VALUES (?, ?)').run('active_project_id', projects.find((item) => item.id !== id)!.id);
   db.prepare('DELETE FROM projects WHERE id = ?').run(id);
@@ -257,7 +257,7 @@ export function deleteProject(id: string): void {
 
 function getDbForProject(projectId: string): Database.Database {
   // Check even cached handles: deletion by another process must not resurrect a data file.
-  if (!projectExists(projectId)) throw new Error('Project not found.');
+  if (!projectExists(projectId)) throw new Error('Projeto não encontrado.');
   const existing = dataDbs.get(projectId);
   if (existing) return existing;
   const db = new Database(dataDbPath(projectId));
@@ -393,7 +393,7 @@ function initSchema(db: Database.Database) {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       keyword TEXT NOT NULL,
       domain TEXT NOT NULL,
-      location TEXT NOT NULL DEFAULT 'France',
+      location TEXT NOT NULL DEFAULT 'Brazil',
       language TEXT NOT NULL DEFAULT 'fr',
       created_at INTEGER NOT NULL,
       UNIQUE(keyword, domain, location, language)
@@ -863,7 +863,7 @@ function initSchema(db: Database.Database) {
   // Before 0.6.0 two overlapping runs could leave two pending tasks for one keyword, which would
   // make the unique index below fail and the project unopenable. Keep the oldest, fail the others.
   db.prepare(`UPDATE rank_tasks
-    SET status = 'failed', completed_at = ?, error_message = 'Duplicate pending check for this keyword.'
+    SET status = 'failed', completed_at = ?, error_message = 'Já existe uma verificação pendente para esta palavra-chave.'
     WHERE status IN ('posting', 'pending') AND rowid NOT IN (
       SELECT MIN(rowid) FROM rank_tasks WHERE status IN ('posting', 'pending') GROUP BY keyword_id
     )`).run(Date.now());
@@ -3096,51 +3096,51 @@ export function getWebMentionsSummary<T>(id: string): T | null {
 // have a page (e.g. Reddit Mentions) are kept so past spend stays visible on older DBs.
 export const SPEND_SOURCES: Array<{ table: string; tool: string; href: string | null; tsColumn?: string }> = [
   { table: 'rank_checks', tool: 'Rank Tracker', href: '/dashboard/rank-tracker', tsColumn: 'checked_at' },
-  { table: 'ranked_kw_searches', tool: 'Ranked Keywords', href: '/dashboard/ranked-keywords' },
-  { table: 'kw_overview_searches', tool: 'Keyword Overview', href: '/dashboard/keyword-overview' },
-  { table: 'competitors_searches', tool: 'Competitors', href: '/dashboard/competitors' },
-  { table: 'domain_intersection_searches', tool: 'Domain Intersection', href: '/dashboard/domain-intersection' },
-  { table: 'hist_rank_searches', tool: 'Historical Rank', href: '/dashboard/historical-rank' },
-  { table: 'related_kw_searches', tool: 'Related Keywords', href: '/dashboard/related-keywords' },
-  { table: 'top_searches_searches', tool: 'Top Searches', href: '/dashboard/top-searches' },
-  { table: 'domain_tech_searches', tool: 'Technologies', href: '/dashboard/domain-analytics/technologies' },
-  { table: 'domain_find_searches', tool: 'Technologies', href: '/dashboard/domain-analytics/technologies' },
+  { table: 'ranked_kw_searches', tool: 'Palavras-chave ranqueadas', href: '/dashboard/ranked-keywords' },
+  { table: 'kw_overview_searches', tool: 'Visão geral de palavras-chave', href: '/dashboard/keyword-overview' },
+  { table: 'competitors_searches', tool: 'Concorrentes', href: '/dashboard/competitors' },
+  { table: 'domain_intersection_searches', tool: 'Interseção de domínios', href: '/dashboard/domain-intersection' },
+  { table: 'hist_rank_searches', tool: 'Histórico de ranking', href: '/dashboard/historical-rank' },
+  { table: 'related_kw_searches', tool: 'Palavras-chave relacionadas', href: '/dashboard/related-keywords' },
+  { table: 'top_searches_searches', tool: 'Principais buscas', href: '/dashboard/top-searches' },
+  { table: 'domain_tech_searches', tool: 'Tecnologias', href: '/dashboard/domain-analytics/technologies' },
+  { table: 'domain_find_searches', tool: 'Tecnologias', href: '/dashboard/domain-analytics/technologies' },
   { table: 'domain_whois_searches', tool: 'Whois', href: '/dashboard/domain-analytics/whois' },
-  { table: 'domain_categories_searches', tool: 'Categories', href: '/dashboard/domain-analytics/categories' },
-  { table: 'keyword_ideas_searches', tool: 'Keyword Ideas', href: '/dashboard/keyword-ideas' },
-  { table: 'search_intent_searches', tool: 'Search Intent', href: '/dashboard/search-intent' },
-  { table: 'page_intersection_searches', tool: 'Page Intersection (Labs)', href: '/dashboard/page-intersection' },
-  { table: 'subdomains_searches', tool: 'Subdomains', href: '/dashboard/subdomains' },
-  { table: 'traffic_estimation_searches', tool: 'Traffic Estimation', href: '/dashboard/traffic-estimation' },
+  { table: 'domain_categories_searches', tool: 'Categorias', href: '/dashboard/domain-analytics/categories' },
+  { table: 'keyword_ideas_searches', tool: 'Ideias de palavras-chave', href: '/dashboard/keyword-ideas' },
+  { table: 'search_intent_searches', tool: 'Intenção de busca', href: '/dashboard/search-intent' },
+  { table: 'page_intersection_searches', tool: 'Interseção de páginas (Labs)', href: '/dashboard/page-intersection' },
+  { table: 'subdomains_searches', tool: 'Subdomínios', href: '/dashboard/subdomains' },
+  { table: 'traffic_estimation_searches', tool: 'Estimativa de tráfego', href: '/dashboard/traffic-estimation' },
   { table: 'backlinks_searches', tool: 'Backlinks', href: '/dashboard/backlinks' },
-  { table: 'ref_domains_searches', tool: 'Referring Domains', href: '/dashboard/backlinks/referring-domains' },
-  { table: 'anchors_searches', tool: 'Anchors', href: '/dashboard/backlinks/anchors' },
-  { table: 'bl_ref_networks', tool: 'Referring Networks', href: '/dashboard/backlinks/referring-networks' },
-  { table: 'bl_page_intersection', tool: 'Backlinks Page Intersection', href: '/dashboard/backlinks/page-intersection' },
-  { table: 'bl_domain_intersection', tool: 'Backlinks Domain Intersection', href: '/dashboard/backlinks/domain-intersection' },
-  { table: 'bl_history', tool: 'Backlinks History', href: '/dashboard/backlinks/history' },
-  { table: 'bl_bulk_backlinks', tool: 'Bulk Backlinks', href: '/dashboard/backlinks/bulk-backlinks' },
-  { table: 'bl_bulk_ref_domains', tool: 'Bulk Ref. Domains', href: '/dashboard/backlinks/bulk-referring-domains' },
-  { table: 'bl_broken', tool: 'Broken Backlinks', href: '/dashboard/backlinks/broken' },
-  { table: 'rv_tasks', tool: 'Review Velocity', href: '/dashboard/review-velocity', tsColumn: 'created_at' },
-  { table: 'rv_discoveries', tool: 'Review Velocity', href: '/dashboard/review-velocity' },
-  { table: 'serp_searches', tool: 'SERP Checker', href: '/dashboard/serp' },
+  { table: 'ref_domains_searches', tool: 'Domínios de referência', href: '/dashboard/backlinks/referring-domains' },
+  { table: 'anchors_searches', tool: 'Âncoras', href: '/dashboard/backlinks/anchors' },
+  { table: 'bl_ref_networks', tool: 'Redes de referência', href: '/dashboard/backlinks/referring-networks' },
+  { table: 'bl_page_intersection', tool: 'Interseção de páginas (Backlinks)', href: '/dashboard/backlinks/page-intersection' },
+  { table: 'bl_domain_intersection', tool: 'Interseção de domínios (Backlinks)', href: '/dashboard/backlinks/domain-intersection' },
+  { table: 'bl_history', tool: 'Histórico de backlinks', href: '/dashboard/backlinks/history' },
+  { table: 'bl_bulk_backlinks', tool: 'Backlinks em massa', href: '/dashboard/backlinks/bulk-backlinks' },
+  { table: 'bl_bulk_ref_domains', tool: 'Domínios de ref. em massa', href: '/dashboard/backlinks/bulk-referring-domains' },
+  { table: 'bl_broken', tool: 'Backlinks quebrados', href: '/dashboard/backlinks/broken' },
+  { table: 'rv_tasks', tool: 'Ritmo de avaliações', href: '/dashboard/review-velocity', tsColumn: 'created_at' },
+  { table: 'rv_discoveries', tool: 'Ritmo de avaliações', href: '/dashboard/review-velocity' },
+  { table: 'serp_searches', tool: 'Verificador de SERP', href: '/dashboard/serp' },
   { table: 'lf_searches', tool: 'Local Finder', href: '/dashboard/local-finder' },
-  { table: 'grid_searches', tool: 'Geo-Grid Ranking', href: '/dashboard/geo-grid' },
-  { table: 'ai_optimization_searches', tool: 'AI Optimization', href: '/dashboard/ai-optimization' },
-  { table: 'ai_visibility_searches', tool: 'AI Visibility', href: '/dashboard/ai-visibility' },
-  { table: 'llm_response_searches', tool: 'AI Prompt Test', href: '/dashboard/llm-responses' },
-  { table: 'ai_kwdata_searches', tool: 'AI Keyword Data', href: '/dashboard/ai-keyword-data' },
+  { table: 'grid_searches', tool: 'Ranking Geo-Grid', href: '/dashboard/geo-grid' },
+  { table: 'ai_optimization_searches', tool: 'Otimização para IA', href: '/dashboard/ai-optimization' },
+  { table: 'ai_visibility_searches', tool: 'Visibilidade em IA', href: '/dashboard/ai-visibility' },
+  { table: 'llm_response_searches', tool: 'Teste de prompt em IA', href: '/dashboard/llm-responses' },
+  { table: 'ai_kwdata_searches', tool: 'Dados de palavras-chave em IA', href: '/dashboard/ai-keyword-data' },
   { table: 'fan_out_searches', tool: 'Query Fan-Out', href: '/dashboard/query-fan-out' },
-  { table: 'llm_prompt_checks', tool: 'Prompt Tracker', href: '/dashboard/prompt-tracker', tsColumn: 'checked_at' },
-  { table: 'reviews_tasks', tool: 'Google Reviews', href: '/dashboard/google-reviews' },
-  { table: 'web_mentions_searches', tool: 'Web Mentions', href: '/dashboard/web-mentions' },
-  { table: 'kd_searches', tool: 'Keyword Data', href: '/dashboard/keyword-data' },
-  { table: 'kw_difficulty_searches', tool: 'Keyword Difficulty', href: '/dashboard/keyword-difficulty' },
-  { table: 'instant_page_searches', tool: 'On-Page Instant Pages', href: '/dashboard/on-page/instant-pages' },
-  { table: 'onpage_tasks', tool: 'Microdata', href: '/dashboard/on-page/microdata' },
-  { table: 'site_audit_tasks', tool: 'Site Audit', href: '/dashboard/on-page/site-audit' },
-  { table: 'reddit_searches', tool: 'Reddit Mentions (removed)', href: null },
+  { table: 'llm_prompt_checks', tool: 'Monitor de prompts', href: '/dashboard/prompt-tracker', tsColumn: 'checked_at' },
+  { table: 'reviews_tasks', tool: 'Avaliações do Google', href: '/dashboard/google-reviews' },
+  { table: 'web_mentions_searches', tool: 'Menções na web', href: '/dashboard/web-mentions' },
+  { table: 'kd_searches', tool: 'Dados de palavras-chave', href: '/dashboard/keyword-data' },
+  { table: 'kw_difficulty_searches', tool: 'Dificuldade de palavras-chave', href: '/dashboard/keyword-difficulty' },
+  { table: 'instant_page_searches', tool: 'Páginas instantâneas (On-page)', href: '/dashboard/on-page/instant-pages' },
+  { table: 'onpage_tasks', tool: 'Microdados', href: '/dashboard/on-page/microdata' },
+  { table: 'site_audit_tasks', tool: 'Auditoria do site', href: '/dashboard/on-page/site-audit' },
+  { table: 'reddit_searches', tool: 'Menções no Reddit (removido)', href: null },
 ];
 
 export interface ToolSpend {

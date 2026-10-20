@@ -18,12 +18,12 @@ export default function BalanceBadge() {
   return (
     <Link
       href="/dashboard/spending"
-      title="See what you've spent"
+      title="Ver quanto você gastou"
       className="flex items-center gap-2 rounded-nexo border border-[rgba(77,162,255,.35)] px-3 py-1.5 transition-colors hover:border-nexo-ice hover:bg-nexo-blue/10"
     >
-      <span className="nexo-label">Balance</span>
+      <span className="nexo-label">Saldo</span>
       <span className="font-mono text-sm font-medium text-[#c2e0ff]">
-        {balance === null ? '…' : `$${balance}`}
+        {balance === null ? '…' : `US$ ${balance.replace('.', ',')}`}
       </span>
     </Link>
   );

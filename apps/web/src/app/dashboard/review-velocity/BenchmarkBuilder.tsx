@@ -73,7 +73,7 @@ export default function BenchmarkBuilder({ defaultCenter, defaultLanguage, hasCr
     let alive = true;
     import('leaflet').then((L) => {
       if (!alive || !containerRef.current || mapRef.current) return;
-      const start = parseCenter(center) ?? [48.8566, 2.3522];
+      const start = parseCenter(center) ?? [-23.5505, -46.6333];
       const map = L.map(containerRef.current).setView(start, 12);
       mapRef.current = map;
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -191,9 +191,9 @@ export default function BenchmarkBuilder({ defaultCenter, defaultLanguage, hasCr
       });
       const found = await res.json() as Array<{ lat: string; lon: string }>;
       if (found[0]) setCenter(`${Number(found[0].lat).toFixed(6)},${Number(found[0].lon).toFixed(6)}`);
-      else setError('Address not found. Click the map instead.');
+      else setError('Endereço não encontrado. Clique no mapa.');
     } catch {
-      setError('Address search failed. Click the map instead.');
+      setError('A busca de endereço falhou. Clique no mapa.');
     }
   }
 
@@ -209,9 +209,9 @@ export default function BenchmarkBuilder({ defaultCenter, defaultLanguage, hasCr
       });
       const data = await res.json() as { results?: BusinessSearchResult[]; error?: string };
       setNameResults(data.results ?? []);
-      if (!data.results?.length) setError(data.error ?? 'No listing found with that name.');
+      if (!data.results?.length) setError(data.error ?? 'Nenhum perfil encontrado com esse nome.');
     } catch {
-      setError('Listing search failed.');
+      setError('A busca de perfis falhou.');
     } finally {
       setNameSearching(false);
     }
@@ -242,7 +242,7 @@ export default function BenchmarkBuilder({ defaultCenter, defaultLanguage, hasCr
           mapsRank: c.manual ? null : c.mapsRank, totalReviews: c.totalReviews, rating: c.rating, isSelf: c.cid === selfCid,
         })),
       });
-      if (response.error || !response.id) { setError(response.error ?? 'Could not start the analysis.'); return; }
+      if (response.error || !response.id) { setError(response.error ?? 'Não foi possível iniciar a análise.'); return; }
       router.push(`/dashboard/review-velocity?id=${response.id}`);
     });
   }
@@ -257,33 +257,33 @@ export default function BenchmarkBuilder({ defaultCenter, defaultLanguage, hasCr
       {/* Step 1 — market */}
       <section className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-5">
         <div className="flex items-baseline justify-between gap-4">
-          <h2 className="text-sm font-medium text-nexo-text">1 · Define the market</h2>
-          <span className="text-[11px] text-nexo-faint">Click the map to set the centre</span>
+          <h2 className="text-sm font-medium text-nexo-text">1 · Defina o mercado</h2>
+          <span className="text-[11px] text-nexo-faint">Clique no mapa para definir o centro</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-6 gap-4">
           <div className="sm:col-span-3">
-            <label className={labelCls} htmlFor="rv-keyword">Keyword <span className="text-nexo-danger-text">*</span></label>
-            <input id="rv-keyword" value={keyword} onChange={(e) => setKeyword(e.target.value)} placeholder="e.g. plumber" className={inputCls}
+            <label className={labelCls} htmlFor="rv-keyword">Palavra-chave <span className="text-nexo-danger-text">*</span></label>
+            <input id="rv-keyword" value={keyword} onChange={(e) => setKeyword(e.target.value)} placeholder="ex.: encanador" className={inputCls}
               onKeyDown={(e) => { if (e.key === 'Enter' && canSearch) { e.preventDefault(); findListings(); } }} />
           </div>
           <div className="sm:col-span-3">
-            <label className={labelCls} htmlFor="rv-name">Analysis name</label>
-            <input id="rv-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Defaults to the keyword" className={inputCls} />
+            <label className={labelCls} htmlFor="rv-name">Nome da análise</label>
+            <input id="rv-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Padrão: a palavra-chave" className={inputCls} />
           </div>
           <div className="sm:col-span-2">
-            <label className={labelCls} htmlFor="rv-language">Language</label>
+            <label className={labelCls} htmlFor="rv-language">Idioma</label>
             <select id="rv-language" value={language} onChange={(e) => setLanguage(e.target.value)} className={inputCls}>
               {LANGUAGES.map((l) => <option key={l.value} value={l.value}>{l.label}</option>)}
             </select>
           </div>
           <div className="sm:col-span-2">
-            <label className={labelCls} htmlFor="rv-radius">Radius</label>
+            <label className={labelCls} htmlFor="rv-radius">Raio</label>
             <select id="rv-radius" value={radiusKm} onChange={(e) => setRadiusKm(Number(e.target.value))} className={inputCls}>
               {RADII.map((r) => <option key={r} value={r}>{r} km</option>)}
             </select>
           </div>
           <div className="sm:col-span-2">
-            <label className={labelCls} htmlFor="rv-depth">Google Maps results</label>
+            <label className={labelCls} htmlFor="rv-depth">Resultados do Google Maps</label>
             <select id="rv-depth" value={depth} onChange={(e) => setDepth(Number(e.target.value))} className={inputCls}>
               <option value={20}>Top 20</option>
               <option value={40}>Top 40</option>
@@ -293,49 +293,49 @@ export default function BenchmarkBuilder({ defaultCenter, defaultLanguage, hasCr
         </div>
 
         <div className="flex gap-2">
-          <input value={addressQuery} onChange={(e) => setAddressQuery(e.target.value)} placeholder="Jump to a city or address…" className={inputCls}
+          <input value={addressQuery} onChange={(e) => setAddressQuery(e.target.value)} placeholder="Ir para uma cidade ou endereço…" className={inputCls}
             onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); goToAddress(); } }} />
           <button type="button" onClick={goToAddress} disabled={!addressQuery.trim()}
-            className="px-4 rounded-nexo-lg border border-nexo-border text-nexo-dim hover:border-nexo-border-strong disabled:opacity-40" aria-label="Go to address">
+            className="px-4 rounded-nexo-lg border border-nexo-border text-nexo-dim hover:border-nexo-border-strong disabled:opacity-40" aria-label="Ir para o endereço">
             <MapPin className="w-4 h-4" />
           </button>
         </div>
         <div ref={containerRef} className="w-full h-[380px] rounded-nexo-lg overflow-hidden border border-nexo-border z-0" />
         <p className="text-[11px] text-nexo-faint -mt-3">
-          {parseCenter(center) ? <>Centre: <span className="font-semibold text-nexo-dim">{areaLabel ?? center}</span> · {radiusKm} km radius</> : 'No centre yet: click the map.'}
+          {parseCenter(center) ? <>Centro: <span className="font-semibold text-nexo-dim">{areaLabel ?? center}</span> · raio de {radiusKm} km</> : 'Ainda sem centro: clique no mapa.'}
         </p>
 
         <div className="flex flex-wrap items-center gap-3">
           <button type="button" onClick={findListings} disabled={!canSearch}
             className="nexo-label inline-flex items-center gap-2 bg-white text-nexo-bg px-5 py-2.5 rounded-nexo-lg hover:bg-nexo-ice transition-colors disabled:opacity-40">
             {searching ? <LoaderCircle className="w-3.5 h-3.5 animate-spin" /> : <Search className="w-3.5 h-3.5" />}
-            {searching ? 'Searching Google Maps…' : searched ? 'Search again' : 'Find listings'}
+            {searching ? 'Buscando no Google Maps…' : searched ? 'Buscar de novo' : 'Encontrar perfis'}
           </button>
           <span className="text-[11px] text-nexo-faint">
-            One Google Maps search{discoveryCost !== null ? ` · last one cost $${discoveryCost.toFixed(4)}` : ' (about $0.002)'}.
+            Uma busca no Google Maps{discoveryCost !== null ? ` · a última custou US$ ${discoveryCost.toFixed(4).replace('.', ',')}` : ' (cerca de US$ 0,002)'}.
           </span>
         </div>
-        {!hasCredentials && <p className="text-xs text-nexo-warn-text">Configure your DataForSEO credentials in Settings first.</p>}
+        {!hasCredentials && <p className="text-xs text-nexo-warn-text">Configure antes suas credenciais da DataForSEO em Configurações.</p>}
       </section>
 
       {/* Step 2 — pick listings */}
       {(searched || candidates.length > 0) && (
         <section className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
           <div className="px-6 py-4 border-b border-nexo-border flex flex-wrap items-baseline justify-between gap-3">
-            <h2 className="text-sm font-medium text-nexo-text">2 · Pick up to {MAX_LISTINGS} listings</h2>
+            <h2 className="text-sm font-medium text-nexo-text">2 · Escolha até {MAX_LISTINGS} perfis</h2>
             <div className="flex items-center gap-4 text-[11px] text-nexo-faint">
               {outsideCount > 0 && (
                 <label className="inline-flex items-center gap-1.5 cursor-pointer select-none">
                   <input type="checkbox" checked={showOutside} onChange={(e) => setShowOutside(e.target.checked)} className="accent-nexo-sky" />
-                  Show {outsideCount} outside the circle
+                  Mostrar {outsideCount} fora do círculo
                 </label>
               )}
-              <span className={`tabular-nums font-medium ${full ? 'text-nexo-warn-text' : 'text-nexo-dim'}`}>{selected.length}/{MAX_LISTINGS} selected</span>
+              <span className={`tabular-nums font-medium ${full ? 'text-nexo-warn-text' : 'text-nexo-dim'}`}>{selected.length}/{MAX_LISTINGS} {selected.length === 1 ? 'selecionado' : 'selecionados'}</span>
             </div>
           </div>
 
           {visible.length === 0 ? (
-            <p className="px-6 py-8 text-sm text-nexo-faint">No listing found in this circle. Widen the radius, show results outside the circle, or add a listing by name below.</p>
+            <p className="px-6 py-8 text-sm text-nexo-faint">Nenhum perfil encontrado neste círculo. Aumente o raio, mostre os resultados fora do círculo ou adicione um perfil pelo nome abaixo.</p>
           ) : (
             <ul className="divide-y divide-nexo-border">
               {visible.map((c, index) => {
@@ -343,7 +343,7 @@ export default function BenchmarkBuilder({ defaultCenter, defaultLanguage, hasCr
                 const isSelf = selfCid === c.cid;
                 return (
                   <li key={c.cid} className={`flex items-center gap-3 px-6 py-3 ${isSelected ? 'bg-nexo-blue/10' : ''} ${!c.insideRadius && !c.manual ? 'opacity-60' : ''}`}>
-                    <button type="button" onClick={() => toggle(c.cid)} disabled={!isSelected && full} aria-pressed={isSelected} aria-label={`Select ${c.title}`}
+                    <button type="button" onClick={() => toggle(c.cid)} disabled={!isSelected && full} aria-pressed={isSelected} aria-label={`Selecionar ${c.title}`}
                       className={`w-5 h-5 shrink-0 rounded-md border flex items-center justify-center transition-colors disabled:opacity-30 ${isSelected ? 'bg-nexo-blue border-nexo-sky text-white' : 'border-nexo-border'}`}>
                       {isSelected && <Check className="w-3.5 h-3.5" />}
                     </button>
@@ -351,22 +351,22 @@ export default function BenchmarkBuilder({ defaultCenter, defaultLanguage, hasCr
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-nexo-text truncate">
                         {c.title}
-                        {c.manual && <span className="nexo-label ml-2">Added</span>}
+                        {c.manual && <span className="nexo-label ml-2">Adicionado</span>}
                       </p>
                       <p className="text-[11px] text-nexo-faint truncate">
                         {[c.category, c.address].filter(Boolean).join(' · ')}
                       </p>
                     </div>
                     <div className="hidden sm:block text-right text-[11px] text-nexo-dim tabular-nums w-28">
-                      {c.rating !== null ? <span className="font-medium text-nexo-dim">{c.rating.toFixed(1)}★</span> : '—'}
-                      <span className="text-nexo-faint"> · {c.totalReviews ?? 0} reviews</span>
+                      {c.rating !== null ? <span className="font-medium text-nexo-dim">{c.rating.toFixed(1).replace('.', ',')}★</span> : '—'}
+                      <span className="text-nexo-faint"> · {c.totalReviews ?? 0} {(c.totalReviews ?? 0) === 1 ? 'avaliação' : 'avaliações'}</span>
                     </div>
                     <div className="hidden md:block text-right text-[11px] text-nexo-faint tabular-nums w-20">
                       {c.manual ? '' : `#${c.mapsRank} · `}{c.distanceKm} km
                     </div>
                     <button type="button" onClick={() => markSelf(c.cid)} disabled={!isSelected && full && !isSelf}
                       className={`inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-widest px-2 py-1 rounded-nexo border transition-colors disabled:opacity-30 ${isSelf ? 'bg-nexo-warn/10 border-nexo-warn/40 text-nexo-warn-text' : 'border-transparent text-nexo-faint hover:text-nexo-warn-text'}`}>
-                      <Star className={`w-3 h-3 ${isSelf ? 'fill-nexo-warn text-nexo-warn-text' : ''}`} /> {isSelf ? 'My listing' : 'Mine?'}
+                      <Star className={`w-3 h-3 ${isSelf ? 'fill-nexo-warn text-nexo-warn-text' : ''}`} /> {isSelf ? 'Meu perfil' : 'É meu?'}
                     </button>
                   </li>
                 );
@@ -375,13 +375,13 @@ export default function BenchmarkBuilder({ defaultCenter, defaultLanguage, hasCr
           )}
 
           <div className="px-6 py-4 border-t border-nexo-border space-y-2">
-            <p className="nexo-label">Missing a listing? Add it by name</p>
+            <p className="nexo-label">Falta algum perfil? Adicione pelo nome</p>
             <div className="flex gap-2">
-              <input value={nameQuery} onChange={(e) => setNameQuery(e.target.value)} placeholder="Business name" className={inputCls}
+              <input value={nameQuery} onChange={(e) => setNameQuery(e.target.value)} placeholder="Nome da empresa" className={inputCls}
                 onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); searchByName(); } }} />
               <button type="button" onClick={searchByName} disabled={!nameQuery.trim() || nameSearching || !parseCenter(center)}
                 className="nexo-label px-4 rounded-nexo-lg border border-nexo-border hover:border-nexo-border-strong disabled:opacity-40">
-                {nameSearching ? '…' : 'Find'}
+                {nameSearching ? '…' : 'Buscar'}
               </button>
             </div>
             {nameResults.length > 0 && (
@@ -409,16 +409,16 @@ export default function BenchmarkBuilder({ defaultCenter, defaultLanguage, hasCr
       {selected.length > 0 && (
         <section className="flex flex-wrap items-center justify-between gap-4 nexo-panel border-nexo-border-strong px-6 py-4">
           <div className="text-sm">
-            <p className="font-medium">{selected.length} listing{selected.length > 1 ? 's' : ''} · last 3 months</p>
+            <p className="font-medium">{selected.length} {selected.length > 1 ? 'perfis' : 'perfil'} · últimos 3 meses</p>
             <p className="text-[11px] text-nexo-faint mt-0.5">
-              Up to ${maxCost.toFixed(4)} for the first fetch (100 newest reviews each). Busy listings are refetched once automatically to cover 3 months.
-              {!selfCid && ' Tip: mark your own listing to get targets.'}
+              Até US$ {maxCost.toFixed(4).replace('.', ',')} na primeira coleta (as 100 avaliações mais recentes de cada um). Perfis com muito movimento são coletados de novo uma vez, automaticamente, para cobrir 3 meses.
+              {!selfCid && ' Dica: marque o seu perfil para receber metas.'}
             </p>
           </div>
           <button type="button" onClick={start} disabled={creating}
             className="nexo-btn-primary inline-flex items-center gap-2 px-5 py-2.5 transition-colors disabled:opacity-50">
             {creating && <LoaderCircle className="w-3.5 h-3.5 animate-spin" />}
-            {creating ? 'Starting…' : 'Start analysis'}
+            {creating ? 'Iniciando…' : 'Iniciar análise'}
           </button>
         </section>
       )}

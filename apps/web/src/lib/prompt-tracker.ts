@@ -54,7 +54,7 @@ export async function runPromptChecks(
       check = {
         promptId: prompt.id, checkedAt: now, date: new Date(now).toISOString().slice(0, 10),
         platform: prompt.platform, model: prompt.model, mentioned: false, brandMentions: 0, domainCited: false,
-        answer: null, sources: [], cost: null, error: error instanceof Error ? error.message : 'Check failed.',
+        answer: null, sources: [], cost: null, error: error instanceof Error ? error.message : 'A verificação falhou.',
       };
     }
     savePromptCheck(check, projectId);

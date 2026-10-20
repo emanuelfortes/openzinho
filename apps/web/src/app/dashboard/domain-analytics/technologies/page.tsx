@@ -100,11 +100,11 @@ async function fetchDomainsByTech(opts: {
 
 function fmt(n?: number) {
   if (n === undefined || n === null) return '—';
-  return n.toLocaleString('en-GB');
+  return n.toLocaleString('pt-BR');
 }
 
 function fmtDate(ts: number) {
-  return new Date(ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  return new Date(ts).toLocaleDateString('pt-BR', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -130,7 +130,7 @@ function formatLabel(slug: string) {
 }
 
 function PriceTag({ price }: { price: number }) {
-  return <span className="font-mono text-[10px] opacity-50 ml-1.5">~${price.toFixed(3)}</span>;
+  return <span className="font-mono text-[10px] opacity-50 ml-1.5">~US$ {price.toFixed(3).replace('.', ',')}</span>;
 }
 
 function entryLabel(e: DomainFindEntry) {
@@ -177,7 +177,7 @@ async function TechnologiesPage({ searchParams }: { searchParams: Promise<Search
         const history = getDomainTechHistory();
         activeDomainEntry = history.find((e) => e.id === historyId) ?? null;
       } else {
-        domainError = "This search is no longer available.";
+        domainError = "Esta busca não está mais disponível.";
       }
     } else if (target) {
       const dedupeId = stableSearchId(['domain-tech', target]);
@@ -186,7 +186,7 @@ async function TechnologiesPage({ searchParams }: { searchParams: Promise<Search
         domainResult = cachedResult;
         domainCost = getDomainTechHistory().find((e) => e.id === dedupeId)?.cost;
       } else if (!creds) {
-        domainError = 'DataForSEO credentials missing. Configure them in Settings.';
+        domainError = 'Credenciais do DataForSEO ausentes. Configure-as em Configurações.';
       } else {
         const res = await fetchDomainTech(target, creds.login, creds.pass);
         if (res.error) {
@@ -197,7 +197,7 @@ async function TechnologiesPage({ searchParams }: { searchParams: Promise<Search
           const entry: DomainTechEntry = { id: dedupeId, ts: Date.now(), target, cost: domainCost };
           saveDomainTechSearch(entry, domainResult);
         } else {
-          domainError = 'No data found for this domain.';
+          domainError = 'Nenhum dado encontrado para este domínio.';
         }
       }
     }
@@ -212,7 +212,7 @@ async function TechnologiesPage({ searchParams }: { searchParams: Promise<Search
         activeFindEntry = history.find((e) => e.id === findHistoryId) ?? null;
         findTotal = activeFindEntry?.totalCount;
       } else {
-        findError = "This search is no longer available.";
+        findError = "Esta busca não está mais disponível.";
       }
     } else if (keyword || technology) {
       const dedupeId = stableSearchId(['domain-find', keyword, technology, limit]);
@@ -223,7 +223,7 @@ async function TechnologiesPage({ searchParams }: { searchParams: Promise<Search
         findTotal = cachedEntry?.totalCount;
         findCost = cachedEntry?.cost;
       } else if (!creds) {
-        findError = 'DataForSEO credentials missing. Configure them in Settings.';
+        findError = 'Credenciais do DataForSEO ausentes. Configure-as em Configurações.';
       } else {
         const res = await fetchDomainsByTech({ keyword: keyword || undefined, technology: technology || undefined, limit, login: creds.login, pass: creds.pass });
         if (res.error) {
@@ -259,15 +259,15 @@ async function TechnologiesPage({ searchParams }: { searchParams: Promise<Search
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="nexo-h1">Technologies</h1>
-        <p className="text-sm text-nexo-faint mt-1">Detect tech stacks or find domains by technology and keyword.</p>
+        <h1 className="nexo-h1">Tecnologias</h1>
+        <p className="text-sm text-nexo-faint mt-1">Detecte o conjunto de tecnologias de um site ou encontre domínios por tecnologia e palavra-chave.</p>
       </div>
 
       {/* Mode tabs */}
       <div className="flex gap-1 bg-nexo-surface-2 p-1 rounded-nexo-lg w-fit">
         {([
-          { label: 'Analyze Domain', value: 'domain' },
-          { label: 'Find Domains', value: 'find' },
+          { label: 'Analisar domínio', value: 'domain' },
+          { label: 'Encontrar domínios', value: 'find' },
         ] as const).map((tab) => (
           <a
             key={tab.value}
@@ -287,16 +287,16 @@ async function TechnologiesPage({ searchParams }: { searchParams: Promise<Search
       {mode === 'domain' && (
         <SearchForm
           className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4"
-          btnLabel={<>Analyze<PriceTag price={PRICE_DOMAIN} /></>}
+          btnLabel={<>Analisar<PriceTag price={PRICE_DOMAIN} /></>}
           btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors"
         >
           <input type="hidden" name="mode" value="domain" />
           <div>
-            <label className="nexo-label block mb-1.5">Domain</label>
+            <label className="nexo-label block mb-1.5">Domínio</label>
             <input
               type="text" name="target"
               defaultValue={displayTarget}
-              placeholder="e.g. example.com"
+              placeholder="ex.: exemplo.com.br"
               required
               className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky font-mono transition-all"
             />
@@ -308,34 +308,34 @@ async function TechnologiesPage({ searchParams }: { searchParams: Promise<Search
       {mode === 'find' && (
         <SearchForm
           className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4"
-          btnLabel={<>Search<PriceTag price={PRICE_FIND} /></>}
+          btnLabel={<>Buscar<PriceTag price={PRICE_FIND} /></>}
           btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors"
         >
           <input type="hidden" name="mode" value="find" />
-          <p className="text-xs text-nexo-faint">Fill one or both fields to narrow the search.</p>
+          <p className="text-xs text-nexo-faint">Preencha um ou os dois campos para refinar a busca.</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="nexo-label block mb-1.5">Technology</label>
+              <label className="nexo-label block mb-1.5">Tecnologia</label>
               <input
                 type="text" name="technology"
                 defaultValue={activeTech}
-                placeholder="e.g. WordPress, Shopify, React…"
+                placeholder="ex.: WordPress, Shopify, React…"
                 className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky transition-all"
               />
             </div>
             <div>
-              <label className="nexo-label block mb-1.5">Keyword</label>
+              <label className="nexo-label block mb-1.5">Palavra-chave</label>
               <input
                 type="text" name="keyword"
                 defaultValue={activeKw}
-                placeholder="e.g. plumbing, dentist…"
+                placeholder="ex.: encanador, dentista…"
                 className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky transition-all"
               />
             </div>
           </div>
           <div className="flex justify-end">
             <div className="w-32">
-              <label className="nexo-label block mb-1.5">Results</label>
+              <label className="nexo-label block mb-1.5">Resultados</label>
               <select name="limit" defaultValue={String(limit)}
                 className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
                 <option value="10">10</option>
@@ -361,10 +361,10 @@ async function TechnologiesPage({ searchParams }: { searchParams: Promise<Search
         <>
           <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-2">
-              <span className="nexo-label">Domain</span>
+              <span className="nexo-label">Domínio</span>
               <span className="font-mono font-medium text-nexo-text">{domainResult.domain ?? displayTarget}</span>
               {isDomainFromHistory && (
-                <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>
+                <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">Histórico</span>
               )}
             </div>
             {domainResult.domain_rank !== undefined && (
@@ -378,25 +378,25 @@ async function TechnologiesPage({ searchParams }: { searchParams: Promise<Search
             )}
             {totalTechs > 0 && (
               <div className="flex items-center gap-1.5">
-                <span className="nexo-label">Technologies</span>
+                <span className="nexo-label">Tecnologias</span>
                 <span className="font-mono font-medium text-nexo-text">{totalTechs}</span>
               </div>
             )}
             {domainCost !== undefined && (
-              <span className="text-[10px] font-mono text-nexo-faint ml-auto">cost: ${domainCost.toFixed(4)}</span>
+              <span className="text-[10px] font-mono text-nexo-faint ml-auto">custo: US$ {domainCost.toFixed(4).replace('.', ',')}</span>
             )}
           </div>
 
           {/* Domain meta */}
           {(domainResult.title || domainResult.emails?.length || domainResult.phone_numbers?.length || domainResult.social_graph_urls?.length) && (
             <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-5 space-y-3">
-              <h2 className="nexo-label">Domain Info</h2>
+              <h2 className="nexo-label">Informações do domínio</h2>
               {domainResult.title && <p className="text-sm font-medium text-nexo-text">{domainResult.title}</p>}
               {domainResult.description && <p className="text-sm text-nexo-dim">{domainResult.description}</p>}
               <div className="flex flex-wrap gap-4 pt-1">
                 {domainResult.emails && domainResult.emails.length > 0 && (
                   <div>
-                    <p className="nexo-label mb-1">Emails</p>
+                    <p className="nexo-label mb-1">E-mails</p>
                     <div className="flex flex-wrap gap-1.5">
                       {domainResult.emails.map((e, i) => (
                         <span key={i} className="text-xs font-mono bg-white/[0.02] border border-nexo-border text-nexo-dim px-2 py-0.5 rounded-md">{e}</span>
@@ -406,7 +406,7 @@ async function TechnologiesPage({ searchParams }: { searchParams: Promise<Search
                 )}
                 {domainResult.phone_numbers && domainResult.phone_numbers.length > 0 && (
                   <div>
-                    <p className="nexo-label mb-1">Phone</p>
+                    <p className="nexo-label mb-1">Telefone</p>
                     <div className="flex flex-wrap gap-1.5">
                       {domainResult.phone_numbers.map((p, i) => (
                         <span key={i} className="text-xs font-mono bg-white/[0.02] border border-nexo-border text-nexo-dim px-2 py-0.5 rounded-md">{p}</span>
@@ -416,7 +416,7 @@ async function TechnologiesPage({ searchParams }: { searchParams: Promise<Search
                 )}
                 {domainResult.social_graph_urls && domainResult.social_graph_urls.length > 0 && (
                   <div>
-                    <p className="nexo-label mb-1">Social</p>
+                    <p className="nexo-label mb-1">Redes sociais</p>
                     <div className="flex flex-wrap gap-1.5">
                       {domainResult.social_graph_urls.map((u, i) => (
                         <a key={i} href={u} target="_blank" rel="noopener noreferrer"
@@ -462,7 +462,7 @@ async function TechnologiesPage({ searchParams }: { searchParams: Promise<Search
             </div>
           ) : (
             <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-6 py-12 text-center text-sm text-nexo-faint">
-              No technologies detected for this domain.
+              Nenhuma tecnologia detectada neste domínio.
             </div>
           )}
 
@@ -470,7 +470,7 @@ async function TechnologiesPage({ searchParams }: { searchParams: Promise<Search
           {domainHistory.length > 0 && (
             <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
               <div className="px-6 py-4 border-b border-nexo-border">
-                <h2 className="nexo-label">History</h2>
+                <h2 className="nexo-label">Histórico</h2>
               </div>
               <div className="divide-y divide-nexo-border">
                 {domainHistory.map((entry) => {
@@ -480,7 +480,7 @@ async function TechnologiesPage({ searchParams }: { searchParams: Promise<Search
                       className={`flex items-center gap-4 px-6 py-3.5 hover:bg-white/[0.04] transition-colors ${isActive ? 'bg-nexo-blue/10' : ''}`}>
                       <div className="flex-1 min-w-0">
                         <p className={`text-sm font-medium font-mono truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.target}</p>
-                        {entry.cost !== undefined && <p className="text-[11px] text-nexo-faint mt-0.5">${entry.cost.toFixed(4)}</p>}
+                        {entry.cost !== undefined && <p className="text-[11px] text-nexo-faint mt-0.5">US$ {entry.cost.toFixed(4).replace('.', ',')}</p>}
                       </div>
                       <span className="shrink-0 text-[11px] text-nexo-faint">{fmtDate(entry.ts)}</span>
                     </a>
@@ -498,32 +498,32 @@ async function TechnologiesPage({ searchParams }: { searchParams: Promise<Search
           <div className="flex items-center gap-4 flex-wrap">
             {activeTech && (
               <div className="flex items-center gap-1.5">
-                <span className="nexo-label">Technology</span>
+                <span className="nexo-label">Tecnologia</span>
                 <span className="px-2 py-0.5 rounded-nexo bg-nexo-blue/10 border border-nexo-border-strong text-nexo-sky text-xs font-medium">{activeTech}</span>
               </div>
             )}
             {activeKw && (
               <div className="flex items-center gap-1.5">
-                <span className="nexo-label">Keyword</span>
+                <span className="nexo-label">Palavra-chave</span>
                 <span className="px-2 py-0.5 rounded-nexo bg-nexo-blue/10 border border-nexo-border-strong text-nexo-sky text-xs font-medium">&ldquo;{activeKw}&rdquo;</span>
               </div>
             )}
             {isFindFromHistory && (
-              <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>
+              <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">Histórico</span>
             )}
             {findTotal !== undefined && (
               <div className="flex items-center gap-1.5 ml-auto">
                 <span className="nexo-label">Total</span>
                 <span className="font-mono font-medium text-nexo-text">{fmt(findTotal)}</span>
-                <span className="text-xs text-nexo-faint">domains</span>
-                {findCost !== undefined && <span className="text-[10px] font-mono text-nexo-faint ml-2">· cost: ${findCost.toFixed(4)}</span>}
+                <span className="text-xs text-nexo-faint">domínios</span>
+                {findCost !== undefined && <span className="text-[10px] font-mono text-nexo-faint ml-2">· custo: US$ {findCost.toFixed(4).replace('.', ',')}</span>}
               </div>
             )}
           </div>
 
           {findItems.length === 0 ? (
             <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-6 py-12 text-center text-sm text-nexo-faint">
-              No domains found.
+              Nenhum domínio encontrado.
             </div>
           ) : (
             <TechFindTable items={findItems} />
@@ -533,7 +533,7 @@ async function TechnologiesPage({ searchParams }: { searchParams: Promise<Search
           {findHistory.length > 0 && (
             <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
               <div className="px-6 py-4 border-b border-nexo-border">
-                <h2 className="nexo-label">History</h2>
+                <h2 className="nexo-label">Histórico</h2>
               </div>
               <div className="divide-y divide-nexo-border">
                 {findHistory.map((entry) => {
@@ -544,9 +544,9 @@ async function TechnologiesPage({ searchParams }: { searchParams: Promise<Search
                       <div className="flex-1 min-w-0">
                         <p className={`text-sm font-medium truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entryLabel(entry)}</p>
                         <p className="text-[11px] text-nexo-faint mt-0.5">
-                          {entry.count} shown
-                          {entry.totalCount !== undefined ? ` / ${fmt(entry.totalCount)} total` : ''}
-                          {entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}
+                          {entry.count} exibidos
+                          {entry.totalCount !== undefined ? ` / ${fmt(entry.totalCount)} no total` : ''}
+                          {entry.cost !== undefined ? ` · US$ ${entry.cost.toFixed(4).replace('.', ',')}` : ''}
                         </p>
                       </div>
                       <span className="shrink-0 text-[11px] text-nexo-faint">{fmtDate(entry.ts)}</span>

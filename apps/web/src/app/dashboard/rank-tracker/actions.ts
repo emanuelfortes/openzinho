@@ -68,8 +68,8 @@ export async function addKeywordAction(formData: FormData) {
   return runWithCurrentProject(async () => {
     const raw = (formData.get('keywords') as string) ?? '';
     const domain = (formData.get('domain') as string)?.trim();
-    const location = (formData.get('location') as string)?.trim() || 'France';
-    const language = (formData.get('language') as string)?.trim() || 'French';
+    const location = (formData.get('location') as string)?.trim() || 'Brazil';
+    const language = (formData.get('language') as string)?.trim() || 'Portuguese';
 
     if (!domain) return;
     addTargetDomain(domain);
