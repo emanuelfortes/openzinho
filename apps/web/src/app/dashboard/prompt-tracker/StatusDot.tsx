@@ -1,10 +1,10 @@
 import { STATUS_LABEL, type CheckStatus } from '@/lib/prompt-report';
 
 const DOT: Record<CheckStatus | 'none', string> = {
-  cited: 'bg-emerald-500 border-emerald-500',
-  'not-cited': 'bg-white border-slate-300 dark:bg-slate-900 dark:border-slate-600',
-  error: 'bg-red-500 border-red-500',
-  none: 'bg-slate-100 border-slate-200 dark:bg-slate-800 dark:border-slate-700',
+  cited: 'bg-nexo-ice border-nexo-ice/30',
+  'not-cited': 'bg-nexo-surface border-nexo-border',
+  error: 'bg-nexo-danger border-nexo-danger/40',
+  none: 'bg-nexo-surface-2 border-nexo-border',
 };
 
 /** One check result: green = cited, white = not cited, red = error, grey = no check that day. */

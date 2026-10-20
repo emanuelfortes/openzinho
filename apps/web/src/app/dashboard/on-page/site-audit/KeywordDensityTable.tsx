@@ -27,8 +27,8 @@ function sortValue(item: KwDensityItem, key: SortKey): number | string {
 }
 
 function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
-  if (!active) return <ArrowUpDown className="w-3 h-3 text-slate-300" />;
-  return dir === 'asc' ? <ArrowUp className="w-3 h-3 text-blue-600" /> : <ArrowDown className="w-3 h-3 text-blue-600" />;
+  if (!active) return <ArrowUpDown className="w-3 h-3 text-nexo-faint" />;
+  return dir === 'asc' ? <ArrowUp className="w-3 h-3 text-nexo-sky" /> : <ArrowDown className="w-3 h-3 text-nexo-sky" />;
 }
 
 export default function KeywordDensityTable({ items }: { items: KwDensityItem[] }) {
@@ -52,7 +52,7 @@ export default function KeywordDensityTable({ items }: { items: KwDensityItem[] 
   function Header({ label, sortK, align, className }: { label: string; sortK: SortKey; align: 'left' | 'right'; className?: string }) {
     const active = sortKey === sortK;
     return (
-      <th className={`px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-400 select-none cursor-pointer hover:text-slate-600 dark:hover:text-slate-300 ${align === 'left' ? 'text-left' : 'text-right'} ${className ?? ''}`}
+      <th className={`px-4 py-3 text-[10px] font-medium uppercase tracking-widest text-nexo-faint select-none cursor-pointer hover:text-white ${align === 'left' ? 'text-left' : 'text-right'} ${className ?? ''}`}
         onClick={() => toggleSort(sortK)}>
         <span className={`inline-flex items-center gap-1 ${align === 'right' ? 'flex-row-reverse' : ''}`}>
           {label}
@@ -79,15 +79,15 @@ export default function KeywordDensityTable({ items }: { items: KwDensityItem[] 
 
   return (
     <div>
-      <div className="px-6 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2">
+      <div className="px-6 py-3 border-b border-nexo-border flex items-center justify-end gap-2">
         <CopyMarkdownButton data={csvData} columns={columns} />
         <ExportCSVButton data={csvData} filename="keyword-density.csv" columns={columns} />
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
-              <th className="px-4 py-3 text-left text-[10px] font-black uppercase tracking-widest text-slate-400">#</th>
+            <tr className="border-b border-nexo-border bg-white/[0.02]">
+              <th className="nexo-label px-4 py-3 text-left">#</th>
               <Header label="Keyword" sortK="keyword" align="left" />
               <Header label="Frequency" sortK="frequency" align="right" />
               <Header label="Density" sortK="density" align="right" />
@@ -95,22 +95,22 @@ export default function KeywordDensityTable({ items }: { items: KwDensityItem[] 
               <Header label="Emphasized" sortK="emphasized" align="right" className="hidden lg:table-cell" />
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
+          <tbody className="divide-y divide-nexo-border">
             {sorted.map((item, i) => {
               const density = item.density ?? 0;
-              const densityCls = density >= 3 ? 'text-red-500' : density >= 1.5 ? 'text-amber-500' : 'text-slate-600';
+              const densityCls = density >= 3 ? 'text-nexo-danger-text' : density >= 1.5 ? 'text-nexo-warn-text' : 'text-nexo-dim';
               return (
-                <tr key={i} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                  <td className="px-4 py-2.5 text-[11px] font-mono text-slate-400 tabular-nums">{i + 1}</td>
+                <tr key={i} className="hover:bg-white/[0.04] transition-colors">
+                  <td className="px-4 py-2.5 text-[11px] font-mono text-nexo-faint tabular-nums">{i + 1}</td>
                   <td className="px-4 py-2.5">
-                    <span className="text-sm font-medium text-slate-800 dark:text-slate-200">{item.keyword ?? '—'}</span>
+                    <span className="text-sm font-medium text-nexo-text">{item.keyword ?? '—'}</span>
                   </td>
-                  <td className="px-4 py-2.5 text-right font-mono font-bold text-slate-700 dark:text-slate-300 tabular-nums">{item.frequency ?? '—'}</td>
-                  <td className={`px-4 py-2.5 text-right font-mono font-bold tabular-nums ${densityCls}`}>
+                  <td className="px-4 py-2.5 text-right font-mono font-medium text-nexo-dim tabular-nums">{item.frequency ?? '—'}</td>
+                  <td className={`px-4 py-2.5 text-right font-mono font-medium tabular-nums ${densityCls}`}>
                     {item.density !== undefined ? `${item.density.toFixed(2)}%` : '—'}
                   </td>
-                  <td className="px-4 py-2.5 text-right font-mono text-slate-500 tabular-nums hidden sm:table-cell">{item.url_count ?? '—'}</td>
-                  <td className="px-4 py-2.5 text-right font-mono text-slate-400 tabular-nums hidden lg:table-cell">{item.emphasized_keyword_frequency ?? '—'}</td>
+                  <td className="px-4 py-2.5 text-right font-mono text-nexo-dim tabular-nums hidden sm:table-cell">{item.url_count ?? '—'}</td>
+                  <td className="px-4 py-2.5 text-right font-mono text-nexo-faint tabular-nums hidden lg:table-cell">{item.emphasized_keyword_frequency ?? '—'}</td>
                 </tr>
               );
             })}

@@ -13,17 +13,17 @@ type SortKey = 'keyword' | 'intent';
 type SortDir = 'asc' | 'desc';
 
 const INTENT_CONFIG: Record<string, { label: string; cls: string }> = {
-  informational: { label: 'Informational', cls: 'bg-blue-50 text-blue-700 border-blue-200' },
-  navigational:  { label: 'Navigational',  cls: 'bg-violet-50 text-violet-700 border-violet-200' },
-  commercial:    { label: 'Commercial',    cls: 'bg-amber-50 text-amber-700 border-amber-200' },
-  transactional: { label: 'Transactional', cls: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+  informational: { label: 'Informational', cls: 'bg-nexo-blue/10 text-nexo-sky border-nexo-border-strong' },
+  navigational:  { label: 'Navigational',  cls: 'bg-nexo-blue/10 text-nexo-sky border-nexo-border-strong' },
+  commercial:    { label: 'Commercial',    cls: 'bg-nexo-warn/10 text-nexo-warn-text border-nexo-warn/40' },
+  transactional: { label: 'Transactional', cls: 'bg-nexo-ice/10 text-nexo-ice border-nexo-ice/30' },
 };
 
 function IntentBadge({ intent }: { intent?: string }) {
-  if (!intent) return <span className="text-slate-300 text-xs">—</span>;
+  if (!intent) return <span className="text-nexo-faint text-xs">—</span>;
   const cfg = INTENT_CONFIG[intent];
-  if (!cfg) return <span className="text-xs text-slate-500">{intent}</span>;
-  return <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded border ${cfg.cls}`}>{cfg.label}</span>;
+  if (!cfg) return <span className="text-xs text-nexo-dim">{intent}</span>;
+  return <span className={`text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded border ${cfg.cls}`}>{cfg.label}</span>;
 }
 
 function getMainIntent(item: IntentItem) { return item.keyword_intent?.label; }
@@ -39,8 +39,8 @@ function sortValue(item: IntentItem, key: SortKey): string {
 }
 
 function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
-  if (!active) return <ArrowUpDown className="w-3 h-3 text-slate-300" />;
-  return dir === 'asc' ? <ArrowUp className="w-3 h-3 text-blue-600" /> : <ArrowDown className="w-3 h-3 text-blue-600" />;
+  if (!active) return <ArrowUpDown className="w-3 h-3 text-nexo-faint" />;
+  return dir === 'asc' ? <ArrowUp className="w-3 h-3 text-nexo-sky" /> : <ArrowDown className="w-3 h-3 text-nexo-sky" />;
 }
 
 export default function SearchIntentTable({ items }: { items: IntentItem[] }) {
@@ -63,7 +63,7 @@ export default function SearchIntentTable({ items }: { items: IntentItem[] }) {
   function Header({ label, sortK, align, className }: { label: string; sortK: SortKey; align: 'left' | 'center'; className?: string }) {
     const active = sortKey === sortK;
     return (
-      <th className={`px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-400 select-none cursor-pointer hover:text-slate-600 dark:hover:text-slate-300 ${align === 'left' ? 'text-left' : 'text-center'} ${className ?? ''}`}
+      <th className={`px-4 py-3 text-[10px] font-medium uppercase tracking-widest text-nexo-faint select-none cursor-pointer hover:text-white ${align === 'left' ? 'text-left' : 'text-center'} ${className ?? ''}`}
           onClick={() => toggleSort(sortK)}>
         <span className="inline-flex items-center justify-center gap-1">
           {label}
@@ -77,20 +77,20 @@ export default function SearchIntentTable({ items }: { items: IntentItem[] }) {
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
-            <th className="px-6 py-3 text-left text-[10px] font-black uppercase tracking-widest text-slate-400">#</th>
+          <tr className="border-b border-nexo-border bg-white/[0.02]">
+            <th className="nexo-label px-6 py-3 text-left">#</th>
             <Header label="Keyword" sortK="keyword" align="left" />
             <Header label="Main intent" sortK="intent" align="center" />
-            <th className="px-4 py-3 text-left text-[10px] font-black uppercase tracking-widest text-slate-400 hidden md:table-cell">Secondary intents</th>
+            <th className="nexo-label px-4 py-3 text-left hidden md:table-cell">Secondary intents</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
+        <tbody className="divide-y divide-nexo-border">
           {sorted.map((item, i) => {
             const secondary = getSecondaryIntents(item);
             return (
-              <tr key={i} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                <td className="px-6 py-3 text-[11px] font-mono text-slate-400 tabular-nums">{i + 1}</td>
-                <td className="px-4 py-3 font-medium text-slate-900 dark:text-slate-200">{item.keyword ?? '—'}</td>
+              <tr key={i} className="hover:bg-white/[0.04] transition-colors">
+                <td className="px-6 py-3 text-[11px] font-mono text-nexo-faint tabular-nums">{i + 1}</td>
+                <td className="px-4 py-3 font-medium text-nexo-text">{item.keyword ?? '—'}</td>
                 <td className="px-4 py-3 text-center"><IntentBadge intent={getMainIntent(item)} /></td>
                 <td className="px-4 py-3 hidden md:table-cell">
                   <div className="flex gap-1 flex-wrap">

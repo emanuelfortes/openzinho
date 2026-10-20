@@ -68,22 +68,22 @@ export default function GridTaskCenter() {
         aria-label="Geo-grid tasks"
         aria-expanded={open}
         onClick={() => setOpen((value) => !value)}
-        className={`relative grid h-8 w-8 place-items-center rounded-lg transition-colors ${total > 0 ? 'bg-blue-50 text-blue-600 hover:bg-blue-100 dark:bg-blue-950/50 dark:text-blue-300 dark:hover:bg-blue-950' : 'text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-200'}`}
+        className={`relative grid h-8 w-8 place-items-center rounded-nexo transition-colors ${total > 0 ? 'bg-nexo-blue/10 text-nexo-sky hover:bg-nexo-blue/15' : 'text-nexo-faint hover:bg-white/[0.04] hover:text-white'}`}
       >
         {pending.length > 0 ? <LoaderCircle className="h-4 w-4 animate-spin" /> : <Bell className="h-4 w-4" />}
-        {total > 0 && <span className={`absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full px-1 text-[9px] font-black text-white ${pending.length > 0 ? 'bg-blue-600' : 'bg-emerald-600'}`}>{total}</span>}
+        {total > 0 && <span className={`absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full px-1 text-[9px] font-medium text-nexo-bg ${pending.length > 0 ? 'bg-nexo-blue' : 'bg-nexo-ice'}`}>{total}</span>}
       </button>
 
       {open && (
-        <div className="absolute right-0 top-10 z-50 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl shadow-slate-950/10 dark:border-slate-700 dark:bg-slate-900">
-          <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3 dark:border-slate-800">
-            <div><p className="text-xs font-black text-slate-900 dark:text-white">Geo-grid tasks</p><p className="mt-0.5 text-[10px] text-slate-400">Progress continues while you work.</p></div>
-            {pending.length > 0 && <span className="text-[10px] font-bold tabular-nums text-blue-600 dark:text-blue-400">{pending.length} running</span>}
+        <div className="absolute right-0 top-10 z-50 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-nexo-lg border border-nexo-border bg-nexo-surface">
+          <div className="flex items-center justify-between border-b border-nexo-border px-4 py-3">
+            <div><p className="text-xs font-medium text-nexo-text">Geo-grid tasks</p><p className="mt-0.5 text-[10px] text-nexo-faint">Progress continues while you work.</p></div>
+            {pending.length > 0 && <span className="text-[10px] font-medium tabular-nums text-nexo-sky">{pending.length} running</span>}
           </div>
-          {total === 0 ? <p className="px-4 py-6 text-center text-xs text-slate-400">No Geo-grid task in progress.</p> : (
-            <div className="divide-y divide-slate-100 dark:divide-slate-800">
-              {completed.map((task) => <Link key={`done-${task.id}`} href={`/dashboard/geo-grid?grid_history_id=${task.id}#results`} onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"><span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-300"><Check className="h-3.5 w-3.5" /></span><span className="min-w-0 flex-1"><span className="block truncate text-xs font-bold text-slate-800 dark:text-slate-100">{task.keyword}</span><span className="block truncate text-[10px] text-emerald-600 dark:text-emerald-400">Report ready · {task.target}</span></span><ChevronRight className="h-3.5 w-3.5 text-slate-400" /></Link>)}
-              {pending.map((task) => <Link key={task.id} href={`/dashboard/geo-grid?grid_history_id=${task.id}#results`} onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800"><span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-300"><LoaderCircle className="h-3.5 w-3.5 animate-spin" /></span><span className="min-w-0 flex-1"><span className="block truncate text-xs font-bold text-slate-800 dark:text-slate-100">{task.keyword}</span><span className="block truncate text-[10px] text-slate-400">{task.target} · {task.ready}/{task.total} points</span></span><ChevronRight className="h-3.5 w-3.5 text-slate-400" /></Link>)}
+          {total === 0 ? <p className="px-4 py-6 text-center text-xs text-nexo-faint">No Geo-grid task in progress.</p> : (
+            <div className="divide-y divide-nexo-border">
+              {completed.map((task) => <Link key={`done-${task.id}`} href={`/dashboard/geo-grid?grid_history_id=${task.id}#results`} onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-white/[0.04]"><span className="grid h-7 w-7 shrink-0 place-items-center rounded-nexo bg-nexo-ice/10 text-nexo-ice"><Check className="h-3.5 w-3.5" /></span><span className="min-w-0 flex-1"><span className="block truncate text-xs font-medium text-nexo-text">{task.keyword}</span><span className="block truncate text-[10px] text-nexo-ice">Report ready · {task.target}</span></span><ChevronRight className="h-3.5 w-3.5 text-nexo-faint" /></Link>)}
+              {pending.map((task) => <Link key={task.id} href={`/dashboard/geo-grid?grid_history_id=${task.id}#results`} onClick={() => setOpen(false)} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-white/[0.04]"><span className="grid h-7 w-7 shrink-0 place-items-center rounded-nexo bg-nexo-blue/10 text-nexo-sky"><LoaderCircle className="h-3.5 w-3.5 animate-spin" /></span><span className="min-w-0 flex-1"><span className="block truncate text-xs font-medium text-nexo-text">{task.keyword}</span><span className="block truncate text-[10px] text-nexo-faint">{task.target} · {task.ready}/{task.total} points</span></span><ChevronRight className="h-3.5 w-3.5 text-nexo-faint" /></Link>)}
             </div>
           )}
         </div>

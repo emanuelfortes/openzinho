@@ -11,12 +11,12 @@ function formatDay(date: string) {
 
 function Change({ position, previous }: { position: number; previous: number | null }) {
   if (previous === null)
-    return <span className="text-[9px] font-black uppercase tracking-wider text-violet-600 dark:text-violet-300">New</span>;
+    return <span className="text-[9px] font-medium uppercase tracking-wider text-nexo-sky">New</span>;
   const diff = previous - position;
-  if (diff === 0) return <span className="text-[11px] text-slate-300">—</span>;
+  if (diff === 0) return <span className="text-[11px] text-nexo-faint">—</span>;
   return diff > 0
-    ? <span className="text-[10px] font-black text-emerald-500">↑{diff}</span>
-    : <span className="text-[10px] font-black text-red-400">↓{Math.abs(diff)}</span>;
+    ? <span className="text-[10px] font-medium text-nexo-ice">↑{diff}</span>
+    : <span className="text-[10px] font-medium text-nexo-danger-text">↓{Math.abs(diff)}</span>;
 }
 
 const escapeCell = (value: string) => value.replace(/\|/g, '\\|').replace(/\r?\n/g, ' ');
@@ -52,9 +52,9 @@ function CopyTopButton({ getMarkdown }: { getMarkdown: () => string }) {
         setCopied(true);
         setTimeout(() => setCopied(false), 1500);
       }}
-      className="flex items-center gap-1.5 text-[10px] font-bold text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 mb-2 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200 transition-colors"
+      className="flex items-center gap-1.5 text-[10px] font-medium text-nexo-dim border border-nexo-border rounded-nexo px-2 py-1 mb-2 hover:bg-white/[0.04] hover:text-white transition-colors"
     >
-      {copied ? <Check className="h-3 w-3 text-emerald-500" /> : <ClipboardCopy className="h-3 w-3" />}
+      {copied ? <Check className="h-3 w-3 text-nexo-ice" /> : <ClipboardCopy className="h-3 w-3" />}
       {copied ? 'Copied' : 'Copy as Markdown'}
     </button>
   );
@@ -72,16 +72,16 @@ interface Props {
 
 export default function TopResultsPanel({ checks, failed, trackedDomain, selectedDate, onSelect }: Props) {
   const title = (
-    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Top 10 results</div>
+    <div className="nexo-label mb-2">Top 10 results</div>
   );
 
-  if (failed) return <div className="mt-5">{title}<p className="text-xs text-slate-400">Could not load the top 10.</p></div>;
-  if (checks === null) return <div className="mt-5">{title}<p className="text-xs text-slate-400">Loading…</p></div>;
+  if (failed) return <div className="mt-5">{title}<p className="text-xs text-nexo-faint">Could not load the top 10.</p></div>;
+  if (checks === null) return <div className="mt-5">{title}<p className="text-xs text-nexo-faint">Loading…</p></div>;
   if (checks.length === 0) {
     return (
       <div className="mt-5">
         {title}
-        <p className="text-xs text-slate-400">The top 10 is saved with each check. Run a check to see who ranks around you.</p>
+        <p className="text-xs text-nexo-faint">The top 10 is saved with each check. Run a check to see who ranks around you.</p>
       </div>
     );
   }
@@ -99,13 +99,13 @@ export default function TopResultsPanel({ checks, failed, trackedDomain, selecte
         {title}
         <div className="flex shrink-0 items-center gap-2">
         <CopyTopButton getMarkdown={() => topResultsMarkdown(current.date, diff.rows, previous !== null)} />
-        {checks.length === 1 && <span className="text-[10px] font-bold text-slate-500 mb-2">{formatDay(current.date)}</span>}
+        {checks.length === 1 && <span className="text-[10px] font-medium text-nexo-dim mb-2">{formatDay(current.date)}</span>}
         {checks.length > 1 && (
           <select
             value={current.date}
             onChange={(e) => onSelect(e.target.value)}
             aria-label="Check date"
-            className="text-[10px] font-bold text-slate-500 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 mb-2"
+            className="nexo-input min-w-0 w-full text-[10px] font-medium px-2 py-1 mb-2"
           >
             {checks.map((check) => <option key={check.date} value={check.date}>{formatDay(check.date)}</option>)}
           </select>
@@ -113,24 +113,24 @@ export default function TopResultsPanel({ checks, failed, trackedDomain, selecte
         </div>
       </div>
 
-      <ol className="rounded-xl border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 divide-y divide-slate-50 dark:divide-slate-800 overflow-hidden">
+      <ol className="rounded-nexo-lg border border-nexo-border bg-nexo-surface divide-y divide-nexo-border overflow-hidden">
         {diff.rows.map((row) => {
           const isMine = row.domain === mine || row.domain.endsWith(`.${mine}`);
           return (
             <li
               key={`${row.position}-${row.url}`}
-              className={`flex items-center gap-3 px-3 py-1.5 ${isMine ? 'bg-blue-50/70 dark:bg-blue-950/30' : ''}`}
+              className={`flex items-center gap-3 px-3 py-1.5 ${isMine ? 'bg-nexo-blue/10' : ''}`}
             >
-              <span className="w-6 text-[11px] font-black tabular-nums text-slate-400">#{row.position}</span>
+              <span className="w-6 text-[11px] font-medium tabular-nums text-nexo-faint">#{row.position}</span>
               <a
                 href={row.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 title={row.title ? `${row.title}\n${row.url}` : row.url}
-                className={`min-w-0 flex-1 truncate text-[11px] hover:underline ${isMine ? 'font-black text-blue-600' : 'font-semibold text-slate-700 dark:text-slate-200'}`}
+                className={`min-w-0 flex-1 truncate text-[11px] hover:underline ${isMine ? 'font-medium text-nexo-sky' : 'font-semibold text-nexo-dim'}`}
               >
                 {row.domain}
-                <span className="ml-2 font-mono font-normal text-slate-400">{row.url.replace(/^https?:\/\/[^/]+/, '') || '/'}</span>
+                <span className="ml-2 font-mono font-normal text-nexo-faint">{row.url.replace(/^https?:\/\/[^/]+/, '') || '/'}</span>
               </a>
               <span className="w-10 text-right shrink-0">
                 {previous && <Change position={row.position} previous={row.previousPosition} />}
@@ -141,16 +141,16 @@ export default function TopResultsPanel({ checks, failed, trackedDomain, selecte
       </ol>
 
       {previous ? (
-        <div className="mt-2 text-[10px] text-slate-400">
+        <div className="mt-2 text-[10px] text-nexo-faint">
           <span className="font-semibold">vs {formatDay(previous.date)}.</span>
           {diff.dropped.length > 0 ? (
             <> Left the top 10: {diff.dropped.map((d, i) => (
-              <span key={d.domain}>{i > 0 && ', '}<span className="font-bold text-slate-600 dark:text-slate-300">{d.domain}</span> (was #{d.position})</span>
+              <span key={d.domain}>{i > 0 && ', '}<span className="font-medium text-nexo-dim">{d.domain}</span> (was #{d.position})</span>
             ))}</>
           ) : ' No domain left the top 10.'}
         </div>
       ) : (
-        <div className="mt-2 text-[10px] text-slate-400">Changes appear from the next check.</div>
+        <div className="mt-2 text-[10px] text-nexo-faint">Changes appear from the next check.</div>
       )}
     </div>
   );

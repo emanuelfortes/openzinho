@@ -82,18 +82,18 @@ export default function KeywordDataForm({ defaults }: Props) {
   }
 
   return (
-    <form method="GET" className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-6">
+    <form method="GET" className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-6">
       {/* SE + SE Type */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">
+          <label className="nexo-label block mb-1.5">
             Search Engine
           </label>
           <select
             name="se"
             value={se}
             onChange={(e) => handleSeChange(e.target.value as SE)}
-            className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800"
+            className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
           >
             {SE_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>{o.label}</option>
@@ -102,14 +102,14 @@ export default function KeywordDataForm({ defaults }: Props) {
         </div>
 
         <div>
-          <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">
+          <label className="nexo-label block mb-1.5">
             Type
           </label>
           <select
             name="se_type"
             value={seType}
             onChange={(e) => setSeType(e.target.value as SEType)}
-            className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800"
+            className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
           >
             {SE_TYPES[se].map((o) => (
               <option key={o.value} value={o.value}>{o.label}</option>
@@ -121,15 +121,15 @@ export default function KeywordDataForm({ defaults }: Props) {
       {/* Keywords or Target */}
       {needsKeywords && (
         <div>
-          <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">
-            Keywords <span className="text-slate-300 normal-case font-normal">(one per line, max 1000)</span>
+          <label className="nexo-label block mb-1.5">
+            Keywords <span className="text-nexo-faint normal-case font-normal">(one per line, max 1000)</span>
           </label>
           <textarea
             name="keywords"
             defaultValue={defaults.keywords}
             rows={5}
             placeholder={"plumber paris\nelectrician london\nheating engineer manchester"}
-            className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800 font-mono resize-y"
+            className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky font-mono resize-y"
           />
         </div>
       )}
@@ -137,25 +137,25 @@ export default function KeywordDataForm({ defaults }: Props) {
       {needsTarget && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">
-              Target <span className="text-slate-300 normal-case font-normal">(domain or URL)</span>
+            <label className="nexo-label block mb-1.5">
+              Target <span className="text-nexo-faint normal-case font-normal">(domain or URL)</span>
             </label>
             <input
               type="text"
               name="target"
               defaultValue={defaults.target}
               placeholder="example.com or https://example.com/page"
-              className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800"
+              className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
             />
           </div>
           <div>
-            <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">
+            <label className="nexo-label block mb-1.5">
               Target Type
             </label>
             <select
               name="target_type"
               defaultValue={defaults.targetType || 'site'}
-              className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800"
+              className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
             >
               <option value="site">Site (whole domain)</option>
               <option value="page">Page (exact URL)</option>
@@ -167,26 +167,26 @@ export default function KeywordDataForm({ defaults }: Props) {
       {/* Location + Language */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">
-            Location {isBing && <span className="text-red-400">*</span>}
+          <label className="nexo-label block mb-1.5">
+            Location {isBing && <span className="text-nexo-danger-text">*</span>}
           </label>
           <LocationPicker
             name="location"
             defaultValue={defaults.location || 'France'}
             placeholder="e.g. France, Paris"
-            className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800"
+            className="w-full px-4 py-2.5 border border-nexo-border rounded-nexo-lg text-sm text-nexo-text placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-nexo-sky bg-nexo-surface"
           />
         </div>
         <div>
-          <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">
-            Language {isBing && <span className="text-red-400">*</span>}
+          <label className="nexo-label block mb-1.5">
+            Language {isBing && <span className="text-nexo-danger-text">*</span>}
           </label>
           <input
             type="text"
             name="language"
             defaultValue={defaults.language || 'French'}
             placeholder="e.g. French, English"
-            className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800"
+            className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
           />
         </div>
       </div>
@@ -194,29 +194,29 @@ export default function KeywordDataForm({ defaults }: Props) {
       {/* Date range + Sort By */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div>
-          <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Date From</label>
+          <label className="nexo-label block mb-1.5">Date From</label>
           <input
             type="date"
             name="date_from"
             defaultValue={defaults.dateFrom}
-            className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800"
+            className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
           />
         </div>
         <div>
-          <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Date To</label>
+          <label className="nexo-label block mb-1.5">Date To</label>
           <input
             type="date"
             name="date_to"
             defaultValue={defaults.dateTo}
-            className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800"
+            className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
           />
         </div>
         <div>
-          <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Sort By</label>
+          <label className="nexo-label block mb-1.5">Sort By</label>
           <select
             name="sort_by"
             defaultValue={defaults.sortBy || 'relevance'}
-            className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800"
+            className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
           >
             {SORT_BY_OPTIONS[se].map((o) => (
               <option key={o.value} value={o.value}>{o.label}</option>
@@ -229,11 +229,11 @@ export default function KeywordDataForm({ defaults }: Props) {
       {showDevice && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Device</label>
+            <label className="nexo-label block mb-1.5">Device</label>
             <select
               name="device"
               defaultValue={defaults.device || 'all'}
-              className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800"
+              className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
             >
               <option value="all">All</option>
               <option value="desktop">Desktop</option>
@@ -252,9 +252,9 @@ export default function KeywordDataForm({ defaults }: Props) {
             name="search_partners"
             value="true"
             defaultChecked={defaults.searchPartners === 'true'}
-            className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+            className="w-4 h-4 rounded border-nexo-border text-nexo-sky focus:ring-nexo-sky"
           />
-          <span className="text-sm text-slate-600 dark:text-slate-300 font-medium">Search Partners</span>
+          <span className="text-sm text-nexo-dim font-medium">Search Partners</span>
         </label>
 
         {showIncludeAdult && (
@@ -264,16 +264,16 @@ export default function KeywordDataForm({ defaults }: Props) {
               name="include_adult_keywords"
               value="true"
               defaultChecked={defaults.includeAdult === 'true'}
-              className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+              className="w-4 h-4 rounded border-nexo-border text-nexo-sky focus:ring-nexo-sky"
             />
-            <span className="text-sm text-slate-600 dark:text-slate-300 font-medium">Include Adult Keywords</span>
+            <span className="text-sm text-nexo-dim font-medium">Include Adult Keywords</span>
           </label>
         )}
       </div>
 
       <button
         type="submit"
-        className="w-full bg-slate-900 dark:bg-slate-700 text-white font-black uppercase tracking-widest text-xs py-3 rounded-xl hover:bg-blue-600 transition-colors"
+        className="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors"
       >
         Search
       </button>

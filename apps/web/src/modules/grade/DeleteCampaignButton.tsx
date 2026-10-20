@@ -11,7 +11,7 @@ export default function DeleteCampaignButton({ id }: { id: string }) {
       }}
     >
       <input type="hidden" name="id" value={id} />
-      <button type="submit" className="text-[10px] font-black uppercase tracking-widest text-slate-400 transition-colors hover:text-red-600">
+      <button type="submit" className="nexo-label transition-colors hover:text-nexo-danger-text">
         Delete
       </button>
     </form>

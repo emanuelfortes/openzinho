@@ -49,9 +49,9 @@ export default function CopyMarkdownLink({ href, label = 'Copy as Markdown' }: {
       type="button"
       onClick={copy}
       disabled={state === 'loading'}
-      className="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-slate-600 transition-colors hover:bg-slate-200 disabled:opacity-60 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+      className="nexo-label inline-flex items-center gap-1.5 rounded-nexo bg-nexo-surface-2 px-3 py-1.5 transition-colors hover:bg-white/[0.04] disabled:opacity-60"
     >
-      {state === 'loading' ? <LoaderCircle className="h-3.5 w-3.5 animate-spin" /> : state === 'copied' ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <ClipboardCopy className="h-3.5 w-3.5" />}
+      {state === 'loading' ? <LoaderCircle className="h-3.5 w-3.5 animate-spin" /> : state === 'copied' ? <Check className="h-3.5 w-3.5 text-nexo-ice" /> : <ClipboardCopy className="h-3.5 w-3.5" />}
       {text}
     </button>
   );

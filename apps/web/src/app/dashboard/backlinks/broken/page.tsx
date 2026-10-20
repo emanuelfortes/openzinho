@@ -73,10 +73,10 @@ function formatDate(ts: number) { return new Date(ts).toLocaleDateString('en-GB'
 
 function Stat({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 px-5 py-4 shadow-sm">
-      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{label}</p>
-      <p className="text-2xl font-black text-slate-900 dark:text-white mt-1 tabular-nums">{value}</p>
-      {hint && <p className="text-[11px] text-slate-400 mt-0.5">{hint}</p>}
+    <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
+      <p className="nexo-label">{label}</p>
+      <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{value}</p>
+      {hint && <p className="text-[11px] text-nexo-faint mt-0.5">{hint}</p>}
     </div>
   );
 }
@@ -155,45 +155,45 @@ async function BrokenBacklinksPage({ searchParams }: { searchParams: Promise<Sea
   return (
     <div className="space-y-6">
       <div>
-        <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 mb-1">
-          <a href="/dashboard/backlinks" className="hover:text-slate-600 transition-colors">Backlinks</a>
-          <span className="text-slate-200 dark:text-slate-700">/</span>
-          <span className="text-slate-600 dark:text-slate-300">Broken Backlinks</span>
+        <div className="nexo-label flex items-center gap-2 mb-1">
+          <a href="/dashboard/backlinks" className="hover:text-white transition-colors">Backlinks</a>
+          <span className="text-nexo-text">/</span>
+          <span className="text-nexo-dim">Broken Backlinks</span>
         </div>
-        <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Broken Backlinks</h1>
-        <p className="text-sm text-slate-400 mt-1 max-w-2xl">
+        <h1 className="nexo-h1">Broken Backlinks</h1>
+        <p className="text-sm text-nexo-faint mt-1 max-w-2xl">
           Live backlinks pointing to pages that answer 4xx or 5xx. On your own site, 301-redirect or restore those pages to reclaim the links.
           On a competitor, each broken page is a broken link building opportunity: offer your content to the sites still linking to it.
         </p>
       </div>
 
-      <SearchForm className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4" btnLabel="Find broken backlinks" btnClassName="w-full bg-slate-900 dark:bg-slate-700 text-white font-black uppercase tracking-widest text-xs py-3 rounded-xl hover:bg-blue-600 transition-colors" disabled={!creds}>
+      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Find broken backlinks" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors" disabled={!creds}>
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
           <div className="sm:col-span-2">
-            <label htmlFor="bb-target" className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Domain or page</label>
+            <label htmlFor="bb-target" className="nexo-label block mb-1.5">Domain or page</label>
             <input id="bb-target" type="text" name="target" defaultValue={displayTarget || defaultDomain} placeholder="example.com" required
-              className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono bg-white dark:bg-slate-800" />
+              className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky font-mono" />
           </div>
           <div>
-            <label htmlFor="bb-dofollow" className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Links</label>
+            <label htmlFor="bb-dofollow" className="nexo-label block mb-1.5">Links</label>
             <select id="bb-dofollow" name="dofollow" defaultValue={displayDofollow ? 'true' : ''}
-              className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800">
+              className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
               <option value="">All broken links</option>
               <option value="true">Dofollow only</option>
             </select>
           </div>
           <div>
-            <label htmlFor="bb-limit" className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Max links</label>
+            <label htmlFor="bb-limit" className="nexo-label block mb-1.5">Max links</label>
             <select id="bb-limit" name="limit" defaultValue={String(limit)}
-              className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800">
+              className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
               {LIMITS.map((n) => <option key={n} value={n}>{n}</option>)}
             </select>
           </div>
         </div>
-        {!creds && <p className="text-xs text-amber-600 dark:text-amber-400 font-medium">Configure API credentials in Settings first.</p>}
+        {!creds && <p className="text-xs text-nexo-warn-text font-medium">Configure API credentials in Settings first.</p>}
       </SearchForm>
 
-      {error && <div className="bg-red-50 dark:bg-red-950 border border-red-100 dark:border-red-900 text-red-600 dark:text-red-400 text-sm rounded-xl px-4 py-3">{error}</div>}
+      {error && <div className="bg-nexo-danger/10 border border-nexo-danger/40 text-nexo-danger-text text-sm rounded-nexo-lg px-4 py-3">{error}</div>}
 
       {(historyId || target) && !error && (
         <>
@@ -204,13 +204,13 @@ async function BrokenBacklinksPage({ searchParams }: { searchParams: Promise<Sea
             <Stat label="Dofollow" value={fmt(dofollowCount)} hint={items.length ? `${Math.round((dofollowCount / items.length) * 100)}% of links` : undefined} />
           </div>
 
-          <div id="results" className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3 flex-wrap">
-              <span className="text-xs font-black uppercase tracking-widest text-slate-400">
+          <div id="results" className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+            <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between gap-3 flex-wrap">
+              <span className="nexo-label">
                 {displayTarget}{displayDofollow && ' · dofollow only'}
               </span>
               <div className="flex items-center gap-3">
-                {cost !== undefined && <span className="text-[10px] font-mono text-slate-400">cost: ${cost.toFixed(4)}</span>}
+                {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">cost: ${cost.toFixed(4)}</span>}
                 {items.length > 0 && (
                   <div className="flex items-center gap-2">
                     <CopyMarkdownButton data={pagesMd} columns={[
@@ -227,7 +227,7 @@ async function BrokenBacklinksPage({ searchParams }: { searchParams: Promise<Sea
               </div>
             </div>
             {items.length === 0 ? (
-              <div className="px-6 py-12 text-center text-sm text-slate-400">
+              <div className="px-6 py-12 text-center text-sm text-nexo-faint">
                 No broken backlinks found{displayDofollow ? ' among dofollow links' : ''}. Every live link to this target lands on a working page.
               </div>
             ) : (
@@ -238,23 +238,23 @@ async function BrokenBacklinksPage({ searchParams }: { searchParams: Promise<Sea
       )}
 
       {history.length > 0 && (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-            <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">History</h2>
+        <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+          <div className="px-6 py-4 border-b border-nexo-border">
+            <h2 className="nexo-label">History</h2>
           </div>
-          <div className="divide-y divide-slate-50 dark:divide-slate-800">
+          <div className="divide-y divide-nexo-border">
             {history.map((entry) => {
               const isActive = entry.id === (historyId ?? activeEntry?.id);
               return (
                 <a key={entry.id} href={`/dashboard/backlinks/broken?history_id=${entry.id}#results`}
-                  className={`flex items-center gap-4 px-6 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${isActive ? 'bg-blue-50 dark:bg-blue-950' : ''}`}>
+                  className={`flex items-center gap-4 px-6 py-3.5 hover:bg-white/[0.04] transition-colors ${isActive ? 'bg-nexo-blue/10' : ''}`}>
                   <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-medium font-mono truncate ${isActive ? 'text-blue-700 dark:text-blue-400' : 'text-slate-800 dark:text-slate-200'}`}>{entry.target}</p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">
+                    <p className={`text-sm font-medium font-mono truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.target}</p>
+                    <p className="text-[11px] text-nexo-faint mt-0.5">
                       {fmt(entry.total ?? entry.count)} broken backlinks{entry.dofollowOnly ? ' · dofollow only' : ''}{entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}
                     </p>
                   </div>
-                  <span className="shrink-0 text-[11px] text-slate-400">{formatDate(entry.ts)}</span>
+                  <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>
                 </a>
               );
             })}

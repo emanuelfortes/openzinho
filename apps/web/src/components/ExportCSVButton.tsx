@@ -34,7 +34,7 @@ export default function ExportCSVButton({
   return (
     <button
       onClick={handleExport}
-      className="flex items-center gap-2 px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-xl border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-900 transition-all"
+      className="nexo-label flex items-center gap-2 px-4 py-2 rounded-nexo-lg border border-nexo-border hover:bg-white/[0.04] hover:text-white transition-all"
     >
       <Download className="h-3.5 w-3.5" />
       Export CSV

@@ -170,21 +170,21 @@ async function TopSearchesPage({ searchParams }: { searchParams: Promise<SearchP
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Top Searches</h1>
-        <p className="text-sm text-slate-400 mt-1">The most searched keywords for a given location and language, via DataForSEO Labs.</p>
+        <h1 className="nexo-h1">Top Searches</h1>
+        <p className="text-sm text-nexo-faint mt-1">The most searched keywords for a given location and language, via DataForSEO Labs.</p>
       </div>
 
-      <SearchForm className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4" btnLabel="Search" btnClassName="w-full bg-slate-900 dark:bg-slate-700 text-white font-black uppercase tracking-widest text-xs py-3 rounded-xl hover:bg-blue-600 transition-colors">
+      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Search" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <LabsLocationLanguageFields
             defaultLocation={displayLocation}
             defaultLanguage={displayLanguage}
-            className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800"
+            className="w-full px-4 py-2.5 border border-nexo-border rounded-nexo-lg text-sm text-nexo-text focus:outline-none focus:ring-2 focus:ring-nexo-sky bg-nexo-surface"
           />
           <div>
-            <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Number of results</label>
+            <label className="nexo-label block mb-1.5">Number of results</label>
             <select name="limit" defaultValue={String(displayLimit)}
-              className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800">
+              className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
               <option value="50">50</option>
               <option value="100">100</option>
               <option value="200">200</option>
@@ -195,34 +195,34 @@ async function TopSearchesPage({ searchParams }: { searchParams: Promise<SearchP
           <div className="flex items-end">
             <label className="flex items-center gap-3 cursor-pointer pb-2.5">
               <input type="checkbox" name="ignore_synonyms" value="true" defaultChecked={ignoreSynonyms}
-                className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
-              <span className="text-sm text-slate-700 dark:text-slate-300 font-medium">Ignore synonyms</span>
+                className="w-4 h-4 rounded border-nexo-border text-nexo-sky focus:ring-nexo-sky" />
+              <span className="text-sm text-nexo-dim font-medium">Ignore synonyms</span>
             </label>
           </div>
         </div>
-        <div className="bg-amber-50 dark:bg-amber-950 border border-amber-100 dark:border-amber-900 rounded-xl px-4 py-3">
-          <p className="text-[11px] text-amber-700 dark:text-amber-400">
-            Cost: <span className="font-black">${COST_PER_1000} / 1,000 keywords</span> — estimated for {limit} results:{' '}
-            <span className="font-black">${estimatedCost}</span>
+        <div className="bg-nexo-warn/10 border border-nexo-warn/40 rounded-nexo-lg px-4 py-3">
+          <p className="text-[11px] text-nexo-warn-text">
+            Cost: <span className="font-medium">${COST_PER_1000} / 1,000 keywords</span> — estimated for {limit} results:{' '}
+            <span className="font-medium">${estimatedCost}</span>
           </p>
         </div>
       </SearchForm>
 
-      {error && <div className="bg-red-50 dark:bg-red-950 border border-red-100 dark:border-red-900 text-red-600 dark:text-red-400 text-sm rounded-xl px-4 py-3">{error}</div>}
+      {error && <div className="bg-nexo-danger/10 border border-nexo-danger/40 text-nexo-danger-text text-sm rounded-nexo-lg px-4 py-3">{error}</div>}
 
       {hasQuery && !error && (
-        <div id="results" className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <div id="results" className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+          <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">Results</h2>
-              {isFromHistory && <span className="text-[10px] font-black uppercase tracking-widest text-blue-500 bg-blue-50 dark:bg-blue-950 px-2 py-0.5 rounded-md">History</span>}
+              <h2 className="nexo-label">Results</h2>
+              {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>}
               {totalCount !== undefined && (
-                <span className="text-[10px] text-slate-400 font-mono">{fmt(totalCount)} total</span>
+                <span className="text-[10px] text-nexo-faint font-mono">{fmt(totalCount)} total</span>
               )}
             </div>
             <div className="flex items-center gap-3">
-              {cost !== undefined && <span className="text-[10px] font-mono text-slate-400">cost: ${cost.toFixed(4)}</span>}
-              <span className="text-xs font-black text-slate-400">{items.length} keyword{items.length !== 1 ? 's' : ''}</span>
+              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">cost: ${cost.toFixed(4)}</span>}
+              <span className="text-xs font-medium text-nexo-faint">{items.length} keyword{items.length !== 1 ? 's' : ''}</span>
               {items.length > 0 && (
                 <div className="flex items-center gap-2">
                   <CopyMarkdownButton
@@ -257,7 +257,7 @@ async function TopSearchesPage({ searchParams }: { searchParams: Promise<SearchP
             </div>
           </div>
           {items.length === 0 ? (
-            <div className="px-6 py-12 text-center text-sm text-slate-400">No results found.</div>
+            <div className="px-6 py-12 text-center text-sm text-nexo-faint">No results found.</div>
           ) : (
             <TopSearchesTable items={items} />
           )}
@@ -265,27 +265,27 @@ async function TopSearchesPage({ searchParams }: { searchParams: Promise<SearchP
       )}
 
       {history.length > 0 && (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-            <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">History</h2>
+        <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+          <div className="px-6 py-4 border-b border-nexo-border">
+            <h2 className="nexo-label">History</h2>
           </div>
-          <div className="divide-y divide-slate-50 dark:divide-slate-800">
+          <div className="divide-y divide-nexo-border">
             {history.map((entry) => {
               const isActive = entry.id === historyId;
               return (
                 <a key={entry.id} href={`/dashboard/top-searches?history_id=${entry.id}#results`}
-                  className={`flex items-center gap-4 px-6 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${isActive ? 'bg-blue-50 dark:bg-blue-950' : ''}`}>
+                  className={`flex items-center gap-4 px-6 py-3.5 hover:bg-white/[0.04] transition-colors ${isActive ? 'bg-nexo-blue/10' : ''}`}>
                   <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-medium truncate ${isActive ? 'text-blue-700 dark:text-blue-400' : 'text-slate-800 dark:text-slate-200'}`}>
+                    <p className={`text-sm font-medium truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>
                       {entry.location} · {entry.language}
                     </p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">
+                    <p className="text-[11px] text-nexo-faint mt-0.5">
                       {entry.count} keywords
                       {entry.totalCount !== undefined ? ` / ${fmt(entry.totalCount)} total` : ''}
                       {entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}
                     </p>
                   </div>
-                  <span className="shrink-0 text-[11px] text-slate-400">{formatDate(entry.ts)}</span>
+                  <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>
                 </a>
               );
             })}

@@ -94,57 +94,57 @@ async function DomainIntersectionPage({ searchParams }: { searchParams: Promise<
   return (
     <div className="space-y-6 pb-12">
       <div>
-        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Domain Intersection</h1>
-        <p className="text-slate-500 text-sm mt-1 font-medium">Keywords two domains rank for simultaneously</p>
+        <h1 className="nexo-h1">Domain Intersection</h1>
+        <p className="text-nexo-dim text-sm mt-1 font-medium">Keywords two domains rank for simultaneously</p>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      <div className="grid gap-6 grid-cols-[repeat(auto-fit,minmax(320px,1fr))]">
         <div className="xl:col-span-2 space-y-5">
-          <SearchForm className="bg-white border border-slate-200 rounded-3xl p-6 space-y-4" btnLabel="Analyze" btnClassName="w-full bg-blue-600 text-white py-3 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-blue-700 shadow-lg shadow-blue-200 dark:shadow-none transition-all disabled:opacity-40" disabled={!creds}>
+          <SearchForm className="bg-nexo-surface border border-nexo-border rounded-nexo-lg p-6 space-y-4" btnLabel="Analyze" btnClassName="w-full bg-nexo-blue text-white py-3 rounded-nexo-lg font-medium uppercase text-[10px] tracking-widest hover:bg-nexo-sky transition-all disabled:opacity-40" disabled={!creds}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Domain 1</label>
-                <input name="target1" type="text" defaultValue={target1 || defaultDomain} placeholder="example.com" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 text-sm font-medium text-slate-900 transition-all" />
+                <label className="nexo-label">Domain 1</label>
+                <input name="target1" type="text" defaultValue={target1 || defaultDomain} placeholder="example.com" className="nexo-input min-w-0 w-full px-4 py-3 outline-none focus:ring-4 focus:ring-nexo-sky text-sm font-medium transition-all" />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Domain 2</label>
-                <input name="target2" type="text" defaultValue={target2} placeholder="competitor.com" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 text-sm font-medium text-slate-900 transition-all" />
+                <label className="nexo-label">Domain 2</label>
+                <input name="target2" type="text" defaultValue={target2} placeholder="competitor.com" className="nexo-input min-w-0 w-full px-4 py-3 outline-none focus:ring-4 focus:ring-nexo-sky text-sm font-medium transition-all" />
               </div>
               <LabsLocationLanguageFields
                 defaultLocation={location}
                 defaultLanguage={language}
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm font-medium text-slate-900"
+                className="w-full px-4 py-3 bg-white/[0.02] border border-nexo-border rounded-nexo-lg outline-none text-sm font-medium text-nexo-text"
                 wrapperClassName="space-y-1.5"
-                labelClassName="text-[10px] font-black text-slate-400 uppercase tracking-widest"
+                labelClassName="nexo-label "
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Limit</label>
-              <select name="limit" defaultValue={String(limit)} className="w-48 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm font-medium text-slate-900">
+              <label className="nexo-label">Limit</label>
+              <select name="limit" defaultValue={String(limit)} className="nexo-input min-w-0 w-48 px-4 py-3 outline-none text-sm font-medium">
                 {[50, 100, 250, 500, 1000].map((n) => <option key={n} value={n}>{n}</option>)}
               </select>
             </div>
-            {!creds && <p className="text-xs text-amber-600 font-medium">Configure API credentials in Settings first.</p>}
+            {!creds && <p className="text-xs text-nexo-warn-text font-medium">Configure API credentials in Settings first.</p>}
           </SearchForm>
 
-          {error && <div className="bg-red-50 border border-red-200 text-red-700 rounded-2xl px-5 py-3 text-sm">{error}</div>}
+          {error && <div className="bg-nexo-danger/10 border border-nexo-danger/40 text-nexo-danger-text rounded-nexo-lg px-5 py-3 text-sm">{error}</div>}
 
           {items.length > 0 && (
             <div className="space-y-3">
-              <p className="text-xs font-black text-slate-400 uppercase tracking-widest">
+              <p className="nexo-label">
                 {items.length} shown / {total.toLocaleString()} common keywords
-                {cost > 0 && <span className="ml-3 text-slate-300">· ${cost.toFixed(4)}</span>}
+                {cost > 0 && <span className="ml-3 text-nexo-faint">· ${cost.toFixed(4)}</span>}
               </p>
 
               {/* Domain header */}
               <div className="grid grid-cols-2 gap-3">
-                <div className="bg-blue-50 border border-blue-100 rounded-2xl px-4 py-3 text-center">
-                  <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Domain 1</p>
-                  <p className="font-black text-blue-700 mt-0.5">{target1}</p>
+                <div className="bg-nexo-blue/10 border border-nexo-border-strong rounded-nexo-lg px-4 py-3 text-center">
+                  <p className="nexo-section">Domain 1</p>
+                  <p className="font-medium text-nexo-sky mt-0.5">{target1}</p>
                 </div>
-                <div className="bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-center">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Domain 2</p>
-                  <p className="font-black text-slate-700 mt-0.5">{target2}</p>
+                <div className="bg-white/[0.02] border border-nexo-border rounded-nexo-lg px-4 py-3 text-center">
+                  <p className="nexo-label">Domain 2</p>
+                  <p className="font-medium text-nexo-dim mt-0.5">{target2}</p>
                 </div>
               </div>
 
@@ -155,16 +155,16 @@ async function DomainIntersectionPage({ searchParams }: { searchParams: Promise<
 
         {/* History */}
         <div>
-          <div className="bg-white border border-slate-200 rounded-3xl p-5 sticky top-6">
-            <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">History</h2>
+          <div className="bg-nexo-surface border border-nexo-border rounded-nexo-lg p-5 sticky top-6">
+            <h2 className="nexo-label mb-4">History</h2>
             {history.length === 0 ? (
-              <p className="text-xs text-slate-400">No searches yet.</p>
+              <p className="text-xs text-nexo-faint">No searches yet.</p>
             ) : (
               <div className="space-y-2">
                 {history.map((h) => (
-                  <a key={h.id} href={`?history_id=${h.id}`} className="block rounded-xl px-3 py-2.5 hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-200">
-                    <div className="font-bold text-xs text-slate-800">{h.target1} <span className="text-slate-300">vs</span> {h.target2}</div>
-                    <div className="text-[10px] text-slate-400 mt-0.5">
+                  <a key={h.id} href={`?history_id=${h.id}`} className="block rounded-nexo-lg px-3 py-2.5 hover:bg-white/[0.04] transition-colors border border-transparent hover:border-nexo-border">
+                    <div className="font-medium text-xs text-nexo-text">{h.target1} <span className="text-nexo-faint">vs</span> {h.target2}</div>
+                    <div className="text-[10px] text-nexo-faint mt-0.5">
                       {h.totalCount.toLocaleString()} common · {new Date(h.ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
                     </div>
                   </a>

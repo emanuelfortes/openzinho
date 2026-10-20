@@ -20,9 +20,9 @@ type SortKey = 'dr' | 'domain' | 'title' | 'country' | 'last_seen';
 type SortDir = 'asc' | 'desc';
 
 function DrBadge({ value }: { value?: number }) {
-  if (!value) return <span className="text-slate-300 text-xs">—</span>;
-  const color = value >= 70 ? 'bg-emerald-500 text-white' : value >= 40 ? 'bg-blue-500 text-white' : 'bg-slate-100 text-slate-500';
-  return <span className={`inline-flex items-center justify-center w-9 h-5 rounded text-[10px] font-black ${color}`}>{value}</span>;
+  if (!value) return <span className="text-nexo-faint text-xs">—</span>;
+  const color = value >= 70 ? 'bg-nexo-ice text-nexo-bg' : value >= 40 ? 'bg-nexo-blue text-white' : 'bg-nexo-surface-2 text-nexo-dim';
+  return <span className={`inline-flex items-center justify-center w-9 h-5 rounded text-[10px] font-medium ${color}`}>{value}</span>;
 }
 
 function fmtVisited(s?: string) {
@@ -41,8 +41,8 @@ function sortValue(item: FindDomainItem, key: SortKey): number | string {
 }
 
 function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
-  if (!active) return <ArrowUpDown className="w-3 h-3 text-slate-300" />;
-  return dir === 'asc' ? <ArrowUp className="w-3 h-3 text-blue-600" /> : <ArrowDown className="w-3 h-3 text-blue-600" />;
+  if (!active) return <ArrowUpDown className="w-3 h-3 text-nexo-faint" />;
+  return dir === 'asc' ? <ArrowUp className="w-3 h-3 text-nexo-sky" /> : <ArrowDown className="w-3 h-3 text-nexo-sky" />;
 }
 
 export default function TechFindTable({ items }: { items: FindDomainItem[] }) {
@@ -68,7 +68,7 @@ export default function TechFindTable({ items }: { items: FindDomainItem[] }) {
   function Header({ label, sortK, align, className }: { label: string; sortK: SortKey; align: 'left' | 'center' | 'right'; className?: string }) {
     const active = sortKey === sortK;
     return (
-      <th className={`px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-400 select-none cursor-pointer hover:text-slate-600 dark:hover:text-slate-300 ${align === 'left' ? 'text-left' : align === 'center' ? 'text-center' : 'text-right'} ${className ?? ''}`}
+      <th className={`px-4 py-3 text-[10px] font-medium uppercase tracking-widest text-nexo-faint select-none cursor-pointer hover:text-white ${align === 'left' ? 'text-left' : align === 'center' ? 'text-center' : 'text-right'} ${className ?? ''}`}
           onClick={() => toggleSort(sortK)}>
         <span className={`inline-flex items-center gap-1 ${align === 'right' ? 'flex-row-reverse' : align === 'center' ? 'justify-center' : ''}`}>
           {label}
@@ -87,11 +87,11 @@ export default function TechFindTable({ items }: { items: FindDomainItem[] }) {
   }));
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-      <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
-        <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">Matching domains</h2>
+    <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+      <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between">
+        <h2 className="nexo-label">Matching domains</h2>
         <div className="flex items-center gap-3">
-          <span className="text-xs font-black text-slate-400">{items.length} shown</span>
+          <span className="text-xs font-medium text-nexo-faint">{items.length} shown</span>
           <CopyMarkdownButton
             data={csvData}
             columns={[
@@ -107,7 +107,7 @@ export default function TechFindTable({ items }: { items: FindDomainItem[] }) {
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40">
+            <tr className="border-b border-nexo-border bg-white/[0.02]">
               <Header label="DR" sortK="dr" align="center" className="w-14" />
               <Header label="Domain" sortK="domain" align="left" />
               <Header label="Title" sortK="title" align="left" className="hidden md:table-cell" />
@@ -115,13 +115,13 @@ export default function TechFindTable({ items }: { items: FindDomainItem[] }) {
               <Header label="Last seen" sortK="last_seen" align="right" className="hidden lg:table-cell" />
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-50 dark:divide-slate-700/50">
+          <tbody className="divide-y divide-nexo-border">
             {sorted.map((item, i) => (
-              <tr key={i} className="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+              <tr key={i} className="hover:bg-white/[0.04] transition-colors">
                 <td className="px-4 py-3 text-center"><DrBadge value={item.domain_rank} /></td>
                 <td className="px-4 py-3">
                   <a href={`https://${item.domain}`} target="_blank" rel="noopener noreferrer"
-                    className="text-xs font-mono font-bold text-slate-800 dark:text-slate-200 hover:text-blue-600 transition-colors">
+                    className="text-xs font-mono font-medium text-nexo-text hover:text-nexo-sky transition-colors">
                     {item.domain}
                   </a>
                   {item.technologies && (
@@ -133,19 +133,19 @@ export default function TechFindTable({ items }: { items: FindDomainItem[] }) {
                       )
                         .slice(0, 6)
                         .map((t) => (
-                          <span key={t} className="text-[9px] font-bold bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 px-1.5 py-0.5 rounded">{t}</span>
+                          <span key={t} className="text-[9px] font-medium bg-nexo-surface-2 text-nexo-dim px-1.5 py-0.5 rounded">{t}</span>
                         ))}
                     </div>
                   )}
                 </td>
                 <td className="px-4 py-3 max-w-[200px] hidden md:table-cell">
-                  <span className="text-xs text-slate-600 dark:text-slate-400 truncate block">{item.title ?? '—'}</span>
+                  <span className="text-xs text-nexo-dim truncate block">{item.title ?? '—'}</span>
                 </td>
                 <td className="px-4 py-3 text-center hidden sm:table-cell">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase">{item.country_iso_code ?? '—'}</span>
+                  <span className="text-[10px] font-medium text-nexo-faint uppercase">{item.country_iso_code ?? '—'}</span>
                 </td>
                 <td className="px-4 py-3 text-right hidden lg:table-cell">
-                  <span className="text-[11px] text-slate-400 tabular-nums">{fmtVisited(item.last_visited)}</span>
+                  <span className="text-[11px] text-nexo-faint tabular-nums">{fmtVisited(item.last_visited)}</span>
                 </td>
               </tr>
             ))}

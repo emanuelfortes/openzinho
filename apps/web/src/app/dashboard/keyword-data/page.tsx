@@ -151,28 +151,28 @@ async function KeywordDataPage({ searchParams }: { searchParams: Promise<SearchP
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Keyword Data</h1>
-        <p className="text-sm text-slate-400 mt-1">Search volume, CPC and competition data via DataForSEO.</p>
+        <h1 className="nexo-h1">Keyword Data</h1>
+        <p className="text-sm text-nexo-faint mt-1">Search volume, CPC and competition data via DataForSEO.</p>
       </div>
 
       <KeywordDataForm defaults={formDefaults} />
 
-      {error && <div className="bg-red-50 dark:bg-red-950 border border-red-100 dark:border-red-900 text-red-600 dark:text-red-400 text-sm rounded-xl px-4 py-3">{error}</div>}
+      {error && <div className="bg-nexo-danger/10 border border-nexo-danger/40 text-nexo-danger-text text-sm rounded-nexo-lg px-4 py-3">{error}</div>}
 
       {hasQuery && !error && (
-        <div id="results" className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <div id="results" className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+          <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">Results</h2>
-              {isFromHistory && <span className="text-[10px] font-black uppercase tracking-widest text-blue-500 bg-blue-50 dark:bg-blue-950 px-2 py-0.5 rounded-md">History</span>}
+              <h2 className="nexo-label">Results</h2>
+              {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>}
             </div>
             <div className="flex items-center gap-3">
-              {cost !== undefined && <span className="text-[10px] font-mono text-slate-400">cost: ${cost.toFixed(4)}</span>}
-              <span className="text-xs font-black text-slate-400">{items.length} keyword{items.length !== 1 ? 's' : ''}</span>
+              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">cost: ${cost.toFixed(4)}</span>}
+              <span className="text-xs font-medium text-nexo-faint">{items.length} keyword{items.length !== 1 ? 's' : ''}</span>
             </div>
           </div>
           {items.length === 0 ? (
-            <div className="px-6 py-12 text-center text-sm text-slate-400">No results found.</div>
+            <div className="px-6 py-12 text-center text-sm text-nexo-faint">No results found.</div>
           ) : (
             <KeywordDataTable items={items} />
           )}
@@ -180,27 +180,27 @@ async function KeywordDataPage({ searchParams }: { searchParams: Promise<SearchP
       )}
 
       {historyIndex.length > 0 && (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-            <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">Search history</h2>
+        <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+          <div className="px-6 py-4 border-b border-nexo-border">
+            <h2 className="nexo-label">Search history</h2>
           </div>
-          <div className="divide-y divide-slate-50 dark:divide-slate-800">
+          <div className="divide-y divide-nexo-border">
             {historyIndex.map((entry) => {
               const isActive = entry.id === historyId;
               return (
                 <a key={entry.id} href={`/dashboard/keyword-data?history_id=${entry.id}#results`}
-                  className={`flex items-center gap-4 px-6 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${isActive ? 'bg-blue-50 dark:bg-blue-950' : ''}`}>
+                  className={`flex items-center gap-4 px-6 py-3.5 hover:bg-white/[0.04] transition-colors ${isActive ? 'bg-nexo-blue/10' : ''}`}>
                   <div className="shrink-0 flex flex-col items-center gap-1">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">{SE_LABELS[entry.se] ?? entry.se}</span>
-                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-300 dark:text-slate-600">{TYPE_LABELS[entry.seType] ?? entry.seType}</span>
+                    <span className="text-[9px] font-medium uppercase tracking-widest text-nexo-faint bg-nexo-surface-2 px-1.5 py-0.5 rounded">{SE_LABELS[entry.se] ?? entry.se}</span>
+                    <span className="text-[9px] font-medium uppercase tracking-widest text-nexo-faint">{TYPE_LABELS[entry.seType] ?? entry.seType}</span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-medium truncate ${isActive ? 'text-blue-700 dark:text-blue-400' : 'text-slate-800 dark:text-slate-200'}`}>{entry.label}</p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">
+                    <p className={`text-sm font-medium truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.label}</p>
+                    <p className="text-[11px] text-nexo-faint mt-0.5">
                       {entry.count} result{entry.count !== 1 ? 's' : ''}{entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}
                     </p>
                   </div>
-                  <span className="shrink-0 text-[11px] text-slate-400">{formatDate(entry.ts)}</span>
+                  <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>
                 </a>
               );
             })}

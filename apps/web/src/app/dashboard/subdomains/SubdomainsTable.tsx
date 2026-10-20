@@ -30,8 +30,8 @@ function sortValue(item: SubdomainItem, key: SortKey): number | string {
 }
 
 function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
-  if (!active) return <ArrowUpDown className="w-3 h-3 text-slate-300" />;
-  return dir === 'asc' ? <ArrowUp className="w-3 h-3 text-blue-600" /> : <ArrowDown className="w-3 h-3 text-blue-600" />;
+  if (!active) return <ArrowUpDown className="w-3 h-3 text-nexo-faint" />;
+  return dir === 'asc' ? <ArrowUp className="w-3 h-3 text-nexo-sky" /> : <ArrowDown className="w-3 h-3 text-nexo-sky" />;
 }
 
 export default function SubdomainsTable({ items }: { items: SubdomainItem[] }) {
@@ -59,7 +59,7 @@ export default function SubdomainsTable({ items }: { items: SubdomainItem[] }) {
   function Header({ label, sortK, align, className }: { label: string; sortK: SortKey; align: 'left' | 'center' | 'right'; className?: string }) {
     const active = sortKey === sortK;
     return (
-      <th className={`px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-400 select-none cursor-pointer hover:text-slate-600 dark:hover:text-slate-300 ${align === 'left' ? 'text-left' : align === 'center' ? 'text-center' : 'text-right'} ${className ?? ''}`}
+      <th className={`px-4 py-3 text-[10px] font-medium uppercase tracking-widest text-nexo-faint select-none cursor-pointer hover:text-white ${align === 'left' ? 'text-left' : align === 'center' ? 'text-center' : 'text-right'} ${className ?? ''}`}
           onClick={() => toggleSort(sortK)}>
         <span className={`inline-flex items-center gap-1 ${align === 'right' ? 'flex-row-reverse' : ''}`}>
           {label}
@@ -73,35 +73,35 @@ export default function SubdomainsTable({ items }: { items: SubdomainItem[] }) {
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
+          <tr className="border-b border-nexo-border bg-white/[0.02]">
             <Header label="Subdomain" sortK="subdomain" align="left" className="!px-6" />
             <Header label="Keywords" sortK="keywords" align="right" />
             <Header label="Traffic" sortK="traffic" align="right" />
-            <th className="px-6 py-3 text-left text-[10px] font-black uppercase tracking-widest text-slate-400 hidden md:table-cell">Share</th>
+            <th className="nexo-label px-6 py-3 text-left hidden md:table-cell">Share</th>
             <Header label="Traffic value" sortK="traffic_cost" align="right" className="hidden lg:table-cell" />
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
+        <tbody className="divide-y divide-nexo-border">
           {sorted.map((item, i) => {
             const org = item.metrics?.organic;
             const etv = org?.etv ?? 0;
             const share = maxTraffic > 0 ? Math.round((etv / maxTraffic) * 100) : 0;
             return (
-              <tr key={i} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                <td className="px-6 py-3 font-mono text-sm text-blue-600 dark:text-blue-400 max-w-[240px]">
+              <tr key={i} className="hover:bg-white/[0.04] transition-colors">
+                <td className="px-6 py-3 font-mono text-sm text-nexo-sky max-w-[240px]">
                   <a href={`https://${item.subdomain}`} target="_blank" rel="noopener noreferrer" className="hover:underline truncate block">{item.subdomain ?? '—'}</a>
                 </td>
-                <td className="px-4 py-3 text-right font-mono text-slate-700 dark:text-slate-300 tabular-nums">{fmt(org?.count)}</td>
-                <td className="px-4 py-3 text-right font-mono text-slate-700 dark:text-slate-300 tabular-nums font-bold">{fmt(Math.round(etv))}</td>
+                <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">{fmt(org?.count)}</td>
+                <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums font-medium">{fmt(Math.round(etv))}</td>
                 <td className="px-6 py-3 hidden md:table-cell">
                   <div className="flex items-center gap-2">
-                    <div className="w-24 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                      <div className="h-full bg-blue-400 rounded-full" style={{ width: `${share}%` }} />
+                    <div className="w-24 h-1.5 bg-nexo-surface-2 rounded-full overflow-hidden">
+                      <div className="h-full bg-nexo-sky/40 rounded-full" style={{ width: `${share}%` }} />
                     </div>
-                    <span className="text-[10px] text-slate-400 tabular-nums">{share}%</span>
+                    <span className="text-[10px] text-nexo-faint tabular-nums">{share}%</span>
                   </div>
                 </td>
-                <td className="px-4 py-3 text-right font-mono text-slate-500 tabular-nums hidden lg:table-cell">
+                <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums hidden lg:table-cell">
                   {org?.estimated_paid_traffic_cost != null ? `$${Math.round(org.estimated_paid_traffic_cost).toLocaleString('en-GB')}` : '—'}
                 </td>
               </tr>

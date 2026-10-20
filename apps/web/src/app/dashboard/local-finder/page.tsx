@@ -51,12 +51,12 @@ function StarRating({ rating }: { rating?: Rating }) {
   const pct = (rating.value / (rating.rating_max ?? 5)) * 100;
   return (
     <div className="flex items-center gap-1.5">
-      <div className="relative inline-flex text-slate-200 text-sm leading-none" style={{ letterSpacing: '-1px' }}>
+      <div className="relative inline-flex text-nexo-text text-sm leading-none" style={{ letterSpacing: '-1px' }}>
         {'★★★★★'}
-        <div className="absolute inset-0 overflow-hidden text-amber-400" style={{ width: `${pct}%` }}>{'★★★★★'}</div>
+        <div className="absolute inset-0 overflow-hidden text-nexo-warn-text" style={{ width: `${pct}%` }}>{'★★★★★'}</div>
       </div>
-      <span className="text-xs font-bold text-slate-700">{rating.value.toFixed(1)}</span>
-      {rating.votes_count !== undefined && <span className="text-[11px] text-slate-400">({rating.votes_count.toLocaleString('en-GB')})</span>}
+      <span className="text-xs font-medium text-nexo-dim">{rating.value.toFixed(1)}</span>
+      {rating.votes_count !== undefined && <span className="text-[11px] text-nexo-faint">({rating.votes_count.toLocaleString('en-GB')})</span>}
     </div>
   );
 }
@@ -152,64 +152,64 @@ async function LocalFinderPage({ searchParams }: { searchParams: Promise<SearchP
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Local Finder</h1>
-        <p className="text-sm text-slate-400 mt-1">Google local pack results for any keyword and location.</p>
+        <h1 className="nexo-h1">Local Finder</h1>
+        <p className="text-sm text-nexo-faint mt-1">Google local pack results for any keyword and location.</p>
       </div>
 
       <LocalFinderForm defaults={formDefaults} />
 
-      {error && <div className="bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900 text-red-600 dark:text-red-400 text-sm rounded-xl px-4 py-3">{error}</div>}
+      {error && <div className="bg-nexo-danger/10 border border-nexo-danger/40 text-nexo-danger-text text-sm rounded-nexo-lg px-4 py-3">{error}</div>}
 
       {hasQuery && !error && (
-        <div id="results" className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between flex-wrap gap-2">
+        <div id="results" className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+          <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between flex-wrap gap-2">
             <div className="flex items-center gap-3">
-              <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">Results</h2>
-              {isFromHistory && <span className="text-[10px] font-black uppercase tracking-widest text-blue-500 bg-blue-50 dark:bg-blue-950/40 px-2 py-0.5 rounded-md">History</span>}
+              <h2 className="nexo-label">Results</h2>
+              {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>}
             </div>
             <div className="flex items-center gap-3">
-              {cost !== undefined && <span className="text-[10px] font-mono text-slate-400">cost: ${cost.toFixed(4)}</span>}
+              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">cost: ${cost.toFixed(4)}</span>}
               {checkUrl && (
                 <a href={checkUrl} target="_blank" rel="noopener noreferrer"
-                  className="text-[10px] font-black uppercase tracking-widest text-blue-500 hover:text-blue-700 transition-colors">
+                  className="nexo-section hover:text-white transition-colors">
                   Verify ↗
                 </a>
               )}
-              <span className="text-xs font-black text-slate-400">{items.length} result{items.length !== 1 ? 's' : ''}</span>
+              <span className="text-xs font-medium text-nexo-faint">{items.length} result{items.length !== 1 ? 's' : ''}</span>
             </div>
           </div>
 
           {items.length === 0 ? (
-            <div className="px-6 py-12 text-center text-sm text-slate-400">No results found.</div>
+            <div className="px-6 py-12 text-center text-sm text-nexo-faint">No results found.</div>
           ) : (
-            <div className="divide-y divide-slate-100 dark:divide-slate-800">
+            <div className="divide-y divide-nexo-border">
               {items.map((item, i) => (
-                <div key={i} className="px-6 py-5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                <div key={i} className="px-6 py-5 hover:bg-white/[0.04] transition-colors">
                   <div className="flex items-start gap-4">
-                    <div className="shrink-0 w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-                      <span className="text-xs font-black text-slate-500 dark:text-slate-400">{item.rank_group}</span>
+                    <div className="shrink-0 w-8 h-8 rounded-nexo bg-nexo-surface-2 flex items-center justify-center">
+                      <span className="text-xs font-medium text-nexo-dim">{item.rank_group}</span>
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2 flex-wrap">
                         <div>
                           <div className="flex items-center gap-2 flex-wrap">
-                            <h3 className="text-sm font-bold text-slate-900 dark:text-white">{item.title ?? '—'}</h3>
-                            {item.is_paid && <span className="text-[9px] font-black uppercase tracking-widest text-amber-600 bg-amber-50 border border-amber-100 px-1.5 py-0.5 rounded">Sponsored</span>}
+                            <h3 className="text-sm font-medium text-nexo-text">{item.title ?? '—'}</h3>
+                            {item.is_paid && <span className="text-[9px] font-medium uppercase tracking-widest text-nexo-warn-text bg-nexo-warn/10 border border-nexo-warn/40 px-1.5 py-0.5 rounded">Sponsored</span>}
                           </div>
                           {item.rating && <StarRating rating={item.rating} />}
                         </div>
-                        {item.phone && <a href={`tel:${item.phone}`} className="shrink-0 text-xs font-mono text-blue-600 hover:text-blue-800 transition-colors">{item.phone}</a>}
+                        {item.phone && <a href={`tel:${item.phone}`} className="shrink-0 text-xs font-mono text-nexo-sky hover:text-white transition-colors">{item.phone}</a>}
                       </div>
-                      {item.description && <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5 line-clamp-2 leading-relaxed">{item.description}</p>}
+                      {item.description && <p className="text-xs text-nexo-dim mt-1.5 line-clamp-2 leading-relaxed">{item.description}</p>}
                       <div className="flex items-center gap-3 mt-2 flex-wrap">
                         {item.url && (
                           <a href={item.url} target="_blank" rel="noopener noreferrer"
-                            className="text-[11px] font-mono text-slate-400 hover:text-blue-600 truncate max-w-xs transition-colors">
+                            className="text-[11px] font-mono text-nexo-faint hover:text-nexo-sky truncate max-w-xs transition-colors">
                             {item.domain ?? item.url}
                           </a>
                         )}
-                        {item.booking_url && <a href={item.booking_url} target="_blank" rel="noopener noreferrer" className="text-[10px] font-black uppercase tracking-widest text-emerald-600 hover:text-emerald-800 transition-colors">Book ↗</a>}
-                        {item.cid && <a href={`https://www.google.com/maps?cid=${item.cid}`} target="_blank" rel="noopener noreferrer" className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-700 transition-colors">Maps ↗</a>}
+                        {item.booking_url && <a href={item.booking_url} target="_blank" rel="noopener noreferrer" className="text-[10px] font-medium uppercase tracking-widest text-nexo-ice hover:text-nexo-ice transition-colors">Book ↗</a>}
+                        {item.cid && <a href={`https://www.google.com/maps?cid=${item.cid}`} target="_blank" rel="noopener noreferrer" className="nexo-label hover:text-white transition-colors">Maps ↗</a>}
                       </div>
                     </div>
                   </div>
@@ -221,25 +221,25 @@ async function LocalFinderPage({ searchParams }: { searchParams: Promise<SearchP
       )}
 
       {historyIndex.length > 0 && (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-            <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">History</h2>
+        <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+          <div className="px-6 py-4 border-b border-nexo-border">
+            <h2 className="nexo-label">History</h2>
           </div>
-          <div className="divide-y divide-slate-50 dark:divide-slate-800">
+          <div className="divide-y divide-nexo-border">
             {historyIndex.map((entry) => {
               const isActive = entry.id === historyId;
               return (
-                <div key={entry.id} className={`flex items-center gap-2 px-6 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${isActive ? 'bg-blue-50 dark:bg-blue-950/30' : ''}`}>
+                <div key={entry.id} className={`flex items-center gap-2 px-6 py-3.5 hover:bg-white/[0.04] transition-colors ${isActive ? 'bg-nexo-blue/10' : ''}`}>
                   <a href={`/dashboard/local-finder?history_id=${entry.id}#results`} className="flex-1 min-w-0">
-                    <p className={`text-sm font-medium truncate ${isActive ? 'text-blue-700 dark:text-blue-400' : 'text-slate-800 dark:text-slate-200'}`}>{entry.keyword}</p>
-                    <p className="text-[11px] text-slate-400 mt-0.5 truncate">
+                    <p className={`text-sm font-medium truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.keyword}</p>
+                    <p className="text-[11px] text-nexo-faint mt-0.5 truncate">
                       {entry.location} · {entry.count} result{entry.count !== 1 ? 's' : ''}
                       {entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}
                     </p>
                   </a>
                   <div className="flex items-center gap-3 shrink-0">
-                    <span className="text-[11px] text-slate-400">{formatDate(entry.ts)}</span>
-                    <a href={lfRerunUrl(entry)} className="text-[10px] font-black uppercase tracking-widest text-emerald-600 hover:text-emerald-800 transition-colors" title="Run again">Re-run ↻</a>
+                    <span className="text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>
+                    <a href={lfRerunUrl(entry)} className="text-[10px] font-medium uppercase tracking-widest text-nexo-ice hover:text-nexo-ice transition-colors" title="Run again">Re-run ↻</a>
                   </div>
                 </div>
               );

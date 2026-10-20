@@ -14,7 +14,7 @@ interface Props {
   labelClassName?: string;
 }
 
-const DEFAULT_LABEL_CLASS = 'block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5';
+const DEFAULT_LABEL_CLASS = 'nexo-label block mb-1.5';
 
 /**
  * Paired Location + Language fields for Labs/AI Optimization pages. Each country only supports a

@@ -32,9 +32,9 @@ export default function CopyMarkdownButton({
   return (
     <button
       onClick={handleCopy}
-      className="flex items-center gap-2 px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200 transition-all"
+      className="nexo-label flex items-center gap-2 px-4 py-2 rounded-nexo-lg border border-nexo-border hover:bg-white/[0.04] hover:text-white transition-all"
     >
-      {copied ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <ClipboardCopy className="h-3.5 w-3.5" />}
+      {copied ? <Check className="h-3.5 w-3.5 text-nexo-ice" /> : <ClipboardCopy className="h-3.5 w-3.5" />}
       {copied ? 'Copied' : 'Copy as Markdown'}
     </button>
   );

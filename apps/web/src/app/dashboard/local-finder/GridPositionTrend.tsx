@@ -52,18 +52,18 @@ export default function GridPositionTrend({ points, selectedId }: Props) {
   const tickIndexes = [...new Set([0, Math.floor((points.length - 1) / 2), points.length - 1])];
 
   return (
-    <section className="mt-5 border-t border-slate-100 pt-5 dark:border-slate-800">
+    <section className="mt-5 border-t border-nexo-border pt-5">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h3 className="text-sm font-black text-slate-900 dark:text-white">Position distribution over time</h3>
-          <p className="mt-0.5 text-[11px] text-slate-400">Share of grid points in each ranking range. Newest snapshot is on the right.</p>
+          <h3 className="text-sm font-medium text-nexo-text">Position distribution over time</h3>
+          <p className="mt-0.5 text-[11px] text-nexo-faint">Share of grid points in each ranking range. Newest snapshot is on the right.</p>
         </div>
-        <div className="flex flex-wrap gap-x-3 gap-y-1 text-[10px] font-bold text-slate-500">
+        <div className="flex flex-wrap gap-x-3 gap-y-1 text-[10px] font-medium text-nexo-dim">
           {bands.map((band) => <span key={band.key} className="inline-flex items-center gap-1.5"><i className="h-2 w-2 rounded-sm" style={{ backgroundColor: band.color }} />{band.label}</span>)}
         </div>
       </div>
 
-      <div className="mt-3 overflow-hidden rounded-xl bg-slate-50 p-2 dark:bg-slate-950/60">
+      <div className="mt-3 overflow-hidden rounded-nexo-lg bg-white/[0.02] p-2">
         <svg viewBox={`0 0 ${width} ${height}`} className="h-auto w-full" role="img" aria-label="Position distribution trend by ranking range">
           {[0, 25, 50, 75, 100].map((tick) => <g key={tick}><line x1={left} x2={width - right} y1={y(tick)} y2={y(tick)} stroke="currentColor" strokeOpacity="0.10" /><text x={left - 7} y={y(tick) + 3} textAnchor="end" fontSize="9" fill="currentColor" opacity="0.48">{tick}%</text></g>)}
           {points.length === 1 ? bands.map((band, index) => {
@@ -78,7 +78,7 @@ export default function GridPositionTrend({ points, selectedId }: Props) {
           {tickIndexes.map((index) => <text key={index} x={positionX(index)} y={height - 10} textAnchor={index === 0 ? 'start' : index === points.length - 1 ? 'end' : 'middle'} fontSize="9" fill="currentColor" opacity="0.55">{formatDate(points[index].ts)}</text>)}
         </svg>
       </div>
-      {points.length === 1 && <p className="mt-2 text-[10px] text-slate-400">Run this monitor again to draw its trend.</p>}
+      {points.length === 1 && <p className="mt-2 text-[10px] text-nexo-faint">Run this monitor again to draw its trend.</p>}
     </section>
   );
 }

@@ -53,13 +53,13 @@ export default function GridAnalysisPanel({ snapshots, selectedId, gridSize, spa
         trend={trend}
       />
       <GradeMetricsPanel results={activeSnapshot.results} previousResults={activeSnapshot.previousResults} />
-      <section className="mt-6 border-t border-slate-100 pt-6 dark:border-slate-800">
+      <section className="mt-6 border-t border-nexo-border pt-6">
         <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-blue-600 dark:text-blue-400">Detailed analysis</p>
-            <h3 className="mt-1 text-lg font-black tracking-tight text-slate-900 dark:text-white">Map and competitive landscape</h3>
+            <p className="nexo-section">Detailed analysis</p>
+            <h3 className="mt-1 text-lg font-medium tracking-tight text-nexo-text">Map and competitive landscape</h3>
           </div>
-          <span className="rounded-full bg-blue-50 px-2.5 py-1 text-[10px] font-bold text-blue-700 dark:bg-blue-950/50 dark:text-blue-300">Selected snapshot</span>
+          <span className="rounded-full bg-nexo-blue/10 px-2.5 py-1 text-[10px] font-medium text-nexo-sky">Selected snapshot</span>
         </div>
         <GridResults
           key={activeSnapshot.id}

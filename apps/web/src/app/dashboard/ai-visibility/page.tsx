@@ -199,21 +199,21 @@ function BreakdownList({ title, items, formatKey = String }: {
   if (!items || items.length === 0) return null;
   const max = Math.max(...items.map((i) => i.mentions), 1);
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-5">
-      <h2 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-4">{title}</h2>
+    <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-5">
+      <h2 className="nexo-label mb-4">{title}</h2>
       <div className="space-y-2">
         {items.map((item, i) => {
           const pct = Math.round((item.mentions / max) * 100);
           return (
             <div key={i}>
               <div className="flex items-center justify-between mb-1 gap-2">
-                <span className="text-xs font-medium text-slate-600 dark:text-slate-300 truncate">{formatKey(item.key)}</span>
-                <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400 shrink-0 tabular-nums">
+                <span className="text-xs font-medium text-nexo-dim truncate">{formatKey(item.key)}</span>
+                <span className="text-[10px] font-mono text-nexo-dim shrink-0 tabular-nums">
                   {fmt(item.mentions)} mentions · {fmt(item.ai_search_volume)} volume
                 </span>
               </div>
-              <div className="h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                <div className="h-full bg-violet-400 rounded-full" style={{ width: `${pct}%` }} />
+              <div className="h-1.5 bg-nexo-surface-2 rounded-full overflow-hidden">
+                <div className="h-full bg-nexo-sky/40 rounded-full" style={{ width: `${pct}%` }} />
               </div>
             </div>
           );
@@ -237,16 +237,16 @@ function MonthlyTrendChart({ title, items, metric }: { title: string; items: His
   const delta = last - first;
   const trendLabel = delta > 0 ? 'increasing' : delta < 0 ? 'declining' : 'flat';
   const trendColor = delta > 0
-    ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950 border-emerald-100 dark:border-emerald-900'
+    ? 'text-nexo-ice bg-nexo-ice/10 border-nexo-ice/30'
     : delta < 0
-      ? 'text-red-600 bg-red-50 dark:bg-red-950 border-red-100 dark:border-red-900'
-      : 'text-slate-500 bg-slate-50 dark:bg-slate-800 border-slate-100 dark:border-slate-700';
+      ? 'text-nexo-danger-text bg-nexo-danger/10 border-nexo-danger/40'
+      : 'text-nexo-dim bg-white/[0.02] border-nexo-border';
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-5">
+    <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-5">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">{title}</h2>
-        <span className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md border ${trendColor}`}>
+        <h2 className="nexo-label">{title}</h2>
+        <span className={`text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-md border ${trendColor}`}>
           {trendLabel}{sorted.length > 1 ? ` (${delta > 0 ? '+' : ''}${fmt(delta)})` : ''}
         </span>
       </div>
@@ -256,11 +256,11 @@ function MonthlyTrendChart({ title, items, metric }: { title: string; items: His
           const h = Math.max(3, Math.round((val / max) * 128));
           return (
             <div key={i} className="flex-1 min-w-0 flex flex-col items-center justify-end gap-1.5 group relative h-full">
-              <span className="absolute -top-4 text-[10px] font-mono text-slate-500 dark:text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              <span className="absolute -top-4 text-[10px] font-mono text-nexo-dim opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                 {fmt(val)}
               </span>
-              <div className="w-full bg-violet-300 dark:bg-violet-500/60 group-hover:bg-violet-500 rounded-t-md transition-colors" style={{ height: `${h}px` }} />
-              <span className="text-[9px] text-slate-400 whitespace-nowrap shrink-0">{monthLabel(item.year, item.month)}</span>
+              <div className="w-full bg-nexo-sky/40 group-hover:bg-nexo-sky rounded-t-md transition-colors" style={{ height: `${h}px` }} />
+              <span className="text-[9px] text-nexo-faint whitespace-nowrap shrink-0">{monthLabel(item.year, item.month)}</span>
             </div>
           );
         })}
@@ -440,23 +440,22 @@ async function AiVisibilityPage({ searchParams }: { searchParams: Promise<Search
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">AI Visibility</h1>
-        <p className="text-sm text-slate-400 mt-1">How often a domain/brand is mentioned by LLMs, and who dominates a topic — via DataForSEO LLM Mentions.</p>
+        <h1 className="nexo-h1">AI Visibility</h1>
+        <p className="text-sm text-nexo-faint mt-1">How often a domain/brand is mentioned by LLMs, and who dominates a topic — via DataForSEO LLM Mentions.</p>
       </div>
 
       <SearchForm
-        className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4"
+        className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4"
         btnLabel={mode === 'target' ? 'Analyze' : mode === 'leaderboard' ? 'Get leaderboard' : 'Show trend'}
-        btnClassName="w-full bg-slate-900 dark:bg-slate-700 text-white font-black uppercase tracking-widest text-xs py-3 rounded-xl hover:bg-violet-600 transition-colors"
+        btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-sky transition-colors"
       >
-        <div className="flex gap-2 mb-2 flex-wrap">
+        <div className="nexo-seg mb-2 max-w-full flex-wrap">
           {(['target', 'leaderboard', 'historical'] as const).map((m) => (
             <a
               key={m}
               href={`/dashboard/ai-visibility?mode=${m}`}
-              className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-colors ${
-                mode === m ? 'bg-violet-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
-              }`}
+              aria-current={mode === m ? 'page' : undefined}
+              className={`transition-colors hover:text-white ${mode === m ? 'active' : ''}`}
             >
               {m === 'target' ? 'My domain/brand' : m === 'leaderboard' ? 'Topic leaderboard' : 'Trend over time'}
             </a>
@@ -467,15 +466,15 @@ async function AiVisibilityPage({ searchParams }: { searchParams: Promise<Search
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="sm:col-span-2 flex gap-2">
             <div className="shrink-0">
-              <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Type</label>
+              <label className="nexo-label block mb-1.5">Type</label>
               <select name="target_type" defaultValue={targetType}
-                className="h-[42px] px-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white dark:bg-slate-800">
+                className="nexo-input min-w-0 w-full h-[42px] px-3 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
                 <option value="domain">Domain</option>
                 <option value="keyword">Keyword</option>
               </select>
             </div>
             <div className="flex-1">
-              <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">
+              <label className="nexo-label block mb-1.5">
                 {mode === 'leaderboard' ? 'Topic' : 'Target'}
               </label>
               <input
@@ -484,7 +483,7 @@ async function AiVisibilityPage({ searchParams }: { searchParams: Promise<Search
                 defaultValue={displayTarget}
                 placeholder={targetType === 'domain' ? 'example.com' : mode === 'leaderboard' ? 'best plumber' : 'your brand name'}
                 required
-                className="w-full h-[42px] px-4 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white dark:bg-slate-800"
+                className="nexo-input min-w-0 w-full h-[42px] px-4 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
               />
             </div>
           </div>
@@ -503,9 +502,9 @@ async function AiVisibilityPage({ searchParams }: { searchParams: Promise<Search
 
               {mode === 'leaderboard' && (
                 <div>
-                  <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Results per list</label>
+                  <label className="nexo-label block mb-1.5">Results per list</label>
                   <select name="limit" defaultValue={String(limit)}
-                    className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white dark:bg-slate-800">
+                    className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
                     {[10, 20, 50].map((n) => <option key={n} value={n}>{n}</option>)}
                   </select>
                 </div>
@@ -515,11 +514,11 @@ async function AiVisibilityPage({ searchParams }: { searchParams: Promise<Search
         </div>
       </SearchForm>
 
-      {error && <div className="bg-red-50 dark:bg-red-950 border border-red-100 text-red-600 dark:text-red-400 text-sm rounded-xl px-4 py-3">{error}</div>}
+      {error && <div className="bg-nexo-danger/10 border border-nexo-danger/40 text-nexo-danger-text text-sm rounded-nexo-lg px-4 py-3">{error}</div>}
 
       {canExportReport && (
-        <div className="flex items-center justify-between gap-4 border-y border-slate-100 dark:border-slate-800 py-3">
-          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Export current report</p>
+        <div className="flex items-center justify-between gap-4 border-y border-nexo-border py-3">
+          <p className="nexo-label">Export current report</p>
           <div className="flex items-center gap-3">
             <ReportPdfExportButton brandName={brandName} brandLogoUrl={brandLogoUrl} brandColor={brand.color} brandFooter={brand.footer} brandStyle={brand} filename={`ai-visibility-${reportSlug}.pdf`}
               title="AI visibility report" subject={displayTarget} generatedAt={reportDate} metrics={reportMetrics} sections={reportSections} />
@@ -532,25 +531,25 @@ async function AiVisibilityPage({ searchParams }: { searchParams: Promise<Search
       {hasQuery && !error && mode === 'target' && targetResult && (
         <div id="results" className="space-y-4">
           <div className="flex items-center gap-3 flex-wrap">
-            <span className="text-xs font-black uppercase tracking-widest text-slate-400">Target</span>
-            <span className="font-mono font-bold text-slate-900 dark:text-slate-100">{displayTarget}</span>
-            {isFromHistory && <span className="text-[10px] font-black uppercase tracking-widest text-blue-500 bg-blue-50 dark:bg-blue-950 px-2 py-0.5 rounded-md">History</span>}
-            {cost !== undefined && <span className="text-[10px] font-mono text-slate-400 ml-auto">cost: ${cost.toFixed(4)}</span>}
+            <span className="nexo-label">Target</span>
+            <span className="font-mono font-medium text-nexo-text">{displayTarget}</span>
+            {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>}
+            {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint ml-auto">cost: ${cost.toFixed(4)}</span>}
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 px-5 py-4 shadow-sm">
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Total mentions</p>
-              <p className="text-2xl font-black text-slate-900 dark:text-white mt-1 tabular-nums">{fmt(agg?.total?.mentions)}</p>
+            <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
+              <p className="nexo-label">Total mentions</p>
+              <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{fmt(agg?.total?.mentions)}</p>
             </div>
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 px-5 py-4 shadow-sm">
-              <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">AI search volume</p>
-              <p className="text-2xl font-black text-slate-900 dark:text-white mt-1 tabular-nums">{fmt(agg?.total?.ai_search_volume)}</p>
+            <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
+              <p className="nexo-label">AI search volume</p>
+              <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{fmt(agg?.total?.ai_search_volume)}</p>
             </div>
           </div>
 
           {(!agg?.total || agg.total.mentions === 0) ? (
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 px-6 py-12 text-center text-sm text-slate-400">
+            <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-6 py-12 text-center text-sm text-nexo-faint">
               No LLM mentions found for this target on {PLATFORM_LABELS[platform]}.
             </div>
           ) : (
@@ -570,10 +569,10 @@ async function AiVisibilityPage({ searchParams }: { searchParams: Promise<Search
       {hasQuery && !error && mode === 'leaderboard' && leaderboardResult && (
         <div id="results">
           <div className="flex items-center gap-3 flex-wrap mb-4">
-            <span className="text-xs font-black uppercase tracking-widest text-slate-400">Topic</span>
-            <span className="font-mono font-bold text-slate-900 dark:text-slate-100">{displayTarget}</span>
-            {isFromHistory && <span className="text-[10px] font-black uppercase tracking-widest text-blue-500 bg-blue-50 dark:bg-blue-950 px-2 py-0.5 rounded-md">History</span>}
-            {cost !== undefined && <span className="text-[10px] font-mono text-slate-400 ml-auto">cost: ${cost.toFixed(4)}</span>}
+            <span className="nexo-label">Topic</span>
+            <span className="font-mono font-medium text-nexo-text">{displayTarget}</span>
+            {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>}
+            {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint ml-auto">cost: ${cost.toFixed(4)}</span>}
           </div>
           <LeaderboardTables
             domains={leaderboardResult.domains}
@@ -590,32 +589,32 @@ async function AiVisibilityPage({ searchParams }: { searchParams: Promise<Search
       {hasQuery && !error && mode === 'historical' && historicalResult && (
         <div id="results" className="space-y-4">
           <div className="flex items-center gap-3 flex-wrap">
-            <span className="text-xs font-black uppercase tracking-widest text-slate-400">Target</span>
-            <span className="font-mono font-bold text-slate-900 dark:text-slate-100">{displayTarget}</span>
-            {isFromHistory && <span className="text-[10px] font-black uppercase tracking-widest text-blue-500 bg-blue-50 dark:bg-blue-950 px-2 py-0.5 rounded-md">History</span>}
-            {cost !== undefined && <span className="text-[10px] font-mono text-slate-400 ml-auto">cost: ${cost.toFixed(4)}</span>}
+            <span className="nexo-label">Target</span>
+            <span className="font-mono font-medium text-nexo-text">{displayTarget}</span>
+            {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>}
+            {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint ml-auto">cost: ${cost.toFixed(4)}</span>}
           </div>
 
           {historicalResult.items.length === 0 ? (
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 px-6 py-12 text-center text-sm text-slate-400">
+            <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-6 py-12 text-center text-sm text-nexo-faint">
               No historical LLM mentions found for this target on {PLATFORM_LABELS[platform]}.
             </div>
           ) : (
             <>
               <div className="grid grid-cols-3 gap-3">
-                <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 px-5 py-4 shadow-sm">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Months tracked</p>
-                  <p className="text-2xl font-black text-slate-900 dark:text-white mt-1 tabular-nums">{historicalResult.items.length}</p>
+                <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
+                  <p className="nexo-label">Months tracked</p>
+                  <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{historicalResult.items.length}</p>
                 </div>
-                <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 px-5 py-4 shadow-sm">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Total mentions</p>
-                  <p className="text-2xl font-black text-slate-900 dark:text-white mt-1 tabular-nums">
+                <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
+                  <p className="nexo-label">Total mentions</p>
+                  <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">
                     {fmt(historicalResult.items.reduce((s, i) => s + i.metrics.mentions, 0))}
                   </p>
                 </div>
-                <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 px-5 py-4 shadow-sm">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Total AI search volume</p>
-                  <p className="text-2xl font-black text-slate-900 dark:text-white mt-1 tabular-nums">
+                <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
+                  <p className="nexo-label">Total AI search volume</p>
+                  <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">
                     {fmt(historicalResult.items.reduce((s, i) => s + i.metrics.ai_search_volume, 0))}
                   </p>
                 </div>
@@ -629,29 +628,29 @@ async function AiVisibilityPage({ searchParams }: { searchParams: Promise<Search
       )}
 
       {history.length > 0 && (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-            <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">History</h2>
+        <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+          <div className="px-6 py-4 border-b border-nexo-border">
+            <h2 className="nexo-label">History</h2>
           </div>
-          <div className="divide-y divide-slate-50 dark:divide-slate-800">
+          <div className="divide-y divide-nexo-border">
             {history.map((entry) => {
               const isActive = entry.id === historyId;
               return (
                 <a key={entry.id} href={`/dashboard/ai-visibility?history_id=${entry.id}&mode=${entry.mode}#results`}
-                  className={`flex items-center gap-4 px-6 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${isActive ? 'bg-blue-50 dark:bg-blue-950' : ''}`}>
+                  className={`flex items-center gap-4 px-6 py-3.5 hover:bg-white/[0.04] transition-colors ${isActive ? 'bg-nexo-blue/10' : ''}`}>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <p className={`text-sm font-medium truncate ${isActive ? 'text-blue-700 dark:text-blue-400' : 'text-slate-800 dark:text-slate-200'}`}>{entry.target}</p>
-                      <span className="text-[10px] font-black text-slate-400 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded shrink-0">
+                      <p className={`text-sm font-medium truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.target}</p>
+                      <span className="text-[10px] font-medium text-nexo-faint bg-nexo-surface-2 px-1.5 py-0.5 rounded shrink-0">
                         {entry.mode === 'target' ? 'Overview' : entry.mode === 'leaderboard' ? 'Leaderboard' : 'Trend'}
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-400 mt-0.5">
+                    <p className="text-[11px] text-nexo-faint mt-0.5">
                       {PLATFORM_LABELS[entry.platform] ?? entry.platform}
                       {entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}
                     </p>
                   </div>
-                  <span className="shrink-0 text-[11px] text-slate-400">{formatDate(entry.ts)}</span>
+                  <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>
                 </a>
               );
             })}

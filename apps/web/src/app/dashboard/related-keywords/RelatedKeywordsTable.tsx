@@ -23,12 +23,12 @@ type SortKey = 'keyword' | 'kd' | 'volume' | 'cpc' | 'competition' | 'ref_domain
 type SortDir = 'asc' | 'desc';
 
 function DifficultyBadge({ value }: { value?: number }) {
-  if (value === undefined || value === null) return <span className="text-slate-300 text-xs">—</span>;
-  const color = value >= 70 ? 'bg-red-100 text-red-700'
-    : value >= 50 ? 'bg-orange-100 text-orange-700'
-    : value >= 30 ? 'bg-amber-100 text-amber-700'
-    : 'bg-emerald-100 text-emerald-700';
-  return <span className={`inline-flex items-center justify-center w-9 h-5 rounded text-[10px] font-black ${color}`}>{value}</span>;
+  if (value === undefined || value === null) return <span className="text-nexo-faint text-xs">—</span>;
+  const color = value >= 70 ? 'bg-nexo-danger/10 text-nexo-danger-text'
+    : value >= 50 ? 'bg-nexo-warn/10 text-nexo-warn-text'
+    : value >= 30 ? 'bg-nexo-warn/10 text-nexo-warn-text'
+    : 'bg-nexo-ice/10 text-nexo-ice';
+  return <span className={`inline-flex items-center justify-center w-9 h-5 rounded text-[10px] font-medium ${color}`}>{value}</span>;
 }
 
 function fmt(n?: number) {
@@ -49,8 +49,8 @@ function sortValue(item: RelatedKeywordItem, key: SortKey): number | string {
 }
 
 function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
-  if (!active) return <ArrowUpDown className="w-3 h-3 text-slate-300" />;
-  return dir === 'asc' ? <ArrowUp className="w-3 h-3 text-blue-600" /> : <ArrowDown className="w-3 h-3 text-blue-600" />;
+  if (!active) return <ArrowUpDown className="w-3 h-3 text-nexo-faint" />;
+  return dir === 'asc' ? <ArrowUp className="w-3 h-3 text-nexo-sky" /> : <ArrowDown className="w-3 h-3 text-nexo-sky" />;
 }
 
 export default function RelatedKeywordsTable({ items }: { items: RelatedKeywordItem[] }) {
@@ -77,7 +77,7 @@ export default function RelatedKeywordsTable({ items }: { items: RelatedKeywordI
   function Header({ label, sortK, align, className }: { label: string; sortK: SortKey; align: 'left' | 'center' | 'right'; className?: string }) {
     const active = sortKey === sortK;
     return (
-      <th className={`px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-400 select-none cursor-pointer hover:text-slate-600 dark:hover:text-slate-300 ${align === 'left' ? 'text-left' : align === 'center' ? 'text-center' : 'text-right'} ${className ?? ''}`}
+      <th className={`px-4 py-3 text-[10px] font-medium uppercase tracking-widest text-nexo-faint select-none cursor-pointer hover:text-white ${align === 'left' ? 'text-left' : align === 'center' ? 'text-center' : 'text-right'} ${className ?? ''}`}
           onClick={() => toggleSort(sortK)}>
         <span className={`inline-flex items-center gap-1 ${align === 'right' ? 'flex-row-reverse' : ''}`}>
           {label}
@@ -91,7 +91,7 @@ export default function RelatedKeywordsTable({ items }: { items: RelatedKeywordI
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
+          <tr className="border-b border-nexo-border bg-white/[0.02]">
             <Header label="Keyword" sortK="keyword" align="left" className="!px-6" />
             <Header label="KD" sortK="kd" align="center" />
             <Header label="Vol." sortK="volume" align="right" />
@@ -101,36 +101,36 @@ export default function RelatedKeywordsTable({ items }: { items: RelatedKeywordI
             <Header label="Related" sortK="related" align="right" className="hidden lg:table-cell" />
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
+        <tbody className="divide-y divide-nexo-border">
           {sorted.map((item, i) => {
             const kd = item.keyword_data;
             return (
-              <tr key={i} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                <td className="px-6 py-3 font-medium text-slate-900 dark:text-white max-w-[200px]">
+              <tr key={i} className="hover:bg-white/[0.04] transition-colors">
+                <td className="px-6 py-3 font-medium text-nexo-text max-w-[200px]">
                   <span className="truncate block">{kd?.keyword ?? '—'}</span>
                 </td>
                 <td className="px-4 py-3 text-center">
                   <DifficultyBadge value={item.keyword_difficulty} />
                 </td>
-                <td className="px-4 py-3 text-right font-mono text-slate-700 dark:text-slate-300 tabular-nums">
+                <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">
                   {fmt(kd?.search_volume)}
                 </td>
-                <td className="px-4 py-3 text-right font-mono text-slate-500 dark:text-slate-400 tabular-nums">
+                <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">
                   {kd?.cpc != null ? `$${kd.cpc.toFixed(2)}` : '—'}
                 </td>
-                <td className="px-4 py-3 text-right font-mono text-slate-500 dark:text-slate-400 tabular-nums hidden sm:table-cell">
+                <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums hidden sm:table-cell">
                   {kd?.competition_index ?? '—'}
                 </td>
-                <td className="px-4 py-3 text-right font-mono text-slate-500 dark:text-slate-400 tabular-nums hidden md:table-cell">
+                <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums hidden md:table-cell">
                   {fmt(item.avg_backlinks_info?.referring_domains)}
                 </td>
                 <td className="px-4 py-3 text-right tabular-nums hidden lg:table-cell">
                   {item.related_keywords && item.related_keywords.length > 0 ? (
-                    <span className="text-[10px] font-black text-slate-400 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">
+                    <span className="text-[10px] font-medium text-nexo-faint bg-nexo-surface-2 px-1.5 py-0.5 rounded">
                       {item.related_keywords.length}
                     </span>
                   ) : (
-                    <span className="text-slate-300 text-xs">—</span>
+                    <span className="text-nexo-faint text-xs">—</span>
                   )}
                 </td>
               </tr>

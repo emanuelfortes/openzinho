@@ -21,8 +21,8 @@ interface BusinessSearchResult {
 }
 
 const RADII = [1, 2, 3, 5, 10, 15, 25, 50];
-const inputCls = 'w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-300 dark:placeholder-slate-500 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500';
-const labelCls = 'block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5';
+const inputCls = 'nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky';
+const labelCls = 'nexo-label block mb-1.5';
 
 function parseCenter(value: string): [number, number] | null {
   const [lat, lng] = value.split(',').map((part) => Number(part.trim()));
@@ -255,14 +255,14 @@ export default function BenchmarkBuilder({ defaultCenter, defaultLanguage, hasCr
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossOrigin="" />
 
       {/* Step 1 — market */}
-      <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 space-y-5">
+      <section className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-5">
         <div className="flex items-baseline justify-between gap-4">
-          <h2 className="text-sm font-black text-slate-900 dark:text-white">1 · Define the market</h2>
-          <span className="text-[11px] text-slate-400">Click the map to set the centre</span>
+          <h2 className="text-sm font-medium text-nexo-text">1 · Define the market</h2>
+          <span className="text-[11px] text-nexo-faint">Click the map to set the centre</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-6 gap-4">
           <div className="sm:col-span-3">
-            <label className={labelCls} htmlFor="rv-keyword">Keyword <span className="text-red-400">*</span></label>
+            <label className={labelCls} htmlFor="rv-keyword">Keyword <span className="text-nexo-danger-text">*</span></label>
             <input id="rv-keyword" value={keyword} onChange={(e) => setKeyword(e.target.value)} placeholder="e.g. plumber" className={inputCls}
               onKeyDown={(e) => { if (e.key === 'Enter' && canSearch) { e.preventDefault(); findListings(); } }} />
           </div>
@@ -296,77 +296,77 @@ export default function BenchmarkBuilder({ defaultCenter, defaultLanguage, hasCr
           <input value={addressQuery} onChange={(e) => setAddressQuery(e.target.value)} placeholder="Jump to a city or address…" className={inputCls}
             onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); goToAddress(); } }} />
           <button type="button" onClick={goToAddress} disabled={!addressQuery.trim()}
-            className="px-4 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:border-slate-400 disabled:opacity-40" aria-label="Go to address">
+            className="px-4 rounded-nexo-lg border border-nexo-border text-nexo-dim hover:border-nexo-border-strong disabled:opacity-40" aria-label="Go to address">
             <MapPin className="w-4 h-4" />
           </button>
         </div>
-        <div ref={containerRef} className="w-full h-[380px] rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 z-0" />
-        <p className="text-[11px] text-slate-400 -mt-3">
-          {parseCenter(center) ? <>Centre: <span className="font-semibold text-slate-600 dark:text-slate-300">{areaLabel ?? center}</span> · {radiusKm} km radius</> : 'No centre yet: click the map.'}
+        <div ref={containerRef} className="w-full h-[380px] rounded-nexo-lg overflow-hidden border border-nexo-border z-0" />
+        <p className="text-[11px] text-nexo-faint -mt-3">
+          {parseCenter(center) ? <>Centre: <span className="font-semibold text-nexo-dim">{areaLabel ?? center}</span> · {radiusKm} km radius</> : 'No centre yet: click the map.'}
         </p>
 
         <div className="flex flex-wrap items-center gap-3">
           <button type="button" onClick={findListings} disabled={!canSearch}
-            className="inline-flex items-center gap-2 bg-slate-900 text-white font-black uppercase tracking-widest text-xs px-5 py-2.5 rounded-xl hover:bg-blue-600 transition-colors disabled:opacity-40">
+            className="nexo-label inline-flex items-center gap-2 bg-white text-nexo-bg px-5 py-2.5 rounded-nexo-lg hover:bg-nexo-ice transition-colors disabled:opacity-40">
             {searching ? <LoaderCircle className="w-3.5 h-3.5 animate-spin" /> : <Search className="w-3.5 h-3.5" />}
             {searching ? 'Searching Google Maps…' : searched ? 'Search again' : 'Find listings'}
           </button>
-          <span className="text-[11px] text-slate-400">
+          <span className="text-[11px] text-nexo-faint">
             One Google Maps search{discoveryCost !== null ? ` · last one cost $${discoveryCost.toFixed(4)}` : ' (about $0.002)'}.
           </span>
         </div>
-        {!hasCredentials && <p className="text-xs text-amber-600">Configure your DataForSEO credentials in Settings first.</p>}
+        {!hasCredentials && <p className="text-xs text-nexo-warn-text">Configure your DataForSEO credentials in Settings first.</p>}
       </section>
 
       {/* Step 2 — pick listings */}
       {(searched || candidates.length > 0) && (
-        <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex flex-wrap items-baseline justify-between gap-3">
-            <h2 className="text-sm font-black text-slate-900 dark:text-white">2 · Pick up to {MAX_LISTINGS} listings</h2>
-            <div className="flex items-center gap-4 text-[11px] text-slate-400">
+        <section className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+          <div className="px-6 py-4 border-b border-nexo-border flex flex-wrap items-baseline justify-between gap-3">
+            <h2 className="text-sm font-medium text-nexo-text">2 · Pick up to {MAX_LISTINGS} listings</h2>
+            <div className="flex items-center gap-4 text-[11px] text-nexo-faint">
               {outsideCount > 0 && (
                 <label className="inline-flex items-center gap-1.5 cursor-pointer select-none">
-                  <input type="checkbox" checked={showOutside} onChange={(e) => setShowOutside(e.target.checked)} className="accent-blue-600" />
+                  <input type="checkbox" checked={showOutside} onChange={(e) => setShowOutside(e.target.checked)} className="accent-nexo-sky" />
                   Show {outsideCount} outside the circle
                 </label>
               )}
-              <span className={`tabular-nums font-bold ${full ? 'text-amber-600' : 'text-slate-500'}`}>{selected.length}/{MAX_LISTINGS} selected</span>
+              <span className={`tabular-nums font-medium ${full ? 'text-nexo-warn-text' : 'text-nexo-dim'}`}>{selected.length}/{MAX_LISTINGS} selected</span>
             </div>
           </div>
 
           {visible.length === 0 ? (
-            <p className="px-6 py-8 text-sm text-slate-400">No listing found in this circle. Widen the radius, show results outside the circle, or add a listing by name below.</p>
+            <p className="px-6 py-8 text-sm text-nexo-faint">No listing found in this circle. Widen the radius, show results outside the circle, or add a listing by name below.</p>
           ) : (
-            <ul className="divide-y divide-slate-50 dark:divide-slate-800">
+            <ul className="divide-y divide-nexo-border">
               {visible.map((c, index) => {
                 const isSelected = selected.includes(c.cid);
                 const isSelf = selfCid === c.cid;
                 return (
-                  <li key={c.cid} className={`flex items-center gap-3 px-6 py-3 ${isSelected ? 'bg-blue-50/60 dark:bg-blue-950/20' : ''} ${!c.insideRadius && !c.manual ? 'opacity-60' : ''}`}>
+                  <li key={c.cid} className={`flex items-center gap-3 px-6 py-3 ${isSelected ? 'bg-nexo-blue/10' : ''} ${!c.insideRadius && !c.manual ? 'opacity-60' : ''}`}>
                     <button type="button" onClick={() => toggle(c.cid)} disabled={!isSelected && full} aria-pressed={isSelected} aria-label={`Select ${c.title}`}
-                      className={`w-5 h-5 shrink-0 rounded-md border flex items-center justify-center transition-colors disabled:opacity-30 ${isSelected ? 'bg-blue-600 border-blue-600 text-white' : 'border-slate-300 dark:border-slate-600'}`}>
+                      className={`w-5 h-5 shrink-0 rounded-md border flex items-center justify-center transition-colors disabled:opacity-30 ${isSelected ? 'bg-nexo-blue border-nexo-sky text-white' : 'border-nexo-border'}`}>
                       {isSelected && <Check className="w-3.5 h-3.5" />}
                     </button>
-                    <span className="w-6 text-[11px] font-black text-slate-400 tabular-nums">{index + 1}</span>
+                    <span className="w-6 text-[11px] font-medium text-nexo-faint tabular-nums">{index + 1}</span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-slate-800 dark:text-slate-100 truncate">
+                      <p className="text-sm font-medium text-nexo-text truncate">
                         {c.title}
-                        {c.manual && <span className="ml-2 text-[10px] font-black uppercase tracking-widest text-slate-400">Added</span>}
+                        {c.manual && <span className="nexo-label ml-2">Added</span>}
                       </p>
-                      <p className="text-[11px] text-slate-400 truncate">
+                      <p className="text-[11px] text-nexo-faint truncate">
                         {[c.category, c.address].filter(Boolean).join(' · ')}
                       </p>
                     </div>
-                    <div className="hidden sm:block text-right text-[11px] text-slate-500 tabular-nums w-28">
-                      {c.rating !== null ? <span className="font-bold text-slate-700 dark:text-slate-200">{c.rating.toFixed(1)}★</span> : '—'}
-                      <span className="text-slate-400"> · {c.totalReviews ?? 0} reviews</span>
+                    <div className="hidden sm:block text-right text-[11px] text-nexo-dim tabular-nums w-28">
+                      {c.rating !== null ? <span className="font-medium text-nexo-dim">{c.rating.toFixed(1)}★</span> : '—'}
+                      <span className="text-nexo-faint"> · {c.totalReviews ?? 0} reviews</span>
                     </div>
-                    <div className="hidden md:block text-right text-[11px] text-slate-400 tabular-nums w-20">
+                    <div className="hidden md:block text-right text-[11px] text-nexo-faint tabular-nums w-20">
                       {c.manual ? '' : `#${c.mapsRank} · `}{c.distanceKm} km
                     </div>
                     <button type="button" onClick={() => markSelf(c.cid)} disabled={!isSelected && full && !isSelf}
-                      className={`inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border transition-colors disabled:opacity-30 ${isSelf ? 'bg-amber-50 border-amber-200 text-amber-700' : 'border-transparent text-slate-400 hover:text-amber-600'}`}>
-                      <Star className={`w-3 h-3 ${isSelf ? 'fill-amber-400 text-amber-500' : ''}`} /> {isSelf ? 'My listing' : 'Mine?'}
+                      className={`inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-widest px-2 py-1 rounded-nexo border transition-colors disabled:opacity-30 ${isSelf ? 'bg-nexo-warn/10 border-nexo-warn/40 text-nexo-warn-text' : 'border-transparent text-nexo-faint hover:text-nexo-warn-text'}`}>
+                      <Star className={`w-3 h-3 ${isSelf ? 'fill-nexo-warn text-nexo-warn-text' : ''}`} /> {isSelf ? 'My listing' : 'Mine?'}
                     </button>
                   </li>
                 );
@@ -374,25 +374,25 @@ export default function BenchmarkBuilder({ defaultCenter, defaultLanguage, hasCr
             </ul>
           )}
 
-          <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 space-y-2">
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Missing a listing? Add it by name</p>
+          <div className="px-6 py-4 border-t border-nexo-border space-y-2">
+            <p className="nexo-label">Missing a listing? Add it by name</p>
             <div className="flex gap-2">
               <input value={nameQuery} onChange={(e) => setNameQuery(e.target.value)} placeholder="Business name" className={inputCls}
                 onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); searchByName(); } }} />
               <button type="button" onClick={searchByName} disabled={!nameQuery.trim() || nameSearching || !parseCenter(center)}
-                className="px-4 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-black uppercase tracking-widest text-slate-600 dark:text-slate-300 hover:border-slate-400 disabled:opacity-40">
+                className="nexo-label px-4 rounded-nexo-lg border border-nexo-border hover:border-nexo-border-strong disabled:opacity-40">
                 {nameSearching ? '…' : 'Find'}
               </button>
             </div>
             {nameResults.length > 0 && (
-              <ul className="rounded-xl border border-slate-200 dark:border-slate-700 divide-y divide-slate-100 dark:divide-slate-800">
+              <ul className="rounded-nexo-lg border border-nexo-border divide-y divide-nexo-border">
                 {nameResults.map((r) => (
                   <li key={r.cid}>
-                    <button type="button" onClick={() => addManual(r)} className="w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-blue-50 dark:hover:bg-blue-950">
-                      <Plus className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                    <button type="button" onClick={() => addManual(r)} className="w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-nexo-blue/15">
+                      <Plus className="w-3.5 h-3.5 text-nexo-sky shrink-0" />
                       <span className="flex-1 min-w-0">
-                        <span className="block text-sm font-bold text-slate-800 dark:text-slate-100 truncate">{r.title}</span>
-                        <span className="block text-[11px] text-slate-400 truncate">{[r.category, r.address].filter(Boolean).join(' · ')}</span>
+                        <span className="block text-sm font-medium text-nexo-text truncate">{r.title}</span>
+                        <span className="block text-[11px] text-nexo-faint truncate">{[r.category, r.address].filter(Boolean).join(' · ')}</span>
                       </span>
                     </button>
                   </li>
@@ -403,20 +403,20 @@ export default function BenchmarkBuilder({ defaultCenter, defaultLanguage, hasCr
         </section>
       )}
 
-      {error && <p className="text-sm text-red-600" role="alert">{error}</p>}
+      {error && <p className="text-sm text-nexo-danger-text" role="alert">{error}</p>}
 
       {/* Step 3 — launch */}
       {selected.length > 0 && (
-        <section className="flex flex-wrap items-center justify-between gap-4 bg-slate-900 text-white rounded-2xl px-6 py-4">
+        <section className="flex flex-wrap items-center justify-between gap-4 nexo-panel border-nexo-border-strong px-6 py-4">
           <div className="text-sm">
-            <p className="font-black">{selected.length} listing{selected.length > 1 ? 's' : ''} · last 3 months</p>
-            <p className="text-[11px] text-slate-400 mt-0.5">
+            <p className="font-medium">{selected.length} listing{selected.length > 1 ? 's' : ''} · last 3 months</p>
+            <p className="text-[11px] text-nexo-faint mt-0.5">
               Up to ${maxCost.toFixed(4)} for the first fetch (100 newest reviews each). Busy listings are refetched once automatically to cover 3 months.
               {!selfCid && ' Tip: mark your own listing to get targets.'}
             </p>
           </div>
           <button type="button" onClick={start} disabled={creating}
-            className="inline-flex items-center gap-2 bg-white text-slate-900 font-black uppercase tracking-widest text-xs px-5 py-2.5 rounded-xl hover:bg-blue-100 transition-colors disabled:opacity-50">
+            className="nexo-btn-primary inline-flex items-center gap-2 px-5 py-2.5 transition-colors disabled:opacity-50">
             {creating && <LoaderCircle className="w-3.5 h-3.5 animate-spin" />}
             {creating ? 'Starting…' : 'Start analysis'}
           </button>

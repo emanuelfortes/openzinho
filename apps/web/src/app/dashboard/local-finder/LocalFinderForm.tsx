@@ -67,13 +67,13 @@ function GridPreview({ size, spacingKm, unit }: { size: number; spacingKm: numbe
           return (
             <div
               key={i}
-              className={`rounded-sm ${isCenter ? 'bg-blue-500 ring-2 ring-blue-300' : 'bg-slate-200 dark:bg-slate-700'}`}
+              className={`rounded-sm ${isCenter ? 'bg-nexo-blue ring-2 ring-nexo-border-strong' : 'bg-white/10'}`}
               style={{ width: Math.max(12, 48 / size), height: Math.max(12, 48 / size) }}
             />
           );
         })}
       </div>
-      <p className="text-[10px] text-slate-400 font-medium">
+      <p className="text-[10px] text-nexo-faint font-medium">
         {size}×{size} points · {formatDistance(spacingKm, unit)} spacing · ~{formatDistance((size - 1) * spacingKm, unit, 1)} coverage
       </p>
     </div>
@@ -102,11 +102,11 @@ export default function LocalFinderForm({ defaults }: Props) {
   const defaultOs = osOptions.some((o) => o.value === defaults.os) ? defaults.os : osOptions[0].value;
 
   return (
-    <form method="GET" className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4" onSubmit={() => setIsLoading(true)}>
+    <form method="GET" className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" onSubmit={() => setIsLoading(true)}>
       {/* Keyword */}
       <div>
-        <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">
-          Keyword to monitor <span className="text-red-400">*</span>
+        <label className="nexo-label block mb-1.5">
+          Keyword to monitor <span className="text-nexo-danger-text">*</span>
         </label>
         <input
           type="text"
@@ -114,20 +114,20 @@ export default function LocalFinderForm({ defaults }: Props) {
           defaultValue={defaults.keyword}
           placeholder="e.g. plumber, italian restaurant, dentist…"
           required
-          className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all dark:bg-slate-800"
+          className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky transition-all"
         />
       </div>
 
       {/* Language */}
       <div>
-        <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">
-          Language <span className="text-red-400">*</span>
+        <label className="nexo-label block mb-1.5">
+          Language <span className="text-nexo-danger-text">*</span>
         </label>
         <select
           name="language"
           value={language}
           onChange={(e) => setLanguage(e.target.value)}
-          className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800"
+          className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
         >
           {LANGUAGES.map((l) => <option key={l.value} value={l.value}>{l.label}</option>)}
         </select>
@@ -136,21 +136,21 @@ export default function LocalFinderForm({ defaults }: Props) {
       {/* Map */}
       <div>
         <div className="flex items-center justify-between mb-1.5">
-          <label className="block text-xs font-black uppercase tracking-widest text-slate-400">
-            {isGrid ? 'Location to monitor (map)' : 'Location (map)'} <span className="text-red-400">*</span>
+          <label className="nexo-label block">
+            {isGrid ? 'Location to monitor (map)' : 'Location (map)'} <span className="text-nexo-danger-text">*</span>
           </label>
           {coordinate && (
             <button
               type="button"
               onClick={() => setCoordinate('')}
-              className="text-[11px] font-black uppercase tracking-widest text-slate-400 hover:text-red-500 transition-colors"
+              className="nexo-label hover:text-nexo-danger-text transition-colors"
             >
               Clear
             </button>
           )}
         </div>
         <div className="space-y-2">
-          <Suspense fallback={<div className="h-64 rounded-xl bg-slate-100 dark:bg-slate-800 animate-pulse" />}>
+          <Suspense fallback={<div className="h-64 rounded-nexo-lg bg-nexo-surface-2 animate-pulse" />}>
             <MapPicker
               coordinate={coordinate}
               onChange={setCoordinate}
@@ -168,10 +168,10 @@ export default function LocalFinderForm({ defaults }: Props) {
             value={coordinate}
             onChange={(e) => setCoordinate(e.target.value)}
             placeholder="Click on the map to set a point — or type lat,lng"
-            className="w-full px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-mono text-slate-700 dark:text-slate-300 placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-800"
+            className="nexo-input min-w-0 w-full px-4 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-nexo-sky"
           />
           {coordinate && (
-            <p className="text-[11px] text-blue-600">
+            <p className="text-[11px] text-nexo-sky">
               {isGrid ? 'Grid will be centered on this point.' : 'Coordinates active — search will be centered on this point.'}
             </p>
           )}
@@ -183,8 +183,8 @@ export default function LocalFinderForm({ defaults }: Props) {
         <>
           {/* Target business */}
           <div>
-            <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">
-              Target domain or business <span className="text-red-400">*</span>
+            <label className="nexo-label block mb-1.5">
+              Target domain or business <span className="text-nexo-danger-text">*</span>
             </label>
             <input
               type="text"
@@ -193,20 +193,20 @@ export default function LocalFinderForm({ defaults }: Props) {
               onChange={(e) => setGridTarget(e.target.value)}
               placeholder="Pick a Google listing above, or enter a domain / business name"
               required
-              className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all dark:bg-slate-800"
+              className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky transition-all"
             />
-            <p className="text-[11px] text-slate-400 mt-1">Picking a listing from the map search matches that exact Google listing. A domain matches with or without https:// and www; a name matches partially.</p>
+            <p className="text-[11px] text-nexo-faint mt-1">Picking a listing from the map search matches that exact Google listing. A domain matches with or without https:// and www; a name matches partially.</p>
           </div>
 
           {/* Grid size + spacing */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Grid size</label>
+              <label className="nexo-label block mb-1.5">Grid size</label>
               <select
                 name="grid_size"
                 value={gridSize}
                 onChange={(e) => setGridSize(parseInt(e.target.value, 10))}
-                className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800"
+                className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
               >
                 <option value="3">3×3 (9 points)</option>
                 <option value="5">5×5 (25 points)</option>
@@ -216,13 +216,13 @@ export default function LocalFinderForm({ defaults }: Props) {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Spacing ({distanceUnit})</label>
+              <label className="nexo-label block mb-1.5">Spacing ({distanceUnit})</label>
               {/* Values are always kilometres; only the labels follow the Settings distance unit. */}
               <select
                 name="spacing_km"
                 value={spacingKm}
                 onChange={(e) => setSpacingKm(parseFloat(e.target.value))}
-                className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800"
+                className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
               >
                 {spacingChoices.map((option) => <option key={option.km} value={option.km}>{option.label}</option>)}
               </select>
@@ -230,14 +230,14 @@ export default function LocalFinderForm({ defaults }: Props) {
           </div>
 
           {/* Grid preview */}
-          <div className="bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 p-4">
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 text-center">Grid preview</p>
+          <div className="bg-white/[0.02] rounded-nexo-lg border border-nexo-border p-4">
+            <p className="nexo-label mb-2 text-center">Grid preview</p>
             <GridPreview size={gridSize} spacingKm={spacingKm} unit={distanceUnit} />
           </div>
 
           {/* Queue mode */}
           <div>
-            <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-2">API mode</label>
+            <label className="nexo-label block mb-2">API mode</label>
             <input type="hidden" name="queue_mode" value={queueMode} />
             <div className="grid grid-cols-3 gap-2">
               {QUEUE_MODES.map((mode) => {
@@ -249,22 +249,22 @@ export default function LocalFinderForm({ defaults }: Props) {
                     key={mode.value}
                     type="button"
                     onClick={() => setQueueMode(mode.value)}
-                    className={`flex flex-col gap-0.5 px-3 py-2.5 rounded-xl border text-left transition-all ${
+                    className={`flex flex-col gap-0.5 px-3 py-2.5 rounded-nexo-lg border text-left transition-all ${
                       active
-                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-950'
-                        : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600'
+                        ? 'border-nexo-sky bg-nexo-blue/10'
+                        : 'border-nexo-border bg-nexo-surface hover:border-nexo-border'
                     }`}
                   >
-                    <span className={`text-xs font-black ${active ? 'text-blue-700 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300'}`}>
+                    <span className={`text-xs font-medium ${active ? 'text-nexo-sky' : 'text-nexo-dim'}`}>
                       {mode.label}
                     </span>
-                    <span className={`text-[10px] font-mono ${active ? 'text-blue-500' : 'text-slate-400'}`}>{estCost}</span>
-                    <span className="text-[10px] text-slate-400">{mode.wait}</span>
+                    <span className={`text-[10px] font-mono ${active ? 'text-nexo-sky' : 'text-nexo-faint'}`}>{estCost}</span>
+                    <span className="text-[10px] text-nexo-faint">{mode.wait}</span>
                   </button>
                 );
               })}
             </div>
-            <p className="text-[11px] text-slate-400 mt-2">
+            <p className="text-[11px] text-nexo-faint mt-2">
               {queueMode === 'live' ? (
                 <>Blocks the page for {formatLiveDuration(gridSize * gridSize)} — DataForSEO’s live endpoint has slowed down, so large grids can take several minutes.</>
               ) : queueMode === 'priority' ? (
@@ -281,33 +281,33 @@ export default function LocalFinderForm({ defaults }: Props) {
           {/* Device / OS / Depth */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Device</label>
+              <label className="nexo-label block mb-1.5">Device</label>
               <select
                 name="device"
                 value={device}
                 onChange={(e) => setDevice(e.target.value)}
-                className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800"
+                className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
               >
                 <option value="desktop">Desktop</option>
                 <option value="mobile">Mobile</option>
               </select>
             </div>
             <div>
-              <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">OS</label>
+              <label className="nexo-label block mb-1.5">OS</label>
               <select
                 name="os"
                 defaultValue={defaultOs}
-                className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800"
+                className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
               >
                 {osOptions.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Depth</label>
+              <label className="nexo-label block mb-1.5">Depth</label>
               <select
                 name="depth"
                 defaultValue={defaults.depth || '20'}
-                className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800"
+                className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
               >
                 <option value="10">10</option>
                 <option value="20">20</option>
@@ -321,11 +321,11 @@ export default function LocalFinderForm({ defaults }: Props) {
           {/* Filters */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Minimum rating</label>
+              <label className="nexo-label block mb-1.5">Minimum rating</label>
               <select
                 name="min_rating"
                 defaultValue={defaults.minRating || ''}
-                className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800"
+                className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
               >
                 <option value="">No filter</option>
                 <option value="3.5">3.5+</option>
@@ -334,11 +334,11 @@ export default function LocalFinderForm({ defaults }: Props) {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Hours filter</label>
+              <label className="nexo-label block mb-1.5">Hours filter</label>
               <select
                 name="time_filter"
                 defaultValue={defaults.timeFilter || ''}
-                className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800"
+                className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
               >
                 <option value="">None</option>
                 <option value="open_now">Open now</option>
@@ -352,7 +352,7 @@ export default function LocalFinderForm({ defaults }: Props) {
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full bg-slate-900 dark:bg-white dark:text-slate-900 text-white font-black uppercase tracking-widest text-xs py-3 rounded-xl hover:bg-blue-600 dark:hover:bg-blue-500 dark:hover:text-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+        className="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
       >
         {isLoading ? (
           <span className="flex items-center justify-center gap-2">

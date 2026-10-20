@@ -32,7 +32,7 @@ function formatDate(ts: number) {
 
 function ResponseText({ items }: { items?: ResponseItem[] }) {
   const messageItems = (items ?? []).filter((it) => it.type !== 'reasoning');
-  if (messageItems.length === 0) return <p className="text-sm text-slate-400">No response text.</p>;
+  if (messageItems.length === 0) return <p className="text-sm text-nexo-faint">No response text.</p>;
 
   const allAnnotations = messageItems.flatMap((it) => it.sections ?? []).flatMap((s) => s.annotations ?? []);
 
@@ -43,7 +43,7 @@ function ResponseText({ items }: { items?: ResponseItem[] }) {
       <MarkdownAnswer>{answerMarkdown}</MarkdownAnswer>
       {allAnnotations.length > 0 && (
         <div>
-          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1.5">Sources</p>
+          <p className="nexo-label mb-1.5">Sources</p>
           <div className="flex flex-wrap gap-1.5">
             {allAnnotations.map((a, ai) => (
               <a
@@ -52,7 +52,7 @@ function ResponseText({ items }: { items?: ResponseItem[] }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 title={a.title ?? a.url}
-                className="text-[11px] text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900 px-2 py-0.5 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/60 transition-colors max-w-[220px] truncate"
+                className="text-[11px] text-nexo-sky bg-nexo-blue/10 border border-nexo-border-strong px-2 py-0.5 rounded-md hover:bg-nexo-blue/15 transition-colors max-w-[220px] truncate"
               >
                 {a.title ?? a.url}
               </a>
@@ -66,9 +66,9 @@ function ResponseText({ items }: { items?: ResponseItem[] }) {
 
 function StatChip({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-100 dark:border-slate-700 px-3 py-2">
-      <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">{label}</p>
-      <p className="text-sm font-black text-slate-800 dark:text-slate-100 tabular-nums">{value}</p>
+    <div className="bg-white/[0.02] rounded-nexo border border-nexo-border px-3 py-2">
+      <p className="text-[9px] font-medium uppercase tracking-widest text-nexo-faint">{label}</p>
+      <p className="text-sm font-medium text-nexo-text tabular-nums">{value}</p>
     </div>
   );
 }
@@ -146,15 +146,15 @@ async function LlmResponsesPage({ searchParams }: { searchParams: Promise<Search
     const isActive = entry.id === historyId;
     return (
       <a key={entry.id} href={`/dashboard/llm-responses?history_id=${entry.id}#results`}
-        className={`flex items-center gap-4 px-5 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors ${isActive ? 'bg-blue-50 dark:bg-blue-950/40' : ''}`}>
+        className={`flex items-center gap-4 px-5 py-3.5 hover:bg-white/[0.04] transition-colors ${isActive ? 'bg-nexo-blue/10' : ''}`}>
         <div className="flex-1 min-w-0">
-          <p className={`text-sm font-medium truncate ${isActive ? 'text-blue-700 dark:text-blue-400' : 'text-slate-800 dark:text-slate-200'}`}>{entry.prompt}</p>
-          <p className="text-[11px] text-slate-400 mt-0.5">
+          <p className={`text-sm font-medium truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.prompt}</p>
+          <p className="text-[11px] text-nexo-faint mt-0.5">
             {PLATFORM_LABELS[entry.platform] ?? entry.platform} · {entry.model}
             {entry.cost !== undefined ? ` · $${entry.cost.toFixed(5)}` : ''}
           </p>
         </div>
-        <span className="shrink-0 text-[11px] text-slate-400">{formatDate(entry.ts)}</span>
+        <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>
       </a>
     );
   });
@@ -162,12 +162,12 @@ async function LlmResponsesPage({ searchParams }: { searchParams: Promise<Search
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">AI Prompt Test</h1>
-        <p className="text-sm text-slate-400 mt-1">Ask ChatGPT, Claude, Gemini or Perplexity a question and see exactly what they answer — with sources.</p>
+        <h1 className="nexo-h1">AI Prompt Test</h1>
+        <p className="text-sm text-nexo-faint mt-1">Ask ChatGPT, Claude, Gemini or Perplexity a question and see exactly what they answer — with sources.</p>
       </div>
 
       {!creds && (
-        <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900 text-amber-700 dark:text-amber-400 text-sm rounded-xl px-4 py-3">
+        <div className="bg-nexo-warn/10 border border-nexo-warn/40 text-nexo-warn-text text-sm rounded-nexo-lg px-4 py-3">
           DataForSEO credentials missing. Configure them in{' '}
           <a href="/dashboard/settings" className="underline font-semibold">settings</a>.
         </div>
@@ -180,38 +180,38 @@ async function LlmResponsesPage({ searchParams }: { searchParams: Promise<Search
             defaults={{ platform, model, prompt, systemMessage, webSearch, countryCode }}
           />
 
-          {error && <div className="bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900 text-red-600 dark:text-red-400 text-sm rounded-xl px-4 py-3">{error}</div>}
+          {error && <div className="bg-nexo-danger/10 border border-nexo-danger/40 text-nexo-danger-text text-sm rounded-nexo-lg px-4 py-3">{error}</div>}
 
           {hasQuery && !error && result && (
-            <div id="results" className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between flex-wrap gap-2">
+            <div id="results" className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+              <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between flex-wrap gap-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-violet-600 bg-violet-50 dark:bg-violet-950/40 border border-violet-100 dark:border-violet-900 px-2 py-0.5 rounded-md">
+                  <span className="nexo-section bg-nexo-blue/10 border border-nexo-border-strong px-2 py-0.5 rounded-md">
                     {PLATFORM_LABELS[displayPlatform] ?? displayPlatform}
                   </span>
-                  <span className="text-xs font-mono text-slate-500 dark:text-slate-400">{result.model_name ?? displayModel}</span>
-                  {isFromHistory && <span className="text-[10px] font-black uppercase tracking-widest text-blue-500 bg-blue-50 dark:bg-blue-950/40 px-2 py-0.5 rounded-md">History</span>}
+                  <span className="text-xs font-mono text-nexo-dim">{result.model_name ?? displayModel}</span>
+                  {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>}
                 </div>
-                {cost !== undefined && <span className="text-[10px] font-mono text-slate-400">cost: ${cost.toFixed(5)}</span>}
+                {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">cost: ${cost.toFixed(5)}</span>}
               </div>
 
               <div className="px-6 py-5 space-y-5">
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1.5">Prompt</p>
-                  <p className="text-sm font-semibold text-slate-900 dark:text-white">{displayPrompt}</p>
+                  <p className="nexo-label mb-1.5">Prompt</p>
+                  <p className="text-sm font-semibold text-nexo-text">{displayPrompt}</p>
                 </div>
 
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1.5">Response</p>
+                  <p className="nexo-label mb-1.5">Response</p>
                   <ResponseText items={result.items} />
                 </div>
 
                 {(result.fan_out_queries?.length ?? 0) > 0 && (
                   <div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1.5">Related queries</p>
+                    <p className="nexo-label mb-1.5">Related queries</p>
                     <div className="flex flex-wrap gap-1.5">
                       {result.fan_out_queries!.map((q, qi) => (
-                        <span key={qi} className="text-[11px] text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
+                        <span key={qi} className="text-[11px] text-nexo-dim bg-nexo-surface-2 px-2 py-0.5 rounded-md">
                           {q.keyword}
                         </span>
                       ))}
@@ -219,7 +219,7 @@ async function LlmResponsesPage({ searchParams }: { searchParams: Promise<Search
                   </div>
                 )}
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-nexo-border">
                   <StatChip label="Input tokens" value={(result.input_tokens ?? 0).toLocaleString('en-GB')} />
                   <StatChip label="Output tokens" value={(result.output_tokens ?? 0).toLocaleString('en-GB')} />
                   {result.reasoning_tokens !== undefined && (
@@ -232,9 +232,9 @@ async function LlmResponsesPage({ searchParams }: { searchParams: Promise<Search
           )}
 
           {!hasQuery && !error && (
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm px-6 py-16 text-center">
-              <p className="text-slate-400 text-sm">Ask a question above to see how an AI model actually answers it.</p>
-              <p className="text-slate-300 dark:text-slate-600 text-xs mt-1">Powered by DataForSEO LLM Responses API.</p>
+            <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-6 py-16 text-center">
+              <p className="text-nexo-faint text-sm">Ask a question above to see how an AI model actually answers it.</p>
+              <p className="text-nexo-faint text-xs mt-1">Powered by DataForSEO LLM Responses API.</p>
             </div>
           )}
         </div>

@@ -18,8 +18,8 @@ type Props = {
   distanceUnit: DistanceUnit;
 };
 
-const field = 'w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white';
-const label = 'mb-1.5 block text-xs font-black uppercase tracking-widest text-slate-400';
+const field = 'nexo-input min-w-0 w-full px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky';
+const label = 'nexo-label mb-1.5 block';
 
 export default function CampaignForm({ campaign, defaults, distanceUnit }: Props) {
   const [state, formAction, pending] = useActionState(saveCampaignAction, undefined);
@@ -62,7 +62,7 @@ export default function CampaignForm({ campaign, defaults, distanceUnit }: Props
 
       <div>
         <label className={label}>Grid center</label>
-        <Suspense fallback={<div className="h-64 animate-pulse rounded-xl bg-slate-100 dark:bg-slate-800" />}>
+        <Suspense fallback={<div className="h-64 animate-pulse rounded-nexo-lg bg-nexo-surface-2" />}>
           <MapPicker
             coordinate={center}
             onChange={setCenter}
@@ -99,7 +99,7 @@ export default function CampaignForm({ campaign, defaults, distanceUnit }: Props
       <div>
         <label className={label} htmlFor="campaign-keywords">Keywords · one per line, up to {MAX_CAMPAIGN_KEYWORDS}</label>
         <textarea id="campaign-keywords" name="keywords" rows={4} value={keywords} onChange={(event) => setKeywords(event.target.value)} placeholder={'dentista\nclareamento dental\nimplante dentário'} className={field} />
-        <p className={`mt-1 text-[11px] ${keywordCount > MAX_CAMPAIGN_KEYWORDS ? 'text-red-500' : 'text-slate-400'}`}>
+        <p className={`mt-1 text-[11px] ${keywordCount > MAX_CAMPAIGN_KEYWORDS ? 'text-nexo-danger-text' : 'text-nexo-faint'}`}>
           {keywordCount} keyword{keywordCount === 1 ? '' : 's'}. Each one is its own monitor, with its own timeline.
         </p>
       </div>
@@ -144,25 +144,25 @@ export default function CampaignForm({ campaign, defaults, distanceUnit }: Props
         </div>
       </div>
 
-      <div className="rounded-xl border border-blue-100 bg-blue-50/60 px-4 py-3 text-xs text-slate-600 dark:border-blue-900/70 dark:bg-blue-950/20 dark:text-slate-300">
-        <p className="text-[10px] font-black uppercase tracking-[0.16em] text-blue-600 dark:text-blue-400">Estimated DataForSEO cost</p>
+      <div className="rounded-nexo-lg border border-nexo-border-strong bg-nexo-blue/10 px-4 py-3 text-xs text-nexo-dim">
+        <p className="nexo-section">Estimated DataForSEO cost</p>
         <p className="mt-1">
           <b className="tabular-nums">{estimate.pointsPerRun}</b> points per run × <b className="tabular-nums">{estimate.runsPerMonth.toFixed(1)}</b> runs a month ≈{' '}
-          <b className="tabular-nums text-slate-900 dark:text-white">${estimate.perMonthUsd.toFixed(2)}/month</b>
-          <span className="text-slate-400"> (${estimate.perRunUsd.toFixed(3)} per run)</span>
+          <b className="tabular-nums text-nexo-text">${estimate.perMonthUsd.toFixed(2)}/month</b>
+          <span className="text-nexo-faint"> (${estimate.perRunUsd.toFixed(3)} per run)</span>
         </p>
-        <p className="mt-1 text-[10px] text-slate-400">Advisory estimate at list price; DataForSEO bills what it reports, and each run stores its real cost. {timeZone.replace(/_/g, ' ')} time.</p>
+        <p className="mt-1 text-[10px] text-nexo-faint">Advisory estimate at list price; DataForSEO bills what it reports, and each run stores its real cost. {timeZone.replace(/_/g, ' ')} time.</p>
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-slate-300">
-          <input type="checkbox" name="active" defaultChecked={campaign?.active ?? true} className="h-4 w-4 rounded border-slate-300" />
+        <label className="flex items-center gap-2 text-xs font-semibold text-nexo-dim">
+          <input type="checkbox" name="active" defaultChecked={campaign?.active ?? true} className="h-4 w-4 rounded border-nexo-border" />
           Active (scheduled runs on)
         </label>
         <div className="flex items-center gap-3">
-          {state?.error && <p className="text-xs font-semibold text-red-600">{state.error}</p>}
-          <a href="/dashboard/campaigns" className="text-[11px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-600">Cancel</a>
-          <button type="submit" disabled={pending} className="rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-black uppercase tracking-widest text-white transition-colors hover:bg-blue-700 disabled:opacity-50">
+          {state?.error && <p className="text-xs font-semibold text-nexo-danger-text">{state.error}</p>}
+          <a href="/dashboard/campaigns" className="nexo-label hover:text-white">Cancel</a>
+          <button type="submit" disabled={pending} className="rounded-nexo-lg bg-nexo-blue px-4 py-2.5 text-xs font-medium uppercase tracking-widest text-white transition-colors hover:bg-nexo-sky disabled:opacity-50">
             {pending ? 'Saving…' : campaign ? 'Save campaign' : 'Create campaign'}
           </button>
         </div>

@@ -10,14 +10,14 @@ type Status = 'loading' | 'ready' | 'fallback';
 const MIN_FAVICON_SIZE = 32;
 
 const MONOGRAM_COLORS = [
-  'bg-blue-500/15 text-blue-600 dark:bg-blue-400/15 dark:text-blue-300',
-  'bg-violet-500/15 text-violet-600 dark:bg-violet-400/15 dark:text-violet-300',
-  'bg-emerald-500/15 text-emerald-600 dark:bg-emerald-400/15 dark:text-emerald-300',
-  'bg-amber-500/15 text-amber-700 dark:bg-amber-400/15 dark:text-amber-300',
-  'bg-rose-500/15 text-rose-600 dark:bg-rose-400/15 dark:text-rose-300',
-  'bg-cyan-500/15 text-cyan-700 dark:bg-cyan-400/15 dark:text-cyan-300',
-  'bg-indigo-500/15 text-indigo-600 dark:bg-indigo-400/15 dark:text-indigo-300',
-  'bg-teal-500/15 text-teal-700 dark:bg-teal-400/15 dark:text-teal-300',
+  'bg-nexo-blue text-nexo-sky',
+  'bg-nexo-blue text-nexo-sky',
+  'bg-nexo-ice text-nexo-ice',
+  'bg-nexo-warn text-nexo-warn-text',
+  'bg-nexo-danger text-nexo-danger-text',
+  'bg-nexo-blue text-nexo-sky',
+  'bg-nexo-blue text-nexo-sky',
+  'bg-nexo-blue text-nexo-sky',
 ];
 
 function monogramFor(domain: string) {
@@ -31,7 +31,7 @@ function monogramFor(domain: string) {
 function Monogram({ domain, className }: { domain: string; className: string }) {
   const { letter, color } = monogramFor(domain);
   return (
-    <span aria-hidden className={`grid shrink-0 place-items-center overflow-hidden rounded-lg ${color} ${className}`}>
+    <span aria-hidden className={`grid shrink-0 place-items-center overflow-hidden rounded-nexo ${color} ${className}`}>
       {/* SVG text scales with the tile, so the letter stays proportional at every size. */}
       <svg viewBox="0 0 24 24" className="h-full w-full">
         <text x="12" y="12" dy="0.35em" textAnchor="middle" fontSize="12" fontWeight="700" fill="currentColor" fontFamily="inherit">
@@ -70,7 +70,7 @@ export default function ProjectFavicon({ domain, className = 'h-7 w-7' }: { doma
       referrerPolicy="no-referrer"
       onError={() => setStatus('fallback')}
       onLoad={(event) => evaluate(event.currentTarget)}
-      className={`shrink-0 rounded-lg bg-slate-100 object-contain transition-opacity dark:bg-slate-800 ${status === 'ready' ? 'opacity-100' : 'opacity-0'} ${className}`}
+      className={`shrink-0 rounded-nexo bg-nexo-surface-2 object-contain transition-opacity ${status === 'ready' ? 'opacity-100' : 'opacity-0'} ${className}`}
     />
   );
 }

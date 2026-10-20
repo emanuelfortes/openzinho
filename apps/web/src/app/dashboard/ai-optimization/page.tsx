@@ -91,19 +91,19 @@ const PLATFORM_LABELS: Record<string, string> = {
 };
 
 const MODEL_COLORS: Record<string, string> = {
-  google_ai_overview: 'text-blue-700 bg-blue-50 border-blue-100',
-  gpt_4o: 'text-emerald-700 bg-emerald-50 border-emerald-100',
-  gpt_4o_mini: 'text-teal-700 bg-teal-50 border-teal-100',
-  gpt_4_turbo: 'text-cyan-700 bg-cyan-50 border-cyan-100',
-  gemini: 'text-violet-700 bg-violet-50 border-violet-100',
+  google_ai_overview: 'text-nexo-sky bg-nexo-blue/10 border-nexo-border-strong',
+  gpt_4o: 'text-nexo-ice bg-nexo-ice/10 border-nexo-ice/30',
+  gpt_4o_mini: 'text-nexo-sky bg-nexo-blue/10 border-nexo-border-strong',
+  gpt_4_turbo: 'text-nexo-sky bg-nexo-blue/10 border-nexo-border-strong',
+  gemini: 'text-nexo-sky bg-nexo-blue/10 border-nexo-border-strong',
 };
 
 function ModelBadge({ model }: { model?: string }) {
   if (!model) return null;
   const label = model.replace(/_/g, ' ');
-  const color = MODEL_COLORS[model] ?? 'text-slate-600 bg-slate-50 border-slate-200';
+  const color = MODEL_COLORS[model] ?? 'text-nexo-dim bg-white/[0.02] border-nexo-border';
   return (
-    <span className={`inline-flex px-2 py-0.5 rounded-md text-[10px] font-black border uppercase tracking-wider ${color}`}>
+    <span className={`inline-flex px-2 py-0.5 rounded-md text-[10px] font-medium border uppercase tracking-wider ${color}`}>
       {label}
     </span>
   );
@@ -119,7 +119,7 @@ function Sparkline({ monthly }: { monthly?: MonthlySearch[] }) {
       {data.map((m, i) => (
         <div
           key={i}
-          className="w-1.5 bg-violet-300 rounded-sm"
+          className="w-1.5 bg-nexo-sky/40 rounded-sm"
           style={{ height: `${Math.max(2, Math.round(((m.search_volume ?? 0) / max) * 20))}px` }}
         />
       ))}
@@ -204,36 +204,36 @@ async function AiOptimizationPage({ searchParams }: { searchParams: Promise<Sear
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">AI Optimization</h1>
-        <p className="text-sm text-slate-400 mt-1">Track how AI models mention your keyword or domain via DataForSEO LLM Mentions.</p>
+        <h1 className="nexo-h1">AI Optimization</h1>
+        <p className="text-sm text-nexo-faint mt-1">Track how AI models mention your keyword or domain via DataForSEO LLM Mentions.</p>
       </div>
 
       {/* Form */}
       <SearchForm
-        className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4"
+        className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4"
         btnLabel="Analyze"
-        btnClassName="w-full bg-slate-900 dark:bg-slate-700 text-white font-black uppercase tracking-widest text-xs py-3 rounded-xl hover:bg-violet-600 transition-colors"
+        btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-sky transition-colors"
         loadingLabel="Fetching AI mentions…"
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Target type + input */}
           <div className="sm:col-span-2 flex gap-2">
             <div className="shrink-0">
-              <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Type</label>
+              <label className="nexo-label block mb-1.5">Type</label>
               <select name="target_type" defaultValue={targetType}
-                className="h-[42px] px-3 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white dark:bg-slate-800">
+                className="nexo-input min-w-0 w-full h-[42px] px-3 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
                 <option value="keyword">Keyword</option>
                 <option value="domain">Domain</option>
               </select>
             </div>
             <div className="flex-1">
-              <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Target</label>
+              <label className="nexo-label block mb-1.5">Target</label>
               <input
                 name="target"
                 type="text"
                 defaultValue={displayTarget}
                 placeholder={targetType === 'domain' ? 'example.com' : 'plumber paris'}
-                className="w-full h-[42px] px-4 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white dark:bg-slate-800"
+                className="nexo-input min-w-0 w-full h-[42px] px-4 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
               />
             </div>
           </div>
@@ -248,62 +248,62 @@ async function AiOptimizationPage({ searchParams }: { searchParams: Promise<Sear
       </SearchForm>
 
       {error && (
-        <div className="bg-red-50 dark:bg-red-950 border border-red-100 dark:border-red-900 text-red-600 dark:text-red-400 text-sm rounded-xl px-4 py-3">{error}</div>
+        <div className="bg-nexo-danger/10 border border-nexo-danger/40 text-nexo-danger-text text-sm rounded-nexo-lg px-4 py-3">{error}</div>
       )}
 
       {/* Summary stats */}
       {hasQuery && !error && items.length > 0 && (
         <div className="grid grid-cols-3 gap-3">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 px-5 py-4 shadow-sm">
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Mentions found</p>
-            <p className="text-2xl font-black text-slate-900 dark:text-white mt-1 tabular-nums">{items.length}</p>
+          <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
+            <p className="nexo-label">Mentions found</p>
+            <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{items.length}</p>
           </div>
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 px-5 py-4 shadow-sm">
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Total AI volume</p>
-            <p className="text-2xl font-black text-slate-900 dark:text-white mt-1 tabular-nums">{totalVolume.toLocaleString('en-GB')}</p>
+          <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
+            <p className="nexo-label">Total AI volume</p>
+            <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{totalVolume.toLocaleString('en-GB')}</p>
           </div>
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 px-5 py-4 shadow-sm">
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Models</p>
-            <p className="text-2xl font-black text-slate-900 dark:text-white mt-1 tabular-nums">{uniqueModels.length}</p>
+          <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
+            <p className="nexo-label">Models</p>
+            <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{uniqueModels.length}</p>
           </div>
         </div>
       )}
 
       {/* Results */}
       {hasQuery && !error && (
-        <div id="results" className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-            <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">
+        <div id="results" className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+          <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between">
+            <h2 className="nexo-label">
               AI Mentions — {PLATFORM_LABELS[platform] ?? platform}
             </h2>
             <div className="flex items-center gap-3">
-              {isFromHistory && <span className="text-[10px] font-black uppercase tracking-widest text-blue-500 bg-blue-50 dark:bg-blue-950 px-2 py-0.5 rounded-md">History</span>}
+              {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>}
               {cost !== undefined && (
-                <span className="text-[10px] font-mono text-slate-400">cost: ${cost.toFixed(4)}</span>
+                <span className="text-[10px] font-mono text-nexo-faint">cost: ${cost.toFixed(4)}</span>
               )}
-              <span className="text-xs font-black text-slate-400">{items.length} result{items.length !== 1 ? 's' : ''}</span>
+              <span className="text-xs font-medium text-nexo-faint">{items.length} result{items.length !== 1 ? 's' : ''}</span>
             </div>
           </div>
 
           {items.length === 0 ? (
-            <div className="px-6 py-12 text-center text-sm text-slate-400">
+            <div className="px-6 py-12 text-center text-sm text-nexo-faint">
               No AI mentions found for this target.
             </div>
           ) : (
-            <div className="divide-y divide-slate-50 dark:divide-slate-800">
+            <div className="divide-y divide-nexo-border">
               {items.map((item, i) => (
-                <div key={i} className="px-6 py-5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                <div key={i} className="px-6 py-5 hover:bg-white/[0.04] transition-colors">
                   <div className="flex items-start justify-between gap-4 mb-2">
                     <div className="flex items-center gap-2 flex-wrap">
                       <ModelBadge model={item.model_name} />
                       {item.ai_search_volume != null && (
-                        <span className="text-[10px] font-black text-violet-600 bg-violet-50 border border-violet-100 px-2 py-0.5 rounded-md uppercase tracking-wider">
+                        <span className="nexo-section bg-nexo-blue/10 border border-nexo-border-strong px-2 py-0.5 rounded-md">
                           {item.ai_search_volume.toLocaleString('en-GB')} AI vol
                         </span>
                       )}
                     </div>
                     {(item.first_response_at || item.last_response_at) && (
-                      <span className="shrink-0 text-[11px] text-slate-400">
+                      <span className="shrink-0 text-[11px] text-nexo-faint">
                         {formatDate(item.last_response_at ?? item.first_response_at)}
                       </span>
                     )}
@@ -311,12 +311,12 @@ async function AiOptimizationPage({ searchParams }: { searchParams: Promise<Sear
 
                   {/* Question */}
                   {item.question && (
-                    <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-2">{item.question}</p>
+                    <p className="text-sm font-semibold text-nexo-text mb-2">{item.question}</p>
                   )}
 
                   {/* Answer */}
                   {item.answer && (
-                    <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-3">
+                    <p className="text-sm text-nexo-dim leading-relaxed mb-3">
                       {truncate(item.answer.replace(/#+\s/g, '').replace(/\*\*/g, ''), 400)}
                     </p>
                   )}
@@ -325,7 +325,7 @@ async function AiOptimizationPage({ searchParams }: { searchParams: Promise<Sear
                     {/* Sources */}
                     {(item.sources?.length ?? 0) > 0 && (
                       <div>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Sources</p>
+                        <p className="nexo-label mb-1">Sources</p>
                         <div className="flex flex-wrap gap-1">
                           {item.sources!.slice(0, 5).map((s, si) => (
                             <a
@@ -334,13 +334,13 @@ async function AiOptimizationPage({ searchParams }: { searchParams: Promise<Sear
                               target="_blank"
                               rel="noopener noreferrer"
                               title={s.title ?? s.url}
-                              className="text-[11px] text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950 border border-blue-100 dark:border-blue-900 px-2 py-0.5 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors max-w-[160px] truncate"
+                              className="text-[11px] text-nexo-sky bg-nexo-blue/10 border border-nexo-border-strong px-2 py-0.5 rounded-md hover:bg-nexo-blue/15 transition-colors max-w-[160px] truncate"
                             >
                               {s.domain ?? s.url}
                             </a>
                           ))}
                           {(item.sources?.length ?? 0) > 5 && (
-                            <span className="text-[11px] text-slate-400 px-2 py-0.5">
+                            <span className="text-[11px] text-nexo-faint px-2 py-0.5">
                               +{item.sources!.length - 5} more
                             </span>
                           )}
@@ -351,10 +351,10 @@ async function AiOptimizationPage({ searchParams }: { searchParams: Promise<Sear
                     {/* Fan-out queries */}
                     {(item.fan_out_queries?.length ?? 0) > 0 && (
                       <div>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Related queries</p>
+                        <p className="nexo-label mb-1">Related queries</p>
                         <div className="flex flex-wrap gap-1">
                           {item.fan_out_queries!.slice(0, 5).map((q, qi) => (
-                            <span key={qi} className="text-[11px] text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">
+                            <span key={qi} className="text-[11px] text-nexo-dim bg-nexo-surface-2 px-2 py-0.5 rounded-md">
                               {q}
                             </span>
                           ))}
@@ -366,7 +366,7 @@ async function AiOptimizationPage({ searchParams }: { searchParams: Promise<Sear
                   {/* Trend sparkline */}
                   {(item.monthly_searches?.length ?? 0) > 0 && (
                     <div className="mt-2">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">AI volume trend</p>
+                      <p className="nexo-label mb-0.5">AI volume trend</p>
                       <Sparkline monthly={item.monthly_searches} />
                     </div>
                   )}
@@ -379,31 +379,31 @@ async function AiOptimizationPage({ searchParams }: { searchParams: Promise<Sear
 
       {/* Empty state */}
       {!hasQuery && !error && (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm px-6 py-16 text-center">
-          <p className="text-slate-400 text-sm">Enter a keyword or domain above to see how AI models mention it.</p>
-          <p className="text-slate-300 text-xs mt-1">Powered by DataForSEO LLM Mentions Search API.</p>
+        <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-6 py-16 text-center">
+          <p className="text-nexo-faint text-sm">Enter a keyword or domain above to see how AI models mention it.</p>
+          <p className="text-nexo-faint text-xs mt-1">Powered by DataForSEO LLM Mentions Search API.</p>
         </div>
       )}
 
       {history.length > 0 && (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-            <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">History</h2>
+        <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+          <div className="px-6 py-4 border-b border-nexo-border">
+            <h2 className="nexo-label">History</h2>
           </div>
-          <div className="divide-y divide-slate-50 dark:divide-slate-800">
+          <div className="divide-y divide-nexo-border">
             {history.map((entry) => {
               const isActive = entry.id === historyId;
               return (
                 <a key={entry.id} href={`/dashboard/ai-optimization?history_id=${entry.id}#results`}
-                  className={`flex items-center gap-4 px-6 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${isActive ? 'bg-blue-50 dark:bg-blue-950' : ''}`}>
+                  className={`flex items-center gap-4 px-6 py-3.5 hover:bg-white/[0.04] transition-colors ${isActive ? 'bg-nexo-blue/10' : ''}`}>
                   <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-medium truncate ${isActive ? 'text-blue-700 dark:text-blue-400' : 'text-slate-800 dark:text-slate-200'}`}>{entry.target}</p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">
+                    <p className={`text-sm font-medium truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.target}</p>
+                    <p className="text-[11px] text-nexo-faint mt-0.5">
                       {PLATFORM_LABELS[entry.platform] ?? entry.platform}
                       {entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}
                     </p>
                   </div>
-                  <span className="shrink-0 text-[11px] text-slate-400">
+                  <span className="shrink-0 text-[11px] text-nexo-faint">
                     {new Date(entry.ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </span>
                 </a>

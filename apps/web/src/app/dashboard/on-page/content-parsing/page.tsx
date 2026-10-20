@@ -40,30 +40,30 @@ async function fetchContentParsing(url: string, login: string, pass: string): Pr
 }
 
 const BLOCK_STYLES: Record<string, { tag: string; cls: string }> = {
-  title:     { tag: 'h1', cls: 'text-2xl font-black text-slate-900 dark:text-white mb-3' },
-  heading_1: { tag: 'h1', cls: 'text-xl font-black text-slate-900 dark:text-white mt-6 mb-2' },
-  heading_2: { tag: 'h2', cls: 'text-lg font-bold text-slate-800 dark:text-slate-200 mt-5 mb-2' },
-  heading_3: { tag: 'h3', cls: 'text-base font-bold text-slate-700 dark:text-slate-300 mt-4 mb-1' },
-  heading_4: { tag: 'h4', cls: 'text-sm font-bold text-slate-700 dark:text-slate-300 mt-3 mb-1' },
-  paragraph: { tag: 'p',  cls: 'text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-2' },
-  list_item: { tag: 'li', cls: 'text-sm text-slate-600 dark:text-slate-400 leading-relaxed ml-4 list-disc' },
+  title:     { tag: 'h1', cls: 'text-2xl font-medium text-nexo-text mb-3' },
+  heading_1: { tag: 'h1', cls: 'text-xl font-medium text-nexo-text mt-6 mb-2' },
+  heading_2: { tag: 'h2', cls: 'text-lg font-medium text-nexo-text mt-5 mb-2' },
+  heading_3: { tag: 'h3', cls: 'text-base font-medium text-nexo-dim mt-4 mb-1' },
+  heading_4: { tag: 'h4', cls: 'text-sm font-medium text-nexo-dim mt-3 mb-1' },
+  paragraph: { tag: 'p',  cls: 'text-sm text-nexo-dim leading-relaxed mb-2' },
+  list_item: { tag: 'li', cls: 'text-sm text-nexo-dim leading-relaxed ml-4 list-disc' },
 };
 
 function StatCard({ label, value, sub, accent }: { label: string; value: string | number; sub?: string; accent?: string }) {
   return (
-    <div className={`rounded-xl border px-4 py-3 ${accent ?? 'bg-slate-50 border-slate-100 dark:bg-slate-800 dark:border-slate-700'}`}>
-      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{label}</p>
-      <p className="text-lg font-black text-slate-900 dark:text-white">{value}</p>
-      {sub && <p className="text-[11px] text-slate-400 mt-0.5">{sub}</p>}
+    <div className={`rounded-nexo-lg border px-4 py-3 ${accent ?? 'bg-white/[0.02] border-nexo-border'}`}>
+      <p className="nexo-label mb-1">{label}</p>
+      <p className="text-lg font-medium text-nexo-text">{value}</p>
+      {sub && <p className="text-[11px] text-nexo-faint mt-0.5">{sub}</p>}
     </div>
   );
 }
 
 function scoreLabel(score?: number) {
   if (score == null) return null;
-  if (score >= 80) return { label: 'Good', cls: 'text-emerald-600' };
-  if (score >= 50) return { label: 'Average', cls: 'text-amber-500' };
-  return { label: 'Poor', cls: 'text-red-500' };
+  if (score >= 80) return { label: 'Good', cls: 'text-nexo-ice' };
+  if (score >= 50) return { label: 'Average', cls: 'text-nexo-warn-text' };
+  return { label: 'Poor', cls: 'text-nexo-danger-text' };
 }
 
 async function ContentParsingPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
@@ -92,27 +92,27 @@ async function ContentParsingPage({ searchParams }: { searchParams: Promise<Sear
   return (
     <div className="space-y-6">
       <div>
-        <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 mb-1">
-          <a href="/dashboard/on-page" className="hover:text-slate-600 transition-colors">On Page</a>
-          <span className="text-slate-200">/</span>
-          <span className="text-slate-600">Content Parsing</span>
+        <div className="nexo-label flex items-center gap-2 mb-1">
+          <a href="/dashboard/on-page" className="hover:text-white transition-colors">On Page</a>
+          <span className="text-nexo-text">/</span>
+          <span className="text-nexo-dim">Content Parsing</span>
         </div>
-        <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Content Parsing</h1>
-        <p className="text-sm text-slate-400 mt-1">Extract and structure all content from a URL — headings, paragraphs, readability, categories.</p>
+        <h1 className="nexo-h1">Content Parsing</h1>
+        <p className="text-sm text-nexo-faint mt-1">Extract and structure all content from a URL — headings, paragraphs, readability, categories.</p>
       </div>
 
-      <SearchForm className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4" btnLabel="Parse page" btnClassName="w-full bg-slate-900 dark:bg-slate-700 text-white font-black uppercase tracking-widest text-xs py-3 rounded-xl hover:bg-blue-600 transition-colors" disabled={!creds}>
+      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Parse page" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors" disabled={!creds}>
         <div>
-          <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Page URL</label>
+          <label className="nexo-label block mb-1.5">Page URL</label>
           <input type="text" name="url" defaultValue={rawUrl} placeholder="https://example.com/page" required
-            className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono bg-white dark:bg-slate-800" />
+            className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky font-mono" />
         </div>
         {!creds && (
-          <p className="text-xs text-amber-600 dark:text-amber-400">Configure DataForSEO credentials in Settings to use this tool.</p>
+          <p className="text-xs text-nexo-warn-text">Configure DataForSEO credentials in Settings to use this tool.</p>
         )}
       </SearchForm>
 
-      {error && <div className="bg-red-50 dark:bg-red-950 border border-red-100 text-red-600 dark:text-red-400 text-sm rounded-xl px-4 py-3">{error}</div>}
+      {error && <div className="bg-nexo-danger/10 border border-nexo-danger/40 text-nexo-danger-text text-sm rounded-nexo-lg px-4 py-3">{error}</div>}
 
       {result && (
         <div className="space-y-6">
@@ -125,7 +125,7 @@ async function ContentParsingPage({ searchParams }: { searchParams: Promise<Sear
               <StatCard
                 label="Quality score"
                 value={`${info.content_quality_score.toFixed(0)} ${sc?.label ?? ''}`}
-                accent={info.content_quality_score >= 80 ? 'bg-emerald-50 border-emerald-200 dark:bg-emerald-950 dark:border-emerald-800' : info.content_quality_score >= 50 ? 'bg-amber-50 border-amber-200' : 'bg-red-50 border-red-200'}
+                accent={info.content_quality_score >= 80 ? 'bg-nexo-ice/10 border-nexo-ice/30' : info.content_quality_score >= 50 ? 'bg-nexo-warn/10 border-nexo-warn/40' : 'bg-nexo-danger/10 border-nexo-danger/40'}
               />
             )}
             {info?.automated_readability_index != null && (
@@ -135,35 +135,35 @@ async function ContentParsingPage({ searchParams }: { searchParams: Promise<Sear
 
           {/* Meta */}
           {result.meta && (
-            <div id="results" className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-                <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">Meta</h2>
+            <div id="results" className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+              <div className="px-6 py-4 border-b border-nexo-border">
+                <h2 className="nexo-label">Meta</h2>
               </div>
               <div className="p-6 space-y-3 text-sm">
                 {result.meta.title && (
                   <div>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block mb-1">Title</span>
-                    <p className="text-slate-900 dark:text-slate-200 font-medium">{result.meta.title}</p>
+                    <span className="nexo-label block mb-1">Title</span>
+                    <p className="text-nexo-text font-medium">{result.meta.title}</p>
                   </div>
                 )}
                 {result.meta.description && (
                   <div>
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block mb-1">Description</span>
-                    <p className="text-slate-600 dark:text-slate-400">{result.meta.description}</p>
+                    <span className="nexo-label block mb-1">Description</span>
+                    <p className="text-nexo-dim">{result.meta.description}</p>
                   </div>
                 )}
                 <div className="flex gap-4 flex-wrap pt-1">
                   {result.meta.robots && (
                     <div>
-                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block mb-0.5">Robots</span>
-                      <code className="text-xs font-mono text-slate-600 dark:text-slate-400">{result.meta.robots}</code>
+                      <span className="nexo-label block mb-0.5">Robots</span>
+                      <code className="text-xs font-mono text-nexo-dim">{result.meta.robots}</code>
                     </div>
                   )}
                   {result.meta.canonical && (
                     <div className="min-w-0">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block mb-0.5">Canonical</span>
+                      <span className="nexo-label block mb-0.5">Canonical</span>
                       <a href={result.meta.canonical} target="_blank" rel="noopener noreferrer"
-                        className="text-xs font-mono text-blue-600 hover:underline truncate block max-w-xs">{result.meta.canonical}</a>
+                        className="text-xs font-mono text-nexo-sky hover:underline truncate block max-w-xs">{result.meta.canonical}</a>
                     </div>
                   )}
                 </div>
@@ -173,13 +173,13 @@ async function ContentParsingPage({ searchParams }: { searchParams: Promise<Sear
 
           {/* Categories */}
           {result.page_category && result.page_category.length > 0 && (
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-6">
-              <h2 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-3">Page categories</h2>
+            <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6">
+              <h2 className="nexo-label mb-3">Page categories</h2>
               <div className="flex gap-2 flex-wrap">
                 {result.page_category.map((cat, i) => (
-                  <span key={i} className="text-[11px] font-semibold px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400 border border-blue-100 dark:border-blue-900">
+                  <span key={i} className="text-[11px] font-semibold px-3 py-1 rounded-full bg-nexo-blue/10 text-nexo-sky border border-nexo-border-strong">
                     {cat.name ?? cat.code}
-                    {cat.confidence != null && <span className="ml-1 text-blue-400">{(cat.confidence * 100).toFixed(0)}%</span>}
+                    {cat.confidence != null && <span className="ml-1 text-nexo-sky">{(cat.confidence * 100).toFixed(0)}%</span>}
                   </span>
                 ))}
               </div>
@@ -188,10 +188,10 @@ async function ContentParsingPage({ searchParams }: { searchParams: Promise<Sear
 
           {/* Content blocks */}
           {blocks.length > 0 && (
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">Content structure</h2>
-                <span className="text-[11px] text-slate-400">{blocks.length} blocks</span>
+            <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+              <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between">
+                <h2 className="nexo-label">Content structure</h2>
+                <span className="text-[11px] text-nexo-faint">{blocks.length} blocks</span>
               </div>
               <div className="p-6 max-h-[600px] overflow-y-auto scrollbar-thin">
                 {blocks.map((block, i) => {

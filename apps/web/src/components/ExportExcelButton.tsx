@@ -45,7 +45,7 @@ export default function ExportExcelButton({ sheets, filename }: { sheets: Export
 
   return (
     <button type="button" onClick={download} disabled={sheets.every((sheet) => sheet.data.length === 0)}
-      className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-emerald-600 disabled:opacity-40 disabled:hover:text-slate-500 transition-colors"
+      className="nexo-label inline-flex items-center gap-1.5 hover:text-nexo-ice disabled:opacity-40 disabled:hover:text-nexo-dim transition-colors"
       title="Export to Excel">
       <Download className="w-3.5 h-3.5" /> Excel
     </button>

@@ -74,17 +74,17 @@ export default function ProjectSync({ projectId, projectName }: { projectId: str
   return (
     <div
       role="status"
-      className="fixed bottom-5 right-5 z-50 flex max-w-sm items-start gap-3 rounded-xl border border-blue-200 bg-white px-4 py-3 text-sm shadow-xl shadow-slate-200/70 dark:border-blue-900 dark:bg-slate-900 dark:shadow-black/30"
+      className="fixed bottom-5 right-5 z-50 flex max-w-sm items-start gap-3 rounded-nexo-lg border border-nexo-border-strong bg-nexo-surface px-4 py-3 text-sm"
     >
-      <ArrowLeftRight className="mt-0.5 h-4 w-4 shrink-0 text-blue-600 dark:text-blue-400" aria-hidden="true" />
-      <p className="text-slate-600 dark:text-slate-300">
-        Now showing <span className="font-semibold text-slate-900 dark:text-white">{notice}</span>: the active project was switched in another window.
+      <ArrowLeftRight className="mt-0.5 h-4 w-4 shrink-0 text-nexo-sky" aria-hidden="true" />
+      <p className="text-nexo-dim">
+        Now showing <span className="font-semibold text-nexo-text">{notice}</span>: the active project was switched in another window.
       </p>
       <button
         type="button"
         onClick={() => setNotice(null)}
         aria-label="Dismiss"
-        className="-mr-1 shrink-0 rounded-md p-0.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+        className="-mr-1 shrink-0 rounded-md p-0.5 text-nexo-faint transition-colors hover:bg-white/[0.04] hover:text-white"
       >
         <X className="h-4 w-4" />
       </button>

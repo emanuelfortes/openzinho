@@ -211,40 +211,40 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
     const isActive = entry.series_id === gridEntry?.series_id;
     const isPending = entry.status === 'pending';
     return (
-      <div key={entry.id} className={`px-5 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors ${isActive ? 'bg-blue-50 dark:bg-blue-950' : ''}`}>
+      <div key={entry.id} className={`px-5 py-3.5 hover:bg-white/[0.04] transition-colors ${isActive ? 'bg-nexo-blue/10' : ''}`}>
         <a href={`/dashboard/geo-grid?grid_history_id=${entry.id}#results`} className="block min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <p className={`text-sm font-bold truncate ${isActive ? 'text-blue-700' : 'text-slate-800 dark:text-slate-200'}`}>
+            <p className={`text-sm font-medium truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>
               {entry.keyword}
             </p>
-            <span className="text-[10px] font-black text-slate-400 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded shrink-0">{entry.grid_size}×{entry.grid_size}</span>
+            <span className="text-[10px] font-medium text-nexo-faint bg-nexo-surface-2 px-1.5 py-0.5 rounded shrink-0">{entry.grid_size}×{entry.grid_size}</span>
             {isPending && (
-              <span className="text-[10px] font-black text-amber-600 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded shrink-0">Pending</span>
+              <span className="text-[10px] font-medium text-nexo-warn-text bg-nexo-warn/10 border border-nexo-warn/40 px-1.5 py-0.5 rounded shrink-0">Pending</span>
             )}
           </div>
-          <p className="text-[11px] text-slate-400 mt-0.5 truncate">
+          <p className="text-[11px] text-nexo-faint mt-0.5 truncate">
             {entry.target} · {formatDistance(entry.spacing_km, distanceUnit)} spacing
             {entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}
           </p>
           {entry.summary && (
             <div className="flex items-center gap-2 mt-1.5">
-              <div className="flex-1 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                <div className="h-full bg-emerald-500" style={{ width: `${entry.summary.ato}%` }} />
+              <div className="flex-1 h-1.5 bg-nexo-surface-2 rounded-full overflow-hidden">
+                <div className="h-full bg-nexo-ice" style={{ width: `${entry.summary.ato}%` }} />
               </div>
-              <span className="text-[10px] font-black text-emerald-600 tabular-nums shrink-0">{entry.summary.ato}%</span>
-              <span className="text-[10px] text-slate-400 shrink-0">
+              <span className="text-[10px] font-medium text-nexo-ice tabular-nums shrink-0">{entry.summary.ato}%</span>
+              <span className="text-[10px] text-nexo-faint shrink-0">
                 {entry.summary.avgRank !== null ? `avg #${entry.summary.avgRank}` : 'not found'} · {entry.summary.foundCount}/{entry.summary.totalPoints}
               </span>
             </div>
           )}
         </a>
         <div className="flex items-center justify-between gap-3 mt-1.5">
-          <span className="text-[11px] text-slate-400">{formatDate(entry.ts)}</span>
+          <span className="text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>
           <div className="flex items-center gap-3">
           <DeleteMonitorButton runId={entry.id} compact />
           <a
             href={gridRerunUrl(entry)}
-            className="text-[10px] font-black uppercase tracking-widest text-emerald-600 hover:text-emerald-800 transition-colors"
+            className="text-[10px] font-medium uppercase tracking-widest text-nexo-ice hover:text-nexo-ice transition-colors"
             title="Run this monitor now"
           >
             Run now ↻
@@ -259,46 +259,46 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
     <GridPreferencesProvider value={gridPreferences}>
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Geo-grid monitors</h1>
-        <p className="text-sm text-slate-400 mt-1">Track a keyword and target domain across a location, then revisit its map over time.</p>
+        <h1 className="nexo-h1">Geo-grid monitors</h1>
+        <p className="text-sm text-nexo-faint mt-1">Track a keyword and target domain across a location, then revisit its map over time.</p>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6 items-start">
         <div className="flex-1 min-w-0 space-y-6">
-          <details className="group rounded-2xl border border-dashed border-blue-200 bg-blue-50/40 p-5 dark:border-blue-900/70 dark:bg-blue-950/20" open={latestBySeries.length === 0 || !!gridError}>
+          <details className="group rounded-nexo-lg border border-dashed border-nexo-border-strong bg-nexo-blue/10 p-5" open={latestBySeries.length === 0 || !!gridError}>
             <summary className="cursor-pointer list-none">
               <div className="flex items-center justify-between gap-4">
                 <div>
-                  <p className="text-sm font-black text-slate-900 dark:text-white">Add a location and keyword to monitor</p>
-                  <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">Choose the map center, keyword, and target domain or business.</p>
+                  <p className="text-sm font-medium text-nexo-text">Add a location and keyword to monitor</p>
+                  <p className="mt-0.5 text-xs text-nexo-dim">Choose the map center, keyword, and target domain or business.</p>
                 </div>
-                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-blue-600 text-lg font-medium text-white transition-transform group-open:rotate-45">+</span>
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-nexo bg-nexo-blue text-lg font-medium text-white transition-transform group-open:rotate-45">+</span>
               </div>
             </summary>
-            <div className="mt-5 border-t border-blue-100 pt-5 dark:border-blue-900/60"><LocalFinderForm defaults={formDefaults} /></div>
+            <div className="mt-5 border-t border-nexo-border-strong pt-5"><LocalFinderForm defaults={formDefaults} /></div>
           </details>
 
           {!gridEntry && !gridError && latestBySeries.length > 0 && (
             <section aria-labelledby="monitor-list-title">
               <div className="flex items-end justify-between gap-4">
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-[0.18em] text-blue-600 dark:text-blue-400">Your monitoring</p>
-                  <h2 id="monitor-list-title" className="mt-1 text-xl font-black tracking-tight text-slate-900 dark:text-white">Keyword &amp; location pairs</h2>
+                  <p className="nexo-section">Your monitoring</p>
+                  <h2 id="monitor-list-title" className="mt-1 text-xl font-medium tracking-tight text-nexo-text">Keyword &amp; location pairs</h2>
                 </div>
-                <span className="text-xs font-bold tabular-nums text-slate-400">{latestBySeries.length} active</span>
+                <span className="text-xs font-medium tabular-nums text-nexo-faint">{latestBySeries.length} active</span>
               </div>
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 {latestBySeries.map((entry) => (
-                  <a key={entry.id} href={`/dashboard/geo-grid?grid_history_id=${entry.id}#results`} className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 transition-all hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-lg hover:shadow-blue-950/5 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-blue-800">
+                  <a key={entry.id} href={`/dashboard/geo-grid?grid_history_id=${entry.id}#results`} className="group relative overflow-hidden rounded-nexo-lg border border-nexo-border bg-nexo-surface p-5 transition-all hover:-translate-y-0.5 hover:border-nexo-border-strong">
                     <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0"><p className="truncate text-base font-black text-slate-900 dark:text-white">{entry.keyword}</p><p className="mt-1 truncate text-xs font-semibold text-blue-600 dark:text-blue-400">{entry.target}</p></div>
-                      <span className="shrink-0 rounded-md bg-slate-100 px-2 py-1 text-[10px] font-black tabular-nums text-slate-500 dark:bg-slate-800 dark:text-slate-400">{entry.grid_size}×{entry.grid_size}</span>
+                      <div className="min-w-0"><p className="truncate text-base font-medium text-nexo-text">{entry.keyword}</p><p className="mt-1 truncate text-xs font-semibold text-nexo-sky">{entry.target}</p></div>
+                      <span className="shrink-0 rounded-md bg-nexo-surface-2 px-2 py-1 text-[10px] font-medium tabular-nums text-nexo-dim">{entry.grid_size}×{entry.grid_size}</span>
                     </div>
-                    <div className="mt-5 flex items-end justify-between gap-3 border-t border-slate-100 pt-3 dark:border-slate-800">
-                      <div className="text-[11px] text-slate-400"><p>{entry.center}</p><p className="mt-0.5">Last run {formatDate(entry.ts)}</p></div>
-                      {entry.summary ? <div className="text-right"><p className="text-lg font-black tabular-nums text-emerald-600">{entry.summary.ato}%</p><p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">visibility</p></div> : <p className="text-[10px] font-black uppercase tracking-widest text-amber-600">Processing</p>}
+                    <div className="mt-5 flex items-end justify-between gap-3 border-t border-nexo-border pt-3">
+                      <div className="text-[11px] text-nexo-faint"><p>{entry.center}</p><p className="mt-0.5">Last run {formatDate(entry.ts)}</p></div>
+                      {entry.summary ? <div className="text-right"><p className="text-lg font-medium tabular-nums text-nexo-ice">{entry.summary.ato}%</p><p className="nexo-label">visibility</p></div> : <p className="text-[10px] font-medium uppercase tracking-widest text-nexo-warn-text">Processing</p>}
                     </div>
-                    <span className="mt-4 block text-[10px] font-black uppercase tracking-widest text-slate-400 transition-colors group-hover:text-blue-600">Open monitor →</span>
+                    <span className="nexo-label mt-4 block transition-colors group-hover:text-nexo-sky">Open monitor →</span>
                   </a>
                 ))}
               </div>
@@ -307,7 +307,7 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
 
           <div id="results">
             {gridError && (
-              <div className="bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl px-4 py-3">{gridError}</div>
+              <div className="bg-nexo-danger/10 border border-nexo-danger/40 text-nexo-danger-text text-sm rounded-nexo-lg px-4 py-3">{gridError}</div>
             )}
             {gridPending && gridEntry && (
               <GridPending

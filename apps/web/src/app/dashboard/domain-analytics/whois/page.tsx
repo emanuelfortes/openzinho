@@ -107,9 +107,9 @@ function formatDate(ts: number) {
 
 function StatCard({ label, value }: { label: string; value: string | number | undefined }) {
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 px-5 py-4 shadow-sm">
-      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{label}</p>
-      <p className="text-xl font-black text-slate-900 dark:text-white mt-1 tabular-nums">{value ?? '—'}</p>
+    <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
+      <p className="nexo-label">{label}</p>
+      <p className="text-xl font-medium text-nexo-text mt-1 tabular-nums">{value ?? '—'}</p>
     </div>
   );
 }
@@ -179,7 +179,7 @@ async function WhoisPage({ searchParams }: { searchParams: Promise<SearchParams>
 
   const expiresIn = daysUntil(result?.expiration_datetime);
   const expiresColor = expiresIn !== null
-    ? expiresIn < 30 ? 'text-red-600' : expiresIn < 90 ? 'text-amber-600' : 'text-emerald-600'
+    ? expiresIn < 30 ? 'text-nexo-danger-text' : expiresIn < 90 ? 'text-nexo-warn-text' : 'text-nexo-ice'
     : '';
 
   const org = result?.metrics?.organic;
@@ -189,30 +189,30 @@ async function WhoisPage({ searchParams }: { searchParams: Promise<SearchParams>
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Whois</h1>
-        <p className="text-sm text-slate-400 mt-1">Domain registration data with traffic and backlink metrics.</p>
+        <h1 className="nexo-h1">Whois</h1>
+        <p className="text-sm text-nexo-faint mt-1">Domain registration data with traffic and backlink metrics.</p>
       </div>
 
       {/* Form */}
       <SearchForm
-        className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm space-y-4"
+        className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4"
         btnLabel={<>Lookup<span className="font-mono text-[10px] opacity-50 ml-1.5">~${PRICE_WHOIS.toFixed(3)}</span></>}
-        btnClassName="w-full bg-slate-900 dark:bg-slate-700 text-white font-black uppercase tracking-widest text-xs py-3 rounded-xl hover:bg-blue-600 transition-colors"
+        btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors"
       >
         <div>
-          <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Domain</label>
+          <label className="nexo-label block mb-1.5">Domain</label>
           <input
             type="text" name="domain"
             defaultValue={displayDomain}
             placeholder="e.g. example.com"
             required
-            className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono bg-white dark:bg-slate-900 transition-all"
+            className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky font-mono transition-all"
           />
         </div>
       </SearchForm>
 
       {error && (
-        <div className="bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl px-4 py-3">{error}</div>
+        <div className="bg-nexo-danger/10 border border-nexo-danger/40 text-nexo-danger-text text-sm rounded-nexo-lg px-4 py-3">{error}</div>
       )}
 
       {hasQuery && !error && result && (
@@ -220,43 +220,43 @@ async function WhoisPage({ searchParams }: { searchParams: Promise<SearchParams>
           {/* Header */}
           <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-black uppercase tracking-widest text-slate-400">Domain</span>
-              <span className="font-mono font-bold text-slate-900 dark:text-white">{result.domain ?? displayDomain}</span>
+              <span className="nexo-label">Domain</span>
+              <span className="font-mono font-medium text-nexo-text">{result.domain ?? displayDomain}</span>
               {isFromHistory && (
-                <span className="text-[10px] font-black uppercase tracking-widest text-blue-500 bg-blue-50 px-2 py-0.5 rounded-md">History</span>
+                <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>
               )}
             </div>
             {result.registered !== undefined && (
-              <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md ${result.registered ? 'text-emerald-600 bg-emerald-50' : 'text-slate-400 bg-slate-100'}`}>
+              <span className={`text-[10px] font-medium uppercase tracking-widest px-2 py-0.5 rounded-md ${result.registered ? 'text-nexo-ice bg-nexo-ice/10' : 'text-nexo-faint bg-nexo-surface-2'}`}>
                 {result.registered ? 'Registered' : 'Not registered'}
               </span>
             )}
             {cost !== undefined && (
-              <span className="text-[10px] font-mono text-slate-400 ml-auto">cost: ${cost.toFixed(4)}</span>
+              <span className="text-[10px] font-mono text-nexo-faint ml-auto">cost: ${cost.toFixed(4)}</span>
             )}
           </div>
 
           {/* Registration info */}
-          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-5 space-y-4">
-            <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">Registration</h2>
+          <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-5 space-y-4">
+            <h2 className="nexo-label">Registration</h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Registrar</p>
-                <p className="text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">{result.registrar ?? '—'}</p>
+                <p className="nexo-label">Registrar</p>
+                <p className="text-sm font-medium text-nexo-text mt-0.5">{result.registrar ?? '—'}</p>
               </div>
               <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Created</p>
-                <p className="text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">{fmtDate(result.created_datetime)}</p>
+                <p className="nexo-label">Created</p>
+                <p className="text-sm font-medium text-nexo-text mt-0.5">{fmtDate(result.created_datetime)}</p>
               </div>
               <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Updated</p>
-                <p className="text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">{fmtDate(result.updated_datetime)}</p>
+                <p className="nexo-label">Updated</p>
+                <p className="text-sm font-medium text-nexo-text mt-0.5">{fmtDate(result.updated_datetime)}</p>
               </div>
               <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Expires</p>
-                <p className={`text-sm font-bold mt-0.5 ${expiresColor}`}>{fmtDate(result.expiration_datetime)}</p>
+                <p className="nexo-label">Expires</p>
+                <p className={`text-sm font-medium mt-0.5 ${expiresColor}`}>{fmtDate(result.expiration_datetime)}</p>
                 {expiresIn !== null && (
-                  <p className={`text-[10px] font-black mt-0.5 ${expiresColor}`}>
+                  <p className={`text-[10px] font-medium mt-0.5 ${expiresColor}`}>
                     {expiresIn > 0 ? `${expiresIn}d remaining` : `Expired ${Math.abs(expiresIn)}d ago`}
                   </p>
                 )}
@@ -264,20 +264,20 @@ async function WhoisPage({ searchParams }: { searchParams: Promise<SearchParams>
             </div>
             {result.epp_status_codes && result.epp_status_codes.length > 0 && (
               <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1.5">EPP Status</p>
+                <p className="nexo-label mb-1.5">EPP Status</p>
                 <div className="flex flex-wrap gap-1.5">
                   {result.epp_status_codes.map((s, i) => (
-                    <span key={i} className="text-[10px] font-mono bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 px-2 py-0.5 rounded-md">{s}</span>
+                    <span key={i} className="text-[10px] font-mono bg-white/[0.02] border border-nexo-border text-nexo-dim px-2 py-0.5 rounded-md">{s}</span>
                   ))}
                 </div>
               </div>
             )}
             {result.nameservers && result.nameservers.length > 0 && (
               <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1.5">Nameservers</p>
+                <p className="nexo-label mb-1.5">Nameservers</p>
                 <div className="flex flex-wrap gap-1.5">
                   {result.nameservers.map((ns, i) => (
-                    <span key={i} className="text-[10px] font-mono bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 px-2 py-0.5 rounded-md">{ns}</span>
+                    <span key={i} className="text-[10px] font-mono bg-white/[0.02] border border-nexo-border text-nexo-dim px-2 py-0.5 rounded-md">{ns}</span>
                   ))}
                 </div>
               </div>
@@ -287,7 +287,7 @@ async function WhoisPage({ searchParams }: { searchParams: Promise<SearchParams>
           {/* Backlinks */}
           {bl && (
             <div>
-              <h2 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-3">Backlinks</h2>
+              <h2 className="nexo-label mb-3">Backlinks</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 <StatCard label="Backlinks" value={fmt(bl.backlinks)} />
                 <StatCard label="Referring Domains" value={fmt(bl.referring_domains)} />
@@ -302,7 +302,7 @@ async function WhoisPage({ searchParams }: { searchParams: Promise<SearchParams>
           {/* Organic traffic */}
           {org && (
             <div>
-              <h2 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-3">Organic Search</h2>
+              <h2 className="nexo-label mb-3">Organic Search</h2>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <StatCard label="Keywords" value={fmt(org.count)} />
                 <StatCard label="Traffic (ETV)" value={fmt(org.etv)} />
@@ -318,8 +318,8 @@ async function WhoisPage({ searchParams }: { searchParams: Promise<SearchParams>
                 { label: '#21–30', value: org.pos_21_30 },
                 { label: '#31–100', value: (org.pos_31_40 ?? 0) + (org.pos_41_50 ?? 0) + (org.pos_51_60 ?? 0) + (org.pos_61_70 ?? 0) + (org.pos_71_80 ?? 0) + (org.pos_81_90 ?? 0) + (org.pos_91_100 ?? 0) },
               ].some(({ value }) => value) && (
-                <div className="mt-3 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-5">
-                  <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">Position Distribution</h3>
+                <div className="mt-3 bg-nexo-surface rounded-nexo-lg border border-nexo-border p-5">
+                  <h3 className="nexo-label mb-4">Position Distribution</h3>
                   <div className="space-y-2">
                     {[
                       { label: '#1', value: org.pos_1 },
@@ -334,11 +334,11 @@ async function WhoisPage({ searchParams }: { searchParams: Promise<SearchParams>
                       return (
                         <div key={label}>
                           <div className="flex items-center justify-between mb-1">
-                            <span className="text-xs font-mono font-bold text-slate-600 dark:text-slate-300 w-12">{label}</span>
-                            <span className="text-xs font-mono text-slate-500">{fmt(value)} <span className="text-slate-300">({pct}%)</span></span>
+                            <span className="text-xs font-mono font-medium text-nexo-dim w-12">{label}</span>
+                            <span className="text-xs font-mono text-nexo-dim">{fmt(value)} <span className="text-nexo-faint">({pct}%)</span></span>
                           </div>
-                          <div className="h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                            <div className="h-full bg-blue-500 rounded-full" style={{ width: `${pct}%` }} />
+                          <div className="h-1.5 bg-nexo-surface-2 rounded-full overflow-hidden">
+                            <div className="h-full bg-nexo-blue rounded-full" style={{ width: `${pct}%` }} />
                           </div>
                         </div>
                       );
@@ -352,7 +352,7 @@ async function WhoisPage({ searchParams }: { searchParams: Promise<SearchParams>
           {/* Paid */}
           {paid && (paid.count ?? 0) > 0 && (
             <div>
-              <h2 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-3">Paid Search</h2>
+              <h2 className="nexo-label mb-3">Paid Search</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 <StatCard label="Paid Keywords" value={fmt(paid.count)} />
                 <StatCard label="Paid Traffic (ETV)" value={fmt(paid.etv)} />
@@ -365,26 +365,26 @@ async function WhoisPage({ searchParams }: { searchParams: Promise<SearchParams>
 
       {/* History */}
       {history.length > 0 && (
-        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700">
-            <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">History</h2>
+        <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+          <div className="px-6 py-4 border-b border-nexo-border">
+            <h2 className="nexo-label">History</h2>
           </div>
-          <div className="divide-y divide-slate-50 dark:divide-slate-700">
+          <div className="divide-y divide-nexo-border">
             {history.map((entry) => {
               const isActive = entry.id === historyId;
               return (
                 <a
                   key={entry.id}
                   href={`/dashboard/domain-analytics/whois?history_id=${entry.id}#results`}
-                  className={`flex items-center gap-4 px-6 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors ${isActive ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}
+                  className={`flex items-center gap-4 px-6 py-3.5 hover:bg-white/[0.04] transition-colors ${isActive ? 'bg-nexo-blue/10' : ''}`}
                 >
                   <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-bold font-mono truncate ${isActive ? 'text-blue-700 dark:text-blue-400' : 'text-slate-800 dark:text-slate-200'}`}>{entry.domain}</p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">
+                    <p className={`text-sm font-medium font-mono truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.domain}</p>
+                    <p className="text-[11px] text-nexo-faint mt-0.5">
                       {entry.cost !== undefined ? `$${entry.cost.toFixed(4)}` : ''}
                     </p>
                   </div>
-                  <span className="shrink-0 text-[11px] text-slate-400">{formatDate(entry.ts)}</span>
+                  <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>
                 </a>
               );
             })}

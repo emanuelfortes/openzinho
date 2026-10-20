@@ -34,7 +34,7 @@ const LABS_SUGGESTIONS: Suggestion[] = LABS_LOCATIONS.map((l) => ({
 }));
 
 const DEFAULT_CLASS =
-  'w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800';
+  'w-full px-4 py-2.5 border border-nexo-border rounded-nexo-lg text-sm text-nexo-text placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-nexo-sky bg-nexo-surface';
 
 function isoToFlag(iso: string): string {
   if (iso.length !== 2) return '';
@@ -134,7 +134,7 @@ export default function LocationPicker({ name, defaultValue = '', placeholder, r
         className={className ?? DEFAULT_CLASS}
       />
       {open && suggestions.length > 0 && (
-        <ul className="absolute z-20 mt-1 w-full max-h-64 overflow-y-auto bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg py-1">
+        <ul className="absolute z-20 mt-1 w-full max-h-64 overflow-y-auto bg-nexo-surface border border-nexo-border rounded-nexo-lg py-1">
           {suggestions.map((s, i) => (
             <li key={`${s.code}-${s.name}`}>
               <button
@@ -142,12 +142,12 @@ export default function LocationPicker({ name, defaultValue = '', placeholder, r
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => selectSuggestion(s)}
                 className={`w-full flex items-center gap-2 px-3 py-2 text-left text-sm transition-colors ${
-                  i === activeIndex ? 'bg-blue-50 dark:bg-blue-950' : 'hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                  i === activeIndex ? 'bg-nexo-blue/10' : 'hover:bg-white/[0.04]'
                 }`}
               >
                 {s.countryIso && <span className="shrink-0">{isoToFlag(s.countryIso)}</span>}
-                <span className="flex-1 truncate text-slate-800 dark:text-slate-200">{s.name}</span>
-                <span className="shrink-0 text-[9px] font-black uppercase tracking-wider text-slate-400 bg-slate-100 dark:bg-slate-700 rounded px-1.5 py-0.5">
+                <span className="flex-1 truncate text-nexo-text">{s.name}</span>
+                <span className="shrink-0 text-[9px] font-medium uppercase tracking-wider text-nexo-faint bg-nexo-surface-2 rounded px-1.5 py-0.5">
                   {s.type}
                 </span>
               </button>

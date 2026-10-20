@@ -1,6 +1,6 @@
 # Nexo: estado do trabalho e próximos passos
 
-Documento de passagem para continuar o rebranding em outra máquina. Atualizado em 19/10/2026.
+Documento de passagem para continuar o rebranding em outra máquina. Atualizado em 19/10/2026 (passo 4 concluído).
 
 ## Como começar na máquina nova
 
@@ -22,7 +22,7 @@ Referências visuais: `docs/Nexo Dashboard.dc.html`, `docs/Nexo Studio.dc.html` 
 | 1. Marca | Feito | `5c47e5c` |
 | 2. Tokens globais (Tailwind v4) | Feito | `10d8bb8` |
 | 3. Shell (layout, sidebar, header, login) | Feito | `4d95a8f` |
-| 4. Páginas | **Falta**; script pronto | – |
+| 4. Páginas | Feito | ver git log |
 | 5. Pins do Geo-grid | **Falta** | – |
 | 6. Tradução pt-BR | **Falta** | – |
 | 7. Studio (`src/` + `index.html` na raiz) | **Falta** | – |
@@ -73,12 +73,17 @@ O que ele faz:
 
 Ele **não** toca nos testes, nem em `lib/brand*`, `report-pdf-blocks`, `review-report-pdf` e `map-capture`.
 
-Depois de rodar, ainda falta:
-1. Revisar o diff e as telas principais. Os botões e chips coloridos do painel inicial (`lib/nav.ts`, `NavColor`) podem precisar de ajuste manual, já que o laranja e o amarelo viram cor de aviso.
-2. Remover o emoji 🎯 do estado vazio em `app/dashboard/rank-tracker/page.tsx`, perto da linha 191.
-3. Trocar à mão os controles segmentados (agendamento, dispositivo, unidade) por `nexo-seg` com `aria-selected`.
-4. Conferir as tabelas: o wrapper deve ter `overflow-x-auto` e o `thead` já está em caixa-alta 10px pelo `@layer base`.
-5. Rodar `npx tsc --noEmit`, `npm run lint`, `npx vitest run` e `npm run build`.
+Resultado (feito):
+- O codemod rodou em 138 arquivos. A regra de sombra foi corrigida: antes ela apagava também a variável JS `shadow` em `GridMap.tsx`.
+- Chips do painel inicial monocromáticos (laranja e amarelo viraram gelo, não cor de aviso).
+- Corrigido texto branco sobre fundo gelo (badges que eram verdes).
+- O cartão de saldo das Configurações e a barra "Start analysis" do Review Velocity eram contêineres escuros que o codemod tratou como botão; viraram `nexo-panel`.
+- `nexo-seg` no modo do AI Visibility, na granularidade do Review Velocity e nas abas do Broken Backlinks. Agendamento, dispositivo e unidade são `<select>` ou cartões, não segmentados.
+- Tabelas sem rolagem horizontal ganharam `overflow-x-auto`.
+- Emoji removido do Rank Tracker.
+- `tsc`, `lint`, `build` e 290 testes passam. No Windows, 7 arquivos de teste falham só na limpeza da pasta temporária (`EPERM` no `rmSync` com o SQLite aberto); já acontecia antes.
+
+Observação: a cor do texto vence `nexo-label` no CSS compilado, então botões com `nexo-label` e cor explícita ficam legíveis.
 
 ### Passo 5: pins do Geo-grid
 

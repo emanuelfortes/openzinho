@@ -108,21 +108,21 @@ function fmtDate(ts: number) {
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-  'content': 'bg-blue-50 border-blue-100 text-blue-700',
-  'analytics': 'bg-violet-50 border-violet-100 text-violet-700',
-  'marketing': 'bg-pink-50 border-pink-100 text-pink-700',
-  'sales': 'bg-emerald-50 border-emerald-100 text-emerald-700',
-  'add_ons': 'bg-amber-50 border-amber-100 text-amber-700',
-  'security': 'bg-red-50 border-red-100 text-red-700',
-  'web_development': 'bg-indigo-50 border-indigo-100 text-indigo-700',
-  'servers': 'bg-teal-50 border-teal-100 text-teal-700',
+  'content': 'bg-nexo-blue/10 border-nexo-border-strong text-nexo-sky',
+  'analytics': 'bg-nexo-blue/10 border-nexo-border-strong text-nexo-sky',
+  'marketing': 'bg-nexo-blue/10 border-nexo-border-strong text-nexo-sky',
+  'sales': 'bg-nexo-ice/10 border-nexo-ice/30 text-nexo-ice',
+  'add_ons': 'bg-nexo-warn/10 border-nexo-warn/40 text-nexo-warn-text',
+  'security': 'bg-nexo-danger/10 border-nexo-danger/40 text-nexo-danger-text',
+  'web_development': 'bg-nexo-blue/10 border-nexo-border-strong text-nexo-sky',
+  'servers': 'bg-nexo-blue/10 border-nexo-border-strong text-nexo-sky',
 };
 
 function categoryColor(cat: string) {
   for (const [key, val] of Object.entries(CATEGORY_COLORS)) {
     if (cat.toLowerCase().includes(key.toLowerCase())) return val;
   }
-  return 'bg-slate-50 border-slate-200 text-slate-600';
+  return 'bg-white/[0.02] border-nexo-border text-nexo-dim';
 }
 
 function formatLabel(slug: string) {
@@ -259,12 +259,12 @@ async function TechnologiesPage({ searchParams }: { searchParams: Promise<Search
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Technologies</h1>
-        <p className="text-sm text-slate-400 mt-1">Detect tech stacks or find domains by technology and keyword.</p>
+        <h1 className="nexo-h1">Technologies</h1>
+        <p className="text-sm text-nexo-faint mt-1">Detect tech stacks or find domains by technology and keyword.</p>
       </div>
 
       {/* Mode tabs */}
-      <div className="flex gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl w-fit">
+      <div className="flex gap-1 bg-nexo-surface-2 p-1 rounded-nexo-lg w-fit">
         {([
           { label: 'Analyze Domain', value: 'domain' },
           { label: 'Find Domains', value: 'find' },
@@ -272,10 +272,10 @@ async function TechnologiesPage({ searchParams }: { searchParams: Promise<Search
           <a
             key={tab.value}
             href={`/dashboard/domain-analytics/technologies?mode=${tab.value}`}
-            className={`px-4 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${
+            className={`px-4 py-1.5 rounded-nexo text-xs font-medium uppercase tracking-widest transition-all ${
               mode === tab.value
-                ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm'
-                : 'text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
+                ? 'bg-nexo-surface text-nexo-text shadow-sm'
+                : 'text-nexo-faint hover:text-white'
             }`}
           >
             {tab.label}
@@ -286,19 +286,19 @@ async function TechnologiesPage({ searchParams }: { searchParams: Promise<Search
       {/* Domain mode form */}
       {mode === 'domain' && (
         <SearchForm
-          className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm space-y-4"
+          className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4"
           btnLabel={<>Analyze<PriceTag price={PRICE_DOMAIN} /></>}
-          btnClassName="w-full bg-slate-900 dark:bg-slate-700 text-white font-black uppercase tracking-widest text-xs py-3 rounded-xl hover:bg-blue-600 transition-colors"
+          btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors"
         >
           <input type="hidden" name="mode" value="domain" />
           <div>
-            <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Domain</label>
+            <label className="nexo-label block mb-1.5">Domain</label>
             <input
               type="text" name="target"
               defaultValue={displayTarget}
               placeholder="e.g. example.com"
               required
-              className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono bg-white dark:bg-slate-900 transition-all"
+              className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky font-mono transition-all"
             />
           </div>
         </SearchForm>
@@ -307,37 +307,37 @@ async function TechnologiesPage({ searchParams }: { searchParams: Promise<Search
       {/* Find Domains form */}
       {mode === 'find' && (
         <SearchForm
-          className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm space-y-4"
+          className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4"
           btnLabel={<>Search<PriceTag price={PRICE_FIND} /></>}
-          btnClassName="w-full bg-slate-900 dark:bg-slate-700 text-white font-black uppercase tracking-widest text-xs py-3 rounded-xl hover:bg-blue-600 transition-colors"
+          btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors"
         >
           <input type="hidden" name="mode" value="find" />
-          <p className="text-xs text-slate-400">Fill one or both fields to narrow the search.</p>
+          <p className="text-xs text-nexo-faint">Fill one or both fields to narrow the search.</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Technology</label>
+              <label className="nexo-label block mb-1.5">Technology</label>
               <input
                 type="text" name="technology"
                 defaultValue={activeTech}
                 placeholder="e.g. WordPress, Shopify, React…"
-                className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-900 transition-all"
+                className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Keyword</label>
+              <label className="nexo-label block mb-1.5">Keyword</label>
               <input
                 type="text" name="keyword"
                 defaultValue={activeKw}
                 placeholder="e.g. plumbing, dentist…"
-                className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-900 transition-all"
+                className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky transition-all"
               />
             </div>
           </div>
           <div className="flex justify-end">
             <div className="w-32">
-              <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Results</label>
+              <label className="nexo-label block mb-1.5">Results</label>
               <select name="limit" defaultValue={String(limit)}
-                className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-900">
+                className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
                 <option value="10">10</option>
                 <option value="20">20</option>
                 <option value="50">50</option>
@@ -350,10 +350,10 @@ async function TechnologiesPage({ searchParams }: { searchParams: Promise<Search
 
       {/* Errors */}
       {mode === 'domain' && domainError && (
-        <div className="bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl px-4 py-3">{domainError}</div>
+        <div className="bg-nexo-danger/10 border border-nexo-danger/40 text-nexo-danger-text text-sm rounded-nexo-lg px-4 py-3">{domainError}</div>
       )}
       {mode === 'find' && findError && (
-        <div className="bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl px-4 py-3">{findError}</div>
+        <div className="bg-nexo-danger/10 border border-nexo-danger/40 text-nexo-danger-text text-sm rounded-nexo-lg px-4 py-3">{findError}</div>
       )}
 
       {/* ---- Domain results ---- */}
@@ -361,66 +361,66 @@ async function TechnologiesPage({ searchParams }: { searchParams: Promise<Search
         <>
           <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-black uppercase tracking-widest text-slate-400">Domain</span>
-              <span className="font-mono font-bold text-slate-900 dark:text-white">{domainResult.domain ?? displayTarget}</span>
+              <span className="nexo-label">Domain</span>
+              <span className="font-mono font-medium text-nexo-text">{domainResult.domain ?? displayTarget}</span>
               {isDomainFromHistory && (
-                <span className="text-[10px] font-black uppercase tracking-widest text-blue-500 bg-blue-50 px-2 py-0.5 rounded-md">History</span>
+                <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>
               )}
             </div>
             {domainResult.domain_rank !== undefined && (
               <div className="flex items-center gap-1.5">
-                <span className="text-xs font-black uppercase tracking-widest text-slate-400">DR</span>
-                <span className="font-mono font-bold text-slate-900 dark:text-white">{fmt(domainResult.domain_rank)}</span>
+                <span className="nexo-label">DR</span>
+                <span className="font-mono font-medium text-nexo-text">{fmt(domainResult.domain_rank)}</span>
               </div>
             )}
             {domainResult.country_iso_code && (
-              <span className="text-sm font-bold text-slate-500 uppercase">{domainResult.country_iso_code}</span>
+              <span className="text-sm font-medium text-nexo-dim uppercase">{domainResult.country_iso_code}</span>
             )}
             {totalTechs > 0 && (
               <div className="flex items-center gap-1.5">
-                <span className="text-xs font-black uppercase tracking-widest text-slate-400">Technologies</span>
-                <span className="font-mono font-bold text-slate-900 dark:text-white">{totalTechs}</span>
+                <span className="nexo-label">Technologies</span>
+                <span className="font-mono font-medium text-nexo-text">{totalTechs}</span>
               </div>
             )}
             {domainCost !== undefined && (
-              <span className="text-[10px] font-mono text-slate-400 ml-auto">cost: ${domainCost.toFixed(4)}</span>
+              <span className="text-[10px] font-mono text-nexo-faint ml-auto">cost: ${domainCost.toFixed(4)}</span>
             )}
           </div>
 
           {/* Domain meta */}
           {(domainResult.title || domainResult.emails?.length || domainResult.phone_numbers?.length || domainResult.social_graph_urls?.length) && (
-            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-5 space-y-3">
-              <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">Domain Info</h2>
-              {domainResult.title && <p className="text-sm font-bold text-slate-900 dark:text-white">{domainResult.title}</p>}
-              {domainResult.description && <p className="text-sm text-slate-500">{domainResult.description}</p>}
+            <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-5 space-y-3">
+              <h2 className="nexo-label">Domain Info</h2>
+              {domainResult.title && <p className="text-sm font-medium text-nexo-text">{domainResult.title}</p>}
+              {domainResult.description && <p className="text-sm text-nexo-dim">{domainResult.description}</p>}
               <div className="flex flex-wrap gap-4 pt-1">
                 {domainResult.emails && domainResult.emails.length > 0 && (
                   <div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Emails</p>
+                    <p className="nexo-label mb-1">Emails</p>
                     <div className="flex flex-wrap gap-1.5">
                       {domainResult.emails.map((e, i) => (
-                        <span key={i} className="text-xs font-mono bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 px-2 py-0.5 rounded-md">{e}</span>
+                        <span key={i} className="text-xs font-mono bg-white/[0.02] border border-nexo-border text-nexo-dim px-2 py-0.5 rounded-md">{e}</span>
                       ))}
                     </div>
                   </div>
                 )}
                 {domainResult.phone_numbers && domainResult.phone_numbers.length > 0 && (
                   <div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Phone</p>
+                    <p className="nexo-label mb-1">Phone</p>
                     <div className="flex flex-wrap gap-1.5">
                       {domainResult.phone_numbers.map((p, i) => (
-                        <span key={i} className="text-xs font-mono bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 px-2 py-0.5 rounded-md">{p}</span>
+                        <span key={i} className="text-xs font-mono bg-white/[0.02] border border-nexo-border text-nexo-dim px-2 py-0.5 rounded-md">{p}</span>
                       ))}
                     </div>
                   </div>
                 )}
                 {domainResult.social_graph_urls && domainResult.social_graph_urls.length > 0 && (
                   <div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Social</p>
+                    <p className="nexo-label mb-1">Social</p>
                     <div className="flex flex-wrap gap-1.5">
                       {domainResult.social_graph_urls.map((u, i) => (
                         <a key={i} href={u} target="_blank" rel="noopener noreferrer"
-                          className="text-xs font-mono bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-blue-600 hover:text-blue-800 px-2 py-0.5 rounded-md truncate max-w-[200px]">{u}</a>
+                          className="text-xs font-mono bg-white/[0.02] border border-nexo-border text-nexo-sky hover:text-white px-2 py-0.5 rounded-md truncate max-w-[200px]">{u}</a>
                       ))}
                     </div>
                   </div>
@@ -437,18 +437,18 @@ async function TechnologiesPage({ searchParams }: { searchParams: Promise<Search
                 const colorClass = categoryColor(category);
                 const uniqueCount = new Set(subEntries.flatMap(([, names]) => names)).size;
                 return (
-                  <div id="results" key={category} className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-                    <div className="px-5 py-3.5 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between">
-                      <h2 className="text-xs font-black uppercase tracking-widest text-slate-600 dark:text-slate-300">{formatLabel(category)}</h2>
-                      <span className="text-[10px] font-black text-slate-400">{uniqueCount}</span>
+                  <div id="results" key={category} className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+                    <div className="px-5 py-3.5 border-b border-nexo-border flex items-center justify-between">
+                      <h2 className="nexo-label">{formatLabel(category)}</h2>
+                      <span className="text-[10px] font-medium text-nexo-faint">{uniqueCount}</span>
                     </div>
                     <div className="p-4 space-y-3">
                       {subEntries.map(([subcat, names]) => (
                         <div key={subcat}>
-                          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1.5">{formatLabel(subcat)}</p>
+                          <p className="nexo-label mb-1.5">{formatLabel(subcat)}</p>
                           <div className="flex flex-wrap gap-2">
                             {names.map((name) => (
-                              <span key={name} className={`inline-flex items-center px-3 py-1.5 rounded-xl border text-xs font-bold ${colorClass}`}>
+                              <span key={name} className={`inline-flex items-center px-3 py-1.5 rounded-nexo-lg border text-xs font-medium ${colorClass}`}>
                                 {name}
                               </span>
                             ))}
@@ -461,28 +461,28 @@ async function TechnologiesPage({ searchParams }: { searchParams: Promise<Search
               })}
             </div>
           ) : (
-            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm px-6 py-12 text-center text-sm text-slate-400">
+            <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-6 py-12 text-center text-sm text-nexo-faint">
               No technologies detected for this domain.
             </div>
           )}
 
           {/* Domain history */}
           {domainHistory.length > 0 && (
-            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700">
-                <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">History</h2>
+            <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+              <div className="px-6 py-4 border-b border-nexo-border">
+                <h2 className="nexo-label">History</h2>
               </div>
-              <div className="divide-y divide-slate-50 dark:divide-slate-700">
+              <div className="divide-y divide-nexo-border">
                 {domainHistory.map((entry) => {
                   const isActive = entry.id === historyId;
                   return (
                     <a key={entry.id} href={`/dashboard/domain-analytics/technologies?mode=domain&history_id=${entry.id}#results`}
-                      className={`flex items-center gap-4 px-6 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors ${isActive ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}>
+                      className={`flex items-center gap-4 px-6 py-3.5 hover:bg-white/[0.04] transition-colors ${isActive ? 'bg-nexo-blue/10' : ''}`}>
                       <div className="flex-1 min-w-0">
-                        <p className={`text-sm font-bold font-mono truncate ${isActive ? 'text-blue-700 dark:text-blue-400' : 'text-slate-800 dark:text-slate-200'}`}>{entry.target}</p>
-                        {entry.cost !== undefined && <p className="text-[11px] text-slate-400 mt-0.5">${entry.cost.toFixed(4)}</p>}
+                        <p className={`text-sm font-medium font-mono truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.target}</p>
+                        {entry.cost !== undefined && <p className="text-[11px] text-nexo-faint mt-0.5">${entry.cost.toFixed(4)}</p>}
                       </div>
-                      <span className="shrink-0 text-[11px] text-slate-400">{fmtDate(entry.ts)}</span>
+                      <span className="shrink-0 text-[11px] text-nexo-faint">{fmtDate(entry.ts)}</span>
                     </a>
                   );
                 })}
@@ -498,31 +498,31 @@ async function TechnologiesPage({ searchParams }: { searchParams: Promise<Search
           <div className="flex items-center gap-4 flex-wrap">
             {activeTech && (
               <div className="flex items-center gap-1.5">
-                <span className="text-xs font-black uppercase tracking-widest text-slate-400">Technology</span>
-                <span className="px-2 py-0.5 rounded-lg bg-blue-50 border border-blue-100 text-blue-700 text-xs font-bold">{activeTech}</span>
+                <span className="nexo-label">Technology</span>
+                <span className="px-2 py-0.5 rounded-nexo bg-nexo-blue/10 border border-nexo-border-strong text-nexo-sky text-xs font-medium">{activeTech}</span>
               </div>
             )}
             {activeKw && (
               <div className="flex items-center gap-1.5">
-                <span className="text-xs font-black uppercase tracking-widest text-slate-400">Keyword</span>
-                <span className="px-2 py-0.5 rounded-lg bg-violet-50 border border-violet-100 text-violet-700 text-xs font-bold">&ldquo;{activeKw}&rdquo;</span>
+                <span className="nexo-label">Keyword</span>
+                <span className="px-2 py-0.5 rounded-nexo bg-nexo-blue/10 border border-nexo-border-strong text-nexo-sky text-xs font-medium">&ldquo;{activeKw}&rdquo;</span>
               </div>
             )}
             {isFindFromHistory && (
-              <span className="text-[10px] font-black uppercase tracking-widest text-blue-500 bg-blue-50 px-2 py-0.5 rounded-md">History</span>
+              <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>
             )}
             {findTotal !== undefined && (
               <div className="flex items-center gap-1.5 ml-auto">
-                <span className="text-xs font-black uppercase tracking-widest text-slate-400">Total</span>
-                <span className="font-mono font-bold text-slate-900 dark:text-white">{fmt(findTotal)}</span>
-                <span className="text-xs text-slate-400">domains</span>
-                {findCost !== undefined && <span className="text-[10px] font-mono text-slate-400 ml-2">· cost: ${findCost.toFixed(4)}</span>}
+                <span className="nexo-label">Total</span>
+                <span className="font-mono font-medium text-nexo-text">{fmt(findTotal)}</span>
+                <span className="text-xs text-nexo-faint">domains</span>
+                {findCost !== undefined && <span className="text-[10px] font-mono text-nexo-faint ml-2">· cost: ${findCost.toFixed(4)}</span>}
               </div>
             )}
           </div>
 
           {findItems.length === 0 ? (
-            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm px-6 py-12 text-center text-sm text-slate-400">
+            <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-6 py-12 text-center text-sm text-nexo-faint">
               No domains found.
             </div>
           ) : (
@@ -531,25 +531,25 @@ async function TechnologiesPage({ searchParams }: { searchParams: Promise<Search
 
           {/* Find history */}
           {findHistory.length > 0 && (
-            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-700">
-                <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">History</h2>
+            <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+              <div className="px-6 py-4 border-b border-nexo-border">
+                <h2 className="nexo-label">History</h2>
               </div>
-              <div className="divide-y divide-slate-50 dark:divide-slate-700">
+              <div className="divide-y divide-nexo-border">
                 {findHistory.map((entry) => {
                   const isActive = entry.id === findHistoryId;
                   return (
                     <a key={entry.id} href={`/dashboard/domain-analytics/technologies?mode=find&find_history_id=${entry.id}#results`}
-                      className={`flex items-center gap-4 px-6 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors ${isActive ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}>
+                      className={`flex items-center gap-4 px-6 py-3.5 hover:bg-white/[0.04] transition-colors ${isActive ? 'bg-nexo-blue/10' : ''}`}>
                       <div className="flex-1 min-w-0">
-                        <p className={`text-sm font-bold truncate ${isActive ? 'text-blue-700 dark:text-blue-400' : 'text-slate-800 dark:text-slate-200'}`}>{entryLabel(entry)}</p>
-                        <p className="text-[11px] text-slate-400 mt-0.5">
+                        <p className={`text-sm font-medium truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entryLabel(entry)}</p>
+                        <p className="text-[11px] text-nexo-faint mt-0.5">
                           {entry.count} shown
                           {entry.totalCount !== undefined ? ` / ${fmt(entry.totalCount)} total` : ''}
                           {entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}
                         </p>
                       </div>
-                      <span className="shrink-0 text-[11px] text-slate-400">{fmtDate(entry.ts)}</span>
+                      <span className="shrink-0 text-[11px] text-nexo-faint">{fmtDate(entry.ts)}</span>
                     </a>
                   );
                 })}

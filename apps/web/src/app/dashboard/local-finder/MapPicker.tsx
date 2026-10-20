@@ -271,30 +271,30 @@ export default function MapPicker({ coordinate, onChange, showGrid, gridSize, sp
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleGeocode(); } }}
           placeholder="Search a business name (e.g. Best Plumbing Austin) or an address…"
-          className="flex-1 px-3 py-2 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-300 dark:placeholder-slate-500 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="nexo-input min-w-0 flex-1 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
         />
         <button
           type="button"
           onClick={handleGeocode}
           disabled={geocoding || !query.trim()}
-          className="px-4 py-2 bg-slate-900 text-white text-xs font-black uppercase tracking-widest rounded-xl hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="nexo-label px-4 py-2 bg-white text-nexo-bg rounded-nexo-lg hover:bg-nexo-ice transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {geocoding ? '…' : 'Find'}
         </button>
       </div>
-      {geoError && <p className="text-[11px] text-red-500 -mt-1">{geoError}</p>}
+      {geoError && <p className="text-[11px] text-nexo-danger-text -mt-1">{geoError}</p>}
       {businesses.length > 0 && (
-        <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700">
-          <p className="bg-slate-50 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-slate-400 dark:bg-slate-800">Google Maps listings · pick one</p>
+        <div className="overflow-hidden rounded-nexo-lg border border-nexo-border">
+          <p className="nexo-label bg-white/[0.02] px-3 py-1.5">Google Maps listings · pick one</p>
           {businesses.map((business) => (
             <button
               key={business.cid}
               type="button"
               onClick={() => selectBusiness(business)}
-              className="block w-full border-t border-slate-100 px-3 py-2 text-left transition-colors hover:bg-blue-50 dark:border-slate-800 dark:hover:bg-blue-950"
+              className="block w-full border-t border-nexo-border px-3 py-2 text-left transition-colors hover:bg-nexo-blue/15"
             >
-              <span className="block text-sm font-bold text-slate-800 dark:text-slate-100">{business.title}</span>
-              <span className="block text-[11px] text-slate-400">
+              <span className="block text-sm font-medium text-nexo-text">{business.title}</span>
+              <span className="block text-[11px] text-nexo-faint">
                 {[business.category, business.address].filter(Boolean).join(' · ')}
                 {business.rating != null ? ` · ${business.rating}★ (${business.reviews ?? 0})` : ''}
               </span>
@@ -306,11 +306,11 @@ export default function MapPicker({ coordinate, onChange, showGrid, gridSize, sp
       {/* Map */}
       <div
         ref={containerRef}
-        className="w-full rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 transition-all duration-300"
+        className="w-full rounded-nexo-lg overflow-hidden border border-nexo-border transition-all duration-300"
         style={{ height: mapHeight }}
       />
       {showGrid && coordinate && gridSize && spacingKm && (
-        <p className="text-[11px] text-slate-400 -mt-1">
+        <p className="text-[11px] text-nexo-faint -mt-1">
           {gridSize}×{gridSize} grid · {distanceUnit === 'km' && spacingKm < 1 ? `${spacingKm * 1000} m` : formatDistance(spacingKm, distanceUnit)} spacing · {gridSize ** 2} points
         </p>
       )}

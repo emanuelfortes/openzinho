@@ -15,15 +15,15 @@ type SortKey = 'keyword' | 'kd' | 'volume' | 'cpc' | 'intent' | 'competition' | 
 type SortDir = 'asc' | 'desc';
 
 function KdBadge({ v }: { v?: number }) {
-  if (v == null) return <span className="text-slate-300 text-xs">—</span>;
-  const cls = v >= 70 ? 'bg-red-100 text-red-700' : v >= 50 ? 'bg-orange-100 text-orange-700' : v >= 30 ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700';
-  return <span className={`inline-flex items-center justify-center w-9 h-5 rounded text-[10px] font-black ${cls}`}>{v}</span>;
+  if (v == null) return <span className="text-nexo-faint text-xs">—</span>;
+  const cls = v >= 70 ? 'bg-nexo-danger/10 text-nexo-danger-text' : v >= 50 ? 'bg-nexo-warn/10 text-nexo-warn-text' : v >= 30 ? 'bg-nexo-warn/10 text-nexo-warn-text' : 'bg-nexo-ice/10 text-nexo-ice';
+  return <span className={`inline-flex items-center justify-center w-9 h-5 rounded text-[10px] font-medium ${cls}`}>{v}</span>;
 }
 
 function IntentBadge({ intent }: { intent?: string }) {
   if (!intent) return null;
-  const map: Record<string, string> = { informational: 'bg-blue-50 text-blue-600', navigational: 'bg-violet-50 text-violet-600', commercial: 'bg-amber-50 text-amber-700', transactional: 'bg-emerald-50 text-emerald-700' };
-  return <span className={`text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded ${map[intent] ?? 'bg-slate-100 text-slate-500'}`}>{intent.slice(0, 4)}</span>;
+  const map: Record<string, string> = { informational: 'bg-nexo-blue/10 text-nexo-sky', navigational: 'bg-nexo-blue/10 text-nexo-sky', commercial: 'bg-nexo-warn/10 text-nexo-warn-text', transactional: 'bg-nexo-ice/10 text-nexo-ice' };
+  return <span className={`text-[9px] font-medium uppercase tracking-wider px-1.5 py-0.5 rounded ${map[intent] ?? 'bg-nexo-surface-2 text-nexo-dim'}`}>{intent.slice(0, 4)}</span>;
 }
 
 function fmt(n?: number) { return n != null ? n.toLocaleString('en-GB') : '—'; }
@@ -41,8 +41,8 @@ function sortValue(item: IdeaItem, key: SortKey): number | string {
 }
 
 function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
-  if (!active) return <ArrowUpDown className="w-3 h-3 text-slate-300" />;
-  return dir === 'asc' ? <ArrowUp className="w-3 h-3 text-blue-600" /> : <ArrowDown className="w-3 h-3 text-blue-600" />;
+  if (!active) return <ArrowUpDown className="w-3 h-3 text-nexo-faint" />;
+  return dir === 'asc' ? <ArrowUp className="w-3 h-3 text-nexo-sky" /> : <ArrowDown className="w-3 h-3 text-nexo-sky" />;
 }
 
 export default function KeywordIdeasTable({ items }: { items: IdeaItem[] }) {
@@ -69,7 +69,7 @@ export default function KeywordIdeasTable({ items }: { items: IdeaItem[] }) {
   function Header({ label, sortK, align, className }: { label: string; sortK: SortKey; align: 'left' | 'center' | 'right'; className?: string }) {
     const active = sortKey === sortK;
     return (
-      <th className={`px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-400 select-none cursor-pointer hover:text-slate-600 dark:hover:text-slate-300 ${align === 'left' ? 'text-left' : align === 'center' ? 'text-center' : 'text-right'} ${className ?? ''}`}
+      <th className={`px-4 py-3 text-[10px] font-medium uppercase tracking-widest text-nexo-faint select-none cursor-pointer hover:text-white ${align === 'left' ? 'text-left' : align === 'center' ? 'text-center' : 'text-right'} ${className ?? ''}`}
           onClick={() => toggleSort(sortK)}>
         <span className={`inline-flex items-center gap-1 ${align === 'right' ? 'flex-row-reverse' : ''}`}>
           {label}
@@ -83,7 +83,7 @@ export default function KeywordIdeasTable({ items }: { items: IdeaItem[] }) {
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
+          <tr className="border-b border-nexo-border bg-white/[0.02]">
             <Header label="Keyword" sortK="keyword" align="left" className="!px-6" />
             <Header label="KD" sortK="kd" align="center" />
             <Header label="Volume" sortK="volume" align="right" />
@@ -93,18 +93,18 @@ export default function KeywordIdeasTable({ items }: { items: IdeaItem[] }) {
             <Header label="Ref. Domains" sortK="ref_domains" align="right" className="hidden lg:table-cell" />
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
+        <tbody className="divide-y divide-nexo-border">
           {sorted.map((item, i) => {
             const ki = item.keyword_info;
             return (
-              <tr key={i} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                <td className="px-6 py-3 font-medium text-slate-900 dark:text-slate-200 max-w-[220px]"><span className="truncate block">{item.keyword ?? '—'}</span></td>
+              <tr key={i} className="hover:bg-white/[0.04] transition-colors">
+                <td className="px-6 py-3 font-medium text-nexo-text max-w-[220px]"><span className="truncate block">{item.keyword ?? '—'}</span></td>
                 <td className="px-4 py-3 text-center"><KdBadge v={item.keyword_properties?.keyword_difficulty} /></td>
-                <td className="px-4 py-3 text-right font-mono text-slate-700 dark:text-slate-300 tabular-nums">{fmt(ki?.search_volume)}</td>
-                <td className="px-4 py-3 text-right font-mono text-slate-500 tabular-nums">{ki?.cpc != null ? `$${ki.cpc.toFixed(2)}` : '—'}</td>
+                <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">{fmt(ki?.search_volume)}</td>
+                <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">{ki?.cpc != null ? `$${ki.cpc.toFixed(2)}` : '—'}</td>
                 <td className="px-4 py-3 text-center hidden sm:table-cell"><IntentBadge intent={item.search_intent_info?.main_intent} /></td>
-                <td className="px-4 py-3 text-right text-slate-500 tabular-nums hidden md:table-cell text-xs">{ki?.competition_level ?? '—'}</td>
-                <td className="px-4 py-3 text-right font-mono text-slate-500 tabular-nums hidden lg:table-cell">{fmt(item.avg_backlinks_info?.referring_domains)}</td>
+                <td className="px-4 py-3 text-right text-nexo-dim tabular-nums hidden md:table-cell text-xs">{ki?.competition_level ?? '—'}</td>
+                <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums hidden lg:table-cell">{fmt(item.avg_backlinks_info?.referring_domains)}</td>
               </tr>
             );
           })}

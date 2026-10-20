@@ -4,8 +4,8 @@ import { useState } from 'react';
 import PendingButton from '@/components/PendingButton';
 import { PLATFORMS, MODELS_BY_PLATFORM, DEFAULT_MODEL_BY_PLATFORM, type LlmPlatform } from '@/lib/llm-options';
 
-const FIELD = 'w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-300 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500 dark:bg-slate-800';
-const LABEL = 'block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5';
+const FIELD = 'w-full px-4 py-2.5 border border-nexo-border rounded-nexo-lg text-sm text-nexo-text placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-nexo-sky';
+const LABEL = 'nexo-label block mb-1.5';
 
 export default function PromptTrackerForm({ action }: { action: (formData: FormData) => Promise<void> }) {
   const [platform, setPlatform] = useState<LlmPlatform>('chat_gpt');
@@ -35,11 +35,11 @@ export default function PromptTrackerForm({ action }: { action: (formData: FormD
     <form
       action={action}
       onSubmit={handleSubmit}
-      className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4"
+      className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4"
     >
       <div>
         <label className={LABEL}>
-          Prompt <span className="text-slate-300 dark:text-slate-600 font-normal normal-case tracking-normal">(max 500 chars)</span>
+          Prompt <span className="text-nexo-faint font-normal normal-case tracking-normal">(max 500 chars)</span>
         </label>
         <textarea
           name="user_prompt"
@@ -103,7 +103,7 @@ export default function PromptTrackerForm({ action }: { action: (formData: FormD
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
         <div>
           {isPerplexity ? (
-            <p className="text-[11px] text-slate-400 pb-2.5">Perplexity always searches the live web.</p>
+            <p className="text-[11px] text-nexo-faint pb-2.5">Perplexity always searches the live web.</p>
           ) : (
             <label className="relative flex items-center gap-2.5 cursor-pointer w-fit">
               <input
@@ -113,26 +113,26 @@ export default function PromptTrackerForm({ action }: { action: (formData: FormD
                 onChange={(e) => setWebSearch(e.target.checked)}
                 className="sr-only peer"
               />
-              <div className="w-9 h-5 bg-slate-200 dark:bg-slate-700 rounded-full peer-checked:bg-violet-500 transition-colors relative">
-                <div className="absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-4" />
+              <div className="w-9 h-5 bg-white/10 rounded-full peer-checked:bg-nexo-blue transition-colors relative">
+                <div className="absolute top-0.5 left-0.5 w-4 h-4 bg-nexo-surface rounded-full transition-transform peer-checked:translate-x-4" />
               </div>
-              <span className="text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">Web search</span>
+              <span className="nexo-label">Web search</span>
             </label>
           )}
         </div>
         <div>
           <label className={LABEL}>
-            Web search country <span className="text-slate-300 dark:text-slate-600 font-normal normal-case tracking-normal">(optional, ISO code)</span>
+            Web search country <span className="text-nexo-faint font-normal normal-case tracking-normal">(optional, ISO code)</span>
           </label>
           <input type="text" name="country_code" maxLength={2} placeholder="e.g. FR, US" className={`${FIELD} uppercase`} />
         </div>
       </div>
 
-      {error && <p className="text-xs font-semibold text-red-600 dark:text-red-400">{error}</p>}
+      {error && <p className="text-xs font-semibold text-nexo-danger-text">{error}</p>}
 
       <PendingButton
         type="submit"
-        className="w-full bg-slate-900 dark:bg-white dark:text-slate-900 text-white font-black uppercase tracking-widest text-xs py-3 rounded-xl hover:bg-violet-600 dark:hover:bg-violet-500 dark:hover:text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        className="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-sky transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         pendingChildren="Saving…"
       >
         Track this prompt

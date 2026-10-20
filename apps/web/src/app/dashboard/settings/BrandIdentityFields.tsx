@@ -19,8 +19,8 @@ import {
   type BrandStyle,
 } from '@/lib/brand';
 
-const inputCls = 'w-full px-5 py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none text-slate-900 dark:text-white placeholder-slate-300 dark:placeholder-slate-600 transition-all font-medium';
-const labelCls = 'text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1';
+const inputCls = 'nexo-input min-w-0 w-full px-5 py-4 focus:ring-4 focus:ring-nexo-sky outline-none transition-all font-medium';
+const labelCls = 'nexo-label ml-1';
 
 type Props = {
   initialName: string;
@@ -48,10 +48,10 @@ function ColorField({ id, name, label, value, fallback, onChange }: { id: string
     <div className="space-y-2">
       <label htmlFor={id} className={labelCls}>{label}</label>
       <div className="flex items-center gap-3">
-        <input type="color" aria-label={label} value={value} onChange={(e) => { setDraft(e.target.value); onChange(e.target.value); }} className="h-[52px] w-14 shrink-0 cursor-pointer rounded-2xl border border-slate-200 bg-white p-1 dark:border-slate-700 dark:bg-slate-800" />
+        <input type="color" aria-label={label} value={value} onChange={(e) => { setDraft(e.target.value); onChange(e.target.value); }} className="h-[52px] w-14 shrink-0 cursor-pointer rounded-nexo-lg border border-nexo-border bg-nexo-surface p-1" />
         <input id={id} name={name} type="text" value={draft} onChange={(e) => onTyped(e.target.value)} maxLength={7} placeholder={fallback} className={inputCls} />
       </div>
-      {!valid && <p className="text-[10px] font-bold text-red-600 dark:text-red-400 ml-1">Use a hex colour such as #0f172a.</p>}
+      {!valid && <p className="text-[10px] font-medium text-nexo-danger-text ml-1">Use a hex colour such as #0f172a.</p>}
     </div>
   );
 }
@@ -115,7 +115,7 @@ export default function BrandIdentityFields({ initialName, initialColor, initial
         <div className="space-y-2">
           <label htmlFor="brand_footer" className={labelCls}>Footer text</label>
           <input id="brand_footer" name="brand_footer" type="text" maxLength={BRAND_FOOTER_MAX_LENGTH} value={footer} onChange={(e) => setFooter(e.target.value)} placeholder="e.g. Acme SEO · hello@acme.com · acme.com" className={inputCls} />
-          <p className="text-[10px] text-slate-400 ml-1">Printed at the bottom of every PDF page. E-mail addresses and domains become clickable links.</p>
+          <p className="text-[10px] text-nexo-faint ml-1">Printed at the bottom of every PDF page. E-mail addresses and domains become clickable links.</p>
         </div>
       </div>
 
@@ -123,26 +123,26 @@ export default function BrandIdentityFields({ initialName, initialColor, initial
         <div className="space-y-2">
           <label htmlFor="brand_logo" className={labelCls}>Logo</label>
           <div className="flex items-center gap-3">
-            <label htmlFor="brand_logo" className="inline-flex cursor-pointer items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs font-bold text-slate-700 transition-colors hover:border-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
+            <label htmlFor="brand_logo" className="inline-flex cursor-pointer items-center gap-2 rounded-nexo-lg border border-nexo-border bg-nexo-surface px-4 py-3 text-xs font-medium text-nexo-dim transition-colors hover:border-nexo-sky">
               <Upload className="h-3.5 w-3.5" /> {logoPreview ? 'Replace logo' : 'Upload logo'}
             </label>
             {logoPreview && (
-              <button type="button" onClick={clearLogo} className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-red-600 hover:text-red-700 dark:text-red-400">
+              <button type="button" onClick={clearLogo} className="inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-widest text-nexo-danger-text hover:text-nexo-danger-text">
                 <X className="h-3.5 w-3.5" /> Remove
               </button>
             )}
             <input ref={fileInput} id="brand_logo" name="brand_logo" type="file" accept="image/png,image/jpeg" onChange={onLogoChosen} className="sr-only" />
             <input type="hidden" name="remove_logo" value={removeLogo ? 'true' : 'false'} />
           </div>
-          <p className="text-[10px] text-slate-400 ml-1">PNG or JPEG, 256 KB max. Replaces the brand name in PDF headers.</p>
-          {logoError && <p className="text-[10px] font-bold text-red-600 dark:text-red-400 ml-1">{logoError}</p>}
+          <p className="text-[10px] text-nexo-faint ml-1">PNG or JPEG, 256 KB max. Replaces the brand name in PDF headers.</p>
+          {logoError && <p className="text-[10px] font-medium text-nexo-danger-text ml-1">{logoError}</p>}
         </div>
 
         <div className="space-y-2">
           <p className={labelCls}>Header style</p>
           <div role="radiogroup" aria-label="Header style" className="grid grid-cols-2 gap-2">
             {BRAND_HEADER_STYLES.map((style) => (
-              <label key={style} className={`cursor-pointer rounded-2xl border px-4 py-3 text-xs font-bold transition-colors ${headerStyle === style ? 'border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'}`}>
+              <label key={style} className={`cursor-pointer rounded-nexo-lg border px-4 py-3 text-xs font-medium transition-colors ${headerStyle === style ? 'border-nexo-sky bg-nexo-blue/10 text-nexo-sky' : 'border-nexo-border bg-nexo-surface text-nexo-dim hover:border-nexo-border'}`}>
                 <input type="radio" name="brand_header_style" value={style} checked={headerStyle === style} onChange={() => setHeaderStyle(style)} className="sr-only" />
                 {HEADER_STYLE_LABELS[style]}
               </label>
@@ -161,17 +161,17 @@ export default function BrandIdentityFields({ initialName, initialColor, initial
       {/* Live preview of the PDF header and footer */}
       <div className="space-y-2">
         <p className={labelCls}>Preview</p>
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700">
+        <div className="overflow-hidden rounded-nexo-lg border border-nexo-border bg-nexo-surface">
           <div className={`relative flex items-center justify-between gap-4 px-6 ${headerStyle === 'wave' ? 'pb-7 pt-5' : 'py-5'}`} style={{ background: fillCss }}>
             {logoPreview ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={logoPreview} alt="" className="max-h-10 max-w-[140px] object-contain" />
             ) : (
-              <span className="text-lg font-black tracking-tight" style={{ color: textCss }}>{previewName}</span>
+              <span className="text-lg font-medium tracking-tight" style={{ color: textCss }}>{previewName}</span>
             )}
             <div className="text-right">
-              <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: subtleCss }}>SEO Report</p>
-              <p className="text-sm font-bold" style={{ color: textCss }}>Example report</p>
+              <p className="text-[9px] font-medium uppercase tracking-widest" style={{ color: subtleCss }}>SEO Report</p>
+              <p className="text-sm font-medium" style={{ color: textCss }}>Example report</p>
             </div>
             {headerStyle === 'wave' && (
               <svg aria-hidden="true" viewBox="0 0 100 8" preserveAspectRatio="none" className="absolute bottom-[-1px] left-0 h-3 w-full" style={{ fill: fillCss }}>

@@ -178,8 +178,8 @@ export default function ReportPdfExportButton(props: Props) {
   return (
     <button type="button" onClick={exportPdf} disabled={exporting}
       className={props.variant === 'solid'
-        ? 'inline-flex items-center gap-2 rounded-xl bg-slate-900 px-3 py-2 text-[10px] font-black uppercase tracking-widest text-white transition-colors hover:bg-slate-700 disabled:cursor-wait disabled:opacity-70 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200'
-        : 'inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-red-600 disabled:opacity-50 transition-colors'}
+        ? 'nexo-label inline-flex items-center gap-2 rounded-nexo-lg bg-white px-3 py-2 text-nexo-bg transition-colors hover:bg-nexo-ice disabled:cursor-wait disabled:opacity-70'
+        : 'nexo-label inline-flex items-center gap-1.5 hover:text-nexo-danger-text disabled:opacity-50 transition-colors'}
       title="Export PDF report">
       {exporting ? <LoaderCircle className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
       {exporting ? (props.variant === 'solid' ? 'Preparing PDF…' : 'PDF…') : props.label ?? 'PDF'}

@@ -46,16 +46,16 @@ export default function GridTimeline({ entry, results, previousResults, snapshot
 
   return (
     <GridSnapshotSelectionProvider selectedId={entry.id}>
-    <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-      <div className="border-b border-slate-100 bg-slate-50/70 px-5 py-4 dark:border-slate-800 dark:bg-slate-900 sm:px-6">
+    <section className="overflow-hidden rounded-nexo-lg border border-nexo-border bg-nexo-surface">
+      <div className="border-b border-nexo-border bg-white/[0.02] px-5 py-4 sm:px-6">
         <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-start">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-blue-600 dark:text-blue-400">Ranking monitor</p>
-            <h2 className="mt-1 text-xl font-black tracking-tight text-slate-900 dark:text-white">{entry.keyword}</h2>
-            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{entry.target} · {entry.grid_size}×{entry.grid_size} points · {formatDistance(entry.spacing_km, distanceUnit)} spacing</p>
+            <p className="nexo-section">Ranking monitor</p>
+            <h2 className="mt-1 text-xl font-medium tracking-tight text-nexo-text">{entry.keyword}</h2>
+            <p className="mt-1 text-xs text-nexo-dim">{entry.target} · {entry.grid_size}×{entry.grid_size} points · {formatDistance(entry.spacing_km, distanceUnit)} spacing</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <a href={`/dashboard/geo-grid?keyword=${encodeURIComponent(entry.keyword)}&location_coordinate=${encodeURIComponent(entry.center)}&grid_size=${entry.grid_size}&spacing_km=${entry.spacing_km}&grid_target=${encodeURIComponent(entry.target)}&language=${encodeURIComponent(entry.language)}&queue_mode=${entry.queue_mode}&mode=grid`} className="inline-flex items-center rounded-xl border border-blue-200 bg-white px-3 py-2 text-[10px] font-black uppercase tracking-widest text-blue-700 transition-colors hover:bg-blue-50 dark:border-blue-900 dark:bg-slate-900 dark:text-blue-300 dark:hover:bg-blue-950">
+            <a href={`/dashboard/geo-grid?keyword=${encodeURIComponent(entry.keyword)}&location_coordinate=${encodeURIComponent(entry.center)}&grid_size=${entry.grid_size}&spacing_km=${entry.spacing_km}&grid_target=${encodeURIComponent(entry.target)}&language=${encodeURIComponent(entry.language)}&queue_mode=${entry.queue_mode}&mode=grid`} className="nexo-section inline-flex items-center rounded-nexo-lg border border-nexo-border-strong bg-nexo-surface px-3 py-2 transition-colors hover:bg-nexo-blue/15">
               Run now
             </a>
             <GridSelectedSnapshotExportButton snapshots={snapshots} fallbackResults={results} fallbackTs={entry.ts} gridSize={entry.grid_size} spacingKm={entry.spacing_km} keyword={entry.keyword} target={entry.target} language={entry.language} brandName={brandName} brandLogoUrl={brandLogoUrl} brandColor={brandColor} brandFooter={brandFooter} brandStyle={brandStyle} mapElementId={mapId} />
@@ -65,16 +65,16 @@ export default function GridTimeline({ entry, results, previousResults, snapshot
       </div>
 
       <div className="p-5 sm:p-6">
-        <div className="grid grid-cols-2 gap-x-4 gap-y-3 border-b border-slate-100 pb-5 dark:border-slate-800 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-3 border-b border-nexo-border pb-5 sm:grid-cols-4">
           {metrics.map((metric) => (
             <div key={metric.label}>
-              <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">{metric.label}</p>
-              <div className="mt-1 flex items-baseline gap-2"><span className="text-xl font-black tabular-nums text-slate-900 dark:text-white">{metric.value}</span>{metric.delta && <span className={`text-[10px] font-bold ${metric.delta === 'No change' ? 'text-slate-400' : metric.good ? 'text-emerald-600' : 'text-red-500'}`}>{metric.delta}</span>}</div>
+              <p className="nexo-label">{metric.label}</p>
+              <div className="mt-1 flex items-baseline gap-2"><span className="text-xl font-medium tabular-nums text-nexo-text">{metric.value}</span>{metric.delta && <span className={`text-[10px] font-medium ${metric.delta === 'No change' ? 'text-nexo-faint' : metric.good ? 'text-nexo-ice' : 'text-nexo-danger-text'}`}>{metric.delta}</span>}</div>
             </div>
           ))}
         </div>
 
-        <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50/50 px-5 dark:border-slate-800 dark:bg-slate-950/20">
+        <div className="mt-5 rounded-nexo-lg border border-nexo-border bg-white/[0.02] px-5">
           <GridScheduleControl runId={entry.id} schedule={schedule} />
         </div>
 

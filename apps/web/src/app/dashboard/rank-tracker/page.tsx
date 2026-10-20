@@ -21,7 +21,7 @@ import RankTrackerScheduleControl from './RankTrackerScheduleControl';
 
 type SearchParams = { domain?: string };
 
-const inputCls = 'w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none text-slate-900 dark:text-white text-sm font-medium transition-all';
+const inputCls = 'nexo-input min-w-0 w-full px-4 py-3 focus:ring-4 focus:ring-nexo-sky outline-none text-sm font-medium transition-all';
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
@@ -83,25 +83,25 @@ async function RankTrackerPage({ searchParams }: { searchParams: Promise<SearchP
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Rank Tracker</h1>
-          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1 font-medium">
+          <h1 className="nexo-h1">Rank Tracker</h1>
+          <p className="text-nexo-dim text-sm mt-1 font-medium">
             {allKeywords.length} keyword{allKeywords.length !== 1 ? 's' : ''} across {domains.length} domain{domains.length !== 1 ? 's' : ''}
           </p>
         </div>
         <div className="flex items-center gap-3 shrink-0">
           <RankTrackerQueueStatus count={pendingRankTasks.length} />
           <form action={saveDepthAction} className="flex items-center gap-2">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">Top</label>
+            <label className="nexo-label whitespace-nowrap">Top</label>
             <select
               name="rank_tracker_depth"
               defaultValue={rankDepth}
-              className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none"
+              className="nexo-input min-w-0 w-full px-3 py-2 text-xs font-medium focus:ring-4 focus:ring-nexo-sky outline-none"
             >
               {['10', '20', '50', '100'].map((v) => (
                 <option key={v} value={v}>{v}</option>
               ))}
             </select>
-            <button type="submit" className="px-3 py-2 text-[9px] font-black uppercase tracking-widest rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
+            <button type="submit" className="px-3 py-2 text-[9px] font-medium uppercase tracking-widest rounded-nexo-lg bg-nexo-surface-2 text-nexo-dim hover:bg-white/[0.04] transition-all">
               Save
             </button>
           </form>
@@ -111,8 +111,8 @@ async function RankTrackerPage({ searchParams }: { searchParams: Promise<SearchP
               <input type="hidden" name="domain" value={activeDomain ?? ''} />
               <PendingButton
                 type="submit"
-                className="px-5 py-3 bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-slate-700 transition-all shadow-xl shadow-slate-200 dark:shadow-none"
-                pendingClassName="px-5 py-3 bg-slate-400 text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-xl shadow-slate-200 dark:shadow-none cursor-not-allowed"
+                className="nexo-label px-5 py-3 bg-white text-nexo-bg rounded-nexo-lg hover:bg-nexo-ice transition-all"
+                pendingClassName="px-5 py-3 bg-white/30 text-white text-[10px] font-medium uppercase tracking-widest rounded-nexo-lg cursor-not-allowed"
                 pendingChildren={`Queuing ${allKeywords.length}…`}
               >
                 Queue All ({allKeywords.length})
@@ -125,7 +125,7 @@ async function RankTrackerPage({ searchParams }: { searchParams: Promise<SearchP
       <RankTrackerScheduleControl schedule={rankSchedule} saveAction={saveRankScheduleAction} />
 
       {!creds && (
-        <div className="bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-900 text-amber-700 dark:text-amber-400 rounded-2xl px-6 py-4 text-sm font-medium">
+        <div className="bg-nexo-warn/10 border border-nexo-warn/40 text-nexo-warn-text rounded-nexo-lg px-6 py-4 text-sm font-medium">
           Configure your DataForSEO credentials in Settings to enable rank checking.
         </div>
       )}
@@ -139,14 +139,14 @@ async function RankTrackerPage({ searchParams }: { searchParams: Promise<SearchP
             <div key={domain} className="flex items-center gap-0.5">
               <a
                 href={`/dashboard/rank-tracker?domain=${encodeURIComponent(domain)}`}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-nexo-lg text-xs font-medium transition-all ${
                   isActive
-                    ? 'bg-slate-900 dark:bg-slate-700 text-white shadow-lg shadow-slate-200 dark:shadow-none'
-                    : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800'
+                    ? 'bg-nexo-surface-2 text-white shadow-lg'
+                    : 'bg-nexo-surface border border-nexo-border text-nexo-dim hover:border-nexo-border hover:bg-white/[0.04]'
                 }`}
               >
                 {domain}
-                <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-md ${isActive ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
+                <span className={`text-[9px] font-medium px-1.5 py-0.5 rounded-md ${isActive ? 'bg-nexo-bg/20 text-white' : 'bg-nexo-surface-2 text-nexo-faint'}`}>
                   {kwCount}
                 </span>
               </a>
@@ -155,10 +155,10 @@ async function RankTrackerPage({ searchParams }: { searchParams: Promise<SearchP
                 <button
                   type="submit"
                   title="Remove domain"
-                  className={`px-1.5 py-2 text-[10px] rounded-lg transition-all ${
+                  className={`px-1.5 py-2 text-[10px] rounded-nexo transition-all ${
                     isActive
-                      ? 'text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950'
-                      : 'text-slate-300 dark:text-slate-600 hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950'
+                      ? 'text-nexo-faint hover:text-nexo-danger-text hover:bg-nexo-danger/15'
+                      : 'text-nexo-faint hover:text-nexo-danger-text hover:bg-nexo-danger/15'
                   }`}
                 >
                   ×
@@ -174,11 +174,11 @@ async function RankTrackerPage({ searchParams }: { searchParams: Promise<SearchP
             name="domain"
             type="text"
             placeholder="newdomain.com"
-            className="px-3 py-2 bg-white dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 placeholder-slate-300 dark:placeholder-slate-600 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none w-40 transition-all"
+            className="nexo-input min-w-0 px-3 py-2 border-dashed text-xs font-medium focus:ring-4 focus:ring-nexo-sky outline-none w-40 transition-all"
           />
           <button
             type="submit"
-            className="px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-slate-900 dark:hover:bg-slate-700 hover:text-white hover:border-slate-900 dark:hover:border-slate-700 transition-all"
+            className="nexo-label px-3 py-2 bg-nexo-surface border border-nexo-border rounded-nexo-lg hover:bg-white/10 hover:text-white hover:border-nexo-border-strong transition-all"
           >
             + Add
           </button>
@@ -187,40 +187,39 @@ async function RankTrackerPage({ searchParams }: { searchParams: Promise<SearchP
 
       {/* ── Empty state: no domains ─────────────────────────────────────────── */}
       {domains.length === 0 && (
-        <div className="bg-white dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-700 rounded-3xl p-16 text-center">
-          <div className="text-3xl mb-3">🎯</div>
-          <p className="font-bold text-slate-700 dark:text-slate-300 mb-1">No domains yet</p>
-          <p className="text-slate-400 text-sm">Add a domain above to start tracking keyword rankings.</p>
+        <div className="bg-nexo-surface border border-dashed border-nexo-border rounded-nexo-lg p-16 text-center">
+          <p className="font-medium text-nexo-dim mb-1">No domains yet</p>
+          <p className="text-nexo-faint text-sm">Add a domain above to start tracking keyword rankings.</p>
         </div>
       )}
 
       {/* ── Domain view ────────────────────────────────────────────────────── */}
       {activeDomain && (
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <div className="grid gap-6 grid-cols-[repeat(auto-fit,minmax(320px,1fr))]">
 
           {/* Keywords table */}
           <div className="xl:col-span-2">
             {rows.length === 0 ? (
-              <div className="bg-white dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-700 rounded-3xl p-12 text-center">
-                <p className="text-slate-500 dark:text-slate-400 font-semibold mb-1">No keywords for {activeDomain}</p>
-                <p className="text-slate-400 text-xs">Add some keywords using the form on the right.</p>
+              <div className="bg-nexo-surface border border-dashed border-nexo-border rounded-nexo-lg p-12 text-center">
+                <p className="text-nexo-dim font-semibold mb-1">No keywords for {activeDomain}</p>
+                <p className="text-nexo-faint text-xs">Add some keywords using the form on the right.</p>
               </div>
             ) : (
-              <div id="results" className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden">
-                <div className="px-5 py-3.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between gap-4">
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+              <div id="results" className="bg-nexo-surface border border-nexo-border rounded-nexo-lg overflow-x-auto">
+                <div className="px-5 py-3.5 border-b border-nexo-border flex items-center justify-between gap-4">
+                  <span className="nexo-label">
                     {activeDomain} — {rows.length} keyword{rows.length !== 1 ? 's' : ''}
                   </span>
                   <div className="flex items-center gap-3">
-                    <span className="text-[10px] text-slate-300 dark:text-slate-600 hidden sm:block">Click a row to see history</span>
+                    <span className="text-[10px] text-nexo-faint hidden sm:block">Click a row to see history</span>
                     <CopyMarkdownButton data={csvData} columns={csvColumns} />
                     {creds && (
                       <form action={checkDomainAction}>
                         <input type="hidden" name="domain" value={activeDomain} />
                         <PendingButton
                           type="submit"
-                          className="px-3 py-1.5 bg-blue-600 text-white text-[9px] font-black uppercase tracking-widest rounded-lg hover:bg-blue-700 transition-all shadow-md shadow-blue-100 dark:shadow-none"
-                          pendingClassName="px-3 py-1.5 bg-blue-300 text-white text-[9px] font-black uppercase tracking-widest rounded-lg cursor-not-allowed"
+                          className="px-3 py-1.5 bg-nexo-blue text-white text-[9px] font-medium uppercase tracking-widest rounded-nexo hover:bg-nexo-sky transition-all"
+                          pendingClassName="px-3 py-1.5 bg-nexo-sky/40 text-white text-[9px] font-medium uppercase tracking-widest rounded-nexo cursor-not-allowed"
                           pendingChildren={`Queuing ${rows.length}…`}
                         >
                           Queue {rows.length}
@@ -242,15 +241,15 @@ async function RankTrackerPage({ searchParams }: { searchParams: Promise<SearchP
 
           {/* Add keywords form */}
           <div>
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sticky top-6">
-              <h2 className="text-xs font-black text-slate-900 dark:text-white uppercase tracking-widest mb-1">Add Keywords</h2>
-              <p className="text-[10px] text-slate-400 font-medium mb-5">for {activeDomain}</p>
+            <div className="bg-nexo-surface border border-nexo-border rounded-nexo-lg p-6 sticky top-6">
+              <h2 className="text-xs font-medium text-nexo-text uppercase tracking-widest mb-1">Add Keywords</h2>
+              <p className="text-[10px] text-nexo-faint font-medium mb-5">for {activeDomain}</p>
               <form action={addKeywordAction} className="space-y-4">
                 <input type="hidden" name="domain" value={activeDomain} />
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                    Keywords <span className="text-slate-300 normal-case font-normal tracking-normal">(one per line, max 50)</span>
+                  <label className="nexo-label">
+                    Keywords <span className="text-nexo-faint normal-case font-normal tracking-normal">(one per line, max 50)</span>
                   </label>
                   <textarea
                     name="keywords"
@@ -262,12 +261,12 @@ async function RankTrackerPage({ searchParams }: { searchParams: Promise<SearchP
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Location</label>
+                  <label className="nexo-label">Location</label>
                   <LocationPicker name="location" defaultValue={defaultLocation} className={inputCls} />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Language</label>
+                  <label className="nexo-label">Language</label>
                   <select name="language" defaultValue={defaultLanguage} className={inputCls}>
                     {LANGUAGES.map((l) => (
                       <option key={l.value} value={l.value}>{l.label}</option>
@@ -277,8 +276,8 @@ async function RankTrackerPage({ searchParams }: { searchParams: Promise<SearchP
 
                 <PendingButton
                   type="submit"
-                  className="w-full bg-blue-600 text-white py-3 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] hover:bg-blue-700 shadow-lg shadow-blue-200 dark:shadow-none transition-all active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
-                  pendingClassName="w-full bg-blue-400 text-white py-3 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] shadow-lg shadow-blue-100 dark:shadow-none cursor-not-allowed"
+                  className="w-full bg-nexo-blue text-white py-3 rounded-nexo-lg font-medium uppercase text-[10px] tracking-[0.2em] hover:bg-nexo-sky transition-all active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
+                  pendingClassName="w-full bg-nexo-sky/40 text-white py-3 rounded-nexo-lg font-medium uppercase text-[10px] tracking-[0.2em] cursor-not-allowed"
                   pendingChildren="Adding…"
                 >
                   Add

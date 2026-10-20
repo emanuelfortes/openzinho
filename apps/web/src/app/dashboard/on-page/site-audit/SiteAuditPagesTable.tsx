@@ -67,19 +67,19 @@ function formatMs(ms?: number) {
 }
 
 function scoreBg(score?: number) {
-  if (!score) return 'bg-slate-100 border-slate-200 text-slate-500';
-  if (score >= 80) return 'bg-emerald-50 border-emerald-200 text-emerald-700';
-  if (score >= 50) return 'bg-amber-50 border-amber-200 text-amber-700';
-  return 'bg-red-50 border-red-200 text-red-700';
+  if (!score) return 'bg-nexo-surface-2 border-nexo-border text-nexo-dim';
+  if (score >= 80) return 'bg-nexo-ice/10 border-nexo-ice/30 text-nexo-ice';
+  if (score >= 50) return 'bg-nexo-warn/10 border-nexo-warn/40 text-nexo-warn-text';
+  return 'bg-nexo-danger/10 border-nexo-danger/40 text-nexo-danger-text';
 }
 
 function httpBadge(code?: number) {
   if (!code) return null;
-  const cls = code < 300 ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-    : code < 400 ? 'bg-blue-50 text-blue-700 border-blue-200'
-    : code < 500 ? 'bg-amber-50 text-amber-700 border-amber-200'
-    : 'bg-red-50 text-red-700 border-red-200';
-  return <span className={`text-[10px] font-black px-1.5 py-0.5 rounded border ${cls}`}>{code}</span>;
+  const cls = code < 300 ? 'bg-nexo-ice/10 text-nexo-ice border-nexo-ice/30'
+    : code < 400 ? 'bg-nexo-blue/10 text-nexo-sky border-nexo-border-strong'
+    : code < 500 ? 'bg-nexo-warn/10 text-nexo-warn-text border-nexo-warn/40'
+    : 'bg-nexo-danger/10 text-nexo-danger-text border-nexo-danger/40';
+  return <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded border ${cls}`}>{code}</span>;
 }
 
 function countPageIssues(page: AuditPage) {
@@ -112,8 +112,8 @@ function sortValue(page: AuditPage, key: SortKey): number | string {
 }
 
 function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
-  if (!active) return <ArrowUpDown className="w-3 h-3 text-slate-300" />;
-  return dir === 'asc' ? <ArrowUp className="w-3 h-3 text-blue-600" /> : <ArrowDown className="w-3 h-3 text-blue-600" />;
+  if (!active) return <ArrowUpDown className="w-3 h-3 text-nexo-faint" />;
+  return dir === 'asc' ? <ArrowUp className="w-3 h-3 text-nexo-sky" /> : <ArrowDown className="w-3 h-3 text-nexo-sky" />;
 }
 
 export default function SiteAuditPagesTable({ pages }: { pages: AuditPage[] }) {
@@ -139,7 +139,7 @@ export default function SiteAuditPagesTable({ pages }: { pages: AuditPage[] }) {
   function Header({ label, sortK, align, className }: { label: string; sortK: SortKey; align: 'left' | 'center' | 'right'; className?: string }) {
     const active = sortKey === sortK;
     return (
-      <th className={`px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-400 select-none cursor-pointer hover:text-slate-600 dark:hover:text-slate-300 ${align === 'left' ? 'text-left' : align === 'center' ? 'text-center' : 'text-right'} ${className ?? ''}`}
+      <th className={`px-4 py-3 text-[10px] font-medium uppercase tracking-widest text-nexo-faint select-none cursor-pointer hover:text-white ${align === 'left' ? 'text-left' : align === 'center' ? 'text-center' : 'text-right'} ${className ?? ''}`}
           onClick={() => toggleSort(sortK)}>
         <span className={`inline-flex items-center gap-1 ${align === 'right' ? 'flex-row-reverse' : align === 'center' ? 'justify-center w-full' : ''}`}>
           {label}
@@ -153,55 +153,55 @@ export default function SiteAuditPagesTable({ pages }: { pages: AuditPage[] }) {
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
-            <th className="px-4 py-3 text-left text-[10px] font-black uppercase tracking-widest text-slate-400">#</th>
+          <tr className="border-b border-nexo-border bg-white/[0.02]">
+            <th className="nexo-label px-4 py-3 text-left">#</th>
             <Header label="URL" sortK="url" align="left" />
             <Header label="Score" sortK="score" align="center" />
             <Header label="HTTP" sortK="status" align="center" />
-            <th className="px-4 py-3 text-left text-[10px] font-black uppercase tracking-widest text-slate-400 hidden md:table-cell">Title</th>
+            <th className="nexo-label px-4 py-3 text-left hidden md:table-cell">Title</th>
             <Header label="Issues" sortK="issues" align="center" />
             <Header label="Load" sortK="load" align="right" className="hidden lg:table-cell" />
             <Header label="Words" sortK="words" align="right" className="hidden xl:table-cell" />
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
+        <tbody className="divide-y divide-nexo-border">
           {sorted.map((page, i) => {
             const { errors: errCount, warnings: warnCount } = countPageIssues(page);
             const path = page.url ? (() => { try { return new URL(page.url).pathname; } catch { return page.url; } })() : '—';
             return (
-              <tr key={i} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                <td className="px-4 py-3 text-[11px] font-mono text-slate-400 tabular-nums">{i + 1}</td>
+              <tr key={i} className="hover:bg-white/[0.04] transition-colors">
+                <td className="px-4 py-3 text-[11px] font-mono text-nexo-faint tabular-nums">{i + 1}</td>
                 <td className="px-4 py-3 max-w-[280px]">
                   <a href={page.url} target="_blank" rel="noopener noreferrer"
-                    className="text-xs font-mono text-blue-600 hover:text-blue-800 truncate block hover:underline">
+                    className="text-xs font-mono text-nexo-sky hover:text-white truncate block hover:underline">
                     {path}
                   </a>
                 </td>
                 <td className="px-4 py-3 text-center">
                   {page.onpage_score !== undefined ? (
-                    <span className={`inline-flex items-center justify-center w-12 h-6 rounded text-[11px] font-black border ${scoreBg(page.onpage_score)}`}>
+                    <span className={`inline-flex items-center justify-center w-12 h-6 rounded text-[11px] font-medium border ${scoreBg(page.onpage_score)}`}>
                       {page.onpage_score.toFixed(0)}
                     </span>
-                  ) : <span className="text-slate-300">—</span>}
+                  ) : <span className="text-nexo-faint">—</span>}
                 </td>
                 <td className="px-4 py-3 text-center">{httpBadge(page.status_code)}</td>
                 <td className="px-4 py-3 max-w-[200px] hidden md:table-cell">
-                  <span className="text-xs text-slate-700 dark:text-slate-300 truncate block">{page.meta?.title ?? <span className="text-slate-300 italic">no title</span>}</span>
+                  <span className="text-xs text-nexo-dim truncate block">{page.meta?.title ?? <span className="text-nexo-faint italic">no title</span>}</span>
                   {page.meta?.title_length !== undefined && (
-                    <span className={`text-[10px] ${page.meta.title_length > 65 || page.meta.title_length < 30 ? 'text-amber-500' : 'text-slate-400'}`}>{page.meta.title_length} chars</span>
+                    <span className={`text-[10px] ${page.meta.title_length > 65 || page.meta.title_length < 30 ? 'text-nexo-warn-text' : 'text-nexo-faint'}`}>{page.meta.title_length} chars</span>
                   )}
                 </td>
                 <td className="px-4 py-3 text-center">
                   <div className="flex items-center justify-center gap-1">
-                    {errCount > 0 && <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-red-50 text-red-600 border border-red-200">{errCount}</span>}
-                    {warnCount > 0 && <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 border border-amber-200">{warnCount}</span>}
-                    {errCount === 0 && warnCount === 0 && <span className="text-emerald-500 text-xs">✓</span>}
+                    {errCount > 0 && <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-nexo-danger/10 text-nexo-danger-text border border-nexo-danger/40">{errCount}</span>}
+                    {warnCount > 0 && <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-nexo-warn/10 text-nexo-warn-text border border-nexo-warn/40">{warnCount}</span>}
+                    {errCount === 0 && warnCount === 0 && <span className="text-nexo-ice text-xs">✓</span>}
                   </div>
                 </td>
-                <td className="px-4 py-3 text-right font-mono text-slate-500 tabular-nums hidden lg:table-cell text-xs">
+                <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums hidden lg:table-cell text-xs">
                   {formatMs(page.page_timing?.duration_time)}
                 </td>
-                <td className="px-4 py-3 text-right font-mono text-slate-500 tabular-nums hidden xl:table-cell text-xs">
+                <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums hidden xl:table-cell text-xs">
                   {fmt(page.meta?.content?.plain_text_word_count)}
                 </td>
               </tr>

@@ -8,9 +8,9 @@ export default function AuthShell({ title, subtitle, children }: { title: string
         <div className="flex items-center justify-center">
           <NexoLogo size="lg" />
         </div>
-        <div className="grid gap-4 rounded-nexo-lg border border-nexo-border-strong bg-white/[0.04] p-7 shadow-[0_30px_80px_rgba(0,0,0,0.6)] backdrop-blur-xl">
+        <div className="grid gap-4 rounded-nexo-lg border border-nexo-border-strong bg-nexo-bg/[0.04] p-7 backdrop-blur-xl">
           <div>
-            <h1 className="text-[28px] font-light tracking-[-0.02em] text-nexo-text">{title}</h1>
+            <h1 className="nexo-h1 text-[28px]">{title}</h1>
             <p className="mt-1.5 text-sm leading-relaxed text-nexo-dim">{subtitle}</p>
           </div>
           {children}

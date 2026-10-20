@@ -170,17 +170,17 @@ function formatDate(ts: number) {
 }
 
 function scoreColor(score?: number): string {
-  if (!score) return 'text-slate-400';
-  if (score >= 80) return 'text-emerald-600';
-  if (score >= 50) return 'text-amber-500';
-  return 'text-red-500';
+  if (!score) return 'text-nexo-faint';
+  if (score >= 80) return 'text-nexo-ice';
+  if (score >= 50) return 'text-nexo-warn-text';
+  return 'text-nexo-danger-text';
 }
 
 function scoreBg(score?: number): string {
-  if (!score) return 'bg-slate-100 dark:bg-slate-800';
-  if (score >= 80) return 'bg-emerald-50 dark:bg-emerald-950 border-emerald-100 dark:border-emerald-900';
-  if (score >= 50) return 'bg-amber-50 dark:bg-amber-950 border-amber-100 dark:border-amber-900';
-  return 'bg-red-50 dark:bg-red-950 border-red-100 dark:border-red-900';
+  if (!score) return 'bg-nexo-surface-2';
+  if (score >= 80) return 'bg-nexo-ice/10 border-nexo-ice/30';
+  if (score >= 50) return 'bg-nexo-warn/10 border-nexo-warn/40';
+  return 'bg-nexo-danger/10 border-nexo-danger/40';
 }
 
 // ─── API ──────────────────────────────────────────────────────────────────────
@@ -196,32 +196,32 @@ async function fetchInstantPage(url: string, login: string, pass: string): Promi
 function MetaRow({ label, value, mono = false }: { label: string; value?: string | number | null; mono?: boolean }) {
   if (value === undefined || value === null || value === '') return null;
   return (
-    <div className="flex gap-3 py-2.5 border-b border-slate-50 dark:border-slate-800 last:border-0">
-      <span className="text-xs font-black uppercase tracking-widest text-slate-400 w-40 shrink-0 mt-0.5">{label}</span>
-      <span className={`text-sm text-slate-800 dark:text-slate-200 break-all leading-relaxed ${mono ? 'font-mono text-xs' : ''}`}>{String(value)}</span>
+    <div className="flex gap-3 py-2.5 border-b border-nexo-border last:border-0">
+      <span className="nexo-label w-40 shrink-0 mt-0.5">{label}</span>
+      <span className={`text-sm text-nexo-text break-all leading-relaxed ${mono ? 'font-mono text-xs' : ''}`}>{String(value)}</span>
     </div>
   );
 }
 
 function StatCard({ label, value, sub }: { label: string; value: string | number; sub?: string }) {
   return (
-    <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-800 px-4 py-3">
-      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{label}</p>
-      <p className="text-lg font-black text-slate-900 dark:text-white">{value}</p>
-      {sub && <p className="text-[11px] text-slate-400 mt-0.5">{sub}</p>}
+    <div className="bg-white/[0.02] rounded-nexo-lg border border-nexo-border px-4 py-3">
+      <p className="nexo-label mb-1">{label}</p>
+      <p className="text-lg font-medium text-nexo-text">{value}</p>
+      {sub && <p className="text-[11px] text-nexo-faint mt-0.5">{sub}</p>}
     </div>
   );
 }
 
 function CheckBadge({ severity, label }: { severity: CheckSeverity; label: string }) {
   const cls: Record<CheckSeverity, string> = {
-    error: 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950 border-red-100 dark:border-red-900',
-    warning: 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950 border-amber-100 dark:border-amber-900',
-    info: 'text-blue-500 dark:text-blue-400 bg-blue-50 dark:bg-blue-950 border-blue-100 dark:border-blue-900',
-    good: 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950 border-emerald-100 dark:border-emerald-900',
+    error: 'text-nexo-danger-text bg-nexo-danger/10 border-nexo-danger/40',
+    warning: 'text-nexo-warn-text bg-nexo-warn/10 border-nexo-warn/40',
+    info: 'text-nexo-sky bg-nexo-blue/10 border-nexo-border-strong',
+    good: 'text-nexo-ice bg-nexo-ice/10 border-nexo-ice/30',
   };
   return (
-    <span className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-lg border ${cls[severity]}`}>
+    <span className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-nexo border ${cls[severity]}`}>
       {severity === 'error' && '✕ '}
       {severity === 'warning' && '⚠ '}
       {severity === 'good' && '✓ '}
@@ -287,43 +287,43 @@ async function InstantPagesPage({ searchParams }: { searchParams: Promise<Search
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 mb-1">
-          <span>On Page</span><span className="text-slate-200 dark:text-slate-700">/</span><span className="text-slate-600 dark:text-slate-300">Instant Pages</span>
+        <div className="nexo-label flex items-center gap-2 mb-1">
+          <span>On Page</span><span className="text-nexo-text">/</span><span className="text-nexo-dim">Instant Pages</span>
         </div>
-        <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Instant Page Analysis</h1>
-        <p className="text-sm text-slate-400 mt-1">Full on-page audit of a URL — metadata, performance, checks, and content metrics.</p>
+        <h1 className="nexo-h1">Instant Page Analysis</h1>
+        <p className="text-sm text-nexo-faint mt-1">Full on-page audit of a URL — metadata, performance, checks, and content metrics.</p>
       </div>
 
       {/* Form */}
       <SearchForm
-        className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-3"
+        className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-3"
         btnLabel="Analyze"
-        btnClassName="w-full bg-slate-900 dark:bg-slate-700 text-white font-black uppercase tracking-widest text-xs py-2.5 rounded-xl hover:bg-blue-600 transition-colors"
+        btnClassName="nexo-label w-full bg-white text-nexo-bg py-2.5 rounded-nexo-lg hover:bg-nexo-ice transition-colors"
       >
-        <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Page URL</label>
+        <label className="nexo-label block mb-1.5">Page URL</label>
         <input
           type="url"
           name="url"
           placeholder="https://example.com/page"
           required
           defaultValue={activeEntry?.url ?? ''}
-          className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-300 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
+          className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky font-mono"
         />
       </SearchForm>
 
       {/* Error */}
       {createError && (
-        <div className="bg-red-50 dark:bg-red-950 border border-red-100 dark:border-red-900 text-red-600 dark:text-red-400 text-sm rounded-xl px-4 py-3">{createError}</div>
+        <div className="bg-nexo-danger/10 border border-nexo-danger/40 text-nexo-danger-text text-sm rounded-nexo-lg px-4 py-3">{createError}</div>
       )}
 
       {/* Results */}
       {activeEntry && pageResult && page && (
         <div className="space-y-4">
           {/* Entry header */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm px-6 py-4 flex items-start justify-between gap-4 flex-wrap">
+          <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-6 py-4 flex items-start justify-between gap-4 flex-wrap">
             <div className="min-w-0">
-              <p className="text-xs font-mono text-slate-500 dark:text-slate-400 truncate max-w-lg">{activeEntry.url}</p>
-              <p className="text-[11px] text-slate-400 mt-1">
+              <p className="text-xs font-mono text-nexo-dim truncate max-w-lg">{activeEntry.url}</p>
+              <p className="text-[11px] text-nexo-faint mt-1">
                 {formatDate(activeEntry.ts)}
                 {activeEntry.cost !== undefined && ` · $${activeEntry.cost.toFixed(5)}`}
                 {page.status_code !== undefined && ` · HTTP ${page.status_code}`}
@@ -332,10 +332,10 @@ async function InstantPagesPage({ searchParams }: { searchParams: Promise<Search
             </div>
             {/* OnPage score */}
             {page.onpage_score !== undefined && (
-              <div className={`shrink-0 rounded-2xl border px-5 py-3 text-center ${scoreBg(page.onpage_score)}`}>
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-0.5">OnPage Score</p>
-                <p className={`text-3xl font-black ${scoreColor(page.onpage_score)}`}>{page.onpage_score.toFixed(1)}</p>
-                <p className="text-[10px] text-slate-400">/ 100</p>
+              <div className={`shrink-0 rounded-nexo-lg border px-5 py-3 text-center ${scoreBg(page.onpage_score)}`}>
+                <p className="nexo-label mb-0.5">OnPage Score</p>
+                <p className={`text-3xl font-medium ${scoreColor(page.onpage_score)}`}>{page.onpage_score.toFixed(1)}</p>
+                <p className="text-[10px] text-nexo-faint">/ 100</p>
               </div>
             )}
           </div>
@@ -350,14 +350,14 @@ async function InstantPagesPage({ searchParams }: { searchParams: Promise<Search
 
           {/* Checks */}
           {flaggedChecks.length > 0 && (
-            <div id="results" className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-                <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">Checks</h2>
+            <div id="results" className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+              <div className="px-6 py-4 border-b border-nexo-border">
+                <h2 className="nexo-label">Checks</h2>
               </div>
               <div className="px-6 py-5 space-y-4">
                 {errors.length > 0 && (
                   <div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-red-400 mb-2">Errors</p>
+                    <p className="text-[10px] font-medium uppercase tracking-widest text-nexo-danger-text mb-2">Errors</p>
                     <div className="flex flex-wrap gap-2">
                       {errors.map(([k]) => <CheckBadge key={k} severity="error" label={CHECK_META[k]?.label ?? k} />)}
                     </div>
@@ -365,7 +365,7 @@ async function InstantPagesPage({ searchParams }: { searchParams: Promise<Search
                 )}
                 {warnings.length > 0 && (
                   <div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-amber-400 mb-2">Warnings</p>
+                    <p className="text-[10px] font-medium uppercase tracking-widest text-nexo-warn-text mb-2">Warnings</p>
                     <div className="flex flex-wrap gap-2">
                       {warnings.map(([k]) => <CheckBadge key={k} severity="warning" label={CHECK_META[k]?.label ?? k} />)}
                     </div>
@@ -373,7 +373,7 @@ async function InstantPagesPage({ searchParams }: { searchParams: Promise<Search
                 )}
                 {goods.length > 0 && (
                   <div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-emerald-400 mb-2">Good</p>
+                    <p className="text-[10px] font-medium uppercase tracking-widest text-nexo-ice mb-2">Good</p>
                     <div className="flex flex-wrap gap-2">
                       {goods.map(([k]) => <CheckBadge key={k} severity="good" label={CHECK_META[k]?.label ?? k} />)}
                     </div>
@@ -381,7 +381,7 @@ async function InstantPagesPage({ searchParams }: { searchParams: Promise<Search
                 )}
                 {infos.length > 0 && (
                   <div>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-blue-400 mb-2">Info</p>
+                    <p className="nexo-section mb-2">Info</p>
                     <div className="flex flex-wrap gap-2">
                       {infos.map(([k]) => <CheckBadge key={k} severity="info" label={CHECK_META[k]?.label ?? k} />)}
                     </div>
@@ -392,9 +392,9 @@ async function InstantPagesPage({ searchParams }: { searchParams: Promise<Search
           )}
 
           {/* Meta */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-              <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">Page Metadata</h2>
+          <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+            <div className="px-6 py-4 border-b border-nexo-border">
+              <h2 className="nexo-label">Page Metadata</h2>
             </div>
             <div className="px-6 py-2">
               <MetaRow label="Title" value={page.meta?.title} />
@@ -416,9 +416,9 @@ async function InstantPagesPage({ searchParams }: { searchParams: Promise<Search
 
           {/* Headings */}
           {page.meta?.htags && Object.keys(page.meta.htags).length > 0 && (
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-                <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">Headings</h2>
+            <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+              <div className="px-6 py-4 border-b border-nexo-border">
+                <h2 className="nexo-label">Headings</h2>
               </div>
               <div className="px-6 py-4 space-y-3">
                 {(['h1', 'h2', 'h3', 'h4'] as const).map((tag) => {
@@ -426,13 +426,13 @@ async function InstantPagesPage({ searchParams }: { searchParams: Promise<Search
                   if (!values?.length) return null;
                   return (
                     <div key={tag}>
-                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 mr-2">{tag.toUpperCase()}</span>
-                      <span className="text-[10px] text-slate-300 mr-3">({values.length})</span>
+                      <span className="nexo-label mr-2">{tag.toUpperCase()}</span>
+                      <span className="text-[10px] text-nexo-faint mr-3">({values.length})</span>
                       <div className="mt-1.5 space-y-1">
                         {values.slice(0, 5).map((v, i) => (
-                          <p key={i} className="text-sm text-slate-700 dark:text-slate-300 pl-2 border-l-2 border-slate-100 dark:border-slate-800">{v}</p>
+                          <p key={i} className="text-sm text-nexo-dim pl-2 border-l-2 border-nexo-border">{v}</p>
                         ))}
-                        {values.length > 5 && <p className="text-xs text-slate-400 pl-2">+{values.length - 5} more</p>}
+                        {values.length > 5 && <p className="text-xs text-nexo-faint pl-2">+{values.length - 5} more</p>}
                       </div>
                     </div>
                   );
@@ -443,9 +443,9 @@ async function InstantPagesPage({ searchParams }: { searchParams: Promise<Search
 
           {/* Performance */}
           {page.page_timing && (
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-                <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">Performance</h2>
+            <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+              <div className="px-6 py-4 border-b border-nexo-border">
+                <h2 className="nexo-label">Performance</h2>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 px-6 py-4">
                 <StatCard label="LCP" value={formatMs(page.page_timing.largest_contentful_paint)} sub="Largest Contentful Paint" />
@@ -464,9 +464,9 @@ async function InstantPagesPage({ searchParams }: { searchParams: Promise<Search
 
           {/* Resources */}
           {page.meta && (
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-                <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">Resources</h2>
+            <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+              <div className="px-6 py-4 border-b border-nexo-border">
+                <h2 className="nexo-label">Resources</h2>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 px-6 py-4">
                 <StatCard label="Images" value={page.meta.images_count ?? '—'} sub={formatBytes(page.meta.images_size)} />
@@ -487,9 +487,9 @@ async function InstantPagesPage({ searchParams }: { searchParams: Promise<Search
 
           {/* Content */}
           {page.content && (
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-                <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">Content Metrics</h2>
+            <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+              <div className="px-6 py-4 border-b border-nexo-border">
+                <h2 className="nexo-label">Content Metrics</h2>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 px-6 py-4">
                 {page.content.plain_text_word_count !== undefined && (
@@ -518,33 +518,33 @@ async function InstantPagesPage({ searchParams }: { searchParams: Promise<Search
 
       {/* No result yet */}
       {params.id && !pageResult && !createError && (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm px-6 py-12 text-center text-sm text-slate-400">
+        <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-6 py-12 text-center text-sm text-nexo-faint">
           Result not found.
         </div>
       )}
 
       {/* History */}
       {history.length > 0 && (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-            <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">Analysis history</h2>
+        <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+          <div className="px-6 py-4 border-b border-nexo-border">
+            <h2 className="nexo-label">Analysis history</h2>
           </div>
-          <div className="divide-y divide-slate-50 dark:divide-slate-800">
+          <div className="divide-y divide-nexo-border">
             {history.map((entry) => {
               const isActive = entry.id === params.id;
               return (
                 <a
                   key={entry.id}
                   href={`/dashboard/on-page/instant-pages?id=${entry.id}`}
-                  className={`flex items-center gap-4 px-6 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${isActive ? 'bg-blue-50 dark:bg-blue-950' : ''}`}
+                  className={`flex items-center gap-4 px-6 py-3.5 hover:bg-white/[0.04] transition-colors ${isActive ? 'bg-nexo-blue/10' : ''}`}
                 >
                   <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-medium truncate ${isActive ? 'text-blue-700 dark:text-blue-400' : 'text-slate-800 dark:text-slate-200'}`}>
+                    <p className={`text-sm font-medium truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>
                       {new URL(entry.url).hostname}
                     </p>
-                    <p className="text-[11px] text-slate-400 mt-0.5 truncate font-mono">{entry.url}</p>
+                    <p className="text-[11px] text-nexo-faint mt-0.5 truncate font-mono">{entry.url}</p>
                   </div>
-                  <span className="shrink-0 text-[11px] text-slate-400">{formatDate(entry.ts)}</span>
+                  <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>
                 </a>
               );
             })}

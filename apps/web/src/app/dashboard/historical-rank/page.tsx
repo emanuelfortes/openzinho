@@ -74,10 +74,10 @@ function Bar({ value, max, color }: { value: number; max: number; color: string 
   const pct = max > 0 ? Math.round((value / max) * 100) : 0;
   return (
     <div className="flex items-center gap-2">
-      <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
+      <div className="flex-1 h-2 bg-nexo-surface-2 rounded-full overflow-hidden">
         <div className={`h-full rounded-full ${color}`} style={{ width: `${pct}%` }} />
       </div>
-      <span className="text-[10px] font-mono font-bold text-slate-600 w-10 text-right">{value.toLocaleString()}</span>
+      <span className="text-[10px] font-mono font-medium text-nexo-dim w-10 text-right">{value.toLocaleString()}</span>
     </div>
   );
 }
@@ -148,49 +148,49 @@ async function HistoricalRankPage({ searchParams }: { searchParams: Promise<Sear
   return (
     <div className="space-y-6 pb-12">
       <div>
-        <h1 className="text-3xl font-black text-slate-900 tracking-tight">Historical Rank Overview</h1>
-        <p className="text-slate-500 text-sm mt-1 font-medium dark:text-slate-400">Monthly keyword count and SERP-position mix for a domain</p>
+        <h1 className="nexo-h1">Historical Rank Overview</h1>
+        <p className="text-nexo-dim text-sm mt-1 font-medium">Monthly keyword count and SERP-position mix for a domain</p>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      <div className="grid gap-6 grid-cols-[repeat(auto-fit,minmax(320px,1fr))]">
         <div className="xl:col-span-2 space-y-5">
-          <SearchForm className="bg-white border border-slate-200 rounded-3xl p-6 space-y-4" btnLabel="Analyze" btnClassName="w-full bg-blue-600 text-white py-3 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-blue-700 shadow-lg shadow-blue-200 dark:shadow-none transition-all disabled:opacity-40" disabled={!creds}>
+          <SearchForm className="bg-nexo-surface border border-nexo-border rounded-nexo-lg p-6 space-y-4" btnLabel="Analyze" btnClassName="w-full bg-nexo-blue text-white py-3 rounded-nexo-lg font-medium uppercase text-[10px] tracking-widest hover:bg-nexo-sky transition-all disabled:opacity-40" disabled={!creds}>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="md:col-span-3 space-y-1.5">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Target Domain</label>
-                <input name="target" type="text" defaultValue={target || defaultDomain} placeholder="example.com" className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 text-sm font-medium text-slate-900 transition-all" />
+                <label className="nexo-label">Target Domain</label>
+                <input name="target" type="text" defaultValue={target || defaultDomain} placeholder="example.com" className="nexo-input min-w-0 w-full px-4 py-3 outline-none focus:ring-4 focus:ring-nexo-sky text-sm font-medium transition-all" />
               </div>
               <LabsLocationLanguageFields
                 defaultLocation={location}
                 defaultLanguage={language}
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none text-sm font-medium text-slate-900"
+                className="w-full px-4 py-3 bg-white/[0.02] border border-nexo-border rounded-nexo-lg outline-none text-sm font-medium text-nexo-text"
                 wrapperClassName="space-y-1.5"
-                labelClassName="text-[10px] font-black text-slate-400 uppercase tracking-widest"
+                labelClassName="nexo-label "
               />
-              <div className="md:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-100 pt-4 dark:border-slate-800">
+              <div className="md:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-nexo-border pt-4">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">From</label>
-                  <input name="date_from" type="date" defaultValue={dateFrom} min={HISTORICAL_RANK_START} max={maxDate} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 text-sm font-medium text-slate-900 transition-all dark:bg-slate-800 dark:border-slate-700 dark:text-white" />
+                  <label className="nexo-label">From</label>
+                  <input name="date_from" type="date" defaultValue={dateFrom} min={HISTORICAL_RANK_START} max={maxDate} className="nexo-input min-w-0 w-full px-4 py-3 outline-none focus:ring-4 focus:ring-nexo-sky text-sm font-medium transition-all" />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">To</label>
-                  <input name="date_to" type="date" defaultValue={dateTo} min={HISTORICAL_RANK_START} max={maxDate} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 text-sm font-medium text-slate-900 transition-all dark:bg-slate-800 dark:border-slate-700 dark:text-white" />
+                  <label className="nexo-label">To</label>
+                  <input name="date_to" type="date" defaultValue={dateTo} min={HISTORICAL_RANK_START} max={maxDate} className="nexo-input min-w-0 w-full px-4 py-3 outline-none focus:ring-4 focus:ring-nexo-sky text-sm font-medium transition-all" />
                 </div>
               </div>
             </div>
-            <p className="text-[11px] leading-relaxed text-slate-400 dark:text-slate-500">Historical Rank data is available from October 2020. The full period is selected by default.</p>
-            {!creds && <p className="text-xs text-amber-600 font-medium">Configure API credentials in Settings first.</p>}
+            <p className="text-[11px] leading-relaxed text-nexo-faint">Historical Rank data is available from October 2020. The full period is selected by default.</p>
+            {!creds && <p className="text-xs text-nexo-warn-text font-medium">Configure API credentials in Settings first.</p>}
           </SearchForm>
 
-          {error && <div className="bg-red-50 border border-red-200 text-red-700 rounded-2xl px-5 py-3 text-sm">{error}</div>}
+          {error && <div className="bg-nexo-danger/10 border border-nexo-danger/40 text-nexo-danger-text rounded-nexo-lg px-5 py-3 text-sm">{error}</div>}
 
           {sorted.length > 0 && (
             <div className="space-y-4">
               {/* Sparkline card */}
-              <div className="bg-white border border-slate-200 rounded-3xl p-6">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">
+              <div className="bg-nexo-surface border border-nexo-border rounded-nexo-lg p-6">
+                <p className="nexo-label mb-3">
                   Total Keywords in Google Top 100
-                  {cost > 0 && <span className="ml-3 text-slate-300">· ${cost.toFixed(4)}</span>}
+                  {cost > 0 && <span className="ml-3 text-nexo-faint">· ${cost.toFixed(4)}</span>}
                 </p>
                 <div className="flex items-end gap-6">
                   <svg width={W} height={H} className="overflow-visible">
@@ -200,8 +200,8 @@ async function HistoricalRankPage({ searchParams }: { searchParams: Promise<Sear
                     {sparkData.length > 1 && <path d={sparkPath} fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />}
                   </svg>
                   <div>
-                    <div className="text-3xl font-black text-slate-900">{(sorted[sorted.length - 1]?.metrics.organic?.count ?? 0).toLocaleString()}</div>
-                    <div className="text-[10px] text-slate-400 uppercase tracking-widest">Latest ({formatMonth(sorted[sorted.length - 1].year, sorted[sorted.length - 1].month)})</div>
+                    <div className="text-3xl font-medium text-nexo-text">{(sorted[sorted.length - 1]?.metrics.organic?.count ?? 0).toLocaleString()}</div>
+                    <div className="nexo-label">Latest ({formatMonth(sorted[sorted.length - 1].year, sorted[sorted.length - 1].month)})</div>
                   </div>
                 </div>
               </div>
@@ -209,33 +209,33 @@ async function HistoricalRankPage({ searchParams }: { searchParams: Promise<Sear
               <RankDistributionChart points={sorted} />
 
               {/* Monthly table */}
-              <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden">
+              <div className="bg-nexo-surface border border-nexo-border rounded-nexo-lg overflow-x-auto">
                 <table className="w-full text-xs">
                   <thead>
-                    <tr className="border-b border-slate-100">
-                      <th className="text-left px-5 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Month</th>
-                      <th className="text-left px-3 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Total KWs</th>
-                      <th className="text-right px-3 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest">#1</th>
-                      <th className="text-right px-3 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest">2–3</th>
-                      <th className="text-right px-3 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest">4–10</th>
-                      <th className="text-right px-3 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest">11–30</th>
-                      <th className="text-right px-3 py-3.5 text-[10px] font-black text-slate-400 uppercase tracking-widest">ETV</th>
+                    <tr className="border-b border-nexo-border">
+                      <th className="nexo-label text-left px-5 py-3.5">Month</th>
+                      <th className="nexo-label text-left px-3 py-3.5">Total KWs</th>
+                      <th className="nexo-label text-right px-3 py-3.5">#1</th>
+                      <th className="nexo-label text-right px-3 py-3.5">2–3</th>
+                      <th className="nexo-label text-right px-3 py-3.5">4–10</th>
+                      <th className="nexo-label text-right px-3 py-3.5">11–30</th>
+                      <th className="nexo-label text-right px-3 py-3.5">ETV</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-50">
+                  <tbody className="divide-y divide-nexo-border">
                     {[...sorted].reverse().map((item, i) => {
                       const m = item.metrics.organic ?? {};
                       return (
-                        <tr key={i} className="hover:bg-slate-50/50">
-                          <td className="px-5 py-3 font-bold text-slate-800">{formatMonth(item.year, item.month)}</td>
+                        <tr key={i} className="hover:bg-white/[0.04]">
+                          <td className="px-5 py-3 font-medium text-nexo-text">{formatMonth(item.year, item.month)}</td>
                           <td className="px-3 py-3">
-                            <Bar value={m.count ?? 0} max={maxCount} color="bg-blue-400" />
+                            <Bar value={m.count ?? 0} max={maxCount} color="bg-nexo-sky/40" />
                           </td>
-                          <td className="px-3 py-3 text-right font-mono font-black text-emerald-600">{(m.pos_1 ?? 0).toLocaleString()}</td>
-                          <td className="px-3 py-3 text-right font-mono text-blue-500">{(m.pos_2_3 ?? 0).toLocaleString()}</td>
-                          <td className="px-3 py-3 text-right font-mono text-slate-600">{(m.pos_4_10 ?? 0).toLocaleString()}</td>
-                          <td className="px-3 py-3 text-right font-mono text-slate-400">{((m.pos_11_20 ?? 0) + (m.pos_21_30 ?? 0)).toLocaleString()}</td>
-                          <td className="px-3 py-3 text-right font-mono text-slate-500">{Math.round(m.etv ?? 0).toLocaleString()}</td>
+                          <td className="px-3 py-3 text-right font-mono font-medium text-nexo-ice">{(m.pos_1 ?? 0).toLocaleString()}</td>
+                          <td className="px-3 py-3 text-right font-mono text-nexo-sky">{(m.pos_2_3 ?? 0).toLocaleString()}</td>
+                          <td className="px-3 py-3 text-right font-mono text-nexo-dim">{(m.pos_4_10 ?? 0).toLocaleString()}</td>
+                          <td className="px-3 py-3 text-right font-mono text-nexo-faint">{((m.pos_11_20 ?? 0) + (m.pos_21_30 ?? 0)).toLocaleString()}</td>
+                          <td className="px-3 py-3 text-right font-mono text-nexo-dim">{Math.round(m.etv ?? 0).toLocaleString()}</td>
                         </tr>
                       );
                     })}
@@ -248,16 +248,16 @@ async function HistoricalRankPage({ searchParams }: { searchParams: Promise<Sear
 
         {/* History */}
         <div>
-          <div className="bg-white border border-slate-200 rounded-3xl p-5 sticky top-6">
-            <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">History</h2>
+          <div className="bg-nexo-surface border border-nexo-border rounded-nexo-lg p-5 sticky top-6">
+            <h2 className="nexo-label mb-4">History</h2>
             {history.length === 0 ? (
-              <p className="text-xs text-slate-400">No searches yet.</p>
+              <p className="text-xs text-nexo-faint">No searches yet.</p>
             ) : (
               <div className="space-y-2">
                 {history.map((h) => (
-                  <a key={h.id} href={`?history_id=${h.id}`} className="block rounded-xl px-3 py-2.5 hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-200">
-                    <div className="font-bold text-xs text-slate-800">{h.target}</div>
-                    <div className="text-[10px] text-slate-400 mt-0.5">
+                  <a key={h.id} href={`?history_id=${h.id}`} className="block rounded-nexo-lg px-3 py-2.5 hover:bg-white/[0.04] transition-colors border border-transparent hover:border-nexo-border">
+                    <div className="font-medium text-xs text-nexo-text">{h.target}</div>
+                    <div className="text-[10px] text-nexo-faint mt-0.5">
                       {h.location} · {h.dateFrom && h.dateTo ? `${h.dateFrom} → ${h.dateTo}` : new Date(h.ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
                     </div>
                   </a>

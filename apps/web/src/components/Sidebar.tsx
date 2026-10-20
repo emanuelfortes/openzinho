@@ -49,7 +49,7 @@ function NavLink({ item, active, favorite, onToggleFavorite }: {
           aria-pressed={favorite}
           aria-label={favorite ? `Remove ${item.name} from favorites` : `Add ${item.name} to favorites`}
           title={favorite ? 'Remove from favorites' : 'Add to favorites'}
-          className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1 rounded-nexo opacity-0 group-hover/item:opacity-100 focus-visible:opacity-100 text-nexo-faint hover:text-nexo-ice hover:bg-white/5 transition-opacity"
+          className="absolute right-1.5 top-1/2 -translate-y-1/2 p-1 rounded-nexo opacity-0 group-hover/item:opacity-100 focus-visible:opacity-100 text-nexo-faint hover:text-nexo-ice hover:bg-nexo-bg/5 transition-opacity"
         >
           <Star className={`h-3.5 w-3.5 ${favorite ? 'fill-nexo-ice text-nexo-ice' : ''}`} />
         </button>
@@ -186,7 +186,7 @@ export default function Sidebar({ initialCollapsed = [], initialFavorites = [], 
             }}
             placeholder="Filter tools"
             aria-label="Filter tools"
-            className="nexo-input min-w-0 w-full pl-8 pr-8 py-1.5 text-sm focus:outline-none focus:border-nexo-sky select-text"
+            className="nexo-input min-w-0 w-full pl-8 pr-8 py-1.5 text-sm focus:outline-none select-text"
           />
           {query ? (
             <button

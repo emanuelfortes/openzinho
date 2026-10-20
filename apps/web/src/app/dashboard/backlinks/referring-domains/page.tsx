@@ -89,37 +89,37 @@ async function RefDomainsPage({ searchParams }: { searchParams: Promise<SearchPa
   return (
     <div className="space-y-6 pb-12">
       <div>
-        <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Referring Domains</h1>
-        <p className="text-slate-500 dark:text-slate-400 text-sm mt-1 font-medium">Domains linking to a target</p>
+        <h1 className="nexo-h1">Referring Domains</h1>
+        <p className="text-nexo-dim text-sm mt-1 font-medium">Domains linking to a target</p>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      <div className="grid gap-6 grid-cols-[repeat(auto-fit,minmax(320px,1fr))]">
         {/* Form + Results */}
         <div className="xl:col-span-2 space-y-5">
-          <SearchForm className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 space-y-4" btnLabel="Analyze" btnClassName="w-full bg-blue-600 text-white py-3 rounded-xl font-black uppercase text-[10px] tracking-widest hover:bg-blue-700 shadow-lg shadow-blue-200 dark:shadow-none transition-all disabled:opacity-40" disabled={!creds}>
+          <SearchForm className="bg-nexo-surface border border-nexo-border rounded-nexo-lg p-6 space-y-4" btnLabel="Analyze" btnClassName="w-full bg-nexo-blue text-white py-3 rounded-nexo-lg font-medium uppercase text-[10px] tracking-widest hover:bg-nexo-sky transition-all disabled:opacity-40" disabled={!creds}>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="md:col-span-2 space-y-1.5">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Target Domain</label>
-                <input name="target" type="text" defaultValue={target || defaultDomain} placeholder="example.com" className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 text-sm font-medium text-slate-900 dark:text-white transition-all" />
+                <label className="nexo-label">Target Domain</label>
+                <input name="target" type="text" defaultValue={target || defaultDomain} placeholder="example.com" className="nexo-input min-w-0 w-full px-4 py-3 outline-none focus:ring-4 focus:ring-nexo-sky text-sm font-medium transition-all" />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Limit</label>
-                <select name="limit" defaultValue={String(limit)} className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none text-sm font-medium text-slate-900 dark:text-white">
+                <label className="nexo-label">Limit</label>
+                <select name="limit" defaultValue={String(limit)} className="nexo-input min-w-0 w-full px-4 py-3 outline-none text-sm font-medium">
                   {[50, 100, 250, 500, 1000].map((n) => <option key={n} value={n}>{n}</option>)}
                 </select>
               </div>
             </div>
-            {!creds && <p className="text-xs text-amber-600 dark:text-amber-400 font-medium">Configure API credentials in Settings first.</p>}
+            {!creds && <p className="text-xs text-nexo-warn-text font-medium">Configure API credentials in Settings first.</p>}
           </SearchForm>
 
-          {error && <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-400 rounded-2xl px-5 py-3 text-sm">{error}</div>}
+          {error && <div className="bg-nexo-danger/10 border border-nexo-danger/40 text-nexo-danger-text rounded-nexo-lg px-5 py-3 text-sm">{error}</div>}
 
           {items.length > 0 && (
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <p className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                <p className="nexo-label">
                   {items.length} shown / {total.toLocaleString()} total
-                  {cost > 0 && <span className="ml-3 text-slate-300 dark:text-slate-600">· ${cost.toFixed(4)}</span>}
+                  {cost > 0 && <span className="ml-3 text-nexo-faint">· ${cost.toFixed(4)}</span>}
                 </p>
                 <div className="flex items-center gap-2">
                   <CopyMarkdownButton
@@ -147,7 +147,7 @@ async function RefDomainsPage({ searchParams }: { searchParams: Promise<SearchPa
                   />
                 </div>
               </div>
-              <div id="results" className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden">
+              <div id="results" className="bg-nexo-surface border border-nexo-border rounded-nexo-lg overflow-x-auto">
                 <ReferringDomainsTable items={items} />
               </div>
             </div>
@@ -156,16 +156,16 @@ async function RefDomainsPage({ searchParams }: { searchParams: Promise<SearchPa
 
         {/* History */}
         <div>
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 sticky top-6">
-            <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">History</h2>
+          <div className="bg-nexo-surface border border-nexo-border rounded-nexo-lg p-5 sticky top-6">
+            <h2 className="nexo-label mb-4">History</h2>
             {history.length === 0 ? (
-              <p className="text-xs text-slate-400">No searches yet.</p>
+              <p className="text-xs text-nexo-faint">No searches yet.</p>
             ) : (
               <div className="space-y-2">
                 {history.map((h) => (
-                  <a key={h.id} href={`?history_id=${h.id}`} className="block rounded-xl px-3 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors border border-transparent hover:border-slate-200 dark:hover:border-slate-700">
-                    <div className="font-bold text-xs text-slate-800 dark:text-slate-200">{h.target}</div>
-                    <div className="text-[10px] text-slate-400 mt-0.5">
+                  <a key={h.id} href={`?history_id=${h.id}`} className="block rounded-nexo-lg px-3 py-2.5 hover:bg-white/[0.04] transition-colors border border-transparent hover:border-nexo-border">
+                    <div className="font-medium text-xs text-nexo-text">{h.target}</div>
+                    <div className="text-[10px] text-nexo-faint mt-0.5">
                       {h.total?.toLocaleString() ?? '?'} domains · {new Date(h.ts).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
                     </div>
                   </a>

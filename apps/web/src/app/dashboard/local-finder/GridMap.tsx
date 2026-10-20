@@ -284,15 +284,15 @@ export default function GridMap({ points, gridSize, target, highlightKey, highli
           background: white;
         }
       `}</style>
-      <div id={captureId} className="relative bg-slate-100">
+      <div id={captureId} className="relative bg-nexo-surface-2">
         {highlightKey && (
-          <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[1000] bg-blue-600 text-white text-[11px] font-black uppercase tracking-widest px-3 py-1.5 rounded-full shadow-lg">
+          <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[1000] bg-nexo-blue text-white text-[11px] font-medium uppercase tracking-widest px-3 py-1.5 rounded-full">
             Showing: {highlightName ?? 'competitor'}
           </div>
         )}
         <div
           ref={containerRef}
-          className="w-full rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800"
+          className="w-full rounded-nexo-lg overflow-hidden border border-nexo-border"
           style={{ height: 520 }}
         />
       </div>

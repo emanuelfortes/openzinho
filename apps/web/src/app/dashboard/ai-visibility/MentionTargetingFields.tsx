@@ -10,7 +10,7 @@ interface Props {
   defaultLanguage: string;
 }
 
-const FIELD_CLASS = 'w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white dark:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed';
+const FIELD_CLASS = 'w-full px-4 py-2.5 border border-nexo-border rounded-nexo-lg text-sm text-nexo-text focus:outline-none focus:ring-2 focus:ring-nexo-sky bg-nexo-surface disabled:opacity-50 disabled:cursor-not-allowed';
 const CHAT_GPT_LANGUAGE_OPTIONS = [{ value: 'English', label: 'English' }];
 
 /** Locale controls shared by the current-snapshot LLM Mentions endpoints. */
@@ -27,14 +27,14 @@ export default function MentionTargetingFields({ defaultPlatform, defaultLocatio
   return (
     <>
       <div>
-        <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Platform</label>
+        <label className="nexo-label block mb-1.5">Platform</label>
         <select name="platform" value={platform} onChange={(event) => setPlatform(event.target.value)} className={FIELD_CLASS}>
           <option value="chat_gpt">ChatGPT</option>
           <option value="google">Google AI</option>
         </select>
       </div>
       <div>
-        <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Location</label>
+        <label className="nexo-label block mb-1.5">Location</label>
         <LocationPicker
           key={isChatGpt ? 'us-locked' : 'user'}
           name="location"
@@ -44,14 +44,14 @@ export default function MentionTargetingFields({ defaultPlatform, defaultLocatio
           className={FIELD_CLASS}
           scope="labs"
         />
-        {isChatGpt && <p className="text-[11px] text-slate-400 mt-1">United States only for ChatGPT.</p>}
+        {isChatGpt && <p className="text-[11px] text-nexo-faint mt-1">United States only for ChatGPT.</p>}
       </div>
       <div>
-        <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Language</label>
+        <label className="nexo-label block mb-1.5">Language</label>
         <select name="language" value={selectedLanguage} onChange={(event) => setLanguage(event.target.value)} disabled={isChatGpt} className={FIELD_CLASS}>
           {languageOptions.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
         </select>
-        {isChatGpt && <p className="text-[11px] text-slate-400 mt-1">English only for ChatGPT.</p>}
+        {isChatGpt && <p className="text-[11px] text-nexo-faint mt-1">English only for ChatGPT.</p>}
       </div>
     </>
   );

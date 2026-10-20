@@ -82,7 +82,7 @@ function StarRow({ value, max = 5 }: { value: number; max?: number }) {
   return (
     <span className="inline-flex gap-0.5">
       {Array.from({ length: max }, (_, i) => (
-        <span key={i} className={i < full ? 'text-amber-400' : 'text-slate-200'} style={{ fontSize: '0.85em' }}>★</span>
+        <span key={i} className={i < full ? 'text-nexo-warn-text' : 'text-nexo-text'} style={{ fontSize: '0.85em' }}>★</span>
       ))}
     </span>
   );
@@ -101,22 +101,22 @@ function DistributionChart({ reviews }: { reviews: Review[] }) {
     }).length,
   }));
   const maxCount = Math.max(...buckets.map((b) => b.count), 1);
-  const barColors = ['bg-emerald-500', 'bg-green-400', 'bg-amber-400', 'bg-orange-400', 'bg-red-500'];
+  const barColors = ['bg-nexo-ice', 'bg-nexo-ice', 'bg-nexo-warn', 'bg-nexo-warn', 'bg-nexo-danger'];
 
   return (
     <div className="space-y-2.5">
       {buckets.map(({ star, count }, i) => (
         <div key={star} className="flex items-center gap-3">
-          <span className="text-xs font-black text-slate-600 dark:text-slate-300 w-5 text-right">{star}</span>
-          <span className="text-amber-400 text-sm">★</span>
-          <div className="flex-1 bg-slate-100 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden">
+          <span className="text-xs font-medium text-nexo-dim w-5 text-right">{star}</span>
+          <span className="text-nexo-warn-text text-sm">★</span>
+          <div className="flex-1 bg-nexo-surface-2 rounded-full h-2.5 overflow-hidden">
             <div
               className={`h-full rounded-full transition-all duration-500 ${barColors[i]}`}
               style={{ width: `${(count / maxCount) * 100}%` }}
             />
           </div>
-          <span className="text-xs tabular-nums text-slate-700 dark:text-slate-300 font-semibold w-8 text-right">{count}</span>
-          <span className="text-xs tabular-nums text-slate-400 w-9">
+          <span className="text-xs tabular-nums text-nexo-dim font-semibold w-8 text-right">{count}</span>
+          <span className="text-xs tabular-nums text-nexo-faint w-9">
             {reviews.length > 0 ? `${((count / reviews.length) * 100).toFixed(0)}%` : ''}
           </span>
         </div>
@@ -141,7 +141,7 @@ function MonthlyChart({ reviews }: { reviews: Review[] }) {
 
   const entries = Object.entries(monthMap).sort(([a], [b]) => a.localeCompare(b));
   if (entries.length < 2) {
-    return <p className="text-sm text-slate-400 py-4 text-center">Not enough data to display monthly chart.</p>;
+    return <p className="text-sm text-nexo-faint py-4 text-center">Not enough data to display monthly chart.</p>;
   }
 
   const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -240,9 +240,9 @@ function RatingGauge({ avg, total }: { avg: number; total: number }) {
         className="absolute left-0 right-0 flex flex-col items-center pointer-events-none"
         style={{ top: '60%', transform: 'translateY(-50%)' }}
       >
-        <span className="text-2xl font-black text-slate-900 dark:text-white leading-none tabular-nums">{avg.toFixed(1)}</span>
-        <span className="text-[9px] text-slate-400 mt-1">out of 5</span>
-        <span className="text-[9px] text-slate-400">{total} reviews</span>
+        <span className="nexo-metric font-mono text-2xl leading-none tabular-nums">{avg.toFixed(1)}</span>
+        <span className="text-[9px] text-nexo-faint mt-1">out of 5</span>
+        <span className="text-[9px] text-nexo-faint">{total} reviews</span>
       </div>
     </div>
   );
@@ -273,28 +273,28 @@ function GoalCalculator({ reviews }: { reviews: Review[] }) {
   }
 
   if (targetsTenths.length === 0) return (
-    <p className="text-xs text-slate-500 dark:text-slate-400">Already displaying 5.0★ — nothing higher to reach.</p>
+    <p className="text-xs text-nexo-dim">Already displaying 5.0★ — nothing higher to reach.</p>
   );
 
   return (
     <div className="space-y-3">
-      <p className="text-xs text-slate-500 dark:text-slate-400">
-        Current average: <strong className="text-slate-700 dark:text-slate-300">{avg.toFixed(2)}★</strong>{' '}
-        (Google shows <strong className="text-slate-700 dark:text-slate-300">{displayed.toFixed(1)}★</strong>) based on{' '}
-        <strong className="text-slate-700 dark:text-slate-300">{n}</strong> fetched reviews. Assumes all new reviews are{' '}
-        <strong className="text-slate-700 dark:text-slate-300">5★</strong>; counts reach the rating Google would display.
+      <p className="text-xs text-nexo-dim">
+        Current average: <strong className="text-nexo-dim">{avg.toFixed(2)}★</strong>{' '}
+        (Google shows <strong className="text-nexo-dim">{displayed.toFixed(1)}★</strong>) based on{' '}
+        <strong className="text-nexo-dim">{n}</strong> fetched reviews. Assumes all new reviews are{' '}
+        <strong className="text-nexo-dim">5★</strong>; counts reach the rating Google would display.
       </p>
 
-      <div className="overflow-hidden rounded-xl border border-slate-100 dark:border-slate-800">
+      <div className="overflow-x-auto rounded-nexo-lg border border-nexo-border">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-100 dark:border-slate-800">
-              <th className="text-left text-[10px] font-black uppercase tracking-widest text-slate-400 px-4 py-2.5">Target rating</th>
-              <th className="text-right text-[10px] font-black uppercase tracking-widest text-slate-400 px-4 py-2.5">5★ reviews needed</th>
-              <th className="text-right text-[10px] font-black uppercase tracking-widest text-slate-400 px-4 py-2.5 hidden sm:table-cell">Total reviews after</th>
+            <tr className="bg-white/[0.02] border-b border-nexo-border">
+              <th className="nexo-label text-left px-4 py-2.5">Target rating</th>
+              <th className="nexo-label text-right px-4 py-2.5">5★ reviews needed</th>
+              <th className="nexo-label text-right px-4 py-2.5 hidden sm:table-cell">Total reviews after</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
+          <tbody className="divide-y divide-nexo-border">
             {targetsTenths.map((t) => {
               const target = t / 10;
               // Min true average that still displays as `target` is just above (target − 0.05).
@@ -306,17 +306,17 @@ function GoalCalculator({ reviews }: { reviews: Review[] }) {
               const easy = needed <= 10;
               const medium = needed <= 50;
               return (
-                <tr key={t} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                <tr key={t} className="hover:bg-white/[0.04] transition-colors">
                   <td className="px-4 py-2.5">
-                    <span className="font-black text-slate-800 dark:text-slate-200">{target.toFixed(1)}</span>
-                    <span className="text-amber-400 ml-1">★</span>
+                    <span className="font-medium text-nexo-text">{target.toFixed(1)}</span>
+                    <span className="text-nexo-warn-text ml-1">★</span>
                   </td>
                   <td className="px-4 py-2.5 text-right">
-                    <span className={`font-black tabular-nums text-base ${easy ? 'text-emerald-600 dark:text-emerald-400' : medium ? 'text-blue-600 dark:text-blue-400' : 'text-slate-700 dark:text-slate-300'}`}>
+                    <span className={`font-medium tabular-nums text-base ${easy ? 'text-nexo-ice' : medium ? 'text-nexo-sky' : 'text-nexo-dim'}`}>
                       {needed > 0 ? needed.toLocaleString() : '0'}
                     </span>
                   </td>
-                  <td className="px-4 py-2.5 text-right text-xs text-slate-400 tabular-nums hidden sm:table-cell">
+                  <td className="px-4 py-2.5 text-right text-xs text-nexo-faint tabular-nums hidden sm:table-cell">
                     {(n + needed).toLocaleString()}
                   </td>
                 </tr>
@@ -352,55 +352,55 @@ function BusinessInfoCard({ meta }: { meta: BusinessMeta }) {
   if (!hasInfo) return null;
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-      <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-        <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">Business info</h2>
+    <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+      <div className="px-6 py-4 border-b border-nexo-border">
+        <h2 className="nexo-label">Business info</h2>
       </div>
       <div className="px-6 py-5 space-y-3">
         {meta.category && (
           <div className="flex items-start gap-3">
-            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 w-32 shrink-0 pt-0.5">Primary category</span>
-            <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">{meta.category}</span>
+            <span className="nexo-label w-32 shrink-0 pt-0.5">Primary category</span>
+            <span className="text-sm font-semibold text-nexo-text">{meta.category}</span>
           </div>
         )}
         {meta.additional_categories && meta.additional_categories.length > 0 && (
           <div className="flex items-start gap-3">
-            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 w-32 shrink-0 pt-0.5">Also in</span>
+            <span className="nexo-label w-32 shrink-0 pt-0.5">Also in</span>
             <div className="flex flex-wrap gap-1.5">
               {meta.additional_categories.map((c, i) => (
-                <span key={i} className="text-xs text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-0.5 rounded-lg">{c}</span>
+                <span key={i} className="text-xs text-nexo-dim bg-nexo-surface-2 border border-nexo-border px-2 py-0.5 rounded-nexo">{c}</span>
               ))}
             </div>
           </div>
         )}
         {meta.description && (
           <div className="flex items-start gap-3">
-            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 w-32 shrink-0 pt-0.5">Description</span>
-            <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{meta.description}</p>
+            <span className="nexo-label w-32 shrink-0 pt-0.5">Description</span>
+            <p className="text-sm text-nexo-dim leading-relaxed">{meta.description}</p>
           </div>
         )}
         {meta.address && (
           <div className="flex items-start gap-3">
-            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 w-32 shrink-0 pt-0.5">Address</span>
-            <span className="text-sm text-slate-700 dark:text-slate-300">{meta.address}</span>
+            <span className="nexo-label w-32 shrink-0 pt-0.5">Address</span>
+            <span className="text-sm text-nexo-dim">{meta.address}</span>
           </div>
         )}
         {meta.phone && (
           <div className="flex items-start gap-3">
-            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 w-32 shrink-0 pt-0.5">Phone</span>
-            <span className="text-sm text-slate-700 dark:text-slate-300">{meta.phone}</span>
+            <span className="nexo-label w-32 shrink-0 pt-0.5">Phone</span>
+            <span className="text-sm text-nexo-dim">{meta.phone}</span>
           </div>
         )}
         {(meta.website || meta.url) && (
           <div className="flex items-start gap-3">
-            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 w-32 shrink-0 pt-0.5">Website</span>
-            <a href={meta.website ?? meta.url} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline truncate max-w-xs">{meta.website ?? meta.url}</a>
+            <span className="nexo-label w-32 shrink-0 pt-0.5">Website</span>
+            <a href={meta.website ?? meta.url} target="_blank" rel="noopener noreferrer" className="text-sm text-nexo-sky hover:underline truncate max-w-xs">{meta.website ?? meta.url}</a>
           </div>
         )}
         {meta.place_id && (
           <div className="flex items-start gap-3">
-            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 w-32 shrink-0 pt-0.5">Place ID</span>
-            <span className="text-xs font-mono text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2 py-0.5 rounded select-all">{meta.place_id}</span>
+            <span className="nexo-label w-32 shrink-0 pt-0.5">Place ID</span>
+            <span className="text-xs font-mono text-nexo-dim bg-white/[0.02] border border-nexo-border px-2 py-0.5 rounded select-all">{meta.place_id}</span>
           </div>
         )}
       </div>
@@ -434,9 +434,9 @@ function PopularTimesDay({ dayKey, hours }: { dayKey: string; hours: PopularHour
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-center justify-between px-1">
-        <span className="text-[11px] font-black uppercase tracking-widest text-slate-500">{DAY_LABELS[dayKey] ?? dayKey}</span>
+        <span className="nexo-label">{DAY_LABELS[dayKey] ?? dayKey}</span>
         {peakHour.value > 0 && (
-          <span className="text-[10px] text-slate-400">Peak {peakHour.hour}h</span>
+          <span className="text-[10px] text-nexo-faint">Peak {peakHour.hour}h</span>
         )}
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: `${H}px` }}>
@@ -470,10 +470,10 @@ function PopularTimesByDaySection({ byDay }: { byDay: Record<string, PopularHour
   if (days.length === 0) return null;
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-      <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-        <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">Popular times by day</h2>
-        <p className="text-[11px] text-slate-400 mt-0.5">Hover a bar to see the hour and busyness level.</p>
+    <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+      <div className="px-6 py-4 border-b border-nexo-border">
+        <h2 className="nexo-label">Popular times by day</h2>
+        <p className="text-[11px] text-nexo-faint mt-0.5">Hover a bar to see the hour and busyness level.</p>
       </div>
       <div className="px-6 py-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
         {days.map((day) => (
@@ -488,17 +488,17 @@ function PopularTimesByDaySection({ byDay }: { byDay: Record<string, PopularHour
 
 function StatusBadge({ status }: { status: ReviewsTask['status'] }) {
   if (status === 'ready') return (
-    <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-lg">
+    <span className="inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-widest text-nexo-ice bg-nexo-ice/10 border border-nexo-ice/30 px-2 py-0.5 rounded-nexo">
       <CheckCircle className="w-2.5 h-2.5" /> Ready
     </span>
   );
   if (status === 'error') return (
-    <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-red-500 bg-red-50 border border-red-100 px-2 py-0.5 rounded-lg">
+    <span className="inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-widest text-nexo-danger-text bg-nexo-danger/10 border border-nexo-danger/40 px-2 py-0.5 rounded-nexo">
       <AlertCircle className="w-2.5 h-2.5" /> Error
     </span>
   );
   return (
-    <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-amber-600 bg-amber-50 border border-amber-100 px-2 py-0.5 rounded-lg">
+    <span className="inline-flex items-center gap-1 text-[10px] font-medium uppercase tracking-widest text-nexo-warn-text bg-nexo-warn/10 border border-nexo-warn/40 px-2 py-0.5 rounded-nexo">
       <Clock className="w-2.5 h-2.5" /> Pending
     </span>
   );
@@ -508,10 +508,10 @@ function StatusBadge({ status }: { status: ReviewsTask['status'] }) {
 
 function StatCard({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
-    <div className="bg-slate-50 dark:bg-slate-800/60 rounded-xl border border-slate-100 dark:border-slate-800 px-4 py-3">
-      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{label}</p>
-      <p className="text-lg font-black text-slate-900 dark:text-white">{value}</p>
-      {sub && <p className="text-[11px] text-slate-400 mt-0.5">{sub}</p>}
+    <div className="bg-white/[0.02] rounded-nexo-lg border border-nexo-border px-4 py-3">
+      <p className="nexo-label mb-1">{label}</p>
+      <p className="text-lg font-medium text-nexo-text">{value}</p>
+      {sub && <p className="text-[11px] text-nexo-faint mt-0.5">{sub}</p>}
     </div>
   );
 }
@@ -658,14 +658,14 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
         key={t.id}
         href={t.status === 'ready' ? `/dashboard/google-reviews?id=${t.id}` : '#'}
         className={`flex items-start gap-3 px-5 py-3.5 transition-colors ${
-          isActive ? 'bg-blue-50 dark:bg-blue-950/30' : t.status === 'ready' ? 'hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer' : 'cursor-default'
+          isActive ? 'bg-nexo-blue/10' : t.status === 'ready' ? 'hover:bg-white/[0.04] cursor-pointer' : 'cursor-default'
         }`}
       >
         <div className="flex-1 min-w-0">
-          <p className={`text-sm font-semibold truncate ${isActive ? 'text-blue-700 dark:text-blue-400' : 'text-slate-800 dark:text-slate-200'}`}>
+          <p className={`text-sm font-semibold truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>
             {t.business}
           </p>
-          <p className="text-[11px] text-slate-400 mt-0.5">
+          <p className="text-[11px] text-nexo-faint mt-0.5">
             {t.location} · {t.language} · {t.depth} reviews · {formatDate(t.ts)}
             {t.resultCount ? ` · ${t.resultCount} results` : ''}
             {t.cost !== undefined ? ` · $${t.cost.toFixed(5)}` : ''}
@@ -680,12 +680,12 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Google Reviews</h1>
-        <p className="text-sm text-slate-400 mt-1">Analyse reviews for a business — distribution, monthly trend, and rating goals.</p>
+        <h1 className="nexo-h1">Google Reviews</h1>
+        <p className="text-sm text-nexo-faint mt-1">Analyse reviews for a business — distribution, monthly trend, and rating goals.</p>
       </div>
 
       {!creds && (
-        <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900 text-amber-700 dark:text-amber-400 text-sm rounded-xl px-4 py-3">
+        <div className="bg-nexo-warn/10 border border-nexo-warn/40 text-nexo-warn-text text-sm rounded-nexo-lg px-4 py-3">
           DataForSEO credentials missing. Configure them in{' '}
           <a href="/dashboard/settings" className="underline font-semibold">settings</a>.
         </div>
@@ -694,43 +694,43 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
       <div className="flex flex-col lg:flex-row gap-6 items-start">
         <div className="flex-1 min-w-0 space-y-6">
       {/* Form */}
-      <form action={submitReviewsTaskAction} className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4">
+      <form action={submitReviewsTaskAction} className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="sm:col-span-2">
-            <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Business name</label>
+            <label className="nexo-label block mb-1.5">Business name</label>
             <input
               type="text"
               name="keyword"
               required
               placeholder="e.g. Joe's Plumbing New York"
-              className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-300 dark:placeholder-slate-500 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
             />
           </div>
           <div>
-            <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Location</label>
+            <label className="nexo-label block mb-1.5">Location</label>
             <LocationPicker
               name="location"
               defaultValue={defaultLocation}
               placeholder="e.g. France, Paris"
-              className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-300 dark:placeholder-slate-500 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2.5 border border-nexo-border rounded-nexo-lg text-sm text-nexo-text placeholder-white/30 bg-nexo-surface focus:outline-none focus:ring-2 focus:ring-nexo-sky"
             />
           </div>
           <div>
-            <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Language</label>
+            <label className="nexo-label block mb-1.5">Language</label>
             <input
               type="text"
               name="language"
               defaultValue={defaultLanguage}
               placeholder="e.g. French"
-              className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-300 dark:placeholder-slate-500 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
             />
           </div>
           <div>
-            <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Depth</label>
+            <label className="nexo-label block mb-1.5">Depth</label>
             <select
               name="depth"
               defaultValue="100"
-              className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
             >
               <option value="50">50 reviews</option>
               <option value="100">100 reviews</option>
@@ -739,11 +739,11 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
             </select>
           </div>
           <div>
-            <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Sort by</label>
+            <label className="nexo-label block mb-1.5">Sort by</label>
             <select
               name="sort_by"
               defaultValue="newest"
-              className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
             >
               <option value="newest">Newest</option>
               <option value="relevant">Most relevant</option>
@@ -755,9 +755,9 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
         <PendingButton
           type="submit"
           disabled={!creds}
-          className="w-full bg-slate-900 text-white font-black uppercase tracking-widest text-xs py-2.5 rounded-xl hover:bg-blue-600 transition-colors disabled:opacity-40"
+          className="nexo-label w-full bg-white text-nexo-bg py-2.5 rounded-nexo-lg hover:bg-nexo-ice transition-colors disabled:opacity-40"
           pendingChildren="Submitting task…"
-          pendingClassName="w-full bg-slate-400 text-white font-black uppercase tracking-widest text-xs py-2.5 rounded-xl cursor-not-allowed"
+          pendingClassName="w-full bg-white/30 text-white font-medium uppercase tracking-widest text-xs py-2.5 rounded-nexo-lg cursor-not-allowed"
         >
           Fetch reviews
         </PendingButton>
@@ -765,8 +765,8 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
 
       {/* Pending indicator */}
       {pendingCount > 0 && (
-        <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900 rounded-xl px-4 py-3 flex items-center gap-3 text-sm text-amber-700 dark:text-amber-400">
-          <svg className="animate-spin w-4 h-4 shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24">
+        <div className="bg-nexo-warn/10 border border-nexo-warn/40 rounded-nexo-lg px-4 py-3 flex items-center gap-3 text-sm text-nexo-warn-text">
+          <svg className="animate-spin w-4 h-4 shrink-0 text-nexo-warn-text" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
           </svg>
@@ -780,8 +780,8 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
       {/* Results */}
       {activeTask && activeTask.status === 'ready' && reviews.length > 0 && (
         <div className="space-y-4">
-          <div className="flex items-center justify-between gap-4 border-y border-slate-100 dark:border-slate-800 py-3">
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Export reputation report</p>
+          <div className="flex items-center justify-between gap-4 border-y border-nexo-border py-3">
+            <p className="nexo-label">Export reputation report</p>
             <div className="flex items-center gap-3">
               <ReportPdfExportButton brandName={brandName} brandLogoUrl={brandLogoUrl} brandColor={brand.color} brandFooter={brand.footer} brandStyle={brand} filename={`${reviewFileStem}-reputation-report.pdf`}
                 title="Google reviews report" subject={meta?.title || activeTask.business} generatedAt={activeTask.ts}
@@ -806,7 +806,7 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
             </div>
           </div>
           {/* Summary stats */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-6">
+          <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6">
             <div className="flex items-center gap-6 flex-wrap">
               {avgRating !== null && (
                 <div className="shrink-0">
@@ -838,9 +838,9 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
           {meta && <BusinessInfoCard meta={meta} />}
 
           {/* Distribution */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-              <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">Rating distribution</h2>
+          <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+            <div className="px-6 py-4 border-b border-nexo-border">
+              <h2 className="nexo-label">Rating distribution</h2>
             </div>
             <div className="px-6 py-5">
               <DistributionChart reviews={reviews} />
@@ -848,10 +848,10 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
           </div>
 
           {/* Monthly chart */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-              <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">Reviews per month</h2>
-              <p className="text-[11px] text-slate-400 mt-0.5">Hover a bar to see the exact month and count.</p>
+          <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+            <div className="px-6 py-4 border-b border-nexo-border">
+              <h2 className="nexo-label">Reviews per month</h2>
+              <p className="text-[11px] text-nexo-faint mt-0.5">Hover a bar to see the exact month and count.</p>
             </div>
             <div className="px-6 py-4">
               <MonthlyChart reviews={reviews} />
@@ -863,9 +863,9 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
 
           {/* Popular times (current/live single snapshot) */}
           {meta?.popular_times && meta.popular_times.length > 0 && !meta.popular_times_by_day && (
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-                <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">Popular times</h2>
+            <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+              <div className="px-6 py-4 border-b border-nexo-border">
+                <h2 className="nexo-label">Popular times</h2>
               </div>
               <div className="px-6 py-5">
                 <PopularTimesDay dayKey="today" hours={meta.popular_times} />
@@ -874,10 +874,10 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
           )}
 
           {/* Goal calculator */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-              <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">Rating goal</h2>
-              <p className="text-[11px] text-slate-400 mt-0.5">5★ reviews needed for each 0.1 increment.</p>
+          <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+            <div className="px-6 py-4 border-b border-nexo-border">
+              <h2 className="nexo-label">Rating goal</h2>
+              <p className="text-[11px] text-nexo-faint mt-0.5">5★ reviews needed for each 0.1 increment.</p>
             </div>
             <div className="px-6 py-5">
               <GoalCalculator reviews={reviews} />
@@ -885,11 +885,11 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
           </div>
 
           {/* Reviews list */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3">
-              <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">Reviews</h2>
+          <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+            <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between gap-3">
+              <h2 className="nexo-label">Reviews</h2>
               <div className="flex items-center gap-4">
-                <span className="text-xs text-slate-400">{reviews.length} fetched</span>
+                <span className="text-xs text-nexo-faint">{reviews.length} fetched</span>
                 <CopyMarkdownButton data={reviewsCsvData} columns={reviewsCsvColumns} />
                 <DownloadCsvButton
                   reviews={reviews}
@@ -897,33 +897,33 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
                 />
               </div>
             </div>
-            <div className="divide-y divide-slate-50 dark:divide-slate-800">
+            <div className="divide-y divide-nexo-border">
               {reviews.slice(0, 100).map((r, i) => (
                 <div key={i} className="px-6 py-4 space-y-1.5">
                   <div className="flex items-center gap-2 flex-wrap">
                     {r.rating?.value !== undefined && <StarRow value={r.rating.value} />}
-                    <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">{r.profile_name ?? 'Anonymous'}</span>
+                    <span className="text-xs font-semibold text-nexo-dim">{r.profile_name ?? 'Anonymous'}</span>
                     {r.local_guide && (
-                      <span className="text-[10px] font-black uppercase tracking-widest text-blue-500 bg-blue-50 border border-blue-100 px-1.5 py-0.5 rounded">
+                      <span className="nexo-section bg-nexo-blue/10 border border-nexo-border-strong px-1.5 py-0.5 rounded">
                         Local Guide
                       </span>
                     )}
                     {r.timestamp && (
-                      <span className="text-[11px] text-slate-400 ml-auto">{formatDateTime(r.timestamp)}</span>
+                      <span className="text-[11px] text-nexo-faint ml-auto">{formatDateTime(r.timestamp)}</span>
                     )}
                     {!r.timestamp && r.time_ago && (
-                      <span className="text-[11px] text-slate-400 ml-auto">{r.time_ago}</span>
+                      <span className="text-[11px] text-nexo-faint ml-auto">{r.time_ago}</span>
                     )}
                   </div>
                   {r.review_text && (
-                    <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                    <p className="text-sm text-nexo-dim leading-relaxed">
                       <TextWithBreaks text={r.review_text} />
                     </p>
                   )}
                   {r.owner_answer && (
-                    <div className="mt-2 ml-4 pl-3 border-l-2 border-blue-100 dark:border-blue-900">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-blue-400 mb-0.5">Owner response</p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+                    <div className="mt-2 ml-4 pl-3 border-l-2 border-nexo-border-strong">
+                      <p className="nexo-section mb-0.5">Owner response</p>
+                      <p className="text-xs text-nexo-dim leading-relaxed">
                         <TextWithBreaks text={r.owner_answer} />
                       </p>
                     </div>
@@ -931,7 +931,7 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
                 </div>
               ))}
               {reviews.length > 100 && (
-                <div className="px-6 py-4 text-center text-xs text-slate-400">
+                <div className="px-6 py-4 text-center text-xs text-nexo-faint">
                   {reviews.length - 100} more reviews not shown.
                 </div>
               )}
@@ -941,7 +941,7 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
       )}
 
       {activeTask && activeTask.status === 'pending' && (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm px-6 py-10 text-center text-sm text-slate-400">
+        <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-6 py-10 text-center text-sm text-nexo-faint">
           Task is being processed by DataForSEO. Reload the page in a few seconds.
         </div>
       )}

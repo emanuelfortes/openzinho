@@ -35,28 +35,28 @@ type SortKey = 'keyword' | 'kd' | 'volume' | 'cpc' | 'intent' | 'competition' | 
 type SortDir = 'asc' | 'desc';
 
 function DifficultyBadge({ value }: { value?: number }) {
-  if (value === undefined || value === null) return <span className="text-slate-300 text-xs">—</span>;
-  const color = value >= 70 ? 'bg-red-100 text-red-700'
-    : value >= 50 ? 'bg-orange-100 text-orange-700'
-    : value >= 30 ? 'bg-amber-100 text-amber-700'
-    : 'bg-emerald-100 text-emerald-700';
-  return <span className={`inline-flex items-center justify-center w-9 h-5 rounded text-[10px] font-black ${color}`}>{value}</span>;
+  if (value === undefined || value === null) return <span className="text-nexo-faint text-xs">—</span>;
+  const color = value >= 70 ? 'bg-nexo-danger/10 text-nexo-danger-text'
+    : value >= 50 ? 'bg-nexo-warn/10 text-nexo-warn-text'
+    : value >= 30 ? 'bg-nexo-warn/10 text-nexo-warn-text'
+    : 'bg-nexo-ice/10 text-nexo-ice';
+  return <span className={`inline-flex items-center justify-center w-9 h-5 rounded text-[10px] font-medium ${color}`}>{value}</span>;
 }
 
 function IntentBadge({ intent }: { intent?: string }) {
-  if (!intent) return <span className="text-slate-300 text-xs">—</span>;
+  if (!intent) return <span className="text-nexo-faint text-xs">—</span>;
   const map: Record<string, string> = {
-    informational: 'bg-blue-50 text-blue-600',
-    navigational: 'bg-purple-50 text-purple-600',
-    commercial: 'bg-amber-50 text-amber-700',
-    transactional: 'bg-emerald-50 text-emerald-700',
+    informational: 'bg-nexo-blue/10 text-nexo-sky',
+    navigational: 'bg-nexo-blue/10 text-nexo-sky',
+    commercial: 'bg-nexo-warn/10 text-nexo-warn-text',
+    transactional: 'bg-nexo-ice/10 text-nexo-ice',
   };
-  const cls = map[intent] ?? 'bg-slate-100 text-slate-500';
-  return <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wide ${cls}`}>{intent.slice(0, 5)}</span>;
+  const cls = map[intent] ?? 'bg-nexo-surface-2 text-nexo-dim';
+  return <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wide ${cls}`}>{intent.slice(0, 5)}</span>;
 }
 
 function TrendSparkline({ monthly }: { monthly?: MonthlySearch[] }) {
-  if (!monthly || monthly.length === 0) return <span className="text-slate-300 text-xs">—</span>;
+  if (!monthly || monthly.length === 0) return <span className="text-nexo-faint text-xs">—</span>;
   const sorted = [...monthly].sort((a, b) => a.year !== b.year ? a.year - b.year : a.month - b.month);
   const values = sorted.map((m) => m.search_volume);
   const max = Math.max(...values, 1);
@@ -91,8 +91,8 @@ function sortValue(item: TopSearchItem, key: SortKey): number | string {
 }
 
 function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
-  if (!active) return <ArrowUpDown className="w-3 h-3 text-slate-300" />;
-  return dir === 'asc' ? <ArrowUp className="w-3 h-3 text-blue-600" /> : <ArrowDown className="w-3 h-3 text-blue-600" />;
+  if (!active) return <ArrowUpDown className="w-3 h-3 text-nexo-faint" />;
+  return dir === 'asc' ? <ArrowUp className="w-3 h-3 text-nexo-sky" /> : <ArrowDown className="w-3 h-3 text-nexo-sky" />;
 }
 
 export default function TopSearchesTable({ items }: { items: TopSearchItem[] }) {
@@ -118,7 +118,7 @@ export default function TopSearchesTable({ items }: { items: TopSearchItem[] }) 
   function Header({ label, sortK, align, className }: { label: string; sortK: SortKey; align: 'left' | 'center' | 'right'; className?: string }) {
     const active = sortKey === sortK;
     return (
-      <th className={`px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-400 select-none cursor-pointer hover:text-slate-600 dark:hover:text-slate-300 ${align === 'left' ? 'text-left' : align === 'center' ? 'text-center' : 'text-right'} ${className ?? ''}`}
+      <th className={`px-4 py-3 text-[10px] font-medium uppercase tracking-widest text-nexo-faint select-none cursor-pointer hover:text-white ${align === 'left' ? 'text-left' : align === 'center' ? 'text-center' : 'text-right'} ${className ?? ''}`}
           onClick={() => toggleSort(sortK)}>
         <span className={`inline-flex items-center gap-1 ${align === 'right' ? 'flex-row-reverse' : ''}`}>
           {label}
@@ -132,8 +132,8 @@ export default function TopSearchesTable({ items }: { items: TopSearchItem[] }) 
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
-            <th className="px-6 py-3 text-left text-[10px] font-black uppercase tracking-widest text-slate-400">#</th>
+          <tr className="border-b border-nexo-border bg-white/[0.02]">
+            <th className="nexo-label px-6 py-3 text-left">#</th>
             <Header label="Keyword" sortK="keyword" align="left" />
             <Header label="KD" sortK="kd" align="center" />
             <Header label="Vol." sortK="volume" align="right" />
@@ -141,34 +141,34 @@ export default function TopSearchesTable({ items }: { items: TopSearchItem[] }) 
             <Header label="Intent" sortK="intent" align="center" className="hidden sm:table-cell" />
             <Header label="Comp." sortK="competition" align="center" className="hidden md:table-cell" />
             <Header label="Ref. Dom." sortK="ref_domains" align="right" className="hidden lg:table-cell" />
-            <th className="px-4 py-3 text-right text-[10px] font-black uppercase tracking-widest text-slate-400 hidden xl:table-cell">Trend</th>
+            <th className="nexo-label px-4 py-3 text-right hidden xl:table-cell">Trend</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
+        <tbody className="divide-y divide-nexo-border">
           {sorted.map((item, i) => {
             const ki = item.keyword_info;
             const kp = item.keyword_properties;
             const compLevel = ki?.competition_level;
-            const compColor = compLevel === 'HIGH' ? 'text-red-500 bg-red-50 dark:bg-red-950'
-              : compLevel === 'MEDIUM' ? 'text-amber-600 bg-amber-50 dark:bg-amber-950'
-              : compLevel === 'LOW' ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950'
-              : 'text-slate-400 bg-slate-100 dark:bg-slate-800';
+            const compColor = compLevel === 'HIGH' ? 'text-nexo-danger-text bg-nexo-danger/10'
+              : compLevel === 'MEDIUM' ? 'text-nexo-warn-text bg-nexo-warn/10'
+              : compLevel === 'LOW' ? 'text-nexo-ice bg-nexo-ice/10'
+              : 'text-nexo-faint bg-nexo-surface-2';
             return (
-              <tr key={i} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                <td className="px-6 py-3 text-[11px] font-mono text-slate-400 tabular-nums">{i + 1}</td>
-                <td className="px-4 py-3 font-medium text-slate-900 dark:text-white max-w-[220px]">
+              <tr key={i} className="hover:bg-white/[0.04] transition-colors">
+                <td className="px-6 py-3 text-[11px] font-mono text-nexo-faint tabular-nums">{i + 1}</td>
+                <td className="px-4 py-3 font-medium text-nexo-text max-w-[220px]">
                   <span className="truncate block">{item.keyword}</span>
                   {kp?.word_count !== undefined && (
-                    <span className="text-[10px] text-slate-400">{kp.word_count} word{kp.word_count !== 1 ? 's' : ''}</span>
+                    <span className="text-[10px] text-nexo-faint">{kp.word_count} word{kp.word_count !== 1 ? 's' : ''}</span>
                   )}
                 </td>
                 <td className="px-4 py-3 text-center">
                   <DifficultyBadge value={kp?.keyword_difficulty} />
                 </td>
-                <td className="px-4 py-3 text-right font-mono text-slate-700 dark:text-slate-300 tabular-nums">
+                <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">
                   {fmt(ki?.search_volume)}
                 </td>
-                <td className="px-4 py-3 text-right font-mono text-slate-500 tabular-nums">
+                <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">
                   {ki?.cpc != null ? `$${ki.cpc.toFixed(2)}` : '—'}
                 </td>
                 <td className="px-4 py-3 text-center hidden sm:table-cell">
@@ -176,12 +176,12 @@ export default function TopSearchesTable({ items }: { items: TopSearchItem[] }) 
                 </td>
                 <td className="px-4 py-3 text-center hidden md:table-cell">
                   {compLevel ? (
-                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black ${compColor}`}>
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium ${compColor}`}>
                       {compLevel}
                     </span>
-                  ) : <span className="text-slate-300 text-xs">—</span>}
+                  ) : <span className="text-nexo-faint text-xs">—</span>}
                 </td>
-                <td className="px-4 py-3 text-right font-mono text-slate-500 tabular-nums hidden lg:table-cell">
+                <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums hidden lg:table-cell">
                   {fmt(item.avg_backlinks_info?.referring_domains)}
                 </td>
                 <td className="px-4 py-3 text-right hidden xl:table-cell">

@@ -17,7 +17,7 @@ interface DFUserResponse {
   }>;
 }
 
-const inputCls = 'w-full px-5 py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none text-slate-900 dark:text-white placeholder-slate-300 dark:placeholder-slate-600 transition-all font-medium';
+const inputCls = 'nexo-input min-w-0 w-full px-5 py-4 focus:ring-4 focus:ring-nexo-sky outline-none transition-all font-medium';
 
 async function SettingsPage() {
   const creds = getCredentials();
@@ -58,66 +58,66 @@ async function SettingsPage() {
     <div className="max-w-2xl space-y-8 pb-12">
       <div className="flex justify-between items-end">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Settings</h1>
-          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1 font-medium">DataForSEO API Management</p>
+          <h1 className="nexo-h1">Settings</h1>
+          <p className="text-nexo-dim text-sm mt-1 font-medium">DataForSEO API Management</p>
         </div>
-        <div className={`px-3 py-1 rounded-full text-[10px] font-black tracking-widest border ${
+        <div className={`px-3 py-1 rounded-full text-[10px] font-medium tracking-widest border ${
           connected
-            ? 'bg-emerald-50 dark:bg-emerald-950/50 border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400'
-            : 'bg-red-50 dark:bg-red-950/50 border-red-200 dark:border-red-800 text-red-600 dark:text-red-400'
+            ? 'bg-nexo-ice/10 border-nexo-ice/30 text-nexo-ice'
+            : 'bg-nexo-danger/10 border-nexo-danger/40 text-nexo-danger-text'
         }`}>
           {status}
         </div>
       </div>
 
       {/* Balance Card */}
-      <div className="bg-slate-900 dark:bg-slate-800 rounded-[2rem] p-10 text-white shadow-2xl shadow-slate-200 dark:shadow-none relative overflow-hidden border border-slate-800 dark:border-slate-700">
+      <div className="nexo-panel p-10 relative overflow-hidden border-nexo-border-strong">
         <div className="relative z-10">
-          <p className="text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-[0.3em]">Total Available Credits</p>
+          <p className="nexo-label">Total Available Credits</p>
           <div className="mt-4 flex items-center gap-4">
-            <span className="text-6xl font-mono font-bold tracking-tighter leading-none">${balance.toFixed(2)}</span>
-            <div className="h-10 w-[2px] bg-slate-700 mx-2" />
-            <span className="text-slate-400 text-xs font-bold leading-tight">USD<br />BALANCE</span>
+            <span className="nexo-metric text-6xl font-mono leading-none">${balance.toFixed(2)}</span>
+            <div className="h-10 w-px bg-nexo-border-strong mx-2" />
+            <span className="text-nexo-faint text-xs font-medium leading-tight">USD<br />BALANCE</span>
           </div>
         </div>
       </div>
 
       {/* Form */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-sm p-1">
-        <div className="bg-slate-50/80 dark:bg-slate-800/40 rounded-[1.4rem] p-8">
+      <div className="bg-nexo-surface border border-nexo-border rounded-nexo-lg p-1">
+        <div className="bg-white/[0.02] rounded-nexo p-8">
           <form action={updateSettings} className="space-y-8">
             {/* API Credentials */}
             <div>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">API Credentials</p>
+              <p className="nexo-label mb-4">API Credentials</p>
               {!creds && (
-                <aside className="mb-6 border-l-2 border-blue-500 bg-blue-50/70 px-4 py-3.5 dark:border-blue-400 dark:bg-blue-950/25">
-                  <p className="text-xs font-bold text-slate-800 dark:text-slate-100">New to DataForSEO?</p>
-                  <p className="mt-1 text-xs leading-relaxed text-slate-600 dark:text-slate-300">
-                    <a href="https://try.dataforseo.com/nrjev32kinaz" target="_blank" rel="noreferrer" className="font-bold text-blue-700 underline decoration-blue-300 underline-offset-2 transition-colors hover:text-blue-900 dark:text-blue-300 dark:decoration-blue-700 dark:hover:text-blue-100">Create an account through this link ↗</a>
+                <aside className="mb-6 border-l-2 border-nexo-sky bg-nexo-blue/10 px-4 py-3.5">
+                  <p className="text-xs font-medium text-nexo-text">New to DataForSEO?</p>
+                  <p className="mt-1 text-xs leading-relaxed text-nexo-dim">
+                    <a href="https://try.dataforseo.com/nrjev32kinaz" target="_blank" rel="noreferrer" className="font-medium text-nexo-sky underline decoration-nexo-border-strong underline-offset-2 transition-colors hover:text-white">Create an account through this link ↗</a>
                     {' '}to support the continued development of SEO Playground, the open-source project Nexo is built on, at no extra cost to you.
                   </p>
-                  <p className="mt-1.5 text-[10px] font-medium text-slate-500 dark:text-slate-400">Affiliate link — I may earn a commission if you become a customer.</p>
+                  <p className="mt-1.5 text-[10px] font-medium text-nexo-dim">Affiliate link — I may earn a commission if you become a customer.</p>
                 </aside>
               )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">API Username</label>
+                  <label className="nexo-label ml-1">API Username</label>
                   <input name="login" type="text" defaultValue={creds?.login || ''} className={inputCls} />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">API Password</label>
+                  <label className="nexo-label ml-1">API Password</label>
                   <input name="password" type="password" className={inputCls} />
-                  {creds && <p className="text-[10px] text-emerald-600 dark:text-emerald-400 ml-1">Password saved. Leave blank to keep it unchanged.</p>}
+                  {creds && <p className="text-[10px] text-nexo-ice ml-1">Password saved. Leave blank to keep it unchanged.</p>}
                 </div>
               </div>
             </div>
 
-            <div className="border-t border-slate-200 dark:border-slate-700" />
+            <div className="border-t border-nexo-border" />
 
             {/* White-label report identity */}
             <div>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">White-label reports</p>
-              <p className="text-xs text-slate-400 mb-6">Applied to every PDF you export. Leave the name blank to use Nexo.</p>
+              <p className="nexo-label mb-1">White-label reports</p>
+              <p className="text-xs text-nexo-faint mb-6">Applied to every PDF you export. Leave the name blank to use Nexo.</p>
               <BrandIdentityFields
                 initialName={brandName}
                 initialColor={brandColor}
@@ -127,16 +127,16 @@ async function SettingsPage() {
               />
             </div>
 
-            <div className="border-t border-slate-200 dark:border-slate-700" />
+            <div className="border-t border-nexo-border" />
 
             {/* Geo-grid display preferences */}
             <div>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Geo-grid</p>
-              <p className="text-xs text-slate-400 mb-6">How the Geo-grid tracker shows distances and ranking pins.</p>
+              <p className="nexo-label mb-1">Geo-grid</p>
+              <p className="text-xs text-nexo-faint mb-6">How the Geo-grid tracker shows distances and ranking pins.</p>
               <GridPreferenceFields initial={gridPreferences} />
             </div>
 
-            <button type="submit" className="w-full bg-blue-600 text-white py-5 rounded-2xl font-black uppercase text-xs tracking-[0.2em] hover:bg-blue-700 shadow-xl shadow-blue-200 dark:shadow-none transition-all active:scale-[0.98]">
+            <button type="submit" className="w-full bg-nexo-blue text-white py-5 rounded-nexo-lg font-medium uppercase text-xs tracking-[0.2em] hover:bg-nexo-sky transition-all active:scale-[0.98]">
               Save Settings
             </button>
           </form>
@@ -144,13 +144,13 @@ async function SettingsPage() {
       </div>
 
       {/* Danger Zone */}
-      <div className="bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900 rounded-3xl p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="bg-nexo-danger/10 border border-nexo-danger/40 rounded-nexo-lg p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="max-w-md">
-          <h2 className="text-red-600 dark:text-red-400 font-black text-xs uppercase tracking-widest mb-1">Danger Zone</h2>
-          <p className="text-xs text-red-700/60 dark:text-red-400/60 font-medium leading-relaxed">Removes your locally stored credentials.</p>
+          <h2 className="text-nexo-danger-text font-medium text-xs uppercase tracking-widest mb-1">Danger Zone</h2>
+          <p className="text-xs text-nexo-danger-text font-medium leading-relaxed">Removes your locally stored credentials.</p>
         </div>
         <form action={deleteCredentials}>
-          <button type="submit" className="px-6 py-3 bg-white dark:bg-slate-900 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-red-600 dark:hover:bg-red-700 hover:text-white dark:hover:border-red-700 transition-all">
+          <button type="submit" className="px-6 py-3 bg-nexo-surface border border-nexo-danger/40 text-nexo-danger-text text-[10px] font-medium uppercase tracking-widest rounded-nexo-lg hover:bg-nexo-danger/80 hover:text-white transition-all">
             Disconnect
           </button>
         </form>

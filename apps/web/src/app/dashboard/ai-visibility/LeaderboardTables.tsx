@@ -21,8 +21,8 @@ function sortValue(item: LeaderboardItem, key: SortKey, nameOf: (i: LeaderboardI
 }
 
 function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
-  if (!active) return <ArrowUpDown className="w-3 h-3 text-slate-300" />;
-  return dir === 'asc' ? <ArrowUp className="w-3 h-3 text-violet-600" /> : <ArrowDown className="w-3 h-3 text-violet-600" />;
+  if (!active) return <ArrowUpDown className="w-3 h-3 text-nexo-faint" />;
+  return dir === 'asc' ? <ArrowUp className="w-3 h-3 text-nexo-sky" /> : <ArrowDown className="w-3 h-3 text-nexo-sky" />;
 }
 
 const METRIC_GROUPS: Array<{ key: Exclude<keyof LeaderboardItem, 'domain' | 'brand' | 'total'>; label: string; location?: boolean }> = [
@@ -38,13 +38,13 @@ const METRIC_GROUPS: Array<{ key: Exclude<keyof LeaderboardItem, 'domain' | 'bra
 function MetricGroup({ label, items, isLocation = false }: { label: string; items?: AggMetric[]; isLocation?: boolean }) {
   if (!items?.length) return null;
   return (
-    <section className="border-t border-slate-100 dark:border-slate-800 pt-3 first:border-t-0 first:pt-0">
-      <h4 className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-2">{label}</h4>
+    <section className="border-t border-nexo-border pt-3 first:border-t-0 first:pt-0">
+      <h4 className="text-[9px] font-medium uppercase tracking-widest text-nexo-faint mb-2">{label}</h4>
       <div className="space-y-1.5">
         {items.map((item, index) => (
           <div key={`${item.key}-${index}`} className="flex items-start justify-between gap-3 text-xs">
-            <span className="min-w-0 truncate text-slate-700 dark:text-slate-200">{isLocation ? labsLocationLabel(item.key) : String(item.key)}</span>
-            <span className="shrink-0 font-mono text-[10px] text-slate-500 tabular-nums">
+            <span className="min-w-0 truncate text-nexo-dim">{isLocation ? labsLocationLabel(item.key) : String(item.key)}</span>
+            <span className="shrink-0 font-mono text-[10px] text-nexo-dim tabular-nums">
               {fmt(item.mentions)} · {fmt(item.ai_search_volume)}
             </span>
           </div>
@@ -56,7 +56,7 @@ function MetricGroup({ label, items, isLocation = false }: { label: string; item
 
 function ItemDetails({ item }: { item: LeaderboardItem }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-4 py-4">
+    <div className="grid sm:grid-cols-2 gap-x-6 gap-y-4 py-4 grid-cols-[repeat(auto-fit,minmax(320px,1fr))]">
       {METRIC_GROUPS.map((group) => (
         <MetricGroup key={group.key} label={group.label} items={item[group.key]} isLocation={group.location} />
       ))}
@@ -67,13 +67,13 @@ function ItemDetails({ item }: { item: LeaderboardItem }) {
 function AggregatePanel({ title, metrics, totalCount }: { title: string; metrics?: AggregatedMetrics; totalCount?: number }) {
   if (!metrics) return null;
   return (
-    <details className="group border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50/70 dark:bg-slate-900/50" open>
-      <summary className="cursor-pointer list-none px-4 py-3 flex items-center gap-3 text-xs font-black uppercase tracking-widest text-slate-500 dark:text-slate-300">
-        <ChevronDown className="w-4 h-4 text-violet-500 transition-transform group-open:rotate-180" />
+    <details className="group border border-nexo-border rounded-nexo-lg bg-white/[0.02]" open>
+      <summary className="nexo-label cursor-pointer list-none px-4 py-3 flex items-center gap-3">
+        <ChevronDown className="w-4 h-4 text-nexo-sky transition-transform group-open:rotate-180" />
         {title}
-        {totalCount !== undefined && <span className="ml-auto font-mono text-[10px] normal-case tracking-normal text-slate-400">{fmt(totalCount)} results</span>}
+        {totalCount !== undefined && <span className="ml-auto font-mono text-[10px] normal-case tracking-normal text-nexo-faint">{fmt(totalCount)} results</span>}
       </summary>
-      <div className="border-t border-slate-200 dark:border-slate-800 px-4 py-4 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-4">
+      <div className="border-t border-nexo-border px-4 py-4 grid sm:grid-cols-2 gap-x-6 gap-y-4 grid-cols-[repeat(auto-fit,minmax(320px,1fr))]">
         {METRIC_GROUPS.map((group) => (
           <MetricGroup key={group.key} label={group.label} items={metrics[group.key]} isLocation={group.location} />
         ))}
@@ -112,7 +112,7 @@ function LeaderboardTable({
   function Header({ label, sortK, align }: { label: string; sortK: SortKey; align: 'left' | 'right' }) {
     const active = sortKey === sortK;
     return (
-      <th className={`px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-400 select-none cursor-pointer hover:text-slate-600 dark:hover:text-slate-300 ${align === 'left' ? 'text-left !px-6' : 'text-right'}`}
+      <th className={`px-4 py-3 text-[10px] font-medium uppercase tracking-widest text-nexo-faint select-none cursor-pointer hover:text-white ${align === 'left' ? 'text-left !px-6' : 'text-right'}`}
         onClick={() => toggleSort(sortK)}>
         <span className={`inline-flex items-center gap-1 ${align === 'right' ? 'flex-row-reverse' : ''}`}>
           {label}
@@ -134,11 +134,11 @@ function LeaderboardTable({
   ];
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-      <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-        <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">{title}</h2>
+    <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+      <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between">
+        <h2 className="nexo-label">{title}</h2>
         <div className="flex items-center gap-2">
-          <span className="text-xs font-black text-slate-400">{items.length}</span>
+          <span className="text-xs font-medium text-nexo-faint">{items.length}</span>
           {items.length > 0 && (
             <>
               <CopyMarkdownButton data={csvData} columns={columns} />
@@ -148,12 +148,12 @@ function LeaderboardTable({
         </div>
       </div>
       {items.length === 0 ? (
-        <div className="px-6 py-8 text-center text-sm text-slate-400">No results found.</div>
+        <div className="px-6 py-8 text-center text-sm text-nexo-faint">No results found.</div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
+              <tr className="border-b border-nexo-border bg-white/[0.02]">
                 <Header label={nameLabel} sortK="name" align="left" />
                 <Header label="Mentions" sortK="mentions" align="right" />
                 <Header label="AI Search Volume" sortK="volume" align="right" />
@@ -163,21 +163,21 @@ function LeaderboardTable({
                 const isExpanded = expanded === i;
                 const hasDetails = METRIC_GROUPS.some((group) => item[group.key]?.length);
                 return (
-                  <tbody key={i} className="border-b border-slate-50 dark:border-slate-800 last:border-b-0">
-                    <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                      <td className="px-6 py-3 font-medium text-slate-900 dark:text-slate-200 max-w-[240px]">
+                  <tbody key={i} className="border-b border-nexo-border last:border-b-0">
+                    <tr className="hover:bg-white/[0.04] transition-colors">
+                      <td className="px-6 py-3 font-medium text-nexo-text max-w-[240px]">
                         {hasDetails ? (
                           <button type="button" onClick={() => setExpanded(isExpanded ? null : i)} className="w-full flex items-center gap-2 text-left group">
-                            <ChevronDown className={`w-3.5 h-3.5 shrink-0 text-slate-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                            <ChevronDown className={`w-3.5 h-3.5 shrink-0 text-nexo-faint transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
                             <span className="truncate">{nameOf(item)}</span>
                           </button>
                         ) : <span className="truncate block">{nameOf(item)}</span>}
                       </td>
-                      <td className="px-4 py-3 text-right font-mono text-slate-700 dark:text-slate-300 tabular-nums">{fmt(item.total?.mentions)}</td>
-                      <td className="px-4 py-3 text-right font-mono text-slate-500 tabular-nums">{fmt(item.total?.ai_search_volume)}</td>
+                      <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">{fmt(item.total?.mentions)}</td>
+                      <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">{fmt(item.total?.ai_search_volume)}</td>
                     </tr>
                     {isExpanded && hasDetails && (
-                      <tr className="bg-slate-50/70 dark:bg-slate-950/30">
+                      <tr className="bg-white/[0.02]">
                         <td colSpan={3} className="px-6"><ItemDetails item={item} /></td>
                       </tr>
                     )}

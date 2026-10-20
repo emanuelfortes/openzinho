@@ -96,39 +96,39 @@ async function PageIntersectionPage({ searchParams }: { searchParams: Promise<Se
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Page Intersection</h1>
-        <p className="text-sm text-slate-400 mt-1">Find keywords that multiple pages rank for simultaneously.</p>
+        <h1 className="nexo-h1">Page Intersection</h1>
+        <p className="text-sm text-nexo-faint mt-1">Find keywords that multiple pages rank for simultaneously.</p>
       </div>
 
-      <SearchForm className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4" btnLabel="Find intersection" btnClassName="w-full bg-slate-900 dark:bg-slate-700 text-white font-black uppercase tracking-widest text-xs py-3 rounded-xl hover:bg-blue-600 transition-colors">
+      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Find intersection" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="sm:col-span-2">
-            <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Page URLs <span className="normal-case font-normal tracking-normal text-slate-300">(2–5 URLs, one per line)</span></label>
+            <label className="nexo-label block mb-1.5">Page URLs <span className="normal-case font-normal tracking-normal text-nexo-faint">(2–5 URLs, one per line)</span></label>
             <textarea name="pages" rows={4} defaultValue={activeEntry ? pageList.join('\n') : rawPages} placeholder={"https://example.com/page-a\nhttps://example.com/page-b"} required
-              className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono resize-y bg-white dark:bg-slate-800" />
+              className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky font-mono resize-y" />
           </div>
           <LabsLocationLanguageFields
             defaultLocation={displayLocation}
             defaultLanguage={displayLanguage}
-            className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800"
+            className="w-full px-4 py-2.5 border border-nexo-border rounded-nexo-lg text-sm text-nexo-text focus:outline-none focus:ring-2 focus:ring-nexo-sky bg-nexo-surface"
           />
           <div>
-            <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Max results</label>
-            <select name="limit" defaultValue={String(limit)} className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800">
+            <label className="nexo-label block mb-1.5">Max results</label>
+            <select name="limit" defaultValue={String(limit)} className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
               {['50','100','200','500'].map((v) => <option key={v} value={v}>{v}</option>)}
             </select>
           </div>
         </div>
       </SearchForm>
 
-      {error && <div className="bg-red-50 dark:bg-red-950 border border-red-100 text-red-600 dark:text-red-400 text-sm rounded-xl px-4 py-3">{error}</div>}
+      {error && <div className="bg-nexo-danger/10 border border-nexo-danger/40 text-nexo-danger-text text-sm rounded-nexo-lg px-4 py-3">{error}</div>}
 
       {(historyId || rawPages) && !error && (
-        <div id="results" className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-            <span className="text-xs font-black uppercase tracking-widest text-slate-400">{items.length} shared keywords</span>
+        <div id="results" className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+          <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between">
+            <span className="nexo-label">{items.length} shared keywords</span>
             <div className="flex items-center gap-3">
-              {cost !== undefined && <span className="text-[10px] font-mono text-slate-400">cost: ${cost.toFixed(4)}</span>}
+              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">cost: ${cost.toFixed(4)}</span>}
               {items.length > 0 && (
                 <div className="flex items-center gap-2">
                   <CopyMarkdownButton data={csvData} columns={csvColumns} />
@@ -138,7 +138,7 @@ async function PageIntersectionPage({ searchParams }: { searchParams: Promise<Se
             </div>
           </div>
           {items.length === 0 ? (
-            <div className="px-6 py-12 text-center text-sm text-slate-400">No common keywords found.</div>
+            <div className="px-6 py-12 text-center text-sm text-nexo-faint">No common keywords found.</div>
           ) : (
             <PageIntersectionTable items={items} pageList={pageList} />
           )}
@@ -146,22 +146,22 @@ async function PageIntersectionPage({ searchParams }: { searchParams: Promise<Se
       )}
 
       {history.length > 0 && (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-            <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">History</h2>
+        <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+          <div className="px-6 py-4 border-b border-nexo-border">
+            <h2 className="nexo-label">History</h2>
           </div>
-          <div className="divide-y divide-slate-50 dark:divide-slate-800">
+          <div className="divide-y divide-nexo-border">
             {history.map((entry) => {
               const isActive = entry.id === historyId;
               const urls = JSON.parse(entry.pages) as string[];
               return (
                 <a key={entry.id} href={`/dashboard/page-intersection?history_id=${entry.id}#results`}
-                  className={`flex items-center gap-4 px-6 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${isActive ? 'bg-blue-50 dark:bg-blue-950' : ''}`}>
+                  className={`flex items-center gap-4 px-6 py-3.5 hover:bg-white/[0.04] transition-colors ${isActive ? 'bg-nexo-blue/10' : ''}`}>
                   <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-medium truncate ${isActive ? 'text-blue-700 dark:text-blue-400' : 'text-slate-800 dark:text-slate-200'}`}>{urls[0]}</p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">{urls.length} pages · {entry.count} keywords{entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}</p>
+                    <p className={`text-sm font-medium truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{urls[0]}</p>
+                    <p className="text-[11px] text-nexo-faint mt-0.5">{urls.length} pages · {entry.count} keywords{entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}</p>
                   </div>
-                  <span className="shrink-0 text-[11px] text-slate-400">{formatDate(entry.ts)}</span>
+                  <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>
                 </a>
               );
             })}

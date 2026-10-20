@@ -110,20 +110,20 @@ export default function GridPending({ searchId, projectId, totalPoints, queueMod
     : null;
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+    <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
       {/* Header */}
-      <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between gap-4 flex-wrap">
+      <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between gap-4 flex-wrap">
         <div className="flex items-center gap-3">
-          <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-          <span className="text-xs font-black uppercase tracking-widest text-slate-500">Processing</span>
-          <span className="text-[10px] font-black uppercase tracking-widest text-amber-600 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md">
+          <div className="w-2 h-2 rounded-full bg-nexo-warn animate-pulse" />
+          <span className="nexo-label">Processing</span>
+          <span className="text-[10px] font-medium uppercase tracking-widest text-nexo-warn-text bg-nexo-warn/10 border border-nexo-warn/40 px-2 py-0.5 rounded-md">
             {MODE_LABEL[queueMode]}
           </span>
         </div>
         <button
           onClick={checkStatus}
           disabled={checking}
-          className="text-[11px] font-black uppercase tracking-widest text-blue-500 hover:text-blue-700 disabled:opacity-40 transition-colors"
+          className="nexo-section hover:text-white disabled:opacity-40 transition-colors"
         >
           {checking ? 'Checking…' : 'Check now'}
         </button>
@@ -132,9 +132,9 @@ export default function GridPending({ searchId, projectId, totalPoints, queueMod
       <div className="px-6 py-6 space-y-5">
         {/* Search info */}
         <div>
-          <p className="text-sm font-bold text-slate-900 dark:text-white">{keyword}</p>
-          <p className="text-[11px] text-slate-400 mt-0.5">
-            Target: <span className="font-bold text-slate-600 dark:text-slate-300">{target}</span>
+          <p className="text-sm font-medium text-nexo-text">{keyword}</p>
+          <p className="text-[11px] text-nexo-faint mt-0.5">
+            Target: <span className="font-medium text-nexo-dim">{target}</span>
             {' · '}{gridSize}×{gridSize} grid
           </p>
         </div>
@@ -142,42 +142,42 @@ export default function GridPending({ searchId, projectId, totalPoints, queueMod
         {/* Progress bar */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-black uppercase tracking-widest text-slate-400">Progress</span>
-            <span className="text-[11px] font-mono text-slate-500">{ready} / {totalPoints} points ready · {pct}%</span>
+            <span className="nexo-label">Progress</span>
+            <span className="text-[11px] font-mono text-nexo-dim">{ready} / {totalPoints} points ready · {pct}%</span>
           </div>
-          <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+          <div className="h-2 bg-nexo-surface-2 rounded-full overflow-hidden">
             <div
-              className="h-full bg-blue-500 rounded-full transition-all duration-500"
+              className="h-full bg-nexo-blue rounded-full transition-all duration-500"
               style={{ width: `${pct}%` }}
             />
           </div>
-          <p className="text-[10px] text-slate-400">{WAIT_HINT[queueMode]}</p>
+          <p className="text-[10px] text-nexo-faint">{WAIT_HINT[queueMode]}</p>
         </div>
 
         {/* Elapsed / ETA */}
         <div className="grid grid-cols-2 gap-3">
-          <div className="bg-slate-50 dark:bg-slate-800/60 rounded-xl px-3 py-2">
-            <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Elapsed</p>
-            <p className="text-sm font-black text-slate-800 dark:text-slate-200 tabular-nums mt-0.5">{formatDuration(elapsedMs)}</p>
+          <div className="bg-white/[0.02] rounded-nexo-lg px-3 py-2">
+            <p className="text-[9px] font-medium uppercase tracking-widest text-nexo-faint">Elapsed</p>
+            <p className="text-sm font-medium text-nexo-text tabular-nums mt-0.5">{formatDuration(elapsedMs)}</p>
           </div>
-          <div className="bg-slate-50 dark:bg-slate-800/60 rounded-xl px-3 py-2">
-            <p className="text-[9px] font-black uppercase tracking-widest text-slate-400">Est. remaining</p>
-            <p className="text-sm font-black text-slate-800 dark:text-slate-200 tabular-nums mt-0.5">
+          <div className="bg-white/[0.02] rounded-nexo-lg px-3 py-2">
+            <p className="text-[9px] font-medium uppercase tracking-widest text-nexo-faint">Est. remaining</p>
+            <p className="text-sm font-medium text-nexo-text tabular-nums mt-0.5">
               {etaMs != null ? `~${formatDuration(etaMs)}` : '—'}
             </p>
           </div>
         </div>
 
         {/* Status line */}
-        <div className="flex items-center gap-2 text-[11px] text-slate-400">
+        <div className="flex items-center gap-2 text-[11px] text-nexo-faint">
           {checking && (
-            <svg className="animate-spin w-3 h-3 text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24">
+            <svg className="animate-spin w-3 h-3 text-nexo-sky shrink-0" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
             </svg>
           )}
           {error ? (
-            <span className="text-red-500">{error}</span>
+            <span className="text-nexo-danger-text">{error}</span>
           ) : lastChecked ? (
             <span>Last checked at {lastChecked.toLocaleTimeString()} · auto-refreshes every {interval / 1000}s</span>
           ) : (

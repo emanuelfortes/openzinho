@@ -49,7 +49,7 @@ export default function DownloadCsvButton({ reviews, filename }: { reviews: CsvR
       type="button"
       onClick={handleDownload}
       disabled={reviews.length === 0}
-      className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-blue-600 disabled:opacity-40 disabled:hover:text-slate-500 transition-colors"
+      className="nexo-label inline-flex items-center gap-1.5 hover:text-nexo-sky disabled:opacity-40 disabled:hover:text-nexo-dim transition-colors"
       title="Download all reviews as CSV"
     >
       <Download className="w-3.5 h-3.5" /> CSV

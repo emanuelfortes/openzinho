@@ -139,7 +139,9 @@ function transform(source) {
   text = text.replace(new RegExp(`${B}((?:[a-z0-9\\-\\[\\]&_=]+:)*)font-(?:black|extrabold|bold)${A}`, 'gm'), (m, v) => `${v}font-medium`);
   text = text.replace(new RegExp(`${B}((?:[a-z0-9\\-\\[\\]&_=]+:)*)rounded(-[trblse]{1,2})?-(?:xl|2xl|3xl|\\[2rem\\]|\\[1\\.5rem\\]|\\[1\\.75rem\\])${A}`, 'gm'), (m, v, side) => `${v}rounded${side ?? ''}-nexo-lg`);
   text = text.replace(new RegExp(`${B}((?:[a-z0-9\\-\\[\\]&_=]+:)*)rounded(-[trblse]{1,2})?-lg${A}`, 'gm'), (m, v, side) => `${v}rounded${side ?? ''}-nexo`);
-  text = text.replace(new RegExp(`${B}(?:[a-z0-9\\-\\[\\]&_=]+:)*shadow(?:-(?:sm|md|lg|xl|2xl|inner|none)|-\\[[^\\]\\s]+\\])?${A}`, 'gm'), '');
+  // Only inside quoted class strings, between spaces: a bare `shadow` can also be a JS identifier.
+  const SHADOW_RE = /(?<=^|\s)(?:[a-z0-9\-\[\]&_=]+:)*shadow(?:-(?:sm|md|lg|xl|2xl|inner|none)|-\[[^\]\s]+\])?(?=\s|$)/g;
+  text = mapSegments(text, (segment) => (segment.includes('\n') ? segment : segment.replace(SHADOW_RE, '')));
 
   // 5. Uppercase small labels -> nexo-label / nexo-section; big numbers -> nexo-metric.
   text = mapSegments(text, (segment) => {

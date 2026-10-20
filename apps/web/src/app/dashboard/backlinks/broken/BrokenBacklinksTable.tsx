@@ -10,22 +10,22 @@ type LinkSort = 'dr' | 'source' | 'target' | 'seen';
 type SortDir = 'asc' | 'desc';
 
 function DRBadge({ value }: { value?: number }) {
-  if (value === undefined || value === null) return <span className="text-slate-300 dark:text-slate-600 text-xs">—</span>;
-  const color = value >= 70 ? 'bg-emerald-500 text-white' : value >= 40 ? 'bg-blue-500 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400';
-  return <span className={`inline-flex items-center justify-center w-8 h-5 rounded text-[10px] font-black ${color}`}>{value}</span>;
+  if (value === undefined || value === null) return <span className="text-nexo-faint text-xs">—</span>;
+  const color = value >= 70 ? 'bg-nexo-ice text-nexo-bg' : value >= 40 ? 'bg-nexo-blue text-white' : 'bg-nexo-surface-2 text-nexo-dim';
+  return <span className={`inline-flex items-center justify-center w-8 h-5 rounded text-[10px] font-medium ${color}`}>{value}</span>;
 }
 
 function StatusBadge({ code }: { code?: number | null }) {
-  if (!code) return <span className="text-[10px] font-mono text-slate-400 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded" title="Not crawled yet">n/a</span>;
+  if (!code) return <span className="text-[10px] font-mono text-nexo-faint bg-nexo-surface-2 px-1.5 py-0.5 rounded" title="Not crawled yet">n/a</span>;
   const color = code >= 500
-    ? 'text-amber-700 bg-amber-50 dark:text-amber-400 dark:bg-amber-950/60'
-    : 'text-red-600 bg-red-50 dark:text-red-400 dark:bg-red-950/60';
-  return <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${color}`}>{code}</span>;
+    ? 'text-nexo-warn-text bg-nexo-warn/10'
+    : 'text-nexo-danger-text bg-nexo-danger/10';
+  return <span className={`text-[10px] font-mono font-medium px-1.5 py-0.5 rounded ${color}`}>{code}</span>;
 }
 
 function DoBadge({ dofollow }: { dofollow?: boolean }) {
   return (
-    <span className={`shrink-0 text-[9px] font-black uppercase px-1.5 py-0.5 rounded ${dofollow ? 'text-emerald-600 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-950/60' : 'text-slate-400 bg-slate-100 dark:bg-slate-800'}`}>
+    <span className={`shrink-0 text-[9px] font-medium uppercase px-1.5 py-0.5 rounded ${dofollow ? 'text-nexo-ice bg-nexo-ice/10' : 'text-nexo-faint bg-nexo-surface-2'}`}>
       {dofollow ? 'do' : 'no'}
     </span>
   );
@@ -39,8 +39,8 @@ function formatSeen(s?: string) {
 }
 
 function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
-  if (!active) return <ArrowUpDown className="w-3 h-3 text-slate-300 dark:text-slate-600" />;
-  return dir === 'asc' ? <ArrowUp className="w-3 h-3 text-blue-600 dark:text-blue-400" /> : <ArrowDown className="w-3 h-3 text-blue-600 dark:text-blue-400" />;
+  if (!active) return <ArrowUpDown className="w-3 h-3 text-nexo-faint" />;
+  return dir === 'asc' ? <ArrowUp className="w-3 h-3 text-nexo-sky" /> : <ArrowDown className="w-3 h-3 text-nexo-sky" />;
 }
 
 function useSort<K extends string>(initial: K) {
@@ -57,7 +57,7 @@ function cmp(a: number | string, b: number | string) {
   return typeof a === 'string' || typeof b === 'string' ? String(a).localeCompare(String(b)) : a - b;
 }
 
-const TH = 'px-4 py-3 whitespace-nowrap text-[10px] font-black uppercase tracking-widest text-slate-400';
+const TH = 'nexo-label px-4 py-3 whitespace-nowrap';
 
 function SortHeader<K extends string>({ label, k, sort, align = 'left', className = '' }: {
   label: string; k: K; sort: { key: K; dir: SortDir; toggle: (k: K) => void }; align?: 'left' | 'right' | 'center'; className?: string;
@@ -67,7 +67,7 @@ function SortHeader<K extends string>({ label, k, sort, align = 'left', classNam
     <th aria-sort={active ? (sort.dir === 'asc' ? 'ascending' : 'descending') : undefined}
       className={`${TH} ${align === 'right' ? 'text-right' : align === 'center' ? 'text-center' : 'text-left'} ${className}`}>
       <button type="button" onClick={() => sort.toggle(k)}
-        className={`inline-flex items-center gap-1 uppercase tracking-widest hover:text-slate-600 dark:hover:text-slate-200 ${align === 'right' ? 'flex-row-reverse' : ''}`}>
+        className={`inline-flex items-center gap-1 uppercase tracking-widest hover:text-white ${align === 'right' ? 'flex-row-reverse' : ''}`}>
         {label}
         <SortIcon active={active} dir={sort.dir} />
       </button>
@@ -79,10 +79,10 @@ function LinkSource({ link }: { link: BrokenLink }) {
   return (
     <>
       <a href={link.url_from} target="_blank" rel="noopener noreferrer"
-        className="text-xs font-mono text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate block">
+        className="text-xs font-mono text-nexo-dim hover:text-nexo-sky transition-colors truncate block">
         {link.url_from}
       </a>
-      <span className="text-[10px] text-slate-400">{link.domain_from}</span>
+      <span className="text-[10px] text-nexo-faint">{link.domain_from}</span>
     </>
   );
 }
@@ -91,11 +91,11 @@ function Anchor({ link }: { link: BrokenLink }) {
   return (
     <div className="flex items-center gap-1.5 min-w-0">
       {link.anchor ? (
-        <span className="text-xs text-slate-800 dark:text-slate-200 font-medium truncate">{link.anchor}</span>
+        <span className="text-xs text-nexo-text font-medium truncate">{link.anchor}</span>
       ) : link.image_url ? (
-        <span className="text-[10px] text-slate-400 italic">Image</span>
+        <span className="text-[10px] text-nexo-faint italic">Image</span>
       ) : (
-        <span className="text-slate-300 dark:text-slate-600 text-xs">—</span>
+        <span className="text-nexo-faint text-xs">—</span>
       )}
       <DoBadge dofollow={link.dofollow} />
     </div>
@@ -127,7 +127,7 @@ function PagesView({ pages }: { pages: BrokenPage[] }) {
   return (
     <table className="w-full text-sm">
       <thead>
-        <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40">
+        <tr className="border-b border-nexo-border bg-white/[0.02]">
           <th className={`${TH} text-left`}>Broken page</th>
           <th className={`${TH} text-center w-16`}>Status</th>
           <SortHeader label="Domains" k="domains" sort={sort} align="right" className="w-24" />
@@ -136,21 +136,21 @@ function PagesView({ pages }: { pages: BrokenPage[] }) {
           <SortHeader label="Best DR" k="dr" sort={sort} align="center" className="w-24" />
         </tr>
       </thead>
-      <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
+      <tbody className="divide-y divide-nexo-border">
         {sorted.map((p) => {
           const isOpen = open.has(p.url);
           return (
             <Fragment key={p.url}>
-              <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+              <tr className="hover:bg-white/[0.04] transition-colors">
                 <td className="px-4 py-3 max-w-0 w-full">
                   <div className="flex items-center gap-1.5 min-w-0">
                     <button type="button" onClick={() => toggle(p.url)} aria-expanded={isOpen}
                       aria-label={`${isOpen ? 'Hide' : 'Show'} the ${p.links.length} links to ${p.url}`}
-                      className="shrink-0 p-0.5 rounded text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800">
+                      className="shrink-0 p-0.5 rounded text-nexo-faint hover:text-white hover:bg-white/[0.04]">
                       <ChevronRight className={`w-3.5 h-3.5 transition-transform ${isOpen ? 'rotate-90' : ''}`} />
                     </button>
                     <a href={p.url} target="_blank" rel="noopener noreferrer"
-                      className="text-xs font-mono font-semibold text-slate-800 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 truncate">
+                      className="text-xs font-mono font-semibold text-nexo-text hover:text-nexo-sky truncate">
                       {p.url || '—'}
                     </a>
                   </div>
@@ -158,15 +158,15 @@ function PagesView({ pages }: { pages: BrokenPage[] }) {
                 <td className="px-4 py-3 text-center whitespace-nowrap">
                   {p.statuses.length ? p.statuses.map((s) => <StatusBadge key={s} code={s} />) : <StatusBadge />}
                 </td>
-                <td className="px-4 py-3 text-right font-mono font-bold text-slate-700 dark:text-slate-300 tabular-nums">{p.domains.toLocaleString('en-GB')}</td>
-                <td className="px-4 py-3 text-right font-mono text-slate-500 dark:text-slate-400 tabular-nums">{p.links.length.toLocaleString('en-GB')}</td>
-                <td className="px-4 py-3 text-right font-mono text-slate-500 dark:text-slate-400 tabular-nums hidden sm:table-cell">{p.dofollow.toLocaleString('en-GB')}</td>
+                <td className="px-4 py-3 text-right font-mono font-medium text-nexo-dim tabular-nums">{p.domains.toLocaleString('en-GB')}</td>
+                <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">{p.links.length.toLocaleString('en-GB')}</td>
+                <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums hidden sm:table-cell">{p.dofollow.toLocaleString('en-GB')}</td>
                 <td className="px-4 py-3 text-center"><DRBadge value={p.bestDr} /></td>
               </tr>
               {isOpen && (
-                <tr className="bg-slate-50/60 dark:bg-slate-800/30">
+                <tr className="bg-white/[0.02]">
                   <td colSpan={6} className="px-4 pb-3 pt-1">
-                    <ul className="ml-6 border-l border-slate-200 dark:border-slate-700 divide-y divide-slate-100 dark:divide-slate-800">
+                    <ul className="ml-6 border-l border-nexo-border divide-y divide-nexo-border">
                       {p.links.map((l, i) => (
                         <li key={`${l.url_from}-${i}`} className="grid grid-cols-[2.5rem_minmax(0,1fr)_minmax(0,14rem)] items-center gap-3 pl-3 py-2">
                           <DRBadge value={l.domain_from_rank} />
@@ -203,7 +203,7 @@ function LinksView({ links }: { links: BrokenLink[] }) {
   return (
     <table className="w-full text-sm table-fixed">
       <thead>
-        <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/40">
+        <tr className="border-b border-nexo-border bg-white/[0.02]">
           <SortHeader label="DR" k="dr" sort={sort} align="center" className="w-16" />
           <SortHeader label="Source page" k="source" sort={sort} />
           <th className={`${TH} text-left w-48 hidden md:table-cell`}>Anchor</th>
@@ -211,9 +211,9 @@ function LinksView({ links }: { links: BrokenLink[] }) {
           <SortHeader label="First seen" k="seen" sort={sort} align="right" className="w-32 hidden lg:table-cell" />
         </tr>
       </thead>
-      <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
+      <tbody className="divide-y divide-nexo-border">
         {sorted.map((l, i) => (
-          <tr key={`${l.url_from}-${l.url_to}-${i}`} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+          <tr key={`${l.url_from}-${l.url_to}-${i}`} className="hover:bg-white/[0.04] transition-colors">
             <td className="px-4 py-3 text-center"><DRBadge value={l.domain_from_rank} /></td>
             <td className="px-4 py-3 min-w-0"><LinkSource link={l} /></td>
             <td className="px-4 py-3 hidden md:table-cell"><Anchor link={l} /></td>
@@ -221,13 +221,13 @@ function LinksView({ links }: { links: BrokenLink[] }) {
               <div className="flex items-center gap-1.5 min-w-0">
                 <StatusBadge code={l.url_to_status_code} />
                 <a href={l.url_to} target="_blank" rel="noopener noreferrer"
-                  className="text-xs font-mono text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 truncate">
+                  className="text-xs font-mono text-nexo-dim hover:text-nexo-sky truncate">
                   {l.url_to}
                 </a>
               </div>
             </td>
             <td className="px-4 py-3 text-right hidden lg:table-cell">
-              <span className="text-[11px] text-slate-400 tabular-nums">{formatSeen(l.first_seen)}</span>
+              <span className="text-[11px] text-nexo-faint tabular-nums">{formatSeen(l.first_seen)}</span>
             </td>
           </tr>
         ))}
@@ -242,21 +242,19 @@ export default function BrokenBacklinksTable({ links }: { links: BrokenLink[] })
 
   const tab = (v: View, label: string, count: number) => (
     <button type="button" role="tab" aria-selected={view === v} onClick={() => setView(v)}
-      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${view === v
-        ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm'
-        : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'}`}>
-      {label} <span className="font-mono text-slate-400 ml-0.5">{count.toLocaleString('en-GB')}</span>
+      className="transition-colors hover:text-white">
+      {label} <span className="font-mono opacity-60 ml-0.5">{count.toLocaleString('en-GB')}</span>
     </button>
   );
 
   return (
     <div>
-      <div className="px-6 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center gap-3 flex-wrap">
-        <div role="tablist" aria-label="Group results" className="inline-flex gap-1 p-1 rounded-xl bg-slate-100 dark:bg-slate-800">
+      <div className="px-6 py-3 border-b border-nexo-border flex items-center gap-3 flex-wrap">
+        <div role="tablist" aria-label="Group results" className="nexo-seg">
           {tab('pages', 'By broken page', pages.length)}
           {tab('links', 'All links', links.length)}
         </div>
-        <p className="text-[11px] text-slate-400">
+        <p className="text-[11px] text-nexo-faint">
           {view === 'pages' ? 'Fix the pages with the most referring domains first.' : 'Every live link landing on a 4xx/5xx page.'}
         </p>
       </div>

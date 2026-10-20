@@ -37,12 +37,12 @@ const MAP_BACKGROUND = [
 function PinPreview({ style }: { style: PinStyle }) {
   const pin = PIN_PREVIEW_STYLE[style];
   return (
-    <div className="grid h-24 place-items-center rounded-xl border border-slate-200 dark:border-slate-700" style={{ background: MAP_BACKGROUND }} aria-hidden="true">
+    <div className="grid h-24 place-items-center rounded-nexo-lg border border-nexo-border" style={{ background: MAP_BACKGROUND }} aria-hidden="true">
       <div className="grid grid-cols-3 gap-x-4 gap-y-3">
         {PREVIEW.map((point, index) => (
           <span
             key={index}
-            className="grid place-items-center font-black text-white"
+            className="grid place-items-center font-medium text-white"
             style={{
               width: pin.size, height: pin.size, borderRadius: pin.radius, background: point.color, fontSize: pin.font,
               border: index === 4 ? '1.5px dashed rgba(255,255,255,0.9)' : pin.ring,
@@ -57,45 +57,45 @@ function PinPreview({ style }: { style: PinStyle }) {
   );
 }
 
-const cardCls = 'block cursor-pointer rounded-2xl border border-slate-200 bg-white p-3 transition-all hover:border-slate-300 peer-checked:border-blue-500 peer-checked:ring-4 peer-checked:ring-blue-500/10 peer-focus-visible:ring-4 peer-focus-visible:ring-blue-500/30 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-slate-600 dark:peer-checked:border-blue-400';
+const cardCls = 'block cursor-pointer rounded-nexo-lg border border-nexo-border bg-nexo-surface p-3 transition-all hover:border-nexo-border peer-checked:border-nexo-sky peer-checked:ring-1 peer-checked:ring-nexo-sky peer-focus-visible:ring-1 peer-focus-visible:ring-nexo-sky';
 
 export default function GridPreferenceFields({ initial }: { initial: GridPreferences }) {
   return (
     <div className="space-y-6">
       <fieldset>
-        <legend className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 mb-2">Distance unit</legend>
+        <legend className="nexo-label ml-1 mb-2">Distance unit</legend>
         <div className="grid grid-cols-2 gap-3">
           {UNIT_OPTIONS.map((option) => (
             <label key={option.value} className="relative">
               <input type="radio" name="grid_distance_unit" value={option.value} defaultChecked={initial.distanceUnit === option.value} className="peer sr-only" />
               <span className={cardCls}>
                 <span className="flex items-baseline justify-between gap-2">
-                  <span className="text-sm font-bold text-slate-900 dark:text-white">{option.label}</span>
-                  <span className="font-mono text-xs font-bold text-slate-400">{option.value}</span>
+                  <span className="text-sm font-medium text-nexo-text">{option.label}</span>
+                  <span className="font-mono text-xs font-medium text-nexo-faint">{option.value}</span>
                 </span>
-                <span className="mt-1 block text-[11px] text-slate-400">{option.detail}</span>
+                <span className="mt-1 block text-[11px] text-nexo-faint">{option.detail}</span>
               </span>
             </label>
           ))}
         </div>
-        <p className="mt-2 ml-1 text-[11px] text-slate-400">Spacing choices, distances and PDF reports use this unit. Existing monitors keep their exact grid.</p>
+        <p className="mt-2 ml-1 text-[11px] text-nexo-faint">Spacing choices, distances and PDF reports use this unit. Existing monitors keep their exact grid.</p>
       </fieldset>
 
       <fieldset>
-        <legend className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 mb-2">Map pin style</legend>
+        <legend className="nexo-label ml-1 mb-2">Map pin style</legend>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {PIN_OPTIONS.map((option) => (
             <label key={option.value} className="relative">
               <input type="radio" name="grid_pin_style" value={option.value} defaultChecked={initial.pinStyle === option.value} className="peer sr-only" />
               <span className={cardCls}>
                 <PinPreview style={option.value} />
-                <span className="mt-2.5 block text-sm font-bold text-slate-900 dark:text-white">{option.label}</span>
-                <span className="block text-[11px] text-slate-400">{option.detail}</span>
+                <span className="mt-2.5 block text-sm font-medium text-nexo-text">{option.label}</span>
+                <span className="block text-[11px] text-nexo-faint">{option.detail}</span>
               </span>
             </label>
           ))}
         </div>
-        <p className="mt-2 ml-1 text-[11px] text-slate-400">The #1 rank keeps its star in every style.</p>
+        <p className="mt-2 ml-1 text-[11px] text-nexo-faint">The #1 rank keeps its star in every style.</p>
       </fieldset>
     </div>
   );

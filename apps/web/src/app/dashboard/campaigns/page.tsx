@@ -48,19 +48,19 @@ function CampaignCard({ campaign, queued, distanceUnit }: { campaign: GridCampai
   const spent = getCampaignSpend(campaign, monthStart());
 
   return (
-    <section id={`campaign-${campaign.id}`} className="scroll-mt-6 rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900">
+    <section id={`campaign-${campaign.id}`} className="scroll-mt-6 rounded-nexo-lg border border-nexo-border bg-nexo-surface p-5">
       <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <h2 className="truncate text-base font-black text-slate-900 dark:text-white">{campaign.name}</h2>
-            <span className={`rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-wider ${campaign.active ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300' : 'bg-slate-100 text-slate-500 dark:bg-slate-800'}`}>
+            <h2 className="truncate text-base font-medium text-nexo-text">{campaign.name}</h2>
+            <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider ${campaign.active ? 'bg-nexo-ice/10 text-nexo-ice' : 'bg-nexo-surface-2 text-nexo-dim'}`}>
               {campaign.active ? 'Active' : 'Paused'}
             </span>
           </div>
-          <p className="mt-0.5 truncate text-xs text-slate-500 dark:text-slate-400">
+          <p className="mt-0.5 truncate text-xs text-nexo-dim">
             {campaign.target} · {campaign.grid_size}×{campaign.grid_size} · {formatDistance(campaign.spacing_km, distanceUnit)} spacing · {campaign.queue_mode} queue
           </p>
-          <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+          <p className="mt-0.5 text-xs text-nexo-dim">
             {describeSchedule(campaign)} ({campaign.time_zone.replace(/_/g, ' ')})
             {campaign.active && nextRun !== null && <> · next {formatWhen(nextRun, campaign.time_zone)}</>}
           </p>
@@ -69,18 +69,18 @@ function CampaignCard({ campaign, queued, distanceUnit }: { campaign: GridCampai
           {campaign.active && (
             <form action={runCampaignNowAction}>
               <input type="hidden" name="id" value={campaign.id} />
-              <button type="submit" className="rounded-xl border border-blue-200 bg-white px-3 py-2 text-[10px] font-black uppercase tracking-widest text-blue-700 transition-colors hover:bg-blue-50 dark:border-blue-900 dark:bg-slate-900 dark:text-blue-300">
+              <button type="submit" className="nexo-section rounded-nexo-lg border border-nexo-border-strong bg-nexo-surface px-3 py-2 transition-colors hover:bg-nexo-blue/15">
                 Run now
               </button>
             </form>
           )}
-          <Link href={`/dashboard/campaigns?edit=${campaign.id}`} className="text-[10px] font-black uppercase tracking-widest text-blue-600 hover:text-blue-800 dark:text-blue-400">Edit</Link>
+          <Link href={`/dashboard/campaigns?edit=${campaign.id}`} className="nexo-section hover:text-white">Edit</Link>
           <DeleteCampaignButton id={campaign.id} />
         </div>
       </div>
 
       {queued && (
-        <p className="mt-3 rounded-xl bg-blue-50 px-3 py-2 text-[11px] font-semibold text-blue-700 dark:bg-blue-950/40 dark:text-blue-300">
+        <p className="mt-3 rounded-nexo-lg bg-nexo-blue/10 px-3 py-2 text-[11px] font-semibold text-nexo-sky">
           Queued. The worker posts every keyword on its next pass (about a minute) and the results arrive as DataForSEO finishes them.
         </p>
       )}
@@ -88,7 +88,7 @@ function CampaignCard({ campaign, queued, distanceUnit }: { campaign: GridCampai
       <div className="mt-4 overflow-x-auto">
         <table className="w-full min-w-[520px] text-left text-xs">
           <thead>
-            <tr className="border-b border-slate-100 text-[10px] font-black uppercase tracking-wider text-slate-400 dark:border-slate-800">
+            <tr className="nexo-label border-b border-nexo-border">
               <th className="py-2 pr-3">Keyword</th>
               <th className="py-2 pr-3 text-right">Avg position</th>
               <th className="py-2 pr-3 text-right">Share of Voice</th>
@@ -101,18 +101,18 @@ function CampaignCard({ campaign, queued, distanceUnit }: { campaign: GridCampai
               const results = keyword.latestDoneRunId ? getGridResults(keyword.latestDoneRunId) : null;
               const metrics = results ? computeGradeMetrics(results) : null;
               return (
-                <tr key={keyword.series_id} className="border-b border-slate-50 last:border-0 dark:border-slate-800/60">
-                  <td className="py-2 pr-3 font-bold text-slate-800 dark:text-slate-100">
+                <tr key={keyword.series_id} className="border-b border-nexo-border last:border-0">
+                  <td className="py-2 pr-3 font-medium text-nexo-text">
                     {keyword.latestDoneRunId
-                      ? <Link href={`/dashboard/geo-grid?grid_history_id=${keyword.latestDoneRunId}#results`} className="hover:text-blue-600">{keyword.keyword}</Link>
+                      ? <Link href={`/dashboard/geo-grid?grid_history_id=${keyword.latestDoneRunId}#results`} className="hover:text-nexo-sky">{keyword.keyword}</Link>
                       : keyword.keyword}
                   </td>
-                  <td className="py-2 pr-3 text-right font-black tabular-nums text-slate-900 dark:text-white">{metrics?.avgPosition ?? '—'}</td>
-                  <td className="py-2 pr-3 text-right tabular-nums text-slate-700 dark:text-slate-300">{metrics ? `${metrics.shareOfVoice}%` : '—'}</td>
-                  <td className="py-2 pr-3 text-right tabular-nums text-slate-700 dark:text-slate-300">{metrics ? `${metrics.bands.top3}%` : '—'}</td>
-                  <td className="py-2 text-slate-500 dark:text-slate-400">
+                  <td className="py-2 pr-3 text-right font-medium tabular-nums text-nexo-text">{metrics?.avgPosition ?? '—'}</td>
+                  <td className="py-2 pr-3 text-right tabular-nums text-nexo-dim">{metrics ? `${metrics.shareOfVoice}%` : '—'}</td>
+                  <td className="py-2 pr-3 text-right tabular-nums text-nexo-dim">{metrics ? `${metrics.bands.top3}%` : '—'}</td>
+                  <td className="py-2 text-nexo-dim">
                     {keyword.latestRun
-                      ? <>{formatWhen(keyword.latestRun.ts, campaign.time_zone)}{keyword.latestRun.status === 'pending' && <span className="ml-1 font-bold text-amber-600">· running</span>}</>
+                      ? <>{formatWhen(keyword.latestRun.ts, campaign.time_zone)}{keyword.latestRun.status === 'pending' && <span className="ml-1 font-medium text-nexo-warn-text">· running</span>}</>
                       : 'Not run yet'}
                   </td>
                 </tr>
@@ -122,8 +122,8 @@ function CampaignCard({ campaign, queued, distanceUnit }: { campaign: GridCampai
         </table>
       </div>
 
-      <p className="mt-3 text-[11px] text-slate-400">
-        Spent this month: <b className="tabular-nums text-slate-600 dark:text-slate-300">${spent.toFixed(3)}</b> · estimate ${estimate.perMonthUsd.toFixed(2)}/month
+      <p className="mt-3 text-[11px] text-nexo-faint">
+        Spent this month: <b className="tabular-nums text-nexo-dim">${spent.toFixed(3)}</b> · estimate ${estimate.perMonthUsd.toFixed(2)}/month
       </p>
     </section>
   );
@@ -145,26 +145,26 @@ async function CampaignsPage({ searchParams }: { searchParams: Promise<SearchPar
     <div className="mx-auto max-w-5xl space-y-6 p-4 sm:p-8">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="flex items-start gap-3">
-          <span className="mt-1 grid h-9 w-9 place-items-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/50 dark:text-blue-300">
+          <span className="mt-1 grid h-9 w-9 place-items-center rounded-nexo-lg bg-nexo-blue/10 text-nexo-sky">
             <CalendarClock className="h-4 w-4" />
           </span>
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">Grid campaigns</h1>
-            <p className="mt-1 max-w-2xl text-sm text-slate-500 dark:text-slate-400">
+            <h1 className="nexo-h1">Grid campaigns</h1>
+            <p className="mt-1 max-w-2xl text-sm text-nexo-dim">
               Track several keywords for one business on the same grid and schedule. Each keyword keeps its own Geo-grid timeline.
             </p>
           </div>
         </div>
         {!showForm && (
-          <Link href="/dashboard/campaigns?new=1" className="rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-black uppercase tracking-widest text-white hover:bg-blue-700">
+          <Link href="/dashboard/campaigns?new=1" className="rounded-nexo-lg bg-nexo-blue px-4 py-2.5 text-xs font-medium uppercase tracking-widest text-white hover:bg-nexo-sky">
             New campaign
           </Link>
         )}
       </div>
 
       {showForm && (
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-slate-900 sm:p-6">
-          <h2 className="mb-4 text-sm font-black text-slate-900 dark:text-white">{editing ? `Edit “${editing.name}”` : 'New campaign'}</h2>
+        <section className="rounded-nexo-lg border border-nexo-border bg-nexo-surface p-5 sm:p-6">
+          <h2 className="mb-4 text-sm font-medium text-nexo-text">{editing ? `Edit “${editing.name}”` : 'New campaign'}</h2>
           <CampaignForm key={editing?.id ?? 'new'} campaign={editing} defaults={defaults} distanceUnit={distanceUnit} />
         </section>
       )}
@@ -173,7 +173,7 @@ async function CampaignsPage({ searchParams }: { searchParams: Promise<SearchPar
         <CampaignCard key={campaign.id} campaign={campaign} queued={params.queued === campaign.id} distanceUnit={distanceUnit} />
       ))}
 
-      <p className="text-[11px] text-slate-400">Scheduled runs are posted by the Geo-grid worker, which <code>npm run dev</code> and <code>npm start</code> launch alongside the app.</p>
+      <p className="text-[11px] text-nexo-faint">Scheduled runs are posted by the Geo-grid worker, which <code>npm run dev</code> and <code>npm start</code> launch alongside the app.</p>
     </div>
   );
 }

@@ -118,18 +118,18 @@ function fmt(n?: number) {
 }
 
 function SpamBadge({ score }: { score?: number }) {
-  if (score === undefined) return <span className="text-slate-300">—</span>;
-  const color = score >= 60 ? 'text-red-600 bg-red-50 border-red-200'
-    : score >= 30 ? 'text-amber-600 bg-amber-50 border-amber-200'
-    : 'text-emerald-600 bg-emerald-50 border-emerald-200';
-  return <span className={`px-2 py-0.5 rounded-md text-[11px] font-black border ${color}`}>{score} / 100</span>;
+  if (score === undefined) return <span className="text-nexo-faint">—</span>;
+  const color = score >= 60 ? 'text-nexo-danger-text bg-nexo-danger/10 border-nexo-danger/40'
+    : score >= 30 ? 'text-nexo-warn-text bg-nexo-warn/10 border-nexo-warn/40'
+    : 'text-nexo-ice bg-nexo-ice/10 border-nexo-ice/30';
+  return <span className={`px-2 py-0.5 rounded-md text-[11px] font-medium border ${color}`}>{score} / 100</span>;
 }
 
 function Delta({ value, invert = false }: { value?: number; invert?: boolean }) {
   if (!value) return null;
   const positive = invert ? value < 0 : value > 0;
   return (
-    <span className={`text-[10px] font-black ml-1 ${positive ? 'text-emerald-500' : 'text-red-500'}`}>
+    <span className={`text-[10px] font-medium ml-1 ${positive ? 'text-nexo-ice' : 'text-nexo-danger-text'}`}>
       {value > 0 ? '+' : ''}{fmt(value)}
     </span>
   );
@@ -137,18 +137,18 @@ function Delta({ value, invert = false }: { value?: number; invert?: boolean }) 
 
 function StatCard({ label, value, new: newVal, lost, href, hrefLabel }: { label: string; value?: number; new?: number; lost?: number; href?: string; hrefLabel?: string }) {
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 px-5 py-4 shadow-sm">
-      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{label}</p>
-      <p className="text-2xl font-black text-slate-900 dark:text-white mt-1 tabular-nums">{fmt(value)}</p>
+    <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
+      <p className="nexo-label">{label}</p>
+      <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{fmt(value)}</p>
       {(newVal !== undefined || lost !== undefined) && (
-        <p className="text-[11px] mt-0.5 text-slate-400">
+        <p className="text-[11px] mt-0.5 text-nexo-faint">
           {newVal !== undefined && <><Delta value={newVal} /> new</>}
           {newVal !== undefined && lost !== undefined && ' · '}
           {lost !== undefined && <><Delta value={-lost} invert /> lost</>}
         </p>
       )}
       {href && (
-        <a href={href} className="inline-block text-[11px] font-bold text-blue-600 dark:text-blue-400 hover:underline mt-0.5">{hrefLabel ?? 'View'} →</a>
+        <a href={href} className="inline-block text-[11px] font-medium text-nexo-sky hover:underline mt-0.5">{hrefLabel ?? 'View'} →</a>
       )}
     </div>
   );
@@ -251,27 +251,27 @@ async function BacklinksPage({ searchParams }: { searchParams: Promise<SearchPar
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Backlinks</h1>
-        <p className="text-sm text-slate-400 mt-1">Inbound link profile of a domain via DataForSEO.</p>
+        <h1 className="nexo-h1">Backlinks</h1>
+        <p className="text-sm text-nexo-faint mt-1">Inbound link profile of a domain via DataForSEO.</p>
       </div>
 
       {/* Form */}
-      <SearchForm className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4" btnLabel="Analyze" btnClassName="w-full bg-slate-900 dark:bg-slate-700 text-white font-black uppercase tracking-widest text-xs py-3 rounded-xl hover:bg-blue-600 transition-colors">
+      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Analyze" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="sm:col-span-2">
-            <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Target domain</label>
+            <label className="nexo-label block mb-1.5">Target domain</label>
             <input
               type="text" name="target"
               defaultValue={displayTarget}
               placeholder="e.g. example.com"
               required
-              className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-300 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono transition-all"
+              className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky font-mono transition-all"
             />
           </div>
           <div>
-            <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Sort by</label>
+            <label className="nexo-label block mb-1.5">Sort by</label>
             <select name="order_by" defaultValue={orderBy}
-              className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800">
+              className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
               <option value="domain_from_rank,desc">Source domain DR (high)</option>
               <option value="page_from_rank,desc">Source page rank (high)</option>
               <option value="first_seen,desc">Most recent</option>
@@ -279,18 +279,18 @@ async function BacklinksPage({ searchParams }: { searchParams: Promise<SearchPar
             </select>
           </div>
           <div>
-            <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Filter</label>
+            <label className="nexo-label block mb-1.5">Filter</label>
             <select name="dofollow" defaultValue={dofollowParam ?? ''}
-              className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800">
+              className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
               <option value="">All links</option>
               <option value="true">Dofollow only</option>
               <option value="false">Nofollow only</option>
             </select>
           </div>
           <div>
-            <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Number of links</label>
+            <label className="nexo-label block mb-1.5">Number of links</label>
             <select name="limit" defaultValue={String(limit)}
-              className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-800">
+              className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky">
               <option value="50">50</option>
               <option value="100">100</option>
               <option value="200">200</option>
@@ -301,30 +301,30 @@ async function BacklinksPage({ searchParams }: { searchParams: Promise<SearchPar
         </div>
       </SearchForm>
 
-      {error && <div className="bg-red-50 dark:bg-red-950 border border-red-100 dark:border-red-900 text-red-600 dark:text-red-400 text-sm rounded-xl px-4 py-3">{error}</div>}
+      {error && <div className="bg-nexo-danger/10 border border-nexo-danger/40 text-nexo-danger-text text-sm rounded-nexo-lg px-4 py-3">{error}</div>}
 
       {hasQuery && !error && (summary || links.length > 0) && (
         <>
           {/* Header */}
           <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-black uppercase tracking-widest text-slate-400">Domain</span>
-              <span className="font-mono font-bold text-slate-900 dark:text-white">{displayTarget}</span>
-              {isFromHistory && <span className="text-[10px] font-black uppercase tracking-widest text-blue-500 bg-blue-50 dark:bg-blue-950 px-2 py-0.5 rounded-md">History</span>}
+              <span className="nexo-label">Domain</span>
+              <span className="font-mono font-medium text-nexo-text">{displayTarget}</span>
+              {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>}
             </div>
             {summary?.rank !== undefined && (
               <div className="flex items-center gap-2">
-                <span className="text-xs font-black uppercase tracking-widest text-slate-400">DR</span>
-                <span className="font-mono font-bold text-slate-900 dark:text-white">{summary.rank}</span>
+                <span className="nexo-label">DR</span>
+                <span className="font-mono font-medium text-nexo-text">{summary.rank}</span>
               </div>
             )}
             {summary?.spam_score !== undefined && (
               <div className="flex items-center gap-2">
-                <span className="text-xs font-black uppercase tracking-widest text-slate-400">Spam</span>
+                <span className="nexo-label">Spam</span>
                 <SpamBadge score={summary.spam_score} />
               </div>
             )}
-            {cost !== undefined && <span className="text-[10px] font-mono text-slate-400 ml-auto">cost: ${cost.toFixed(4)}</span>}
+            {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint ml-auto">cost: ${cost.toFixed(4)}</span>}
           </div>
 
           {/* Summary stats */}
@@ -347,19 +347,19 @@ async function BacklinksPage({ searchParams }: { searchParams: Promise<SearchPar
               {(linkTypeEntries.length > 0 || tldEntries.length > 0) && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {linkTypeEntries.length > 0 && (
-                    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-5">
-                      <h2 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-4">Link types</h2>
+                    <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-5">
+                      <h2 className="nexo-label mb-4">Link types</h2>
                       <div className="space-y-2">
                         {linkTypeEntries.map(([type, count]) => {
                           const pct = Math.round(((count ?? 0) / (summary.backlinks ?? 1)) * 100);
                           return (
                             <div key={type}>
                               <div className="flex items-center justify-between mb-1">
-                                <span className="text-xs font-medium text-slate-600 dark:text-slate-300 capitalize">{type.replace(/_/g, ' ')}</span>
-                                <span className="text-xs font-mono text-slate-500 dark:text-slate-400">{fmt(count)} <span className="text-slate-300">({pct}%)</span></span>
+                                <span className="text-xs font-medium text-nexo-dim capitalize">{type.replace(/_/g, ' ')}</span>
+                                <span className="text-xs font-mono text-nexo-dim">{fmt(count)} <span className="text-nexo-faint">({pct}%)</span></span>
                               </div>
-                              <div className="h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                                <div className="h-full bg-blue-500 rounded-full" style={{ width: `${pct}%` }} />
+                              <div className="h-1.5 bg-nexo-surface-2 rounded-full overflow-hidden">
+                                <div className="h-full bg-nexo-blue rounded-full" style={{ width: `${pct}%` }} />
                               </div>
                             </div>
                           );
@@ -368,19 +368,19 @@ async function BacklinksPage({ searchParams }: { searchParams: Promise<SearchPar
                     </div>
                   )}
                   {tldEntries.length > 0 && (
-                    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-5">
-                      <h2 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-4">Referring domains TLD</h2>
+                    <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-5">
+                      <h2 className="nexo-label mb-4">Referring domains TLD</h2>
                       <div className="space-y-2">
                         {tldEntries.map(([tld, count]) => {
                           const pct = Math.round((count / tldTotal) * 100);
                           return (
                             <div key={tld}>
                               <div className="flex items-center justify-between mb-1">
-                                <span className="text-xs font-mono font-bold text-slate-600 dark:text-slate-300">.{tld}</span>
-                                <span className="text-xs font-mono text-slate-500 dark:text-slate-400">{fmt(count)} <span className="text-slate-300">({pct}%)</span></span>
+                                <span className="text-xs font-mono font-medium text-nexo-dim">.{tld}</span>
+                                <span className="text-xs font-mono text-nexo-dim">{fmt(count)} <span className="text-nexo-faint">({pct}%)</span></span>
                               </div>
-                              <div className="h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                                <div className="h-full bg-violet-400 rounded-full" style={{ width: `${pct}%` }} />
+                              <div className="h-1.5 bg-nexo-surface-2 rounded-full overflow-hidden">
+                                <div className="h-full bg-nexo-sky/40 rounded-full" style={{ width: `${pct}%` }} />
                               </div>
                             </div>
                           );
@@ -394,13 +394,13 @@ async function BacklinksPage({ searchParams }: { searchParams: Promise<SearchPar
           )}
 
           {/* Backlinks list */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-              <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">Backlinks list</h2>
+          <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+            <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between">
+              <h2 className="nexo-label">Backlinks list</h2>
               <div className="flex items-center gap-3">
-                <span className="text-xs font-black text-slate-400">
+                <span className="text-xs font-medium text-nexo-faint">
                   {links.length} shown
-                  {linksTotal > links.length && <span className="text-slate-300"> / {fmt(linksTotal)} total</span>}
+                  {linksTotal > links.length && <span className="text-nexo-faint"> / {fmt(linksTotal)} total</span>}
                 </span>
                 {links.length > 0 && (
                   <>
@@ -455,7 +455,7 @@ async function BacklinksPage({ searchParams }: { searchParams: Promise<SearchPar
             </div>
 
             {links.length === 0 ? (
-              <div className="px-6 py-12 text-center text-sm text-slate-400">No backlinks found.</div>
+              <div className="px-6 py-12 text-center text-sm text-nexo-faint">No backlinks found.</div>
             ) : (
               <BacklinksTable links={links} />
             )}
@@ -465,24 +465,24 @@ async function BacklinksPage({ searchParams }: { searchParams: Promise<SearchPar
 
       {/* History */}
       {history.length > 0 && (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-            <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">History</h2>
+        <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+          <div className="px-6 py-4 border-b border-nexo-border">
+            <h2 className="nexo-label">History</h2>
           </div>
-          <div className="divide-y divide-slate-50 dark:divide-slate-800">
+          <div className="divide-y divide-nexo-border">
             {history.map((entry) => {
               const isActive = entry.id === historyId;
               return (
                 <a key={entry.id} href={`/dashboard/backlinks?history_id=${entry.id}#results`}
-                  className={`flex items-center gap-4 px-6 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${isActive ? 'bg-blue-50 dark:bg-blue-950' : ''}`}>
+                  className={`flex items-center gap-4 px-6 py-3.5 hover:bg-white/[0.04] transition-colors ${isActive ? 'bg-nexo-blue/10' : ''}`}>
                   <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-bold font-mono truncate ${isActive ? 'text-blue-700 dark:text-blue-400' : 'text-slate-800 dark:text-slate-200'}`}>{entry.target}</p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">
+                    <p className={`text-sm font-medium font-mono truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.target}</p>
+                    <p className="text-[11px] text-nexo-faint mt-0.5">
                       {entry.linksTotal !== undefined ? `${fmt(entry.linksTotal)} backlinks` : ''}
                       {entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}
                     </p>
                   </div>
-                  <span className="shrink-0 text-[11px] text-slate-400">{formatDate(entry.ts)}</span>
+                  <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>
                 </a>
               );
             })}

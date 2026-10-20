@@ -82,20 +82,20 @@ export default function RankDistributionChart({ points }: { points: Point[] }) {
   };
 
   return (
-    <section className="bg-white border border-slate-200 rounded-3xl p-6 dark:bg-slate-900 dark:border-slate-800">
+    <section className="bg-nexo-surface border border-nexo-border rounded-nexo-lg p-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-[10px] font-black text-blue-600 uppercase tracking-[0.18em] dark:text-blue-400">SERP mix</p>
-          <h2 className="mt-1 text-base font-black tracking-tight text-slate-900 dark:text-white">Position distribution over time</h2>
-          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">The coloured areas show the position mix; the blue line tracks the total number of ranked keywords.</p>
+          <p className="nexo-section">SERP mix</p>
+          <h2 className="mt-1 text-base font-medium tracking-tight text-nexo-text">Position distribution over time</h2>
+          <p className="mt-1 text-xs text-nexo-dim">The coloured areas show the position mix; the blue line tracks the total number of ranked keywords.</p>
         </div>
-        <div className="flex max-w-md flex-wrap justify-end gap-x-3 gap-y-1.5 text-[10px] font-bold text-slate-500 dark:text-slate-400">
-          <span className="inline-flex items-center gap-1.5 text-blue-700 dark:text-blue-300"><i className="h-0.5 w-3 bg-blue-700 dark:bg-blue-300" />Ranked keywords</span>
+        <div className="flex max-w-md flex-wrap justify-end gap-x-3 gap-y-1.5 text-[10px] font-medium text-nexo-dim">
+          <span className="inline-flex items-center gap-1.5 text-nexo-sky"><i className="h-0.5 w-3 bg-nexo-blue" />Ranked keywords</span>
           {bands.map((band) => <span key={band.key} className="inline-flex items-center gap-1.5"><i className="h-2 w-2 rounded-sm" style={{ backgroundColor: band.color }} />{band.label}</span>)}
         </div>
       </div>
 
-      <div className="mt-5 overflow-x-auto rounded-2xl bg-slate-50 p-2 dark:bg-slate-950/60">
+      <div className="mt-5 overflow-x-auto rounded-nexo-lg bg-white/[0.02] p-2">
         <svg viewBox={`0 0 ${width} ${height}`} className="min-w-[620px] h-auto w-full" role="img" aria-label="Monthly position distribution and total ranked keywords">
           {[0, 25, 50, 75, 100].map((tick) => (
             <g key={tick}>
@@ -128,7 +128,7 @@ export default function RankDistributionChart({ points }: { points: Point[] }) {
           {tickIndexes.map((index) => <text key={index} x={x(index)} y={height - 11} textAnchor={index === 0 ? 'start' : index === points.length - 1 ? 'end' : 'middle'} fontSize="9" fill="currentColor" opacity="0.58">{formatMonth(points[index].year, points[index].month)}</text>)}
         </svg>
       </div>
-      <div className="mt-3 flex flex-wrap justify-between gap-x-4 gap-y-1 text-[10px] text-slate-400 dark:text-slate-500"><span>Left scale: position share.</span><span>Right scale: ranked keywords.</span><span>Hover a month for the detailed mix and volume.</span></div>
+      <div className="mt-3 flex flex-wrap justify-between gap-x-4 gap-y-1 text-[10px] text-nexo-faint"><span>Left scale: position share.</span><span>Right scale: ranked keywords.</span><span>Hover a month for the detailed mix and volume.</span></div>
     </section>
   );
 }

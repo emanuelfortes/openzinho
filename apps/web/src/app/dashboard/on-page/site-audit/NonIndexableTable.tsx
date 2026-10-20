@@ -30,8 +30,8 @@ function sortValue(page: NonIndexableItem, key: SortKey): string {
 }
 
 function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
-  if (!active) return <ArrowUpDown className="w-3 h-3 text-slate-300" />;
-  return dir === 'asc' ? <ArrowUp className="w-3 h-3 text-blue-600" /> : <ArrowDown className="w-3 h-3 text-blue-600" />;
+  if (!active) return <ArrowUpDown className="w-3 h-3 text-nexo-faint" />;
+  return dir === 'asc' ? <ArrowUp className="w-3 h-3 text-nexo-sky" /> : <ArrowDown className="w-3 h-3 text-nexo-sky" />;
 }
 
 export default function NonIndexableTable({ pages }: { pages: NonIndexableItem[] }) {
@@ -53,7 +53,7 @@ export default function NonIndexableTable({ pages }: { pages: NonIndexableItem[]
   function Header({ label, sortK, align, className }: { label: string; sortK: SortKey; align: 'left' | 'center'; className?: string }) {
     const active = sortKey === sortK;
     return (
-      <th className={`px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-400 select-none cursor-pointer hover:text-slate-600 dark:hover:text-slate-300 ${align === 'left' ? 'text-left' : 'text-center'} ${className ?? ''}`}
+      <th className={`px-4 py-3 text-[10px] font-medium uppercase tracking-widest text-nexo-faint select-none cursor-pointer hover:text-white ${align === 'left' ? 'text-left' : 'text-center'} ${className ?? ''}`}
         onClick={() => toggleSort(sortK)}>
         <span className={`inline-flex items-center gap-1 ${align === 'center' ? 'justify-center w-full' : ''}`}>
           {label}
@@ -71,30 +71,30 @@ export default function NonIndexableTable({ pages }: { pages: NonIndexableItem[]
 
   return (
     <div>
-      <div className="px-6 py-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-end gap-2">
+      <div className="px-6 py-3 border-b border-nexo-border flex items-center justify-end gap-2">
         <CopyMarkdownButton data={csvData} columns={columns} />
         <ExportCSVButton data={csvData} filename="site-audit-non-indexable.csv" columns={columns} />
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-xs">
           <thead>
-            <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
-              <th className="px-4 py-3 text-left text-[10px] font-black uppercase tracking-widest text-slate-400">#</th>
+            <tr className="border-b border-nexo-border bg-white/[0.02]">
+              <th className="nexo-label px-4 py-3 text-left">#</th>
               <Header label="URL" sortK="url" align="left" />
               <Header label="Reason" sortK="reason" align="left" />
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
+          <tbody className="divide-y divide-nexo-border">
             {sorted.map((page, i) => {
               const path = page.url ? (() => { try { return new URL(page.url).pathname; } catch { return page.url; } })() : '—';
               return (
-                <tr key={i} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                  <td className="px-4 py-3 text-[11px] font-mono text-slate-400 tabular-nums">{i + 1}</td>
+                <tr key={i} className="hover:bg-white/[0.04] transition-colors">
+                  <td className="px-4 py-3 text-[11px] font-mono text-nexo-faint tabular-nums">{i + 1}</td>
                   <td className="px-4 py-3 max-w-[280px]">
                     <a href={page.url} target="_blank" rel="noopener noreferrer"
-                      className="text-[10px] font-mono text-blue-600 hover:underline truncate block">{path}</a>
+                      className="text-[10px] font-mono text-nexo-sky hover:underline truncate block">{path}</a>
                   </td>
-                  <td className="px-4 py-3 text-xs text-slate-700 dark:text-slate-300">{reasonLabel(page.reason)}</td>
+                  <td className="px-4 py-3 text-xs text-nexo-dim">{reasonLabel(page.reason)}</td>
                 </tr>
               );
             })}

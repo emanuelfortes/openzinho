@@ -73,48 +73,48 @@ export default function GridResults({ results, gridSize, spacingKm, keyword, tar
     <div className="space-y-4">
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="bg-white border border-slate-200 rounded-2xl px-4 py-3">
-          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">ATO Score</p>
-          <p className="text-2xl font-black text-slate-900 mt-0.5 tabular-nums">{ato}%</p>
-          <p className="text-[10px] text-slate-400 mt-0.5">Local visibility</p>
+        <div className="bg-nexo-surface border border-nexo-border rounded-nexo-lg px-4 py-3">
+          <p className="nexo-label">ATO Score</p>
+          <p className="nexo-metric font-mono text-2xl mt-0.5 tabular-nums">{ato}%</p>
+          <p className="text-[10px] text-nexo-faint mt-0.5">Local visibility</p>
         </div>
-        <div className="bg-white border border-slate-200 rounded-2xl px-4 py-3">
-          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Avg rank</p>
-          <p className="text-2xl font-black text-slate-900 mt-0.5 tabular-nums">{avgRank ?? '—'}</p>
-          <p className="text-[10px] text-slate-400 mt-0.5">{foundCount}/{results.length} points found</p>
+        <div className="bg-nexo-surface border border-nexo-border rounded-nexo-lg px-4 py-3">
+          <p className="nexo-label">Avg rank</p>
+          <p className="nexo-metric font-mono text-2xl mt-0.5 tabular-nums">{avgRank ?? '—'}</p>
+          <p className="text-[10px] text-nexo-faint mt-0.5">{foundCount}/{results.length} points found</p>
         </div>
-        <div className="bg-white border border-slate-200 rounded-2xl px-4 py-3">
-          <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600">Top 3</p>
-          <p className="text-2xl font-black text-emerald-600 mt-0.5 tabular-nums">{top3}</p>
-          <p className="text-[10px] text-slate-400 mt-0.5">of {results.length} points</p>
+        <div className="bg-nexo-surface border border-nexo-border rounded-nexo-lg px-4 py-3">
+          <p className="text-[10px] font-medium uppercase tracking-widest text-nexo-ice">Top 3</p>
+          <p className="nexo-metric font-mono text-2xl text-nexo-ice mt-0.5 tabular-nums">{top3}</p>
+          <p className="text-[10px] text-nexo-faint mt-0.5">of {results.length} points</p>
         </div>
-        <div className="bg-white border border-slate-200 rounded-2xl px-4 py-3">
-          <p className="text-[10px] font-black uppercase tracking-widest text-blue-600">Top 10</p>
-          <p className="text-2xl font-black text-blue-600 mt-0.5 tabular-nums">{top10}</p>
-          <p className="text-[10px] text-slate-400 mt-0.5">of {results.length} points</p>
+        <div className="bg-nexo-surface border border-nexo-border rounded-nexo-lg px-4 py-3">
+          <p className="nexo-section">Top 10</p>
+          <p className="nexo-metric font-mono text-2xl text-nexo-sky mt-0.5 tabular-nums">{top10}</p>
+          <p className="text-[10px] text-nexo-faint mt-0.5">of {results.length} points</p>
         </div>
       </div>
 
       {/* Competitive landscape */}
       {topCompetitors.length > 0 && (
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5">
+        <div className="bg-nexo-surface border border-nexo-border rounded-nexo-lg p-5">
           <div className="flex items-center justify-between mb-1">
-            <p className="text-sm font-black text-slate-900 dark:text-white">Competitive landscape</p>
-            <p className="text-[10px] text-slate-400">Ranked by grid presence</p>
+            <p className="text-sm font-medium text-nexo-text">Competitive landscape</p>
+            <p className="text-[10px] text-nexo-faint">Ranked by grid presence</p>
           </div>
-          <p className="text-[11px] text-slate-400 mb-4">
+          <p className="text-[11px] text-nexo-faint mb-4">
             {snapshotDate ? `Snapshot from ${formatSnapshotDate(snapshotDate)} · ` : ''}Businesses appearing in the top 20 across the grid, compared to your own visibility.
           </p>
 
           <div className="space-y-2">
             {/* Target row, for direct comparison */}
-            <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950 border border-emerald-100 dark:border-emerald-900">
-              <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600 w-14 shrink-0">You</span>
-              <span className="text-sm font-bold text-slate-800 dark:text-slate-100 flex-1 min-w-0 truncate">{target}</span>
-              <div className="flex-1 max-w-[120px] h-2 bg-emerald-100 dark:bg-emerald-900 rounded-full overflow-hidden hidden sm:block">
-                <div className="h-full bg-emerald-500" style={{ width: `${ato}%` }} />
+            <div className="flex items-center gap-3 px-3 py-2.5 rounded-nexo-lg bg-nexo-ice/10 border border-nexo-ice/30">
+              <span className="text-[10px] font-medium uppercase tracking-widest text-nexo-ice w-14 shrink-0">You</span>
+              <span className="text-sm font-medium text-nexo-text flex-1 min-w-0 truncate">{target}</span>
+              <div className="flex-1 max-w-[120px] h-2 bg-nexo-ice/10 rounded-full overflow-hidden hidden sm:block">
+                <div className="h-full bg-nexo-ice" style={{ width: `${ato}%` }} />
               </div>
-              <span className="text-xs font-black text-emerald-700 dark:text-emerald-400 tabular-nums w-10 text-right">{ato}%</span>
+              <span className="text-xs font-medium text-nexo-ice tabular-nums w-10 text-right">{ato}%</span>
             </div>
 
             {topCompetitors.map((c, i) => {
@@ -122,31 +122,31 @@ export default function GridResults({ results, gridSize, spacingKm, keyword, tar
               return (
                 <div
                   key={c.key}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-xl border transition-colors ${
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-nexo-lg border transition-colors ${
                     isActive
-                      ? 'bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-900'
-                      : 'bg-slate-50 dark:bg-slate-800 border-transparent'
+                      ? 'bg-nexo-blue/10 border-nexo-border-strong'
+                      : 'bg-white/[0.02] border-transparent'
                   }`}
                 >
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 w-14 shrink-0">#{i + 1}</span>
+                  <span className="nexo-label w-14 shrink-0">#{i + 1}</span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-slate-800 dark:text-slate-100 truncate">{c.name}</p>
-                    <p className="text-[10px] text-slate-400 truncate">
+                    <p className="text-sm font-medium text-nexo-text truncate">{c.name}</p>
+                    <p className="text-[10px] text-nexo-faint truncate">
                       {c.appearances}/{c.totalPoints} points · avg #{c.avgRank}
                       {c.avgRating != null ? ` · ★${c.avgRating.toFixed(1)}` : ''}
                     </p>
                   </div>
-                  <div className="flex-1 max-w-[120px] h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden hidden sm:block">
-                    <div className="h-full bg-blue-500" style={{ width: `${c.visibilityScore}%` }} />
+                  <div className="flex-1 max-w-[120px] h-2 bg-white/10 rounded-full overflow-hidden hidden sm:block">
+                    <div className="h-full bg-nexo-blue" style={{ width: `${c.visibilityScore}%` }} />
                   </div>
-                  <span className="text-xs font-black text-slate-600 dark:text-slate-300 tabular-nums w-10 text-right">{c.visibilityScore}%</span>
+                  <span className="text-xs font-medium text-nexo-dim tabular-nums w-10 text-right">{c.visibilityScore}%</span>
                   <button
                     type="button"
                     onClick={() => setHighlight(isActive ? null : c)}
-                    className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1.5 rounded-lg shrink-0 transition-colors ${
+                    className={`text-[10px] font-medium uppercase tracking-widest px-2.5 py-1.5 rounded-nexo shrink-0 transition-colors ${
                       isActive
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-white dark:bg-slate-900 text-blue-600 border border-blue-200 dark:border-blue-900 hover:bg-blue-50 dark:hover:bg-blue-950'
+                        ? 'bg-nexo-blue text-white'
+                        : 'bg-nexo-surface text-nexo-sky border border-nexo-border-strong hover:bg-nexo-blue/15'
                     }`}
                   >
                     {isActive ? 'Showing ✓' : 'View on grid'}
@@ -159,18 +159,18 @@ export default function GridResults({ results, gridSize, spacingKm, keyword, tar
       )}
 
       {/* Map card */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-5">
+      <div className="bg-nexo-surface border border-nexo-border rounded-nexo-lg p-5">
         {/* Header */}
         <div className="flex items-center justify-between gap-3 mb-4">
           <div>
-            <p className="text-sm font-black text-slate-900">
+            <p className="text-sm font-medium text-nexo-text">
               {highlight ? highlight.name : keyword}
             </p>
-            <p className="text-[11px] text-slate-400 mt-0.5">
+            <p className="text-[11px] text-nexo-faint mt-0.5">
               {highlight ? (
                 <>Competitor · avg #{highlight.avgRank} · {highlight.appearances}/{highlight.totalPoints} points</>
               ) : (
-                <>Target: <span className="font-bold text-slate-600">{target}</span></>
+                <>Target: <span className="font-medium text-nexo-dim">{target}</span></>
               )}
               {' · '}{gridSize}×{gridSize} points
             </p>
@@ -190,18 +190,18 @@ export default function GridResults({ results, gridSize, spacingKm, keyword, tar
               brandFooter={brandFooter} brandStyle={brandStyle}
             />
             {cost !== undefined && (
-              <span className="text-[10px] font-mono text-slate-400">cost: ${cost.toFixed(4)}</span>
+              <span className="text-[10px] font-mono text-nexo-faint">cost: ${cost.toFixed(4)}</span>
             )}
             {highlight ? (
               <button
                 type="button"
                 onClick={() => setHighlight(null)}
-                className="text-[10px] font-black uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-1 rounded-lg hover:bg-blue-100 transition-colors"
+                className="nexo-section bg-nexo-blue/10 px-2 py-1 rounded-nexo hover:bg-nexo-blue/15 transition-colors"
               >
                 ← Back to target
               </button>
             ) : (
-              <span className="text-[10px] font-black text-slate-400 bg-slate-100 px-2 py-1 rounded-lg">
+              <span className="text-[10px] font-medium text-nexo-faint bg-nexo-surface-2 px-2 py-1 rounded-nexo">
                 Click a pin for details
               </span>
             )}
@@ -213,19 +213,19 @@ export default function GridResults({ results, gridSize, spacingKm, keyword, tar
           {legend.map((item) => (
             <div key={item.label} className="flex items-center gap-1.5">
               <div className={`w-3 h-3 ${swatchShape}`} style={{ backgroundColor: item.color }} />
-              <span className="text-[10px] font-bold text-slate-500">{item.label}</span>
+              <span className="text-[10px] font-medium text-nexo-dim">{item.label}</span>
             </div>
           ))}
-          <div className="flex items-center gap-1.5 ml-2 pl-2 border-l border-slate-200">
-            <div className={`w-3 h-3 ${swatchShape} border-2 border-dashed border-slate-400`} />
-            <span className="text-[10px] font-bold text-slate-500">Center</span>
+          <div className="flex items-center gap-1.5 ml-2 pl-2 border-l border-nexo-border">
+            <div className={`w-3 h-3 ${swatchShape} border-2 border-dashed border-nexo-border-strong`} />
+            <span className="text-[10px] font-medium text-nexo-dim">Center</span>
           </div>
         </div>
 
         {/* Map */}
         <Suspense fallback={
-          <div className="w-full rounded-xl bg-slate-100 animate-pulse flex items-center justify-center" style={{ height: 520 }}>
-            <p className="text-sm text-slate-400 font-medium">Loading map…</p>
+          <div className="w-full rounded-nexo-lg bg-nexo-surface-2 animate-pulse flex items-center justify-center" style={{ height: 520 }}>
+            <p className="text-sm text-nexo-faint font-medium">Loading map…</p>
           </div>
         }>
           <GridMap
@@ -241,27 +241,27 @@ export default function GridResults({ results, gridSize, spacingKm, keyword, tar
 
       {/* Visibility by distance from center */}
       {ringStats.length > 1 && (
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5">
-          <p className="text-sm font-black text-slate-900 dark:text-white mb-1">Visibility by distance</p>
-          <p className="text-[11px] text-slate-400 mb-4">
+        <div className="bg-nexo-surface border border-nexo-border rounded-nexo-lg p-5">
+          <p className="text-sm font-medium text-nexo-text mb-1">Visibility by distance</p>
+          <p className="text-[11px] text-nexo-faint mb-4">
             How far from the center point the target stays visible — useful to see the real edge of your service area.
           </p>
           <div className="space-y-2">
             {ringStats.map((r) => (
               <div key={r.ring} className="flex items-center gap-3">
-                <span className="text-[10px] font-black text-slate-400 w-20 shrink-0 tabular-nums">
+                <span className="text-[10px] font-medium text-nexo-faint w-20 shrink-0 tabular-nums">
                   {r.ring === 0 ? 'Center' : `~${formatDistance(r.distanceKm, distanceUnit, 1)}`}
                 </span>
-                <div className="flex-1 h-2.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                <div className="flex-1 h-2.5 bg-nexo-surface-2 rounded-full overflow-hidden">
                   <div
-                    className={`h-full ${r.top3Pct >= 50 ? 'bg-emerald-500' : r.foundCount > 0 ? 'bg-amber-500' : 'bg-slate-300 dark:bg-slate-600'}`}
+                    className={`h-full ${r.top3Pct >= 50 ? 'bg-nexo-ice' : r.foundCount > 0 ? 'bg-nexo-warn' : 'bg-white/20'}`}
                     style={{ width: `${Math.round((r.foundCount / r.pointCount) * 100)}%` }}
                   />
                 </div>
-                <span className="text-[11px] font-bold text-slate-600 dark:text-slate-300 w-28 shrink-0 text-right tabular-nums">
+                <span className="text-[11px] font-medium text-nexo-dim w-28 shrink-0 text-right tabular-nums">
                   {r.avgRank != null ? `avg #${r.avgRank}` : 'not found'}
                 </span>
-                <span className="text-[10px] text-slate-400 w-16 shrink-0 text-right tabular-nums">
+                <span className="text-[10px] text-nexo-faint w-16 shrink-0 text-right tabular-nums">
                   {r.foundCount}/{r.pointCount} pts
                 </span>
               </div>
@@ -272,8 +272,8 @@ export default function GridResults({ results, gridSize, spacingKm, keyword, tar
 
       {/* Rank distribution mini-grid (fallback for points without geo) */}
       {results.some((p) => p.lat == null) && (
-        <div className="bg-white border border-slate-200 rounded-2xl p-5">
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Distribution (grid without coordinates)</p>
+        <div className="bg-nexo-surface border border-nexo-border rounded-nexo-lg p-5">
+          <p className="nexo-label mb-3">Distribution (grid without coordinates)</p>
           <div className="inline-grid gap-1" style={{ gridTemplateColumns: `repeat(${gridSize}, 1fr)` }}>
             {results.map((p, i) => {
               const color = rankColor(p.rank);

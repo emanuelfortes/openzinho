@@ -69,31 +69,31 @@ async function ReferringNetworksPage({ searchParams }: { searchParams: Promise<S
   return (
     <div className="space-y-6">
       <div>
-        <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 mb-1">
-          <a href="/dashboard/backlinks" className="hover:text-slate-600 transition-colors">Backlinks</a>
-          <span className="text-slate-200">/</span>
-          <span className="text-slate-600">Referring Networks</span>
+        <div className="nexo-label flex items-center gap-2 mb-1">
+          <a href="/dashboard/backlinks" className="hover:text-white transition-colors">Backlinks</a>
+          <span className="text-nexo-text">/</span>
+          <span className="text-nexo-dim">Referring Networks</span>
         </div>
-        <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Referring Networks</h1>
-        <p className="text-sm text-slate-400 mt-1">IP subnets and networks sending backlinks to a domain.</p>
+        <h1 className="nexo-h1">Referring Networks</h1>
+        <p className="text-sm text-nexo-faint mt-1">IP subnets and networks sending backlinks to a domain.</p>
       </div>
 
-      <SearchForm className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4" btnLabel="Analyze" btnClassName="w-full bg-slate-900 dark:bg-slate-700 text-white font-black uppercase tracking-widest text-xs py-3 rounded-xl hover:bg-blue-600 transition-colors">
+      <SearchForm className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4" btnLabel="Analyze" btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-ice transition-colors">
         <div>
-          <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">Domain</label>
+          <label className="nexo-label block mb-1.5">Domain</label>
           <input type="text" name="target" defaultValue={displayTarget || defaultDomain} placeholder="example.com" required
-            className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono bg-white dark:bg-slate-800" />
+            className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky font-mono" />
         </div>
       </SearchForm>
 
-      {error && <div className="bg-red-50 dark:bg-red-950 border border-red-100 text-red-600 dark:text-red-400 text-sm rounded-xl px-4 py-3">{error}</div>}
+      {error && <div className="bg-nexo-danger/10 border border-nexo-danger/40 text-nexo-danger-text text-sm rounded-nexo-lg px-4 py-3">{error}</div>}
 
       {(historyId || rawTarget) && !error && (
-        <div id="results" className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
-            <span className="text-xs font-black uppercase tracking-widest text-slate-400">{items.length} networks — {displayTarget}</span>
+        <div id="results" className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+          <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between">
+            <span className="nexo-label">{items.length} networks — {displayTarget}</span>
             <div className="flex items-center gap-3">
-              {cost !== undefined && <span className="text-[10px] font-mono text-slate-400">cost: ${cost.toFixed(4)}</span>}
+              {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">cost: ${cost.toFixed(4)}</span>}
               {items.length > 0 && (
                 <div className="flex items-center gap-2">
                   <CopyMarkdownButton data={csvData} columns={[{key:'network',label:'Network'},{key:'ip_count',label:'IPs'},{key:'referring_domains',label:'Ref. Domains'},{key:'backlinks',label:'Backlinks'},{key:'rank',label:'Rank'}]} />
@@ -103,7 +103,7 @@ async function ReferringNetworksPage({ searchParams }: { searchParams: Promise<S
             </div>
           </div>
           {items.length === 0 ? (
-            <div className="px-6 py-12 text-center text-sm text-slate-400">No networks found.</div>
+            <div className="px-6 py-12 text-center text-sm text-nexo-faint">No networks found.</div>
           ) : (
             <ReferringNetworksTable items={items} />
           )}
@@ -111,21 +111,21 @@ async function ReferringNetworksPage({ searchParams }: { searchParams: Promise<S
       )}
 
       {history.length > 0 && (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-            <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">History</h2>
+        <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+          <div className="px-6 py-4 border-b border-nexo-border">
+            <h2 className="nexo-label">History</h2>
           </div>
-          <div className="divide-y divide-slate-50 dark:divide-slate-800">
+          <div className="divide-y divide-nexo-border">
             {history.map((entry) => {
               const isActive = entry.id === historyId;
               return (
                 <a key={entry.id} href={`/dashboard/backlinks/referring-networks?history_id=${entry.id}#results`}
-                  className={`flex items-center gap-4 px-6 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors ${isActive ? 'bg-blue-50 dark:bg-blue-950' : ''}`}>
+                  className={`flex items-center gap-4 px-6 py-3.5 hover:bg-white/[0.04] transition-colors ${isActive ? 'bg-nexo-blue/10' : ''}`}>
                   <div className="flex-1 min-w-0">
-                    <p className={`text-sm font-medium font-mono truncate ${isActive ? 'text-blue-700 dark:text-blue-400' : 'text-slate-800 dark:text-slate-200'}`}>{entry.target}</p>
-                    <p className="text-[11px] text-slate-400 mt-0.5">{entry.count} networks{entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}</p>
+                    <p className={`text-sm font-medium font-mono truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.target}</p>
+                    <p className="text-[11px] text-nexo-faint mt-0.5">{entry.count} networks{entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}</p>
                   </div>
-                  <span className="shrink-0 text-[11px] text-slate-400">{formatDate(entry.ts)}</span>
+                  <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>
                 </a>
               );
             })}

@@ -11,21 +11,21 @@ import { getTopResultsAction } from './actions';
 function PositionBadge({ pos }: { pos: number | null }) {
   if (pos === null)
     return (
-      <span title="The domain was not in the results returned for this check" className="px-2 py-0.5 rounded-lg text-[10px] font-black bg-red-50 text-red-400 border border-red-100 whitespace-nowrap">
+      <span title="The domain was not in the results returned for this check" className="px-2 py-0.5 rounded-nexo text-[10px] font-medium bg-nexo-danger/10 text-nexo-danger-text border border-nexo-danger/40 whitespace-nowrap">
         Not found
       </span>
     );
   const cls =
-    pos <= 3 ? 'bg-emerald-50 text-emerald-600 border-emerald-200'
-    : pos <= 10 ? 'bg-blue-50 text-blue-600 border-blue-200'
-    : pos <= 30 ? 'bg-yellow-50 text-yellow-600 border-yellow-200'
-    : 'bg-slate-100 text-slate-500 border-slate-200';
-  return <span className={`px-2 py-0.5 rounded-lg text-[11px] font-black border tabular-nums ${cls}`}>#{pos}</span>;
+    pos <= 3 ? 'bg-nexo-ice/10 text-nexo-ice border-nexo-ice/30'
+    : pos <= 10 ? 'bg-nexo-blue/10 text-nexo-sky border-nexo-border-strong'
+    : pos <= 30 ? 'bg-nexo-warn/10 text-nexo-warn-text border-nexo-warn/40'
+    : 'bg-nexo-surface-2 text-nexo-dim border-nexo-border';
+  return <span className={`px-2 py-0.5 rounded-nexo text-[11px] font-medium border tabular-nums ${cls}`}>#{pos}</span>;
 }
 
 function AiOverviewBadge() {
   return (
-    <span title="Cited as a source in Google's AI Overview for this check" className="px-1.5 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider bg-violet-50 text-violet-600 border border-violet-200 dark:bg-violet-950/50 dark:text-violet-300 dark:border-violet-900">
+    <span title="Cited as a source in Google's AI Overview for this check" className="px-1.5 py-0.5 rounded-nexo text-[9px] font-medium uppercase tracking-wider bg-nexo-blue/10 text-nexo-sky border border-nexo-border-strong">
       AI
     </span>
   );
@@ -33,11 +33,11 @@ function AiOverviewBadge() {
 
 function TrendBadge({ current, previous }: { current: number | null; previous: number | null }) {
   if (current === null && previous === null) return null;
-  if (previous === null || current === null) return <span className="text-[10px] font-bold text-slate-300">new</span>;
+  if (previous === null || current === null) return <span className="text-[10px] font-medium text-nexo-faint">new</span>;
   const diff = previous - current;
-  if (diff === 0) return <span className="text-[11px] text-slate-300">—</span>;
-  if (diff > 0) return <span className="text-[10px] font-black text-emerald-500">↑{diff}</span>;
-  return <span className="text-[10px] font-black text-red-400">↓{Math.abs(diff)}</span>;
+  if (diff === 0) return <span className="text-[11px] text-nexo-faint">—</span>;
+  if (diff > 0) return <span className="text-[10px] font-medium text-nexo-ice">↑{diff}</span>;
+  return <span className="text-[10px] font-medium text-nexo-danger-text">↓{Math.abs(diff)}</span>;
 }
 
 // ─── Sparkline ────────────────────────────────────────────────────────────────
@@ -45,11 +45,11 @@ function TrendBadge({ current, previous }: { current: number | null; previous: n
 function Sparkline({ history }: { history: RankCheck[] }) {
   const sorted = [...history].sort((a, b) => a.date.localeCompare(b.date));
   const last14 = sorted.slice(-14);
-  if (last14.length < 2) return <span className="text-[10px] text-slate-300">—</span>;
+  if (last14.length < 2) return <span className="text-[10px] text-nexo-faint">—</span>;
 
   const positions = last14.map((c) => c.position);
   const definedPositions = positions.filter((p): p is number => p !== null);
-  if (definedPositions.length < 2) return <span className="text-[10px] text-slate-300">—</span>;
+  if (definedPositions.length < 2) return <span className="text-[10px] text-nexo-faint">—</span>;
 
   const maxPos = Math.max(...definedPositions, 10);
   const minPos = Math.min(...definedPositions, 1);
@@ -104,13 +104,13 @@ function HistoryChart({ history, keywordId, topDates, selectedDate, onSelect }: 
   const sorted = [...history].sort((a, b) => a.date.localeCompare(b.date));
 
   if (sorted.length === 0)
-    return <div className="py-6 text-center text-slate-400 text-xs">No checks recorded yet.</div>;
+    return <div className="py-6 text-center text-nexo-faint text-xs">No checks recorded yet.</div>;
 
   const positions = sorted.map((h) => h.position).filter((p): p is number => p !== null);
 
   // A domain that was never found has no point to plot, but its days still have a top 10 to open.
   if (positions.length === 0 && !topDates)
-    return <div className="py-6 text-center text-slate-400 text-xs">No ranking data recorded yet.</div>;
+    return <div className="py-6 text-center text-nexo-faint text-xs">No ranking data recorded yet.</div>;
 
   const W = 600, H = 150;
   const PAD = { l: 44, r: 20, t: 20, b: 36 };
@@ -350,30 +350,30 @@ export default function KeywordRow({ kw, history, latest, previous, hasCreds, pe
   return (
     <>
       <tr
-        className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors cursor-pointer select-none"
+        className="hover:bg-white/[0.04] transition-colors cursor-pointer select-none"
         onClick={() => setExpanded((v) => !v)}
       >
         <td className="px-5 py-3.5">
-          <div className="font-bold text-slate-800 dark:text-white flex items-center gap-1.5">
+          <div className="font-medium text-nexo-text flex items-center gap-1.5">
             <span
-              className="inline-block text-[8px] text-slate-300 transition-transform duration-200"
+              className="inline-block text-[8px] text-nexo-faint transition-transform duration-200"
               style={{ transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)' }}
             >
               ▼
             </span>
             {kw.keyword}
           </div>
-          <div className="text-[10px] text-slate-400 pl-4">{kw.location} · {kw.language}</div>
+          <div className="text-[10px] text-nexo-faint pl-4">{kw.location} · {kw.language}</div>
         </td>
         <td className="px-3 py-3.5 text-center">
-          {pending ? <span className="text-[9px] font-black uppercase tracking-wider text-amber-600 dark:text-amber-400">Queued</span> : !latest ? <span className="text-[10px] text-slate-300">—</span> : (
+          {pending ? <span className="text-[9px] font-medium uppercase tracking-wider text-nexo-warn-text">Queued</span> : !latest ? <span className="text-[10px] text-nexo-faint">—</span> : (
             <div className="flex flex-col items-center gap-1">
               <div className="flex items-center justify-center gap-1">
                 <PositionBadge pos={currPos} />
                 {latest.aiOverview && <AiOverviewBadge />}
               </div>
               {lastRanked && (
-                <span className="text-[9px] font-semibold text-slate-400 whitespace-nowrap">
+                <span className="text-[9px] font-semibold text-nexo-faint whitespace-nowrap">
                   last #{lastRanked.position} · {formatDay(lastRanked.date)}
                 </span>
               )}
@@ -388,7 +388,7 @@ export default function KeywordRow({ kw, history, latest, previous, hasCreds, pe
             <Sparkline history={history} />
           </div>
         </td>
-        <td className="px-3 py-3.5 text-slate-400 text-[10px] whitespace-nowrap">
+        <td className="px-3 py-3.5 text-nexo-faint text-[10px] whitespace-nowrap">
           {latest ? formatDate(latest.checkedAt, hydrated ? undefined : 'UTC') : '—'}
         </td>
         <td className="px-3 py-3.5" onClick={(e) => e.stopPropagation()}>
@@ -403,8 +403,8 @@ export default function KeywordRow({ kw, history, latest, previous, hasCreds, pe
                 <PendingButton
                   type="submit"
                   disabled={pending}
-                  className="px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all"
-                  pendingClassName="px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg bg-blue-100 text-blue-300 cursor-not-allowed"
+                  className="px-2.5 py-1 text-[9px] font-medium uppercase tracking-widest rounded-nexo bg-nexo-blue/10 text-nexo-sky hover:bg-nexo-sky hover:text-white transition-all"
+                  pendingClassName="px-2.5 py-1 text-[9px] font-medium uppercase tracking-widest rounded-nexo bg-nexo-blue/10 text-nexo-ice cursor-not-allowed"
                 >
                   {pending ? '…' : '↻'}
                 </PendingButton>
@@ -412,7 +412,7 @@ export default function KeywordRow({ kw, history, latest, previous, hasCreds, pe
             )}
             <form action={removeAction}>
               <input type="hidden" name="id" value={kw.id} />
-              <button type="submit" className="px-2.5 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg bg-red-50 text-red-400 hover:bg-red-500 hover:text-white transition-all">
+              <button type="submit" className="px-2.5 py-1 text-[9px] font-medium uppercase tracking-widest rounded-nexo bg-nexo-danger/10 text-nexo-danger-text hover:bg-nexo-danger/80 hover:text-white transition-all">
                 ✕
               </button>
             </form>
@@ -421,21 +421,21 @@ export default function KeywordRow({ kw, history, latest, previous, hasCreds, pe
       </tr>
 
       {expanded && (
-        <tr className="bg-slate-50/40 dark:bg-slate-800/30">
+        <tr className="bg-white/[0.02]">
           {/* max-w-0: this cell must not size the table. A long unbreakable URL would otherwise stretch it past the page. */}
           <td colSpan={6} className="px-5 pt-1 pb-5 max-w-0">
-            <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
+            <div className="nexo-label mb-2">
               Position history — last 30 days
             </div>
             <HistoryChart history={history} keywordId={kw.id} topDates={topDates} selectedDate={selectedDate} onSelect={setPickedDate} />
             {latest?.url && (
               <div className="mt-2 flex items-center gap-2">
-                <span className="text-[10px] text-slate-400 font-semibold shrink-0">Ranked URL:</span>
+                <span className="text-[10px] text-nexo-faint font-semibold shrink-0">Ranked URL:</span>
                 <a
                   href={latest.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[10px] text-blue-600 hover:underline font-mono truncate"
+                  className="text-[10px] text-nexo-sky hover:underline font-mono truncate"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {latest.url}

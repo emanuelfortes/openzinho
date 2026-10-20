@@ -15,17 +15,17 @@ type SortKey = 'keyword' | 'kd' | 'volume' | number; // number = page index
 type SortDir = 'asc' | 'desc';
 
 function KdBadge({ v }: { v?: number }) {
-  if (v == null) return <span className="text-slate-300 text-xs">—</span>;
-  const cls = v >= 70 ? 'bg-red-100 text-red-700' : v >= 50 ? 'bg-orange-100 text-orange-700' : v >= 30 ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700';
-  return <span className={`inline-flex items-center justify-center w-9 h-5 rounded text-[10px] font-black ${cls}`}>{v}</span>;
+  if (v == null) return <span className="text-nexo-faint text-xs">—</span>;
+  const cls = v >= 70 ? 'bg-nexo-danger/10 text-nexo-danger-text' : v >= 50 ? 'bg-nexo-warn/10 text-nexo-warn-text' : v >= 30 ? 'bg-nexo-warn/10 text-nexo-warn-text' : 'bg-nexo-ice/10 text-nexo-ice';
+  return <span className={`inline-flex items-center justify-center w-9 h-5 rounded text-[10px] font-medium ${cls}`}>{v}</span>;
 }
 
 function fmt(n?: number) { return n != null ? n.toLocaleString('en-GB') : '—'; }
 
 function RankBadge({ rank }: { rank?: number }) {
-  if (rank == null) return <span className="text-slate-300">—</span>;
-  const cls = rank <= 3 ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : rank <= 10 ? 'bg-blue-50 text-blue-700 border-blue-200' : rank <= 30 ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-slate-50 text-slate-500 border-slate-200';
-  return <span className={`text-[10px] font-black px-1.5 py-0.5 rounded border ${cls}`}>#{rank}</span>;
+  if (rank == null) return <span className="text-nexo-faint">—</span>;
+  const cls = rank <= 3 ? 'bg-nexo-ice/10 text-nexo-ice border-nexo-ice/30' : rank <= 10 ? 'bg-nexo-blue/10 text-nexo-sky border-nexo-border-strong' : rank <= 30 ? 'bg-nexo-warn/10 text-nexo-warn-text border-nexo-warn/40' : 'bg-white/[0.02] text-nexo-dim border-nexo-border';
+  return <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded border ${cls}`}>#{rank}</span>;
 }
 
 function sortValue(item: IntersectionItem, key: SortKey): number | string {
@@ -38,8 +38,8 @@ function sortValue(item: IntersectionItem, key: SortKey): number | string {
 }
 
 function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
-  if (!active) return <ArrowUpDown className="w-3 h-3 text-slate-300" />;
-  return dir === 'asc' ? <ArrowUp className="w-3 h-3 text-blue-600" /> : <ArrowDown className="w-3 h-3 text-blue-600" />;
+  if (!active) return <ArrowUpDown className="w-3 h-3 text-nexo-faint" />;
+  return dir === 'asc' ? <ArrowUp className="w-3 h-3 text-nexo-sky" /> : <ArrowDown className="w-3 h-3 text-nexo-sky" />;
 }
 
 export default function PageIntersectionTable({ items, pageList }: { items: IntersectionItem[]; pageList: string[] }) {
@@ -66,7 +66,7 @@ export default function PageIntersectionTable({ items, pageList }: { items: Inte
   function Header({ label, sortK, align, className, title }: { label: string; sortK: SortKey; align: 'left' | 'center' | 'right'; className?: string; title?: string }) {
     const active = sortKey === sortK;
     return (
-      <th className={`px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-400 select-none cursor-pointer hover:text-slate-600 dark:hover:text-slate-300 ${align === 'left' ? 'text-left' : align === 'center' ? 'text-center' : 'text-right'} ${className ?? ''}`}
+      <th className={`px-4 py-3 text-[10px] font-medium uppercase tracking-widest text-nexo-faint select-none cursor-pointer hover:text-white ${align === 'left' ? 'text-left' : align === 'center' ? 'text-center' : 'text-right'} ${className ?? ''}`}
           title={title} onClick={() => toggleSort(sortK)}>
         <span className={`inline-flex items-center justify-center gap-1 ${align === 'right' ? 'flex-row-reverse' : ''}`}>
           {label}
@@ -80,7 +80,7 @@ export default function PageIntersectionTable({ items, pageList }: { items: Inte
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
+          <tr className="border-b border-nexo-border bg-white/[0.02]">
             <Header label="Keyword" sortK="keyword" align="left" className="!px-6" />
             <Header label="KD" sortK="kd" align="center" />
             <Header label="Volume" sortK="volume" align="right" />
@@ -89,14 +89,14 @@ export default function PageIntersectionTable({ items, pageList }: { items: Inte
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
+        <tbody className="divide-y divide-nexo-border">
           {sorted.map((item, i) => {
             const ranked = item.ranked_serp_element?.items ?? [];
             return (
-              <tr key={i} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                <td className="px-6 py-3 font-medium text-slate-900 dark:text-slate-200 max-w-[200px]"><span className="truncate block">{item.keyword_data?.keyword ?? '—'}</span></td>
+              <tr key={i} className="hover:bg-white/[0.04] transition-colors">
+                <td className="px-6 py-3 font-medium text-nexo-text max-w-[200px]"><span className="truncate block">{item.keyword_data?.keyword ?? '—'}</span></td>
                 <td className="px-4 py-3 text-center"><KdBadge v={item.keyword_difficulty} /></td>
-                <td className="px-4 py-3 text-right font-mono text-slate-700 dark:text-slate-300 tabular-nums">{fmt(item.keyword_data?.keyword_info?.search_volume)}</td>
+                <td className="px-4 py-3 text-right font-mono text-nexo-dim tabular-nums">{fmt(item.keyword_data?.keyword_info?.search_volume)}</td>
                 {pageList.map((_, pi) => (
                   <td key={pi} className="px-4 py-3 text-center"><RankBadge rank={ranked[pi]?.rank_absolute} /></td>
                 ))}

@@ -269,16 +269,16 @@ async function QueryFanOutPage({ searchParams }: { searchParams: Promise<SearchP
     const isActive = entry.id === historyId;
     return (
       <a key={entry.id} href={`/dashboard/query-fan-out?history_id=${entry.id}#results`}
-        className={`flex items-center gap-4 px-5 py-3.5 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors ${isActive ? 'bg-blue-50 dark:bg-blue-950/40' : ''}`}>
+        className={`flex items-center gap-4 px-5 py-3.5 hover:bg-white/[0.04] transition-colors ${isActive ? 'bg-nexo-blue/10' : ''}`}>
         <div className="flex-1 min-w-0">
-          <p className={`text-sm font-medium truncate ${isActive ? 'text-blue-700 dark:text-blue-400' : 'text-slate-800 dark:text-slate-200'}`}>{entry.seeds}</p>
-          <p className="text-[11px] text-slate-400 mt-0.5">
+          <p className={`text-sm font-medium truncate ${isActive ? 'text-nexo-sky' : 'text-nexo-text'}`}>{entry.seeds}</p>
+          <p className="text-[11px] text-nexo-faint mt-0.5">
             {entry.seedCount} seed{entry.seedCount !== 1 ? 's' : ''} → {entry.queryCount} quer{entry.queryCount !== 1 ? 'ies' : 'y'}
             {' · '}{entry.location}
             {entry.cost !== undefined ? ` · $${entry.cost.toFixed(4)}` : ''}
           </p>
         </div>
-        <span className="shrink-0 text-[11px] text-slate-400">{formatDate(entry.ts)}</span>
+        <span className="shrink-0 text-[11px] text-nexo-faint">{formatDate(entry.ts)}</span>
       </a>
     );
   });
@@ -286,14 +286,14 @@ async function QueryFanOutPage({ searchParams }: { searchParams: Promise<SearchP
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Query Fan-Out</h1>
-        <p className="text-sm text-slate-400 mt-1">
+        <h1 className="nexo-h1">Query Fan-Out</h1>
+        <p className="text-sm text-nexo-faint mt-1">
           Discover the hidden sub-queries AI models generate when answering prompts related to your seed keywords, and their AI search volume.
         </p>
       </div>
 
       {!creds && (
-        <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900 text-amber-700 dark:text-amber-400 text-sm rounded-xl px-4 py-3">
+        <div className="bg-nexo-warn/10 border border-nexo-warn/40 text-nexo-warn-text text-sm rounded-nexo-lg px-4 py-3">
           DataForSEO credentials missing. Configure them in{' '}
           <a href="/dashboard/settings" className="underline font-semibold">settings</a>.
         </div>
@@ -302,16 +302,16 @@ async function QueryFanOutPage({ searchParams }: { searchParams: Promise<SearchP
       <div className="flex flex-col lg:flex-row gap-6 items-start">
         <div className="flex-1 min-w-0 space-y-6">
           <SearchForm
-            className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm space-y-4"
+            className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-6 space-y-4"
             btnLabel="Analyze"
-            btnClassName="w-full bg-slate-900 dark:bg-white dark:text-slate-900 text-white font-black uppercase tracking-widest text-xs py-3 rounded-xl hover:bg-violet-600 dark:hover:bg-violet-500 dark:hover:text-white transition-colors"
+            btnClassName="nexo-label w-full bg-white text-nexo-bg py-3 rounded-nexo-lg hover:bg-nexo-sky transition-colors"
             loadingLabel="Fetching fan-out queries…"
             disabled={!creds}
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="sm:col-span-2">
-                <label className="block text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5">
-                  Seed keywords <span className="text-slate-300 dark:text-slate-600 font-normal normal-case tracking-normal">(one word per line, max {MAX_SEEDS} — each seed is a separate billed lookup)</span>
+                <label className="nexo-label block mb-1.5">
+                  Seed keywords <span className="text-nexo-faint font-normal normal-case tracking-normal">(one word per line, max {MAX_SEEDS} — each seed is a separate billed lookup)</span>
                 </label>
                 <textarea
                   name="seeds"
@@ -319,7 +319,7 @@ async function QueryFanOutPage({ searchParams }: { searchParams: Promise<SearchP
                   rows={5}
                   placeholder={'plumber\ndrain cleaning\nleak'}
                   required
-                  className="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-300 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-violet-500 transition-all font-mono resize-y dark:bg-slate-800"
+                  className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky transition-all font-mono resize-y"
                 />
               </div>
 
@@ -332,33 +332,33 @@ async function QueryFanOutPage({ searchParams }: { searchParams: Promise<SearchP
             </div>
           </SearchForm>
 
-          {error && <div className="bg-red-50 dark:bg-red-950/30 border border-red-100 dark:border-red-900 text-red-600 dark:text-red-400 text-sm rounded-xl px-4 py-3">{error}</div>}
+          {error && <div className="bg-nexo-danger/10 border border-nexo-danger/40 text-nexo-danger-text text-sm rounded-nexo-lg px-4 py-3">{error}</div>}
 
           {hasQuery && !error && seedStats.length > 0 && (
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 px-5 py-4 shadow-sm">
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Seeds analyzed</p>
-                <p className="text-2xl font-black text-slate-900 dark:text-white mt-1 tabular-nums">{seedStats.length}</p>
+              <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
+                <p className="nexo-label">Seeds analyzed</p>
+                <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{seedStats.length}</p>
               </div>
-              <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 px-5 py-4 shadow-sm">
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Triggered fan-out</p>
-                <p className="text-2xl font-black text-slate-900 dark:text-white mt-1 tabular-nums">
-                  {seedsTriggered}{triggerRate !== null && <span className="text-sm text-slate-400 font-semibold"> ({triggerRate}%)</span>}
+              <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
+                <p className="nexo-label">Triggered fan-out</p>
+                <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">
+                  {seedsTriggered}{triggerRate !== null && <span className="text-sm text-nexo-faint font-semibold"> ({triggerRate}%)</span>}
                 </p>
               </div>
-              <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 px-5 py-4 shadow-sm">
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Fan-out queries found</p>
-                <p className="text-2xl font-black text-slate-900 dark:text-white mt-1 tabular-nums">{items.length}</p>
+              <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
+                <p className="nexo-label">Fan-out queries found</p>
+                <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{items.length}</p>
               </div>
-              <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 px-5 py-4 shadow-sm">
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Total AI volume</p>
-                <p className="text-2xl font-black text-slate-900 dark:text-white mt-1 tabular-nums">{totalVolume.toLocaleString('en-GB')}</p>
+              <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-5 py-4">
+                <p className="nexo-label">Total AI volume</p>
+                <p className="nexo-metric font-mono text-2xl mt-1 tabular-nums">{totalVolume.toLocaleString('en-GB')}</p>
               </div>
             </div>
           )}
 
           {hasQuery && !error && seedStats.some((s) => s.error) && (
-            <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900 text-amber-700 dark:text-amber-400 text-xs rounded-xl px-4 py-3 space-y-1">
+            <div className="bg-nexo-warn/10 border border-nexo-warn/40 text-nexo-warn-text text-xs rounded-nexo-lg px-4 py-3 space-y-1">
               {seedStats.filter((s) => s.error).map((s) => (
                 <p key={s.seed}><span className="font-semibold">{s.seed}</span> — {s.error}</p>
               ))}
@@ -366,15 +366,15 @@ async function QueryFanOutPage({ searchParams }: { searchParams: Promise<SearchP
           )}
 
           {hasQuery && !error && (
-            <div id="results" className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-              <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+            <div id="results" className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+              <div className="px-6 py-4 border-b border-nexo-border flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <h2 className="text-xs font-black uppercase tracking-widest text-slate-400">Discovered fan-out queries</h2>
-                  {isFromHistory && <span className="text-[10px] font-black uppercase tracking-widest text-blue-500 bg-blue-50 dark:bg-blue-950/40 px-2 py-0.5 rounded-md">History</span>}
+                  <h2 className="nexo-label">Discovered fan-out queries</h2>
+                  {isFromHistory && <span className="nexo-section bg-nexo-blue/10 px-2 py-0.5 rounded-md">History</span>}
                 </div>
                 <div className="flex items-center gap-3">
-                  {cost !== undefined && <span className="text-[10px] font-mono text-slate-400">cost: ${cost.toFixed(4)}</span>}
-                  <span className="text-xs font-black text-slate-400">{items.length} quer{items.length !== 1 ? 'ies' : 'y'}</span>
+                  {cost !== undefined && <span className="text-[10px] font-mono text-nexo-faint">cost: ${cost.toFixed(4)}</span>}
+                  <span className="text-xs font-medium text-nexo-faint">{items.length} quer{items.length !== 1 ? 'ies' : 'y'}</span>
                   {items.length > 0 && (
                     <CopyMarkdownButton
                       data={items.map((i) => ({
@@ -394,9 +394,9 @@ async function QueryFanOutPage({ searchParams }: { searchParams: Promise<SearchP
                 </div>
               </div>
               {items.length === 0 ? (
-                <div className="px-6 py-12 text-center text-sm text-slate-400 space-y-1">
+                <div className="px-6 py-12 text-center text-sm text-nexo-faint space-y-1">
                   <p>No fan-out queries surfaced for these seeds within the checked mentions.</p>
-                  <p className="text-xs text-slate-300 dark:text-slate-600">Across ChatGPT prompts generally, only about 47.5% trigger fan-out — try raising &quot;mentions checked per seed&quot; or broadening the seed keywords.</p>
+                  <p className="text-xs text-nexo-faint">Across ChatGPT prompts generally, only about 47.5% trigger fan-out — try raising &quot;mentions checked per seed&quot; or broadening the seed keywords.</p>
                 </div>
               ) : (
                 <FanOutQueryTable items={items} />
@@ -405,13 +405,13 @@ async function QueryFanOutPage({ searchParams }: { searchParams: Promise<SearchP
           )}
 
           {!hasQuery && !error && (
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm px-6 py-16 text-center space-y-2">
-              <p className="text-slate-400 text-sm">Enter seed keywords above to uncover the sub-queries AI models fan out to, and how often people search for them.</p>
-              <p className="text-slate-300 dark:text-slate-600 text-xs max-w-lg mx-auto">
+            <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-6 py-16 text-center space-y-2">
+              <p className="text-nexo-faint text-sm">Enter seed keywords above to uncover the sub-queries AI models fan out to, and how often people search for them.</p>
+              <p className="text-nexo-faint text-xs max-w-lg mx-auto">
                 When an AI model can&apos;t fully answer a prompt from what it already knows, it silently issues extra searches — &quot;fan-out queries&quot; — to gather context before responding.
                 These never reach the user, but they shape which sources get cited. This tool asks DataForSEO&apos;s LLM Mentions API to surface fan-out queries matching your seeds, then looks up their AI search volume.
               </p>
-              <p className="text-slate-300 dark:text-slate-600 text-xs">Powered by DataForSEO LLM Mentions Search + AI Keyword Data APIs.</p>
+              <p className="text-nexo-faint text-xs">Powered by DataForSEO LLM Mentions Search + AI Keyword Data APIs.</p>
             </div>
           )}
         </div>
