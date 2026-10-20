@@ -17,6 +17,15 @@ SKIP_PARTS = {
     "dist",
     "node_modules",
     "__pycache__",
+    # Local build output and tool environments, never committed.
+    ".next",
+    ".venv",
+    ".uv",
+}
+# DataForSEO reference tables: some of their thousands of real place names contain marker words.
+SKIP_FILES = {
+    Path("apps/web/data/dfs-locations.csv"),
+    Path("apps/web/data/dfs-categories.csv"),
 }
 TEXT_SUFFIXES = {"", ".css", ".csv", ".html", ".js", ".json", ".md", ".py", ".svg", ".txt", ".yaml", ".yml"}
 PRIVATE_MARKERS = (
@@ -49,7 +58,8 @@ class ReleaseHygieneTests(unittest.TestCase):
     def test_public_tree_has_no_house_or_personal_markers(self) -> None:
         offenders: list[str] = []
         for path in ROOT.rglob("*"):
-            if not path.is_file() or any(part in SKIP_PARTS for part in path.relative_to(ROOT).parts):
+            relative = path.relative_to(ROOT)
+            if not path.is_file() or relative in SKIP_FILES or any(part in SKIP_PARTS for part in relative.parts):
                 continue
             if path.suffix.lower() not in TEXT_SUFFIXES:
                 continue
@@ -104,7 +114,8 @@ class ReleaseHygieneTests(unittest.TestCase):
     def test_product_brand_is_lowercase_slug(self) -> None:
         offenders: list[str] = []
         for path in ROOT.rglob("*"):
-            if not path.is_file() or any(part in SKIP_PARTS for part in path.relative_to(ROOT).parts):
+            relative = path.relative_to(ROOT)
+            if not path.is_file() or relative in SKIP_FILES or any(part in SKIP_PARTS for part in relative.parts):
                 continue
             if path.suffix.lower() not in TEXT_SUFFIXES:
                 continue
