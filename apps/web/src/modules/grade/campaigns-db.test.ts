@@ -6,7 +6,7 @@ import path from 'node:path';
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'grade-campaigns-'));
 process.env.DB_PATH = path.join(tmpDir, 'test.db');
 
-import { claimDueGridSchedules, createProject, getGridSchedule, runInProjectScope } from '@/lib/db';
+import { closeAllDatabases, claimDueGridSchedules, createProject, getGridSchedule, runInProjectScope } from '@/lib/db';
 import {
   campaignSeriesId, deleteCampaign, getCampaignKeywordStatus, listCampaigns, runCampaignNow, saveCampaign, validateCampaign,
   type GridCampaignInput,
@@ -33,8 +33,10 @@ beforeAll(() => {
   }).id;
 });
 
-// SQLite keeps the files open, which Windows refuses to delete; the OS cleans its temp folder.
-afterAll(() => { try { fs.rmSync(tmpDir, { recursive: true, force: true }); } catch { /* Windows file lock */ } });
+afterAll(() => {
+  closeAllDatabases();
+  fs.rmSync(tmpDir, { recursive: true, force: true });
+});
 
 describe('validateCampaign', () => {
   it('cleans keywords and the center', () => {

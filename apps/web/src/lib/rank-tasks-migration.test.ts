@@ -34,9 +34,12 @@ legacy.exec(`
 `);
 legacy.close();
 
-import { getPendingRankTasksForProject } from './db';
+import { closeAllDatabases, getPendingRankTasksForProject } from './db';
 
-afterAll(() => fs.rmSync(tmpDir, { recursive: true, force: true }));
+afterAll(() => {
+  closeAllDatabases();
+  fs.rmSync(tmpDir, { recursive: true, force: true });
+});
 
 describe('rank_tasks active-keyword index migration', () => {
   it('opens a store with duplicate pending tasks, keeping the oldest one per keyword', () => {

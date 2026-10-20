@@ -6,7 +6,7 @@ import path from 'node:path';
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'dfsui-rank-queue-'));
 process.env.DB_PATH = path.join(tmpDir, 'test.db');
 
-import { createProject, getPendingRankTasksForProject, getTrackedKeywordsForProject, runInProjectScope, addTrackedKeyword } from './db';
+import { closeAllDatabases, createProject, getPendingRankTasksForProject, getTrackedKeywordsForProject, runInProjectScope, addTrackedKeyword } from './db';
 import { queueStandardRankChecksForProject } from './rank-queue';
 
 const creds = { login: 'login', pass: 'pass' };
@@ -22,7 +22,10 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-afterAll(() => fs.rmSync(tmpDir, { recursive: true, force: true }));
+afterAll(() => {
+  closeAllDatabases();
+  fs.rmSync(tmpDir, { recursive: true, force: true });
+});
 
 function addKeyword(keyword: string) {
   return runInProjectScope(projectId, () => {

@@ -8,7 +8,7 @@ const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'dfsui-prompt-tracker-test-
 process.env.DB_PATH = path.join(tmpDir, 'test.db');
 
 import {
-  addTrackedPrompt, getTrackedPrompts, getTrackedPrompt, removeTrackedPrompt,
+  closeAllDatabases, addTrackedPrompt, getTrackedPrompts, getTrackedPrompt, removeTrackedPrompt,
   savePromptCheck, getPromptChecks, getLatestPromptChecks, getPromptCheckTotals,
   savePromptTrackerSchedule, getPromptTrackerSchedule, deletePromptTrackerSchedule, claimDuePromptTrackerSchedules,
 } from './db';
@@ -24,6 +24,7 @@ function check(promptId: number, mentioned: boolean, checkedAt: number, error: s
 }
 
 afterAll(() => {
+  closeAllDatabases();
   fs.rmSync(tmpDir, { recursive: true, force: true });
 });
 

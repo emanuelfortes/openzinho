@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {
-  createProject, deleteProject, getActiveProject, getCurrentProject, getSetting, setSetting,
+  closeAllDatabases, createProject, deleteProject, getActiveProject, getCurrentProject, getSetting, setSetting,
   getSerpHistory, saveSerpSearch, getTargetDomains, setActiveProject, runInProjectScope,
   runWithCurrentProject, withProjectScope, getTrackedKeywordsForProject, saveCredentials,
   getReviewsTasks,
@@ -34,7 +34,10 @@ afterEach(() => {
   vi.unstubAllGlobals();
   setActiveProject('default');
 });
-afterAll(() => fs.rmSync(tmpDir, { recursive: true, force: true }));
+afterAll(() => {
+  closeAllDatabases();
+  fs.rmSync(tmpDir, { recursive: true, force: true });
+});
 
 describe('operation-local project identity', () => {
   it('captures at page entry before searchParams resolves and isolates concurrent operations', async () => {

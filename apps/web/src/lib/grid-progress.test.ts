@@ -7,7 +7,7 @@ const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'dfsui-grid-progress-'));
 process.env.DB_PATH = path.join(tmpDir, 'test.db');
 
 import {
-  createProject, getGridEntryForProject, getGridProgressForProject, saveGridSearchPendingForProject,
+  closeAllDatabases, createProject, getGridEntryForProject, getGridProgressForProject, saveGridSearchPendingForProject,
   type GridSearchEntry, type GridTaskPoint,
 } from './db';
 import { collectGridProgress } from './grid-progress';
@@ -22,7 +22,10 @@ beforeAll(() => {
 });
 
 afterEach(() => vi.unstubAllGlobals());
-afterAll(() => fs.rmSync(tmpDir, { recursive: true, force: true }));
+afterAll(() => {
+  closeAllDatabases();
+  fs.rmSync(tmpDir, { recursive: true, force: true });
+});
 
 function entry(id: string): GridSearchEntry {
   return {

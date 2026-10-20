@@ -6,7 +6,7 @@ import path from 'path';
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'dfsui-rv-test-'));
 process.env.DB_PATH = path.join(tmpDir, 'test.db');
 
-import { getActiveProject } from './db';
+import { closeAllDatabases, getActiveProject } from './db';
 import {
   createBenchmark, deleteBenchmark, getBenchmarkListings, getPendingTasks, getReviewsByListing, getTasks, reserveTask,
 } from './review-velocity-db';
@@ -15,7 +15,10 @@ import { backfillRequests, collectReviewTasks, postReviewTasks, refreshRequests,
 const DAY = 86_400_000;
 const credentials = { login: 'l', pass: 'p' };
 
-afterAll(() => fs.rmSync(tmpDir, { recursive: true, force: true }));
+afterAll(() => {
+  closeAllDatabases();
+  fs.rmSync(tmpDir, { recursive: true, force: true });
+});
 afterEach(() => vi.unstubAllGlobals());
 
 function ts(ms: number): string {

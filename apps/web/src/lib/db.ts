@@ -275,6 +275,17 @@ function getDb(): Database.Database {
 }
 
 /**
+ * Closes every cached SQLite handle; the next call reopens them. Tests call it before removing
+ * their temp folder, since Windows refuses to delete files that are still open.
+ */
+export function closeAllDatabases(): void {
+  for (const db of dataDbs.values()) db.close();
+  dataDbs.clear();
+  controlDb?.close();
+  controlDb = null;
+}
+
+/**
  * Data store for feature modules that keep their own tables (e.g. review-velocity-db.ts).
  * With an explicit ID (cron, workers) the project must still exist; without one it uses the operation's scope.
  */
