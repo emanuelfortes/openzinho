@@ -14,10 +14,10 @@ type Props = {
 };
 
 const bands = [
-  { key: 'top3', label: 'Top 3', color: '#059669' },
-  { key: 'top4To7', label: '#4–7', color: '#14b8a6' },
-  { key: 'top8To10', label: '#8–10', color: '#3b82f6' },
-  { key: 'top11Plus', label: '#11+', color: '#f59e0b' },
+  { key: 'top3', label: 'Top 3', color: '#c2e0ff' },
+  { key: 'top4To7', label: '#4–7', color: '#4da2ff' },
+  { key: 'top8To10', label: '#8–10', color: '#1f6bff' },
+  { key: 'top11Plus', label: '#11+', color: '#1246b8' },
 ] as const;
 
 function formatDate(ts: number) {
@@ -70,10 +70,10 @@ export default function GridPositionTrend({ points, selectedId }: Props) {
             const lower = bands.slice(0, index).reduce((sum, previousBand) => sum + percentage(points[0], previousBand.key), 0);
             const upper = lower + percentage(points[0], band.key);
             return <rect key={band.key} x={positionX(0) - 28} y={y(upper)} width="56" height={y(lower) - y(upper)} fill={band.color}><title>{`${band.label}: ${Math.round(percentage(points[0], band.key))}%`}</title></rect>;
-          }) : bands.map((band) => <path key={band.key} d={areaPath(band.key)} fill={band.color} fillOpacity="0.86" stroke="#ffffff" strokeOpacity="0.45" strokeWidth="1"><title>{band.label}</title></path>)}
+          }) : bands.map((band) => <path key={band.key} d={areaPath(band.key)} fill={band.color} fillOpacity="0.86" stroke="#030508" strokeOpacity="0.6" strokeWidth="1"><title>{band.label}</title></path>)}
           {points.map((point, index) => {
             const active = point.id === selectedId;
-            return <g key={point.id}><line x1={positionX(index)} x2={positionX(index)} y1={top} y2={height - bottom} stroke={active ? '#1d4ed8' : 'currentColor'} strokeOpacity={active ? '0.6' : '0.08'} strokeDasharray={active ? '3 3' : undefined} /><circle cx={positionX(index)} cy={y(runningPercent(point, 0))} r={active ? 4.5 : 3} fill="#ffffff" stroke="#059669" strokeWidth="2"><title>{`${formatDate(point.ts)} — Top 3: ${point.top3}/${point.total}; #4–7: ${point.top4To7}/${point.total}; #8–10: ${point.top8To10}/${point.total}; #11+: ${point.top11Plus}/${point.total}`}</title></circle></g>;
+            return <g key={point.id}><line x1={positionX(index)} x2={positionX(index)} y1={top} y2={height - bottom} stroke={active ? '#4da2ff' : 'currentColor'} strokeOpacity={active ? '0.6' : '0.08'} strokeDasharray={active ? '3 3' : undefined} /><circle cx={positionX(index)} cy={y(runningPercent(point, 0))} r={active ? 4.5 : 3} fill="#030508" stroke="#c2e0ff" strokeWidth="2"><title>{`${formatDate(point.ts)} — Top 3: ${point.top3}/${point.total}; #4–7: ${point.top4To7}/${point.total}; #8–10: ${point.top8To10}/${point.total}; #11+: ${point.top11Plus}/${point.total}`}</title></circle></g>;
           })}
           {tickIndexes.map((index) => <text key={index} x={positionX(index)} y={height - 10} textAnchor={index === 0 ? 'start' : index === points.length - 1 ? 'end' : 'middle'} fontSize="9" fill="currentColor" opacity="0.55">{formatDate(points[index].ts)}</text>)}
         </svg>

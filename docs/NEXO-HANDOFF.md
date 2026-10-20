@@ -1,6 +1,6 @@
 # Nexo: estado do trabalho e próximos passos
 
-Documento de passagem para continuar o rebranding em outra máquina. Atualizado em 19/10/2026 (passo 4 concluído).
+Documento de passagem para continuar o rebranding em outra máquina. Atualizado em 19/10/2026 (passos 4 e 5 concluídos).
 
 ## Como começar na máquina nova
 
@@ -23,7 +23,7 @@ Referências visuais: `docs/Nexo Dashboard.dc.html`, `docs/Nexo Studio.dc.html` 
 | 2. Tokens globais (Tailwind v4) | Feito | `10d8bb8` |
 | 3. Shell (layout, sidebar, header, login) | Feito | `4d95a8f` |
 | 4. Páginas | Feito | ver git log |
-| 5. Pins do Geo-grid | **Falta** | – |
+| 5. Pins do Geo-grid | Feito | ver git log |
 | 6. Tradução pt-BR | **Falta** | – |
 | 7. Studio (`src/` + `index.html` na raiz) | **Falta** | – |
 
@@ -85,25 +85,13 @@ Resultado (feito):
 
 Observação: a cor do texto vence `nexo-label` no CSS compilado, então botões com `nexo-label` e cor explícita ficam legíveis.
 
-### Passo 5: pins do Geo-grid
+### Passo 5: pins do Geo-grid (feito)
 
-Escala azul monocromática:
-- 1 a 3 → `#c2e0ff`, texto `#030508`, brilho `0 0 18px rgba(194,224,255,.6)`;
-- 4 a 10 → `#4da2ff`, texto branco;
-- 11 a 20 → `#1246b8`, texto branco;
-- mais de 20 ou não encontrado → `rgba(77,162,255,.1)`, borda `rgba(77,162,255,.4)`, texto `rgba(194,224,255,.45)`.
-
-A fonte dos pins é mono.
-
-Onde mudar:
-- `app/dashboard/local-finder/GridMap.tsx`: `rankColor`, `rankTextColor`, o HTML do popup (cores claras pensadas para fundo branco) e o texto do pin, que hoje é sempre branco;
-- `GridResults.tsx`: `rankColor` e a legenda;
-- `GridPdfExportButton.tsx`: `rankColor` em RGB, usado no PDF;
-- `GridPositionTrend.tsx`;
-- `settings/GridPreferenceFields.tsx`: a prévia;
-- `historical-rank/RankDistributionChart.tsx`;
-- `modules/grade/GradeMetricsPanel.tsx`: as faixas;
-- `MapPicker.tsx`: os pontos da prévia.
+A escala fica num só lugar: [apps/web/src/lib/rank-scale.ts](../apps/web/src/lib/rank-scale.ts) (`rankTier`, `rankStyle`, `RANK_TIERS`), com testes.
+- 1 a 3 → `#c2e0ff`, texto `#030508`, brilho; 4 a 10 → `#4da2ff`; 11 a 20 → `#1246b8`; mais de 20 ou não encontrado → `rgba(77,162,255,.1)` com borda, sobre um fundo escuro para ser legível em cima do mapa claro.
+- Fonte mono nos pins. O selo de variação é escuro, com ganho em gelo e perda em `#fca5a5`. O popup do mapa está em tema escuro.
+- Usam a escala: `GridMap`, legenda e grade de reserva do `GridResults`, PDF (grade de reserva e legenda; o mapa do PDF é uma captura do `GridMap`), prévia em Configurações, `GradeMetricsPanel`, `GridPositionTrend`, `RankDistributionChart` e `MapPicker`.
+- Pendente, fora do Geo-grid: cores hex fixas em gráficos SVG de outros módulos (Google Reviews, Rank Tracker `KeywordRow`, Backlinks History, Historical Rank, mapa do Review Velocity). O codemod só trata classes Tailwind.
 
 ### Passo 6: tradução para pt-BR
 

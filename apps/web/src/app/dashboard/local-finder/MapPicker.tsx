@@ -171,8 +171,8 @@ export default function MapPicker({ coordinate, onChange, showGrid, gridSize, sp
         bounds.push([lat, lng]);
         L.circleMarker([lat, lng], {
           radius: isCenter ? 9 : 6,
-          fillColor: isCenter ? '#3b82f6' : '#94a3b8',
-          color: isCenter ? '#1d4ed8' : '#475569',
+          fillColor: isCenter ? '#c2e0ff' : '#4da2ff',
+          color: isCenter ? '#030508' : '#1246b8',
           weight: 1.5,
           opacity: 0.9,
           fillOpacity: isCenter ? 0.7 : 0.35,

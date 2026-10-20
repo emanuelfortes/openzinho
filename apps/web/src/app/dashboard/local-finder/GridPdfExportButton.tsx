@@ -7,6 +7,7 @@ import { computeCompetitors, computeGridSummary } from './grid-insights';
 import { brandPalette, fitBox, footerPalette, imageSize, resolveBrandStyle, type BrandStyle } from '@/lib/brand';
 import { drawFooter, drawHeaderBand } from '@/lib/brand-pdf';
 import { formatDistance } from '@/lib/grid-preferences';
+import { RANK_TIER_ORDER, RANK_TIERS, rankStyle } from '@/lib/rank-scale';
 import { MAP_CAPTURE_FETCH_OPTIONS } from '@/lib/map-capture';
 import { useGridPreferences } from './GridPreferences';
 
@@ -36,17 +37,6 @@ const palette = {
   line: [226, 232, 240] as const,
   panel: [248, 250, 252] as const,
 };
-
-function rankColor(rank: number | null): [number, number, number] {
-  if (rank === null) return [203, 213, 225];
-  if (rank === 1) return [5, 150, 105];
-  if (rank <= 3) return [16, 185, 129];
-  if (rank <= 7) return [20, 184, 166];
-  if (rank <= 10) return [59, 130, 246];
-  if (rank <= 15) return [245, 158, 11];
-  if (rank <= 20) return [249, 115, 22];
-  return [239, 68, 68];
-}
 
 function pdfText(value: string, max = 90): string {
   // Standard PDF fonts are WinAnsi-based. This keeps the report robust when a
@@ -239,13 +229,13 @@ export default function GridPdfExportButton(props: Props) {
         for (let row = 0; row < props.gridSize; row += 1) {
           for (let col = 0; col < props.gridSize; col += 1) {
             const point = pointByCell.get(`${row}:${col}`);
-            const color = rankColor(point?.rank ?? null);
+            const style = rankStyle(point?.rank ?? null);
             const x = gridX + col * cell;
             const y = gridTop + row * cell;
-            fill(color);
+            fill(style.pdfFill);
             pdf.rect(x + 0.5, y + 0.5, cell - 1, cell - 1, 'F');
             if (row === middle && col === middle) {
-              pdf.setDrawColor(255, 255, 255);
+              pdf.setDrawColor(3, 5, 8);
               pdf.setLineDashPattern([1, 0.7], 0);
               pdf.rect(x + 1.25, y + 1.25, cell - 2.5, cell - 2.5, 'S');
               pdf.setLineDashPattern([], 0);
@@ -253,7 +243,7 @@ export default function GridPdfExportButton(props: Props) {
             if (cell >= 10) {
               pdf.setFont('helvetica', 'bold');
               pdf.setFontSize(Math.min(8, cell * 0.45));
-              pdf.setTextColor(255, 255, 255);
+              setColor(style.pdfText);
               text(point?.rank == null ? '-' : `#${point.rank}`, x + cell / 2, y + cell / 2 + 1.5, { align: 'center' });
             }
           }
@@ -261,11 +251,7 @@ export default function GridPdfExportButton(props: Props) {
         legendY = gridTop + gridDisplaySize + 7;
       }
 
-      const legend = [
-        ['#1', [5, 150, 105]], ['#2-3', [16, 185, 129]], ['#4-7', [20, 184, 166]],
-        ['#8-10', [59, 130, 246]], ['#11-15', [245, 158, 11]], ['#16-20', [249, 115, 22]],
-        ['#21+', [239, 68, 68]], ['Not found', [203, 213, 225]],
-      ] as const;
+      const legend = RANK_TIER_ORDER.map((tier) => [RANK_TIERS[tier].label, RANK_TIERS[tier].pdfFill] as const);
       let legendX = margin;
       legend.forEach(([label, color]) => {
         fill(color);
@@ -274,7 +260,7 @@ export default function GridPdfExportButton(props: Props) {
         pdf.setFontSize(6.5);
         setColor(palette.muted);
         text(label, legendX + 5, legendY);
-        legendX += label.length > 7 ? 21 : 15;
+        legendX += 5 + pdf.getTextWidth(label) + 5;
       });
 
       let y = legendY + 15;

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { GridPoint } from '@/lib/db';
 import type { PinStyle } from '@/lib/grid-preferences';
+import { RANK_TIERS, rankStyle, rankTier, type RankTierStyle } from '@/lib/rank-scale';
 import { competitorKey } from './grid-insights';
 import { useGridPreferences } from './GridPreferences';
 
@@ -19,22 +20,13 @@ interface Props {
   captureId?: string;
 }
 
-function rankColor(rank: number | null): string {
-  if (rank === null) return '#94a3b8';
-  if (rank === 1)    return '#059669';
-  if (rank <= 3)     return '#10b981';
-  if (rank <= 7)     return '#14b8a6';
-  if (rank <= 10)    return '#3b82f6';
-  if (rank <= 15)    return '#f59e0b';
-  if (rank <= 20)    return '#f97316';
-  return '#ef4444';
-}
+const MONO = 'var(--font-geist-mono),ui-monospace,monospace';
+const GAIN_COLOR = '#c2e0ff';
+const LOSS_COLOR = '#fca5a5';
 
-function rankTextColor(rank: number): string {
-  if (rank <= 3)  return '#059669';
-  if (rank <= 10) return '#2563eb';
-  if (rank <= 20) return '#d97706';
-  return '#dc2626';
+function popupRankColor(rank: number): string {
+  const tier = rankTier(rank);
+  return tier === 'none' ? 'rgba(194,224,255,.45)' : tier === 'low' ? '#7fa8f0' : RANK_TIERS[tier].swatch;
 }
 
 function buildPopupHtml(point: GridPoint, target: string, highlightKey?: string): string {
@@ -43,29 +35,28 @@ function buildPopupHtml(point: GridPoint, target: string, highlightKey?: string)
   const itemRows = items.slice(0, 20).map((item) => {
     const isHighlighted = !item.is_target && !!highlightKey && competitorKey(item) === highlightKey;
     const nameStyle = item.is_target
-      ? 'font-weight:700;color:#059669'
+      ? 'font-weight:500;color:#c2e0ff'
       : isHighlighted
-        ? 'font-weight:700;color:#2563eb'
-        : 'font-weight:400;color:#334155';
-    const rankColor_ = rankTextColor(item.rank_group);
+        ? 'font-weight:500;color:#4da2ff'
+        : 'font-weight:400;color:rgba(234,242,255,.85)';
     const stars = item.rating_value != null
-      ? `<span style="color:#f59e0b;font-size:10px">★</span><span style="font-size:10px;color:#64748b"> ${item.rating_value.toFixed(1)}${item.rating_votes != null ? ` (${item.rating_votes.toLocaleString()})` : ''}</span>`
+      ? `<span style="color:#f5a524;font-size:10px">★</span><span style="font-size:10px;color:rgba(234,242,255,.5)"> ${item.rating_value.toFixed(1)}${item.rating_votes != null ? ` (${item.rating_votes.toLocaleString()})` : ''}</span>`
       : '';
     const rowBg = item.is_target
-      ? 'background:#f0fdf4;border-left:3px solid #10b981;padding-left:5px;margin-left:-5px;border-radius:2px;'
+      ? 'background:rgba(194,224,255,.08);border-left:2px solid #c2e0ff;padding-left:5px;margin-left:-5px;border-radius:2px;'
       : isHighlighted
-        ? 'background:#eff6ff;border-left:3px solid #3b82f6;padding-left:5px;margin-left:-5px;border-radius:2px;'
+        ? 'background:rgba(77,162,255,.12);border-left:2px solid #4da2ff;padding-left:5px;margin-left:-5px;border-radius:2px;'
         : '';
     const mapsHref = item.cid
       ? `https://www.google.com/maps?cid=${item.cid}`
       : `https://www.google.com/maps/search/${encodeURIComponent(item.title)}`;
-    const mapsLink = `<a href="${mapsHref}" target="_blank" rel="noopener noreferrer" style="font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:0.06em;color:#3b82f6;text-decoration:none;white-space:nowrap;margin-top:2px;display:inline-block">Maps ↗</a>`;
+    const mapsLink = `<a href="${mapsHref}" target="_blank" rel="noopener noreferrer" style="font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:#4da2ff;text-decoration:none;white-space:nowrap;margin-top:2px;display:inline-block">Maps ↗</a>`;
     return `
-      <div style="display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid #f1f5f9;${rowBg}">
-        <span style="font-size:12px;font-weight:900;min-width:24px;color:${rankColor_}">#${item.rank_group}</span>
+      <div style="display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid rgba(77,162,255,.1);${rowBg}">
+        <span style="font-size:12px;font-weight:500;font-family:${MONO};min-width:24px;color:${popupRankColor(item.rank_group)}">#${item.rank_group}</span>
         <div style="flex:1;min-width:0">
           <div style="font-size:12px;${nameStyle};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px">${item.title}</div>
-          ${item.domain ? `<div style="font-size:10px;color:#94a3b8;margin-top:1px">${item.domain}</div>` : ''}
+          ${item.domain ? `<div style="font-size:10px;color:rgba(234,242,255,.45);margin-top:1px">${item.domain}</div>` : ''}
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
             ${stars ? `<div style="margin-top:1px">${stars}</div>` : ''}
             ${mapsLink}
@@ -75,13 +66,13 @@ function buildPopupHtml(point: GridPoint, target: string, highlightKey?: string)
   }).join('');
 
   const emptyMsg = items.length === 0
-    ? '<p style="color:#94a3b8;font-size:12px;margin:8px 0">No results at this point.</p>'
+    ? '<p style="color:rgba(234,242,255,.45);font-size:12px;margin:8px 0">No results at this point.</p>'
     : '';
 
   return `
-    <div style="font-family:system-ui,-apple-system,sans-serif;min-width:230px;max-width:260px">
-      <p style="font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.08em;color:#94a3b8;margin:0 0 6px">
-        Target: <span style="color:#334155">${target}</span>
+    <div style="font-family:var(--font-geist-sans),system-ui,sans-serif;min-width:230px;max-width:260px">
+      <p style="font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:rgba(234,242,255,.45);margin:0 0 6px">
+        Target: <span style="color:#eaf2ff">${target}</span>
       </p>
       ${itemRows}${emptyMsg}
     </div>`;
@@ -102,7 +93,9 @@ const STAR_PATH = (() => {
   return `M${pts.join('L')}Z`;
 })();
 
-function starMarkerHtml(size: number, fontSize: number, color: string, label: string, isCenter: boolean, movement = '', movementColor = '#065f46'): string {
+const BADGE_BASE = `position:absolute;left:50%;transform:translateX(-50%);border-radius:99px;background:rgba(3,5,8,.92);border:1px solid rgba(77,162,255,.4);font-family:${MONO};font-weight:500;white-space:nowrap`;
+
+function starMarkerHtml(size: number, fontSize: number, style: RankTierStyle, label: string, isCenter: boolean, movement = '', movementColor = GAIN_COLOR): string {
   // The center point loses its dashed border as a star, so a white halo keeps the "grid center" cue.
   const halo = isCenter
     ? `<path d="${STAR_PATH}" fill="white" stroke="white" stroke-width="20" stroke-linejoin="round"/>`
@@ -111,20 +104,20 @@ function starMarkerHtml(size: number, fontSize: number, color: string, label: st
     <div style="
       position:relative;width:${size}px;height:${size}px;
       cursor:pointer;transition:transform 0.1s;
-      filter:drop-shadow(0 2px 4px rgba(0,0,0,0.35));
+      filter:drop-shadow(0 0 8px rgba(194,224,255,.6));
     " onmouseenter="this.style.transform='scale(1.12)'" onmouseleave="this.style.transform='scale(1)'">
       <!-- z-index:0 overrides Leaflet's ".leaflet-map-pane svg { z-index: 200 }", which would hide the label -->
       <svg viewBox="0 0 100 100" width="${size}" height="${size}" style="position:absolute;inset:0;z-index:0;overflow:visible">
         ${halo}
-        <path d="${STAR_PATH}" fill="${color}" stroke="${color}" stroke-width="8" stroke-linejoin="round"/>
+        <path d="${STAR_PATH}" fill="${style.fill}" stroke="${style.fill}" stroke-width="8" stroke-linejoin="round"/>
       </svg>
       <div style="
         position:absolute;inset:0;z-index:1;padding-top:${Math.round(size * 0.06)}px;
         display:flex;align-items:center;justify-content:center;
-        font-size:${fontSize}px;font-weight:900;color:white;
-        font-family:system-ui,sans-serif;
+        font-size:${fontSize}px;font-weight:500;color:${style.text};
+        font-family:${MONO};
       ">${label}</div>
-      ${movement ? `<span style="position:absolute;bottom:-5px;left:50%;z-index:2;transform:translateX(-50%);border-radius:99px;background:rgba(255,255,255,0.96);padding:1px 3px;font-size:9px;line-height:11px;font-weight:900;color:${movementColor};box-shadow:0 1px 2px rgba(15,23,42,0.22)">${movement}</span>` : ''}
+      ${movement ? `<span style="${BADGE_BASE};bottom:-5px;z-index:2;padding:1px 3px;font-size:9px;line-height:11px;color:${movementColor}">${movement}</span>` : ''}
     </div>`;
 }
 
@@ -137,22 +130,24 @@ function markerMetrics(gridSize: number, pinStyle: PinStyle) {
   return { size: cellPx, fontSize, starScale: 1.3 };
 }
 
-function shapeMarkerHtml(pinStyle: PinStyle, size: number, fontSize: number, color: string, label: string, isCenter: boolean, movement: string, movementColor: string): string {
+function shapeMarkerHtml(pinStyle: PinStyle, size: number, fontSize: number, style: RankTierStyle, label: string, isCenter: boolean, movement: string, movementColor: string): string {
   const round = pinStyle !== 'square';
-  const radius = round ? '50%' : `${Math.round(size * 0.22)}px`;
-  // Round pins get a crisp white ring so they stay readable on top of busy map tiles.
+  const radius = round ? '50%' : `${Math.round(size * 0.18)}px`;
+  // The faint "not found" pin keeps its own outline; the solid tiers get a thin dark ring for busy tiles.
   const border = isCenter
-    ? `border: ${pinStyle === 'dot' ? 2 : 3}px dashed rgba(255,255,255,0.9);`
-    : round
-      ? `border: ${pinStyle === 'dot' ? 1.5 : 2}px solid rgba(255,255,255,0.95);`
-      : 'border: 2px solid rgba(255,255,255,0.4);';
-  const shadow = pinStyle === 'dot' ? '0 1px 4px rgba(0,0,0,0.35)' : '0 2px 8px rgba(0,0,0,0.35)';
+    ? `border: ${pinStyle === 'dot' ? 2 : 3}px dashed rgba(194,224,255,0.9);`
+    : style.border
+      ? `border: ${style.border.replace(/^1px/, pinStyle === 'dot' ? '1px' : '1.5px')};`
+      : `border: ${pinStyle === 'dot' ? 1 : 1.5}px solid rgba(3,5,8,0.55);`;
+  // "Not found" pins sit on a dark wash so the faint fill stays readable over light map tiles.
+  const background = style.border ? `linear-gradient(${style.fill},${style.fill}),rgba(3,5,8,.72)` : style.fill;
+  const shadow = style.glow || (pinStyle === 'dot' ? '0 1px 4px rgba(0,0,0,0.45)' : '0 2px 8px rgba(0,0,0,0.45)');
   // Movement badges shrink with dots so they don't outweigh the pin itself.
   const badgeSize = pinStyle === 'dot' ? 'bottom:-6px;padding:0 2px;font-size:7.5px;line-height:9px;' : 'bottom:-7px;padding:1px 3px;font-size:9px;line-height:11px;';
   const badge = movement
-    ? `<span style="position:absolute;left:50%;transform:translateX(-50%);border-radius:99px;background:rgba(255,255,255,0.96);${badgeSize}font-weight:900;color:${movementColor};box-shadow:0 1px 2px rgba(15,23,42,0.22);white-space:nowrap">${movement}</span>`
+    ? `<span style="${BADGE_BASE};${badgeSize}color:${movementColor}">${movement}</span>`
     : '';
-  return `<div style="position:relative;box-sizing:border-box;width:${size}px;height:${size}px;background:${color};border-radius:${radius};display:flex;align-items:center;justify-content:center;font-size:${fontSize}px;font-weight:900;color:white;font-family:system-ui,sans-serif;${border}box-shadow:${shadow};cursor:pointer;transition:transform 0.1s" onmouseenter="this.style.transform='scale(1.12)'" onmouseleave="this.style.transform='scale(1)'"><span>${label}</span>${badge}</div>`;
+  return `<div style="position:relative;box-sizing:border-box;width:${size}px;height:${size}px;background:${background};border-radius:${radius};display:flex;align-items:center;justify-content:center;font-size:${fontSize}px;font-weight:500;color:${style.text};font-family:${MONO};${border}box-shadow:${shadow};cursor:pointer;transition:transform 0.1s" onmouseenter="this.style.transform='scale(1.12)'" onmouseleave="this.style.transform='scale(1)'"><span>${label}</span>${badge}</div>`;
 }
 
 /** Resolves the rank to display at a point, given whether a competitor is being highlighted. */
@@ -230,7 +225,7 @@ export default function GridMap({ points, gridSize, target, highlightKey, highli
     geoPoints.forEach((point) => {
       const isCenter = point.row === half && point.col === half;
       const rank = pointRank(point, highlightKey);
-      const color = rankColor(rank);
+      const style = rankStyle(rank);
       const label = rank != null ? String(rank) : '—';
       const before = pointRank(previousByPoint.get(`${point.row}:${point.col}`) ?? { ...point, rank: null }, highlightKey);
       const movement = before === null && rank === null ? ''
@@ -238,11 +233,11 @@ export default function GridMap({ points, gridSize, target, highlightKey, highli
           : rank === null ? 'lost'
             : before - rank === 0 ? ''
               : `${before - rank > 0 ? '+' : ''}${before - rank}`;
-      const movementColor = before === null || (rank !== null && before > rank) ? '#065f46' : '#991b1b';
+      const movementColor = before === null || (rank !== null && before > rank) ? GAIN_COLOR : LOSS_COLOR;
       const markerPx = rank === 1 ? Math.round(size * starScale) : size;
       const html = rank === 1
-        ? starMarkerHtml(markerPx, fontSize, color, label, isCenter, movement, movementColor)
-        : shapeMarkerHtml(pinStyle, size, fontSize, color, label, isCenter, movement, movementColor);
+        ? starMarkerHtml(markerPx, fontSize, style, label, isCenter, movement, movementColor)
+        : shapeMarkerHtml(pinStyle, size, fontSize, style, label, isCenter, movement, movementColor);
       const icon = L.divIcon({ html, className: '', iconSize: [markerPx, markerPx], iconAnchor: [markerPx / 2, markerPx / 2] });
       const marker = L.marker([point.lat!, point.lng!], { icon }).addTo(markerLayer);
       marker.bindPopup(buildPopupHtml(point, target, highlightKey), {
@@ -263,25 +258,32 @@ export default function GridMap({ points, gridSize, target, highlightKey, highli
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossOrigin="" />
       <style>{`
         .grid-popup .leaflet-popup-content-wrapper {
-          border-radius: 12px;
-          box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+          border-radius: 6px;
+          background: #06090f;
+          color: #eaf2ff;
+          border: 1px solid rgba(77,162,255,0.35);
+          box-shadow: 0 8px 24px rgba(0,0,0,0.5);
           padding: 0;
         }
         .grid-popup .leaflet-popup-content {
           margin: 12px 14px;
           overflow-y: auto;
           scrollbar-width: thin;
-          scrollbar-color: #cbd5e1 transparent;
+          scrollbar-color: rgba(77,162,255,0.3) transparent;
         }
         .grid-popup .leaflet-popup-content::-webkit-scrollbar {
           width: 4px;
         }
         .grid-popup .leaflet-popup-content::-webkit-scrollbar-thumb {
-          background: #cbd5e1;
+          background: rgba(77,162,255,0.3);
           border-radius: 4px;
         }
         .grid-popup .leaflet-popup-tip {
-          background: white;
+          background: #06090f;
+          border: 1px solid rgba(77,162,255,0.35);
+        }
+        .grid-popup a.leaflet-popup-close-button {
+          color: rgba(234,242,255,0.6);
         }
       `}</style>
       <div id={captureId} className="relative bg-nexo-surface-2">

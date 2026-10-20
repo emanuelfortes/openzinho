@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react';
 import type { GridPoint } from '@/lib/db';
+import { RANK_TIERS } from '@/lib/rank-scale';
 import { BAND_ORDER, compareGradeMetrics, computeGradeMetrics, type RankBand } from './metrics';
 
 type Props = {
@@ -11,10 +12,10 @@ type Props = {
 };
 
 const BANDS: Record<RankBand, { label: string; color: string; higherIsBetter: boolean }> = {
-  top3: { label: '#1-3', color: '#16a34a', higherIsBetter: true },
-  top10: { label: '#4-10', color: '#eab308', higherIsBetter: true },
-  top20: { label: '#11-20', color: '#f97316', higherIsBetter: false },
-  out: { label: 'Not in top 20', color: '#dc2626', higherIsBetter: false },
+  top3: { label: '#1-3', color: RANK_TIERS.top.swatch, higherIsBetter: true },
+  top10: { label: '#4-10', color: RANK_TIERS.mid.swatch, higherIsBetter: true },
+  top20: { label: '#11-20', color: RANK_TIERS.low.swatch, higherIsBetter: false },
+  out: { label: 'Not in top 20', color: RANK_TIERS.none.swatch, higherIsBetter: false },
 };
 
 function Delta({ value, unit = '', higherIsBetter }: { value: number | null | undefined; unit?: string; higherIsBetter: boolean }) {

@@ -1,4 +1,5 @@
 import type { DistanceUnit, GridPreferences, PinStyle } from '@/lib/grid-preferences';
+import { rankStyle } from '@/lib/rank-scale';
 
 const UNIT_OPTIONS: { value: DistanceUnit; label: string; detail: string }[] = [
   { value: 'km', label: 'Kilometres', detail: '0.5 · 1 · 2 · 3 · 5 · 10 km' },
@@ -12,16 +13,12 @@ const PIN_OPTIONS: { value: PinStyle; label: string; detail: string }[] = [
 ];
 
 // Sample ranks for the 3×3 preview; the middle one is the grid center.
-const PREVIEW = [
-  { rank: '2', color: '#10b981' }, { rank: '5', color: '#14b8a6' }, { rank: '12', color: '#f59e0b' },
-  { rank: '4', color: '#14b8a6' }, { rank: '3', color: '#10b981' }, { rank: '9', color: '#3b82f6' },
-  { rank: '18', color: '#f97316' }, { rank: '24', color: '#ef4444' }, { rank: '—', color: '#94a3b8' },
-];
+const PREVIEW = ['2', '5', '12', '4', '3', '9', '18', '24', '—'].map((rank) => ({ rank, style: rankStyle(Number(rank) || null) }));
 
 const PIN_PREVIEW_STYLE: Record<PinStyle, { size: number; radius: string; font: number; ring: string }> = {
-  square: { size: 22, radius: '5px', font: 9, ring: '1.5px solid rgba(255,255,255,0.4)' },
-  circle: { size: 20, radius: '50%', font: 8, ring: '1.5px solid rgba(255,255,255,0.95)' },
-  dot: { size: 14, radius: '50%', font: 6.5, ring: '1px solid rgba(255,255,255,0.95)' },
+  square: { size: 22, radius: '5px', font: 9, ring: '1.5px solid rgba(3,5,8,0.55)' },
+  circle: { size: 20, radius: '50%', font: 8, ring: '1.5px solid rgba(3,5,8,0.55)' },
+  dot: { size: 14, radius: '50%', font: 6.5, ring: '1px solid rgba(3,5,8,0.55)' },
 };
 
 // A faint street pattern so the preview shows how much of the basemap each style leaves visible.
@@ -42,11 +39,12 @@ function PinPreview({ style }: { style: PinStyle }) {
         {PREVIEW.map((point, index) => (
           <span
             key={index}
-            className="grid place-items-center font-medium text-white"
+            className="grid place-items-center font-mono font-medium"
             style={{
-              width: pin.size, height: pin.size, borderRadius: pin.radius, background: point.color, fontSize: pin.font,
-              border: index === 4 ? '1.5px dashed rgba(255,255,255,0.9)' : pin.ring,
-              boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
+              width: pin.size, height: pin.size, borderRadius: pin.radius, background: point.style.border ? `linear-gradient(${point.style.fill},${point.style.fill}),rgba(3,5,8,.72)` : point.style.fill,
+              color: point.style.text, fontSize: pin.font,
+              border: index === 4 ? '1.5px dashed rgba(194,224,255,0.9)' : point.style.border || pin.ring,
+              boxShadow: point.style.glow || '0 1px 4px rgba(0,0,0,0.3)',
             }}
           >
             {point.rank}

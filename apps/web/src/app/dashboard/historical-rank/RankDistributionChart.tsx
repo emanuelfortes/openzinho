@@ -28,12 +28,12 @@ type Band = {
 };
 
 const bands: Band[] = [
-  { key: 'top-1', label: '#1', color: '#059669', value: (m) => m.pos_1 ?? 0 },
-  { key: 'top-3', label: '#2–3', color: '#14b8a6', value: (m) => m.pos_2_3 ?? 0 },
-  { key: 'top-10', label: '#4–10', color: '#3b82f6', value: (m) => m.pos_4_10 ?? 0 },
-  { key: 'top-20', label: '#11–20', color: '#6366f1', value: (m) => m.pos_11_20 ?? 0 },
-  { key: 'top-50', label: '#21–50', color: '#f59e0b', value: (m) => (m.pos_21_30 ?? 0) + (m.pos_31_40 ?? 0) + (m.pos_41_50 ?? 0) },
-  { key: 'top-100', label: '#51–100', color: '#f97316', value: (m) => (m.pos_51_60 ?? 0) + (m.pos_61_70 ?? 0) + (m.pos_71_80 ?? 0) + (m.pos_81_90 ?? 0) + (m.pos_91_100 ?? 0) },
+  { key: 'top-1', label: '#1', color: '#eaf2ff', value: (m) => m.pos_1 ?? 0 },
+  { key: 'top-3', label: '#2–3', color: '#c2e0ff', value: (m) => m.pos_2_3 ?? 0 },
+  { key: 'top-10', label: '#4–10', color: '#4da2ff', value: (m) => m.pos_4_10 ?? 0 },
+  { key: 'top-20', label: '#11–20', color: '#1f6bff', value: (m) => m.pos_11_20 ?? 0 },
+  { key: 'top-50', label: '#21–50', color: '#1246b8', value: (m) => (m.pos_21_30 ?? 0) + (m.pos_31_40 ?? 0) + (m.pos_41_50 ?? 0) },
+  { key: 'top-100', label: '#51–100', color: '#16305f', value: (m) => (m.pos_51_60 ?? 0) + (m.pos_61_70 ?? 0) + (m.pos_71_80 ?? 0) + (m.pos_81_90 ?? 0) + (m.pos_91_100 ?? 0) },
 ];
 
 function formatMonth(year: number, month: number) {
@@ -111,7 +111,7 @@ export default function RankDistributionChart({ points }: { points: Point[] }) {
               return <rect key={band.key} x={x(0) - 34} y={y(upper)} width="68" height={y(lower) - y(upper)} fill={band.color}><title>{`${band.label}: ${displayPercent(values[0][bandIndex])}`}</title></rect>;
             })
             : bands.map((band, index) => <path key={band.key} d={areaPath(index)} fill={band.color} fillOpacity="0.88" stroke="white" strokeOpacity="0.45" strokeWidth="1"><title>{band.label}</title></path>)}
-          {totals.length > 1 && <path d={volumePath} fill="none" stroke="#1d4ed8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />}
+          {totals.length > 1 && <path d={volumePath} fill="none" stroke="#4da2ff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />}
           {points.map((point, index) => {
             const step = points.length > 1 ? plotWidth / (points.length - 1) : 68;
             const leftEdge = Math.max(left, x(index) - step / 2);
@@ -120,7 +120,7 @@ export default function RankDistributionChart({ points }: { points: Point[] }) {
             return (
               <g key={`${point.year}-${point.month}`}>
                 <line x1={x(index)} x2={x(index)} y1={top} y2={height - bottom} stroke="currentColor" strokeOpacity="0.08" />
-                <circle cx={x(index)} cy={volumeY(totals[index])} r="3.5" fill="#eff6ff" stroke="#1d4ed8" strokeWidth="2" />
+                <circle cx={x(index)} cy={volumeY(totals[index])} r="3.5" fill="#030508" stroke="#4da2ff" strokeWidth="2" />
                 <rect x={leftEdge} y={top} width={rightEdge - leftEdge} height={plotHeight} fill="transparent"><title>{`${formatMonth(point.year, point.month)} — ${tooltip}`}</title></rect>
               </g>
             );

@@ -7,6 +7,7 @@ import type { GridPoint } from '@/lib/db';
 import { computeCompetitors, computeGridSummary, computeRingStats, type CompetitorSummary } from './grid-insights';
 import GridPdfExportButton from './GridPdfExportButton';
 import { formatDistance } from '@/lib/grid-preferences';
+import { RANK_TIER_ORDER, RANK_TIERS, rankStyle } from '@/lib/rank-scale';
 import { useGridPreferences } from './GridPreferences';
 
 const GridMap = lazy(() => import('./GridMap'));
@@ -28,17 +29,6 @@ interface Props {
   brandStyle?: Partial<BrandStyle>;
 }
 
-function rankColor(rank: number | null): string {
-  if (rank === null) return '#94a3b8';
-  if (rank === 1)    return '#059669';
-  if (rank <= 3)     return '#10b981';
-  if (rank <= 7)     return '#14b8a6';
-  if (rank <= 10)    return '#3b82f6';
-  if (rank <= 15)    return '#f59e0b';
-  if (rank <= 20)    return '#f97316';
-  return '#ef4444';
-}
-
 function formatSnapshotDate(ts: number) {
   return new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'UTC' }).format(new Date(ts));
 }
@@ -58,16 +48,7 @@ export default function GridResults({ results, gridSize, spacingKm, keyword, tar
   const topCompetitors = competitors.slice(0, 5);
   const ringStats = useMemo(() => computeRingStats(results, gridSize, spacingKm), [results, gridSize, spacingKm]);
 
-  const legend = [
-    { color: '#059669', label: '#1' },
-    { color: '#10b981', label: '#2-3' },
-    { color: '#14b8a6', label: '#4-7' },
-    { color: '#3b82f6', label: '#8-10' },
-    { color: '#f59e0b', label: '#11-15' },
-    { color: '#f97316', label: '#16-20' },
-    { color: '#ef4444', label: '#21+' },
-    { color: '#94a3b8', label: 'Not found' },
-  ];
+  const legend = RANK_TIER_ORDER.map((tier) => ({ tier, ...RANK_TIERS[tier] }));
 
   return (
     <div className="space-y-4">
@@ -211,8 +192,8 @@ export default function GridResults({ results, gridSize, spacingKm, keyword, tar
         {/* Mini legend */}
         <div className="flex flex-wrap gap-2 mb-4">
           {legend.map((item) => (
-            <div key={item.label} className="flex items-center gap-1.5">
-              <div className={`w-3 h-3 ${swatchShape}`} style={{ backgroundColor: item.color }} />
+            <div key={item.tier} className="flex items-center gap-1.5">
+              <div className={`w-3 h-3 ${swatchShape}`} style={{ background: item.fill, border: item.border || undefined, boxShadow: item.glow || undefined }} />
               <span className="text-[10px] font-medium text-nexo-dim">{item.label}</span>
             </div>
           ))}
@@ -276,7 +257,7 @@ export default function GridResults({ results, gridSize, spacingKm, keyword, tar
           <p className="nexo-label mb-3">Distribution (grid without coordinates)</p>
           <div className="inline-grid gap-1" style={{ gridTemplateColumns: `repeat(${gridSize}, 1fr)` }}>
             {results.map((p, i) => {
-              const color = rankColor(p.rank);
+              const style = rankStyle(p.rank);
               const half = Math.floor(gridSize / 2);
               const isCenter = p.row === half && p.col === half;
               return (
@@ -285,11 +266,12 @@ export default function GridResults({ results, gridSize, spacingKm, keyword, tar
                   title={p.rank != null ? `#${p.rank}` : 'Not found'}
                   style={{
                     width: 36, height: 36,
-                    background: color,
-                    borderRadius: 6,
-                    border: isCenter ? '2px dashed rgba(255,255,255,0.7)' : '1px solid rgba(255,255,255,0.2)',
+                    background: style.fill,
+                    borderRadius: 4,
+                    border: isCenter ? '2px dashed rgba(194,224,255,0.9)' : style.border || '1px solid rgba(3,5,8,0.55)',
+                    boxShadow: style.glow || undefined,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 11, fontWeight: 900, color: 'white',
+                    fontSize: 11, fontWeight: 500, color: style.text, fontFamily: 'var(--font-geist-mono), monospace',
                   }}
                 >
                   {p.rank ?? '—'}
