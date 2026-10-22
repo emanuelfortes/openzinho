@@ -6,9 +6,11 @@ import path from 'node:path';
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'grade-campaigns-'));
 process.env.DB_PATH = path.join(tmpDir, 'test.db');
 
-import { closeAllDatabases, claimDueGridSchedules, createProject, getGridSchedule, runInProjectScope } from '@/lib/db';
 import {
-  campaignSeriesId, deleteCampaign, getCampaignKeywordStatus, listCampaigns, runCampaignNow, saveCampaign, validateCampaign,
+  closeAllDatabases, claimDueGridSchedules, createProject, getGridEntry, getGridSchedule, runInProjectScope, saveGridSearch, saveGridSearchPending,
+} from '@/lib/db';
+import {
+  campaignSeriesId, deleteCampaign, getCampaign, getCampaignKeywordStatus, getCampaignSpend, listCampaigns, runCampaignNow, saveCampaign, validateCampaign,
   type GridCampaignInput,
 } from './campaigns-db';
 
@@ -103,5 +105,66 @@ describe('campaign schedules', () => {
     expect(getGridSchedule(campaignSeriesId(moved, 'dentista'))?.grid_size).toBe(7);
     deleteCampaign(campaign.id);
     expect(listCampaigns().some((item) => item.id === campaign.id)).toBe(false);
+  }));
+});
+
+describe('campaign device and depth', () => {
+  it('defaults to desktop and 20, stores the choice on the campaign and its schedules', () => scoped(() => {
+    const plain = saveCampaign(valid({ ...base, keywords: ['dentista'] }));
+    expect(getCampaign(plain.id)).toMatchObject({ device: 'desktop', depth: 20 });
+    expect(getGridSchedule(campaignSeriesId(plain, 'dentista'))).toMatchObject({ device: 'desktop', depth: 20 });
+
+    const mobile = saveCampaign(valid({ ...base, keywords: ['dentista'], device: 'mobile', depth: 250 }), plain.id);
+    expect(getCampaign(plain.id)).toMatchObject({ device: 'mobile', depth: 100 });
+    // A different device or depth is a different monitor; the desktop schedule is gone.
+    expect(campaignSeriesId(mobile, 'dentista')).not.toBe(campaignSeriesId(plain, 'dentista'));
+    expect(getGridSchedule(campaignSeriesId(plain, 'dentista'))).toBeNull();
+    expect(getGridSchedule(campaignSeriesId(mobile, 'dentista'))).toMatchObject({ device: 'mobile', depth: 100, campaign_id: plain.id });
+    deleteCampaign(plain.id);
+  }));
+
+  it('hands device and depth to the worker with each claimed schedule', () => {
+    const campaign = scoped(() => saveCampaign(valid({ ...base, keywords: ['dentista'], device: 'mobile', depth: 40 })));
+    scoped(() => runCampaignNow(campaign.id));
+    const claimed = claimDueGridSchedules(Date.now() + 1_000).filter((schedule) => schedule.campaign_id === campaign.id);
+    expect(claimed).toHaveLength(1);
+    expect(claimed[0]).toMatchObject({ device: 'mobile', depth: 40 });
+    scoped(() => deleteCampaign(campaign.id));
+  });
+
+  it('records the configuration with each run', () => scoped(() => {
+    const run = {
+      id: 'run-config', ts: Date.now(), series_id: 'grid-config', keyword: 'dentista', target: 'x', center: '1,2',
+      grid_size: 3, spacing_km: 1, language: 'Portuguese', status: 'pending' as const, queue_mode: 'standard' as const,
+      device: 'mobile' as const, depth: 60, campaign_id: 'camp-1', cost: 0.01,
+    };
+    saveGridSearchPending(run, []);
+    expect(getGridEntry('run-config')).toMatchObject({ device: 'mobile', depth: 60, campaign_id: 'camp-1' });
+    saveGridSearch({ ...run, id: 'run-legacy', device: undefined, depth: undefined, campaign_id: undefined, status: 'done' }, []);
+    expect(getGridEntry('run-legacy')).toMatchObject({ device: 'desktop', depth: 20, campaign_id: '' });
+  }));
+});
+
+describe('campaign monthly spend', () => {
+  it('sums runs of the campaign this month, also on grids it no longer uses', () => scoped(() => {
+    const campaign = saveCampaign(valid({ ...base, keywords: ['dentista'] }));
+    const oldSeries = campaignSeriesId(campaign, 'dentista');
+    const entry = {
+      ts: Date.now(), keyword: 'dentista', target: campaign.target, center: campaign.center, grid_size: 5, spacing_km: 0.5,
+      language: 'Portuguese', status: 'done' as const, queue_mode: 'standard' as const,
+    };
+    saveGridSearch({ ...entry, id: 'spend-old-grid', series_id: oldSeries, campaign_id: campaign.id, cost: 0.015 }, []);
+    // Last month: not counted.
+    saveGridSearch({ ...entry, id: 'spend-last-month', series_id: oldSeries, campaign_id: campaign.id, cost: 1, ts: Date.now() - 40 * 86_400_000 }, []);
+    // Another campaign: not counted.
+    saveGridSearch({ ...entry, id: 'spend-other', series_id: 'grid-other', campaign_id: 'other-campaign', cost: 2 }, []);
+
+    const moved = saveCampaign(valid({ ...base, keywords: ['dentista'], grid_size: 7 }), campaign.id);
+    // A manual run of the current keyword from the Geo-grid page has no campaign_id but counts.
+    saveGridSearch({ ...entry, id: 'spend-manual', series_id: campaignSeriesId(moved, 'dentista'), grid_size: 7, cost: 0.01 }, []);
+
+    const since = Date.now() - 86_400_000;
+    expect(getCampaignSpend(moved, since)).toBeCloseTo(0.025);
+    deleteCampaign(campaign.id);
   }));
 });

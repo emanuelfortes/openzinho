@@ -7,8 +7,12 @@ import { spacingOptions, type DistanceUnit } from '@/lib/grid-preferences';
 import type { GridScheduleFrequency } from '@/lib/db';
 import { CAMPAIGN_GRID_SIZES, MAX_CAMPAIGN_KEYWORDS, normalizeKeywords, type GridCampaign } from './campaigns-shared';
 import { estimateCampaign } from './estimate';
+import {
+  DEFAULT_GRID_DEPTH, DEFAULT_GRID_DEVICE, GRID_DEPTH_OPTIONS, GRID_DEVICE_LABELS, GRID_DEVICES, type GridDevice,
+} from './grid-config';
 import { formatBrl } from '@/modules/custos/budget-shared';
 import { gridGeometryKey } from './inactive-points';
+import { LANGUAGES } from '@/lib/geo-options';
 
 const MapPicker = lazy(() => import('@/app/dashboard/local-finder/MapPicker'));
 
@@ -16,7 +20,8 @@ const days = [['Domingo', 0], ['Segunda-feira', 1], ['Terça-feira', 2], ['Quart
 
 type Props = {
   campaign: GridCampaign | null;
-  defaults: { center: string; language: string; target: string };
+  /** Settings defaults, or values prefilled from the URL (?new=1&keywords=…&target=…&center=…). */
+  defaults: { center: string; language: string; target: string; keywords?: string[] };
   distanceUnit: DistanceUnit;
   /** Exchange rate and the client's monthly cap, to show the estimate in reais. */
   budget: { brlPerUsd: number; clientCapBrl: number | null; clientSpentBrl: number };
@@ -34,7 +39,9 @@ export default function CampaignForm({ campaign, defaults, distanceUnit, budget,
   const [language, setLanguage] = useState(campaign?.language ?? defaults.language);
   const [gridSize, setGridSize] = useState(campaign?.grid_size ?? 7);
   const [spacingKm, setSpacingKm] = useState(campaign?.spacing_km ?? 0.5);
-  const [keywords, setKeywords] = useState(campaign?.keywords.join('\n') ?? '');
+  const [keywords, setKeywords] = useState(campaign?.keywords.join('\n') ?? defaults.keywords?.join('\n') ?? '');
+  const [device, setDevice] = useState<GridDevice>(campaign?.device ?? DEFAULT_GRID_DEVICE);
+  const [depth, setDepth] = useState(campaign?.depth ?? DEFAULT_GRID_DEPTH);
   const [frequency, setFrequency] = useState<GridScheduleFrequency>(campaign?.frequency ?? 'biweekly');
   const [queueMode, setQueueMode] = useState<'standard' | 'priority'>(campaign?.queue_mode ?? 'standard');
   const [timeZone, setTimeZone] = useState(campaign?.time_zone ?? 'UTC');
@@ -49,8 +56,8 @@ export default function CampaignForm({ campaign, defaults, distanceUnit, budget,
     && gridGeometryKey({ center, grid_size: gridSize, spacing_km: spacingKm }) === gridGeometryKey(campaign);
   const inactiveCount = sameGrid ? inactivePoints.length : 0;
   const estimate = useMemo(
-    () => estimateCampaign({ gridSize, keywordCount, frequency, queueMode, inactivePoints: inactiveCount }),
-    [gridSize, keywordCount, frequency, queueMode, inactiveCount],
+    () => estimateCampaign({ gridSize, keywordCount, frequency, queueMode, inactivePoints: inactiveCount, depth }),
+    [gridSize, keywordCount, frequency, queueMode, inactiveCount, depth],
   );
   const usesWeekday = frequency === 'weekly' || frequency === 'biweekly';
   const perMonthBrl = estimate.perMonthUsd * budget.brlPerUsd;
@@ -104,7 +111,34 @@ export default function CampaignForm({ campaign, defaults, distanceUnit, budget,
         </div>
         <div>
           <label className={label} htmlFor="campaign-language">Idioma</label>
-          <input id="campaign-language" name="language" value={language} onChange={(event) => setLanguage(event.target.value)} className={field} />
+          <select id="campaign-language" name="language" value={language} onChange={(event) => setLanguage(event.target.value)} className={field}>
+            {/* Values are the language names DataForSEO expects; labels are shown in each language. */}
+            {!LANGUAGES.some((option) => option.value === language) && <option value={language}>{language}</option>}
+            {LANGUAGES.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+          </select>
+        </div>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <span className={label} id="campaign-device-label">Dispositivo</span>
+          <input type="hidden" name="device" value={device} />
+          <div className="nexo-seg" role="group" aria-labelledby="campaign-device-label">
+            {GRID_DEVICES.map((option) => (
+              <button key={option} type="button" onClick={() => setDevice(option)} aria-pressed={device === option}
+                className={`transition-colors hover:text-white ${device === option ? 'active' : ''}`}>
+                {GRID_DEVICE_LABELS[option]}
+              </button>
+            ))}
+          </div>
+          <p className="mt-1 text-[11px] text-nexo-faint">O Google mostra resultados locais diferentes no celular e no computador.</p>
+        </div>
+        <div>
+          <label className={label} htmlFor="campaign-depth">Profundidade · resultados verificados por ponto</label>
+          <select id="campaign-depth" name="depth" value={depth} onChange={(event) => setDepth(Number(event.target.value))} className={field}>
+            {GRID_DEPTH_OPTIONS.map((option) => <option key={option} value={option}>{option === DEFAULT_GRID_DEPTH ? `${option} (padrão)` : option}</option>)}
+          </select>
+          <p className="mt-1 text-[11px] text-nexo-faint">Acima de 20, a empresa é encontrada mesmo em posições mais baixas. Mudar dispositivo ou profundidade inicia novas linhas do tempo.</p>
         </div>
       </div>
 
@@ -184,7 +218,7 @@ export default function CampaignForm({ campaign, defaults, distanceUnit, budget,
         <p className="mt-1 text-[10px] text-nexo-faint">
           {inactiveCount > 0 && <>{inactiveCount} {inactiveCount === 1 ? 'ponto desligado nesta grade não entra' : 'pontos desligados nesta grade não entram'} na conta. </>}
           {campaign ? 'Desligue pontos sobre mar, rio ou parque pelo link “Pontos” no cartão da campanha. ' : 'Depois de criar a campanha, você pode desligar pontos sobre mar, rio ou parque. '}
-          Estimativa indicativa pelo preço de tabela, com o dólar a {formatBrl(budget.brlPerUsd)}; o DataForSEO cobra o que ele informa, e cada execução registra seu custo real. Fuso horário: {timeZone.replace(/_/g, ' ')}.
+          Estimativa indicativa pelo preço de tabela por ponto (o mesmo em qualquer profundidade), com o dólar a {formatBrl(budget.brlPerUsd)}; o DataForSEO cobra o que ele informa, e cada execução registra seu custo real. Fuso horário: {timeZone.replace(/_/g, ' ')}.
         </p>
       </div>
 

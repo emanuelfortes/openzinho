@@ -8,10 +8,11 @@ import { getGridPreferences } from '@/lib/grid-preferences-server';
 import { formatDistance } from '@/lib/grid-preferences';
 import CampaignForm from '@/modules/grade/CampaignForm';
 import DeleteCampaignButton from '@/modules/grade/DeleteCampaignButton';
-import { getCampaign, getCampaignKeywordStatus, getCampaignSpend, listCampaigns, type GridCampaign } from '@/modules/grade/campaigns-db';
+import { getCampaign, getCampaignKeywordStatus, getCampaignSpend, listCampaigns, parseCampaignPrefill, type GridCampaign } from '@/modules/grade/campaigns-db';
+import { describeGridConfig } from '@/modules/grade/grid-config';
 import { estimateCampaign } from '@/modules/grade/estimate';
 import { computeGradeMetrics } from '@/modules/grade/metrics';
-import { formatBrl, getBudgetStatus, type BudgetStatus } from '@/modules/custos/budget';
+import { formatBrl, getBudgetStatus, monthStart, type BudgetStatus } from '@/modules/custos/budget';
 import { getInactivePoints, gridPointsHref } from '@/modules/grade/inactive-points-db';
 import { runCampaignNowAction } from './actions';
 
@@ -19,6 +20,10 @@ interface SearchParams {
   edit?: string;
   new?: string;
   queued?: string;
+  /** Prefill for a new campaign: keywords=a,b,c, target=..., center=lat,lng. */
+  keywords?: string;
+  target?: string;
+  center?: string;
 }
 
 const weekdays = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado'];
@@ -38,11 +43,6 @@ function formatWhen(ts: number, timeZone: string): string {
   return new Intl.DateTimeFormat('pt-BR', { dateStyle: 'medium', timeStyle: 'short', timeZone }).format(new Date(ts));
 }
 
-function monthStart(): number {
-  const now = new Date();
-  return new Date(now.getFullYear(), now.getMonth(), 1).getTime();
-}
-
 function CampaignCard({ campaign, queued, distanceUnit, budget }: { campaign: GridCampaign; queued: boolean; distanceUnit: ReturnType<typeof getGridPreferences>['distanceUnit']; budget: BudgetStatus }) {
   const keywords = getCampaignKeywordStatus(campaign);
   const nextRuns = keywords.map((keyword) => keyword.next_run_at).filter((value): value is number => value !== null);
@@ -50,9 +50,11 @@ function CampaignCard({ campaign, queued, distanceUnit, budget }: { campaign: Gr
   const inactive = getInactivePoints(campaign);
   const estimate = estimateCampaign({
     gridSize: campaign.grid_size, keywordCount: campaign.keywords.length, frequency: campaign.frequency,
-    queueMode: campaign.queue_mode, inactivePoints: inactive.size,
+    queueMode: campaign.queue_mode, inactivePoints: inactive.size, depth: campaign.depth,
   });
   const spent = getCampaignSpend(campaign, monthStart());
+  const spentBrl = spent * budget.brlPerUsd;
+  const estimateBrl = estimate.perMonthUsd * budget.brlPerUsd;
 
   return (
     <section id={`campaign-${campaign.id}`} className="scroll-mt-6 rounded-nexo-lg border border-nexo-border bg-nexo-surface p-5">
@@ -65,7 +67,7 @@ function CampaignCard({ campaign, queued, distanceUnit, budget }: { campaign: Gr
             </span>
           </div>
           <p className="mt-0.5 truncate text-xs text-nexo-dim">
-            {campaign.target} · {campaign.grid_size}×{campaign.grid_size} · espaçamento de {formatDistance(campaign.spacing_km, distanceUnit)} · fila {campaign.queue_mode === 'priority' ? 'prioritária' : 'padrão'}
+            {campaign.target} · {campaign.grid_size}×{campaign.grid_size} · espaçamento de {formatDistance(campaign.spacing_km, distanceUnit)} · {describeGridConfig(campaign).toLowerCase()} · fila {campaign.queue_mode === 'priority' ? 'prioritária' : 'padrão'}
           </p>
           {(campaign.owner || (campaign.tags?.length ?? 0) > 0) && (
             <p className="mt-1 flex flex-wrap items-center gap-1.5 text-[11px] text-nexo-dim">
@@ -81,6 +83,7 @@ function CampaignCard({ campaign, queued, distanceUnit, budget }: { campaign: Gr
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-3">
+          <Link href={`/dashboard/campaigns/${campaign.id}/relatorio`} className="nexo-section hover:text-white">Relatório</Link>
           {campaign.active && (
             <form action={runCampaignNowAction}>
               <input type="hidden" name="id" value={campaign.id} />
@@ -140,9 +143,19 @@ function CampaignCard({ campaign, queued, distanceUnit, budget }: { campaign: Gr
         </table>
       </div>
 
-      <p className="mt-3 text-[11px] text-nexo-faint">
-        Gasto neste mês: <b className="tabular-nums text-nexo-dim">{formatBrl(spent * budget.brlPerUsd)}</b> (US$ {spent.toFixed(3).replace('.', ',')}) · estimativa de {formatBrl(estimate.perMonthUsd * budget.brlPerUsd)}/mês
-      </p>
+      <div className="mt-3 flex flex-wrap items-baseline gap-x-6 gap-y-1 border-t border-nexo-border pt-3 text-[11px] text-nexo-faint">
+        <p>
+          <span className="nexo-label mr-2">Gasto em {budget.monthLabel}</span>
+          <b className="tabular-nums text-sm font-medium text-nexo-text">{formatBrl(spentBrl)}</b>
+          <span className="ml-1">(US$ {spent.toFixed(3).replace('.', ',')})</span>
+        </p>
+        <p>
+          <span className="nexo-label mr-2">Estimativa</span>
+          <b className="tabular-nums text-sm font-medium text-nexo-dim">{formatBrl(estimateBrl)}/mês</b>
+          {estimateBrl > 0 && <span className={`ml-1 ${spentBrl > estimateBrl ? 'text-nexo-warn-text' : ''}`}>· {Math.round((spentBrl / estimateBrl) * 100)}% gasto</span>}
+        </p>
+        <p className="basis-full text-[10px]">Gasto real informado pelo DataForSEO em cada varredura da campanha (inclusive em grades anteriores à última edição), convertido com o dólar a {formatBrl(budget.brlPerUsd)}. A estimativa é indicativa.</p>
+      </div>
     </section>
   );
 }
@@ -154,10 +167,13 @@ async function CampaignsPage({ searchParams }: { searchParams: Promise<SearchPar
   const showForm = Boolean(editing) || params.new === '1' || campaigns.length === 0;
   const { distanceUnit } = getGridPreferences();
   const budget = getBudgetStatus(getCurrentProject().id);
+  // A link such as ?new=1&keywords=a,b&target=…&center=lat,lng opens the form prefilled.
+  const prefill = parseCampaignPrefill(params);
   const defaults = {
-    center: getSetting('default_coordinates') ?? '',
-    language: getSetting('default_language') ?? 'Portuguese',
-    target: getSetting('default_domain') ?? '',
+    center: prefill.center || (getSetting('default_coordinates') ?? ''),
+    language: getSetting('default_language') || 'Portuguese',
+    target: prefill.target || (getSetting('default_domain') ?? ''),
+    keywords: prefill.keywords,
   };
 
   return (

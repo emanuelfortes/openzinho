@@ -2,7 +2,8 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { authEnabled } from '@/lib/auth-config';
 
 // Reachable without a session. /api/cron has its own bearer secret (used by the worker container).
-const PUBLIC_PREFIXES = ['/login', '/setup', '/api/auth', '/api/cron'];
+// /r/<token> is a read-only campaign report shared by secret link (modules/relatorio/share-tokens).
+const PUBLIC_PREFIXES = ['/login', '/setup', '/api/auth', '/api/cron', '/r'];
 
 function isPublic(pathname: string) {
   return PUBLIC_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));

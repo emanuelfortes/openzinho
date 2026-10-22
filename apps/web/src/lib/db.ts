@@ -6,6 +6,9 @@ import { AsyncLocalStorage } from 'node:async_hooks';
 import { reconcileGridPoints } from './grid-target';
 import type { RankTopResult } from './rank-serp';
 import { clampMonthDay, nextCadenceRun } from '@/modules/grade/cadence';
+import { gridConfigKey, normalizeGridConfig, type GridDevice } from '@/modules/grade/grid-config';
+
+export type { GridDevice } from '@/modules/grade/grid-config';
 
 // Operation-local identity, never the mutable UI selection after an await.
 const projectScope = new AsyncLocalStorage<string>();
@@ -903,6 +906,11 @@ function initSchema(db: Database.Database) {
   addColumnIfMissing(db, 'grid_searches', `ADD COLUMN series_id TEXT NOT NULL DEFAULT ''`);
   addColumnIfMissing(db, 'grid_schedules', 'ADD COLUMN month_day INTEGER');
   addColumnIfMissing(db, 'grid_schedules', `ADD COLUMN campaign_id TEXT NOT NULL DEFAULT ''`);
+  addColumnIfMissing(db, 'grid_schedules', `ADD COLUMN device TEXT NOT NULL DEFAULT 'desktop'`);
+  addColumnIfMissing(db, 'grid_schedules', 'ADD COLUMN depth INTEGER NOT NULL DEFAULT 20');
+  addColumnIfMissing(db, 'grid_searches', `ADD COLUMN device TEXT NOT NULL DEFAULT 'desktop'`);
+  addColumnIfMissing(db, 'grid_searches', 'ADD COLUMN depth INTEGER NOT NULL DEFAULT 20');
+  addColumnIfMissing(db, 'grid_searches', `ADD COLUMN campaign_id TEXT NOT NULL DEFAULT ''`);
   addColumnIfMissing(db, 'reviews_tasks', 'ADD COLUMN meta TEXT');
   addColumnIfMissing(db, 'rank_checks', 'ADD COLUMN ai_overview INTEGER');
   addColumnIfMissing(db, 'rank_checks', 'ADD COLUMN top_results TEXT');
@@ -912,6 +920,9 @@ function initSchema(db: Database.Database) {
   addColumnIfMissing(db, 'hist_rank_searches', `ADD COLUMN date_to TEXT NOT NULL DEFAULT ''`);
 
   backfillGridSeriesIds(db);
+  // Runs posted before grid_searches.campaign_id existed: tag those whose series a campaign still schedules.
+  db.exec(`UPDATE grid_searches SET campaign_id = (SELECT s.campaign_id FROM grid_schedules s WHERE s.series_id = grid_searches.series_id)
+    WHERE campaign_id = '' AND series_id IN (SELECT series_id FROM grid_schedules WHERE campaign_id != '')`);
   db.exec(`CREATE INDEX IF NOT EXISTS idx_grid_searches_series ON grid_searches(series_id, ts DESC)`);
 }
 
@@ -1938,6 +1949,11 @@ export interface GridSearchEntry {
   cost?: number;
   status: GridStatus;
   queue_mode: GridQueueMode;
+  /** Device and depth posted to Local Finder for this run. Older runs read as desktop, 20. */
+  device?: GridDevice;
+  depth?: number;
+  /** Campaign that started the run; empty for a single monitor. Keeps campaign spend after grid edits. */
+  campaign_id?: string;
   summary?: GridHistorySummary;
 }
 
@@ -1960,6 +1976,9 @@ export interface GridSchedule {
   month_day?: number | null;
   /** Campaign grouping several keywords on one grid; empty for a single monitor. */
   campaign_id?: string;
+  /** Local Finder device and depth; desktop and 20 when omitted. */
+  device?: GridDevice;
+  depth?: number;
   time_of_day: string;
   time_zone: string;
   next_run_at: number;
@@ -2005,8 +2024,13 @@ export interface GridPoint {
  */
 export function gridSeriesId(
   keyword: string, center: string, gridSize: number, spacingKm: number, target: string, language: string,
+  config?: { device?: unknown; depth?: unknown },
 ): string {
-  const key = [keyword.trim().toLowerCase(), center.trim(), gridSize, spacingKm, target.trim().toLowerCase(), language.trim().toLowerCase()].join('|');
+  // Desktop at depth 20 adds nothing, so series created before device/depth existed keep their ID.
+  const configKey = gridConfigKey(config);
+  const parts: Array<string | number> = [keyword.trim().toLowerCase(), center.trim(), gridSize, spacingKm, target.trim().toLowerCase(), language.trim().toLowerCase()];
+  if (configKey) parts.push(configKey);
+  const key = parts.join('|');
   let hash = 0x811c9dc5;
   for (let index = 0; index < key.length; index += 1) {
     hash ^= key.charCodeAt(index);
@@ -2015,17 +2039,25 @@ export function gridSeriesId(
   return `grid-${hash.toString(16).padStart(8, '0')}`;
 }
 
-function entryFromGridRow(row: {
+/** Columns read for a grid run, without the (large) results and task list. */
+const GRID_ENTRY_COLUMNS = 'id, ts, series_id, keyword, target, center, grid_size, spacing_km, language, cost, status, queue_mode, device, depth, campaign_id';
+
+type GridEntryRow = {
   id: string; ts: number; series_id: string; keyword: string; target: string; center: string; grid_size: number; spacing_km: number; language: string;
-  cost: number | null; status: string; queue_mode: string; results?: string | null; task_ids?: string | null;
-}): GridSearchEntry & { task_ids?: GridTaskPoint[] } {
+  cost: number | null; status: string; queue_mode: string; device?: string | null; depth?: number | null; campaign_id?: string | null;
+  results?: string | null; task_ids?: string | null;
+};
+
+function entryFromGridRow(row: GridEntryRow): GridSearchEntry & { task_ids?: GridTaskPoint[] } {
+  const config = normalizeGridConfig(row);
   return {
     id: row.id,
-    series_id: row.series_id || gridSeriesId(row.keyword, row.center, row.grid_size, row.spacing_km, row.target, row.language),
+    series_id: row.series_id || gridSeriesId(row.keyword, row.center, row.grid_size, row.spacing_km, row.target, row.language, config),
     ts: row.ts, keyword: row.keyword, target: row.target, center: row.center,
     grid_size: row.grid_size, spacing_km: row.spacing_km, language: row.language, cost: row.cost ?? undefined,
     status: (row.status ?? 'done') as GridStatus,
     queue_mode: (row.queue_mode ?? 'live') as GridQueueMode,
+    device: config.device, depth: config.depth, campaign_id: row.campaign_id ?? '',
     summary: row.status === 'pending' ? undefined : summarizeGridResults(row.results ?? null, row.target),
     task_ids: row.task_ids ? JSON.parse(row.task_ids) as GridTaskPoint[] : undefined,
   };
@@ -2053,16 +2085,16 @@ function summarizeGridResults(resultsJson: string | null, target: string): GridH
 
 export function getGridHistory(): GridSearchEntry[] {
   const rows = getDb()
-    .prepare('SELECT id, ts, series_id, keyword, target, center, grid_size, spacing_km, language, cost, status, queue_mode, results FROM grid_searches ORDER BY ts DESC LIMIT 100')
-    .all() as Array<{ id: string; ts: number; series_id: string; keyword: string; target: string; center: string; grid_size: number; spacing_km: number; language: string; cost: number | null; status: string; queue_mode: string; results: string | null }>;
+    .prepare(`SELECT ${GRID_ENTRY_COLUMNS}, results FROM grid_searches ORDER BY ts DESC LIMIT 100`)
+    .all() as GridEntryRow[];
   return rows.map(entryFromGridRow);
 }
 
 /** Every run of one monitor, newest first. Not derived from getGridHistory(), whose cap spans all monitors. */
 export function getGridSeriesHistory(seriesId: string): GridSearchEntry[] {
   const rows = getDb()
-    .prepare('SELECT id, ts, series_id, keyword, target, center, grid_size, spacing_km, language, cost, status, queue_mode, results FROM grid_searches WHERE series_id = ? ORDER BY ts DESC')
-    .all(seriesId) as Array<{ id: string; ts: number; series_id: string; keyword: string; target: string; center: string; grid_size: number; spacing_km: number; language: string; cost: number | null; status: string; queue_mode: string; results: string | null }>;
+    .prepare(`SELECT ${GRID_ENTRY_COLUMNS}, results FROM grid_searches WHERE series_id = ? ORDER BY ts DESC`)
+    .all(seriesId) as GridEntryRow[];
   return rows.map(entryFromGridRow);
 }
 
@@ -2072,16 +2104,22 @@ export function getGridEntry(id: string): (GridSearchEntry & { task_ids?: GridTa
 
 export function getGridEntryForProject(projectId: string, id: string): (GridSearchEntry & { task_ids?: GridTaskPoint[] }) | null {
   const row = getDbForProject(projectId)
-    .prepare('SELECT id, ts, series_id, keyword, target, center, grid_size, spacing_km, language, cost, status, queue_mode, task_ids FROM grid_searches WHERE id = ?')
-    .get(id) as { id: string; ts: number; series_id: string; keyword: string; target: string; center: string; grid_size: number; spacing_km: number; language: string; cost: number | null; status: string; queue_mode: string; task_ids: string | null } | undefined;
+    .prepare(`SELECT ${GRID_ENTRY_COLUMNS}, task_ids FROM grid_searches WHERE id = ?`)
+    .get(id) as GridEntryRow | undefined;
   if (!row) return null;
   return entryFromGridRow(row);
 }
 
+/** Device, depth and campaign of a run, in the order the INSERTs list them. */
+function gridEntryConfigValues(entry: GridSearchEntry): [string, number, string] {
+  const config = normalizeGridConfig(entry);
+  return [config.device, config.depth, entry.campaign_id ?? ''];
+}
+
 export function saveGridSearch(entry: GridSearchEntry, results: GridPoint[]): void {
   getDb()
-    .prepare('INSERT OR REPLACE INTO grid_searches (id, ts, series_id, keyword, target, center, grid_size, spacing_km, language, cost, results, status, queue_mode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-    .run(entry.id, entry.ts, entry.series_id, entry.keyword, entry.target, entry.center, entry.grid_size, entry.spacing_km, entry.language, entry.cost ?? null, JSON.stringify(results), entry.status, entry.queue_mode);
+    .prepare('INSERT OR REPLACE INTO grid_searches (id, ts, series_id, keyword, target, center, grid_size, spacing_km, language, cost, results, status, queue_mode, device, depth, campaign_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+    .run(entry.id, entry.ts, entry.series_id, entry.keyword, entry.target, entry.center, entry.grid_size, entry.spacing_km, entry.language, entry.cost ?? null, JSON.stringify(results), entry.status, entry.queue_mode, ...gridEntryConfigValues(entry));
 }
 
 export function saveGridSearchPending(entry: GridSearchEntry, taskPoints: GridTaskPoint[]): void {
@@ -2090,8 +2128,8 @@ export function saveGridSearchPending(entry: GridSearchEntry, taskPoints: GridTa
 
 function saveGridSearchPendingToDb(db: Database.Database, entry: GridSearchEntry, taskPoints: GridTaskPoint[]): void {
   db
-    .prepare('INSERT OR REPLACE INTO grid_searches (id, ts, series_id, keyword, target, center, grid_size, spacing_km, language, cost, results, status, queue_mode, task_ids) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-    .run(entry.id, entry.ts, entry.series_id, entry.keyword, entry.target, entry.center, entry.grid_size, entry.spacing_km, entry.language, entry.cost ?? null, '[]', 'pending', entry.queue_mode, JSON.stringify(taskPoints));
+    .prepare('INSERT OR REPLACE INTO grid_searches (id, ts, series_id, keyword, target, center, grid_size, spacing_km, language, cost, results, status, queue_mode, task_ids, device, depth, campaign_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+    .run(entry.id, entry.ts, entry.series_id, entry.keyword, entry.target, entry.center, entry.grid_size, entry.spacing_km, entry.language, entry.cost ?? null, '[]', 'pending', entry.queue_mode, JSON.stringify(taskPoints), ...gridEntryConfigValues(entry));
 }
 
 export function saveGridSearchPendingForProject(projectId: string, entry: GridSearchEntry, taskPoints: GridTaskPoint[]): void {
@@ -2142,9 +2180,9 @@ export function updateGridProgressForProject(projectId: string, id: string, accu
 
 export function getPendingGridEntriesForProject(projectId: string): Array<GridSearchEntry & { task_ids?: GridTaskPoint[] }> {
   const rows = getDbForProject(projectId)
-    .prepare(`SELECT id, ts, series_id, keyword, target, center, grid_size, spacing_km, language, cost, status, queue_mode, task_ids
+    .prepare(`SELECT ${GRID_ENTRY_COLUMNS}, task_ids
       FROM grid_searches WHERE status = 'pending' ORDER BY ts ASC LIMIT 100`)
-    .all() as Array<{ id: string; ts: number; series_id: string; keyword: string; target: string; center: string; grid_size: number; spacing_km: number; language: string; cost: number | null; status: string; queue_mode: string; task_ids: string | null }>;
+    .all() as GridEntryRow[];
   return rows.map(entryFromGridRow);
 }
 
@@ -2161,7 +2199,7 @@ export function getGridResults(id: string): GridPoint[] | null {
 function parseScheduleRow(row: {
   series_id: string; keyword: string; target: string; center: string; grid_size: number; spacing_km: number; language: string;
   queue_mode: string; frequency: string; weekday: number | null; time_of_day: string; time_zone: string; next_run_at: number;
-  month_day?: number | null; campaign_id?: string;
+  month_day?: number | null; campaign_id?: string; device?: string | null; depth?: number | null;
 }): GridSchedule {
   return {
     series_id: row.series_id, keyword: row.keyword, target: row.target, center: row.center,
@@ -2170,6 +2208,7 @@ function parseScheduleRow(row: {
     frequency: row.frequency as GridScheduleFrequency,
     weekday: row.weekday, time_of_day: row.time_of_day, time_zone: row.time_zone, next_run_at: row.next_run_at,
     month_day: row.month_day ?? null, campaign_id: row.campaign_id ?? '',
+    ...normalizeGridConfig(row),
   };
 }
 
@@ -2247,7 +2286,7 @@ function nextGridScheduleRun(
 
 export function getGridSchedule(seriesId: string): GridSchedule | null {
   const row = getDb().prepare(`SELECT series_id, keyword, target, center, grid_size, spacing_km, language,
-    queue_mode, frequency, weekday, month_day, campaign_id, time_of_day, time_zone, next_run_at FROM grid_schedules WHERE series_id = ?`).get(seriesId) as Parameters<typeof parseScheduleRow>[0] | undefined;
+    queue_mode, frequency, weekday, month_day, campaign_id, device, depth, time_of_day, time_zone, next_run_at FROM grid_schedules WHERE series_id = ?`).get(seriesId) as Parameters<typeof parseScheduleRow>[0] | undefined;
   return row ? parseScheduleRow(row) : null;
 }
 
@@ -2260,18 +2299,20 @@ export function saveGridSchedule(input: Omit<GridSchedule, 'next_run_at'>): Grid
   const weekday = usesWeekday && input.weekday != null && input.weekday >= 0 && input.weekday <= 6 ? input.weekday : null;
   const month_day = frequency === 'monthly' ? clampMonthDay(input.month_day) : null;
   const campaign_id = input.campaign_id ?? '';
+  const { device, depth } = normalizeGridConfig(input);
   const next_run_at = nextGridScheduleRun({ frequency, weekday, month_day, time_of_day, time_zone }, now);
   // An empty campaign_id keeps the existing grouping, so the per-monitor control cannot detach a campaign keyword.
   getDb().prepare(`INSERT INTO grid_schedules
-    (series_id, keyword, target, center, grid_size, spacing_km, language, queue_mode, frequency, weekday, month_day, campaign_id, time_of_day, time_zone, next_run_at, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    (series_id, keyword, target, center, grid_size, spacing_km, language, queue_mode, frequency, weekday, month_day, campaign_id, device, depth, time_of_day, time_zone, next_run_at, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ON CONFLICT(series_id) DO UPDATE SET
       queue_mode = excluded.queue_mode, frequency = excluded.frequency, weekday = excluded.weekday, month_day = excluded.month_day,
       campaign_id = COALESCE(NULLIF(excluded.campaign_id, ''), grid_schedules.campaign_id),
+      device = excluded.device, depth = excluded.depth,
       time_of_day = excluded.time_of_day, time_zone = excluded.time_zone, next_run_at = excluded.next_run_at, updated_at = excluded.updated_at`)
     .run(input.series_id, input.keyword, input.target, input.center, input.grid_size, input.spacing_km, input.language,
-      input.queue_mode, frequency, weekday, month_day, campaign_id, time_of_day, time_zone, next_run_at, now, now);
-  return { ...input, frequency, weekday, month_day, campaign_id, time_of_day, time_zone, next_run_at };
+      input.queue_mode, frequency, weekday, month_day, campaign_id, device, depth, time_of_day, time_zone, next_run_at, now, now);
+  return { ...input, frequency, weekday, month_day, campaign_id, device, depth, time_of_day, time_zone, next_run_at };
 }
 
 export function deleteGridSchedule(seriesId: string): void {
@@ -2293,7 +2334,7 @@ export function claimDueGridSchedules(now = Date.now()): DueGridSchedule[] {
   for (const project of getProjects()) {
     const db = getDbForProject(project.id);
     const rows = db.prepare(`SELECT series_id, keyword, target, center, grid_size, spacing_km, language,
-      queue_mode, frequency, weekday, month_day, campaign_id, time_of_day, time_zone, next_run_at FROM grid_schedules WHERE next_run_at <= ?`).all(now) as Parameters<typeof parseScheduleRow>[0][];
+      queue_mode, frequency, weekday, month_day, campaign_id, device, depth, time_of_day, time_zone, next_run_at FROM grid_schedules WHERE next_run_at <= ?`).all(now) as Parameters<typeof parseScheduleRow>[0][];
     const claim = db.prepare('UPDATE grid_schedules SET next_run_at = ?, updated_at = ? WHERE series_id = ? AND next_run_at = ?');
     for (const row of rows) {
       const schedule = parseScheduleRow(row);
@@ -3119,6 +3160,7 @@ export const SPEND_SOURCES: Array<{ table: string; tool: string; href: string | 
   { table: 'rank_checks', tool: 'Rank Tracker', href: '/dashboard/rank-tracker', tsColumn: 'checked_at' },
   { table: 'ranked_kw_searches', tool: 'Palavras-chave ranqueadas', href: '/dashboard/ranked-keywords' },
   { table: 'kw_overview_searches', tool: 'Visão geral de palavras-chave', href: '/dashboard/keyword-overview' },
+  { table: 'palavras_pesquisas', tool: 'Sugestão de palavras-chave', href: '/dashboard/sugestao-de-palavras' },
   { table: 'competitors_searches', tool: 'Concorrentes', href: '/dashboard/competitors' },
   { table: 'domain_intersection_searches', tool: 'Interseção de domínios', href: '/dashboard/domain-intersection' },
   { table: 'hist_rank_searches', tool: 'Histórico de ranking', href: '/dashboard/historical-rank' },

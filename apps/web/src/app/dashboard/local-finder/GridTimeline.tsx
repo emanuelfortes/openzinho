@@ -58,7 +58,7 @@ export default function GridTimeline({ entry, results, previousResults, snapshot
             <p className="mt-1 text-xs text-nexo-dim">{entry.target} · {entry.grid_size}×{entry.grid_size} pontos · espaçamento de {formatDistance(entry.spacing_km, distanceUnit)}</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <a href={`/dashboard/geo-grid?keyword=${encodeURIComponent(entry.keyword)}&location_coordinate=${encodeURIComponent(entry.center)}&grid_size=${entry.grid_size}&spacing_km=${entry.spacing_km}&grid_target=${encodeURIComponent(entry.target)}&language=${encodeURIComponent(entry.language)}&queue_mode=${entry.queue_mode}&mode=grid`} className="nexo-section inline-flex items-center rounded-nexo-lg border border-nexo-border-strong bg-nexo-surface px-3 py-2 transition-colors hover:bg-nexo-blue/15">
+            <a href={`/dashboard/geo-grid?keyword=${encodeURIComponent(entry.keyword)}&location_coordinate=${encodeURIComponent(entry.center)}&grid_size=${entry.grid_size}&spacing_km=${entry.spacing_km}&grid_target=${encodeURIComponent(entry.target)}&language=${encodeURIComponent(entry.language)}&queue_mode=${entry.queue_mode}&device=${entry.device ?? 'desktop'}&depth=${entry.depth ?? 20}&mode=grid`} className="nexo-section inline-flex items-center rounded-nexo-lg border border-nexo-border-strong bg-nexo-surface px-3 py-2 transition-colors hover:bg-nexo-blue/15">
               Executar agora
             </a>
             <a href={gridPointsHref(entry, `/dashboard/geo-grid?grid_history_id=${entry.id}#results`)} className="nexo-section inline-flex items-center rounded-nexo-lg border border-nexo-border-strong bg-nexo-surface px-3 py-2 transition-colors hover:bg-nexo-blue/15">

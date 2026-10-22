@@ -4,6 +4,7 @@ import { runWithCurrentProject, type GridScheduleFrequency } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { deleteCampaign, runCampaignNow, saveCampaign, validateCampaign, type GridCampaignInput } from '@/modules/grade/campaigns-db';
+import { normalizeGridDepth, normalizeGridDevice } from '@/modules/grade/grid-config';
 
 function text(formData: FormData, key: string, fallback = ''): string {
   const value = formData.get(key);
@@ -38,6 +39,8 @@ function campaignFromForm(formData: FormData): GridCampaignInput {
     active: formData.get('active') === 'on',
     tags: text(formData, 'tags').split(','),
     owner: text(formData, 'owner'),
+    device: normalizeGridDevice(text(formData, 'device')),
+    depth: normalizeGridDepth(text(formData, 'depth', '20')),
   };
 }
 

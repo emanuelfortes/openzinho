@@ -5,6 +5,7 @@ import { LANGUAGES } from '@/lib/geo-options';
 import { formatBusinessTarget } from '@/lib/grid-target';
 import { formatDistance, spacingOptions, type DistanceUnit } from '@/lib/grid-preferences';
 import { useGridPreferences } from './GridPreferences';
+import { DEFAULT_GRID_DEPTH, GRID_DEPTH_OPTIONS, GRID_DEVICE_LABELS, GRID_DEVICES, normalizeGridDepth } from '@/modules/grade/grid-config';
 
 const MapPicker = lazy(() => import('./MapPicker'));
 
@@ -228,6 +229,34 @@ export default function LocalFinderForm({ defaults }: Props) {
               </select>
             </div>
           </div>
+
+          {/* Device + depth posted to Local Finder for every point */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <span className="nexo-label block mb-1.5" id="grid-device-label">Dispositivo</span>
+              <input type="hidden" name="device" value={device} />
+              <div className="nexo-seg" role="group" aria-labelledby="grid-device-label">
+                {GRID_DEVICES.map((option) => (
+                  <button key={option} type="button" onClick={() => setDevice(option)} aria-pressed={device === option}
+                    className={`transition-colors hover:text-white ${device === option ? 'active' : ''}`}>
+                    {GRID_DEVICE_LABELS[option]}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label className="nexo-label block mb-1.5" htmlFor="grid-depth">Profundidade · resultados por ponto</label>
+              <select
+                id="grid-depth"
+                name="depth"
+                defaultValue={String(normalizeGridDepth(defaults.depth))}
+                className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
+              >
+                {GRID_DEPTH_OPTIONS.map((option) => <option key={option} value={option}>{option === DEFAULT_GRID_DEPTH ? `${option} (padrão)` : option}</option>)}
+              </select>
+            </div>
+          </div>
+          <p className="text-[11px] text-nexo-faint -mt-2">Cada combinação de dispositivo e profundidade é um monitor próprio. A estimativa abaixo usa o mesmo preço por ponto em qualquer profundidade; cada execução registra o custo real.</p>
 
           {/* Grid preview */}
           <div className="bg-white/[0.02] rounded-nexo-lg border border-nexo-border p-4">

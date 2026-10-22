@@ -9,6 +9,7 @@ export default function robots(): MetadataRoute.Robots {
       disallow: [
         '/dashboard',     // Keep the app UI out of search results
         '/api/',          // Don't crawl internal API routes
+        '/r/',            // Shared report links are private
         '/_next/',        // Standard Next.js internal files
       ],
     },

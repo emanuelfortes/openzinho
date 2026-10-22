@@ -1,6 +1,23 @@
 import type { GridPoint, GridLocalItem, GridTaskPoint } from '@/lib/db';
 import { matchesGridTarget } from '@/lib/grid-target';
 import { pointKey } from '@/modules/grade/metrics';
+import { gridConfigKey, normalizeGridConfig, type GridQueryConfig } from '@/modules/grade/grid-config';
+
+/** One Local Finder task. Device and depth come from the monitor or campaign (desktop, 20 by default). */
+export function localFinderTask(
+  keyword: string, lat: number, lng: number, language: string,
+  config?: Partial<GridQueryConfig>, priority?: 1 | 2,
+): Record<string, string | number> {
+  const { device, depth } = normalizeGridConfig(config);
+  return {
+    keyword,
+    location_coordinate: `${lat.toFixed(6)},${lng.toFixed(6)}`,
+    language_name: language,
+    device,
+    depth,
+    ...(priority ? { priority } : {}),
+  };
+}
 
 export interface LocalPackItem {
   type: string;
@@ -53,19 +70,14 @@ async function mapWithConcurrency<T, R>(
 }
 
 async function requestGridPoint(
-  keyword: string, lat: number, lng: number, language: string, auth: string,
+  keyword: string, lat: number, lng: number, language: string, auth: string, config?: Partial<GridQueryConfig>,
 ): Promise<{ items: LocalPackItem[]; cost: number; error?: string }> {
   let res: Response;
   try {
     res = await fetch('https://api.dataforseo.com/v3/serp/google/local_finder/live/advanced', {
       method: 'POST',
       headers: { Authorization: `Basic ${auth}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify([{
-        keyword,
-        location_coordinate: `${lat.toFixed(6)},${lng.toFixed(6)}`,
-        language_name: language,
-        depth: 20,
-      }]),
+      body: JSON.stringify([localFinderTask(keyword, lat, lng, language, config)]),
       signal: AbortSignal.timeout(45_000),
     });
   } catch (e) {
@@ -84,12 +96,12 @@ async function requestGridPoint(
 }
 
 export async function fetchOneGridPoint(
-  keyword: string, lat: number, lng: number, language: string, auth: string,
+  keyword: string, lat: number, lng: number, language: string, auth: string, config?: Partial<GridQueryConfig>,
 ): Promise<{ items: LocalPackItem[]; cost: number }> {
-  let result = await requestGridPoint(keyword, lat, lng, language, auth);
+  let result = await requestGridPoint(keyword, lat, lng, language, auth, config);
   if (result.error) {
     // Transient failures (timeouts, rate limiting) are common under concurrent load; retry once.
-    result = await requestGridPoint(keyword, lat, lng, language, auth);
+    result = await requestGridPoint(keyword, lat, lng, language, auth, config);
   }
   return { items: result.items, cost: result.cost };
 }
@@ -97,7 +109,7 @@ export async function fetchOneGridPoint(
 export async function fetchGridSearch(
   keyword: string, center: string, gridSize: number, spacingKm: number,
   language: string, target: string, login: string, pass: string,
-  inactivePoints: ReadonlySet<string> = new Set(),
+  inactivePoints: ReadonlySet<string> = new Set(), config?: Partial<GridQueryConfig>,
 ): Promise<{ results: GridPoint[]; cost: number; error?: string }> {
   const parts = center.split(',').map(Number);
   if (parts.length < 2 || isNaN(parts[0]) || isNaN(parts[1])) {
@@ -111,7 +123,7 @@ export async function fetchGridSearch(
   const pointResults = await mapWithConcurrency(
     coords, 6,
     async ({ row, col, lat, lng }) => {
-      const { items: rawItems, cost } = await fetchOneGridPoint(keyword, lat, lng, language, auth);
+      const { items: rawItems, cost } = await fetchOneGridPoint(keyword, lat, lng, language, auth, config);
 
       const isTarget = (item: LocalPackItem) => matchesGridTarget(target, item);
 
@@ -139,7 +151,7 @@ export async function fetchGridSearch(
 export async function postGridTasksQueue(
   keyword: string, center: string, gridSize: number, spacingKm: number,
   language: string, login: string, pass: string, priorityMode: 'priority' | 'standard' = 'standard',
-  inactivePoints: ReadonlySet<string> = new Set(),
+  inactivePoints: ReadonlySet<string> = new Set(), config?: Partial<GridQueryConfig>,
 ): Promise<{ taskPoints: GridTaskPoint[]; cost: number; error?: string }> {
   const parts = center.split(',').map(Number);
   if (parts.length < 2 || isNaN(parts[0]) || isNaN(parts[1])) {
@@ -158,13 +170,7 @@ export async function postGridTasksQueue(
 
   for (let i = 0; i < coords.length; i += CHUNK) {
     const chunk = coords.slice(i, i + CHUNK);
-    const body = chunk.map(({ lat, lng }) => ({
-      keyword,
-      location_coordinate: `${lat.toFixed(6)},${lng.toFixed(6)}`,
-      language_name: language,
-      depth: 20,
-      priority,
-    }));
+    const body = chunk.map(({ lat, lng }) => localFinderTask(keyword, lat, lng, language, config, priority));
     // On failure, still return the chunks already posted: those tasks are billed, and
     // callers keep them as a partial run rather than losing them or posting them twice.
     let data: { tasks?: Array<{ id?: string; status_code?: number; cost?: number }> };
@@ -195,10 +201,12 @@ export async function postGridTasksQueue(
 
 export function stableGridId(
   keyword: string, center: string, gridSize: number,
-  spacingKm: number, target: string, queueMode: string,
+  spacingKm: number, target: string, queueMode: string, config?: Partial<GridQueryConfig>,
 ): string {
   const window = Math.floor(Date.now() / 60_000);
-  const key = `${window}|${keyword}|${center}|${gridSize}|${spacingKm}|${target}|${queueMode}`;
+  // Desktop at depth 20 adds nothing, keeping the key of runs started before device/depth existed.
+  const configKey = gridConfigKey(config);
+  const key = `${window}|${keyword}|${center}|${gridSize}|${spacingKm}|${target}|${queueMode}${configKey ? `|${configKey}` : ''}`;
   let h = 0x811c9dc5;
   for (let i = 0; i < key.length; i++) {
     h ^= key.charCodeAt(i);

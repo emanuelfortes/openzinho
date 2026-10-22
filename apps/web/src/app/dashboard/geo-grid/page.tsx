@@ -18,6 +18,7 @@ import DeleteMonitorButton from '../local-finder/DeleteMonitorButton';
 import { fetchGridSearch, postGridTasksQueue, stableGridId } from '../local-finder/grid-api';
 import { getBudgetStatus } from '@/modules/custos/budget';
 import { getInactivePoints } from '@/modules/grade/inactive-points-db';
+import { describeGridConfig, gridConfigKey, normalizeGridConfig } from '@/modules/grade/grid-config';
 
 interface SearchParams {
   keyword?: string;
@@ -28,6 +29,8 @@ interface SearchParams {
   grid_target?: string;
   grid_history_id?: string;
   queue_mode?: string;
+  device?: string;
+  depth?: string;
 }
 
 function formatDate(ts: number) {
@@ -37,7 +40,8 @@ function formatDate(ts: number) {
   });
 }
 
-function gridRerunUrl(entry: { keyword: string; center: string; grid_size: number; spacing_km: number; target: string; language: string; queue_mode: string }, basePath = '/dashboard/geo-grid') {
+function gridRerunUrl(entry: { keyword: string; center: string; grid_size: number; spacing_km: number; target: string; language: string; queue_mode: string; device?: string; depth?: number }, basePath = '/dashboard/geo-grid') {
+  const config = normalizeGridConfig(entry);
   const p = new URLSearchParams({
     keyword: entry.keyword,
     location_coordinate: entry.center,
@@ -46,6 +50,8 @@ function gridRerunUrl(entry: { keyword: string; center: string; grid_size: numbe
     grid_target: entry.target,
     language: entry.language,
     queue_mode: entry.queue_mode,
+    device: config.device,
+    depth: String(config.depth),
     mode: 'grid',
   });
   return `${basePath}?${p.toString()}`;
@@ -56,7 +62,7 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
   const params = await searchParams;
   const gridHistoryId = params.grid_history_id;
 
-  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
+  const defaultLanguage = getSetting('default_language') || 'Portuguese';
   const defaultCoordinates = getSetting('default_coordinates') ?? '';
   const defaultDomain = getSetting('default_domain') ?? '';
   const brand = getBrandSettings();
@@ -96,12 +102,14 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
       const spacingKm = parseFloat(params.spacing_km ?? '1');
       const queueMode = (params.queue_mode ?? 'live') as GridQueueMode;
       const language = params.language ?? defaultLanguage;
+      // Device and depth posted to Local Finder (desktop, 20 by default), kept with the run.
+      const config = normalizeGridConfig(params);
       const seriesId = gridSeriesId(
-        params.keyword, params.location_coordinate, gridSize, spacingKm, params.grid_target, language,
+        params.keyword, params.location_coordinate, gridSize, spacingKm, params.grid_target, language, config,
       );
 
       const id = stableGridId(
-        params.keyword, params.location_coordinate, gridSize, spacingKm, params.grid_target, queueMode,
+        params.keyword, params.location_coordinate, gridSize, spacingKm, params.grid_target, queueMode, config,
       );
 
       const budget = getGridEntry(id) ? null : getBudgetStatus(getCurrentProject().id);
@@ -119,6 +127,9 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
           language,
           status: 'done',
           queue_mode: queueMode,
+          ...config,
+          // A manual run of a campaign keyword still counts toward that campaign's spend.
+          campaign_id: getGridSchedule(seriesId)?.campaign_id ?? '',
         };
 
         const inactivePoints = getInactivePoints({ center: params.location_coordinate, grid_size: gridSize, spacing_km: spacingKm });
@@ -126,7 +137,7 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
           const result = await fetchGridSearch(
             params.keyword, params.location_coordinate,
             gridSize, spacingKm, params.language ?? defaultLanguage,
-            params.grid_target, creds.login, creds.pass, inactivePoints,
+            params.grid_target, creds.login, creds.pass, inactivePoints, config,
           );
           if (result.error) {
             gridError = result.error;
@@ -137,7 +148,7 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
           const result = await postGridTasksQueue(
             params.keyword, params.location_coordinate,
             gridSize, spacingKm, params.language ?? defaultLanguage,
-            creds.login, creds.pass, queueMode, inactivePoints,
+            creds.login, creds.pass, queueMode, inactivePoints, config,
           );
           if (result.error) gridError = result.error;
           // A failure after some chunks were posted still leaves billed tasks to collect.
@@ -203,9 +214,9 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
     locationCoordinate: (params.location_coordinate ?? gridEntry?.center ?? '').toString(),
     defaultCenter: defaultCoordinates,
     language: (params.language ?? gridEntry?.language ?? defaultLanguage).toString(),
-    device: 'desktop',
+    device: normalizeGridConfig({ device: params.device ?? gridEntry?.device }).device,
     os: 'windows',
-    depth: '20',
+    depth: String(normalizeGridConfig({ depth: params.depth ?? gridEntry?.depth }).depth),
     minRating: '',
     timeFilter: '',
     gridMode: true,
@@ -234,6 +245,7 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
           </div>
           <p className="text-[11px] text-nexo-faint mt-0.5 truncate">
             {entry.target} · espaçamento de {formatDistance(entry.spacing_km, distanceUnit)}
+            {gridConfigKey(entry) ? ` · ${describeGridConfig(entry).toLowerCase()}` : ''}
             {entry.cost !== undefined ? ` · US$ ${entry.cost.toFixed(4).replace('.', ',')}` : ''}
           </p>
           {entry.summary && (

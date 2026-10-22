@@ -81,6 +81,7 @@ async function runPass(credentials: { login: string; pass: string }) {
         schedule.keyword, schedule.center, schedule.grid_size, schedule.spacing_km, schedule.language,
         credentials.login, credentials.pass, schedule.queue_mode === 'priority' ? 'priority' : 'standard',
         getInactivePoints(schedule, schedule.projectId),
+        { device: schedule.device, depth: schedule.depth },
       );
       if (result.error) failed.push({ seriesId: schedule.series_id, error: result.error });
       if (result.taskPoints.length === 0) {
@@ -101,6 +102,10 @@ async function runPass(credentials: { login: string; pass: string }) {
         language: schedule.language,
         status: 'pending',
         queue_mode: schedule.queue_mode,
+        // The run keeps the configuration it was posted with, and its campaign for monthly spend.
+        device: schedule.device,
+        depth: schedule.depth,
+        campaign_id: schedule.campaign_id ?? '',
         cost: result.cost,
       };
       saveGridSearchPendingForProject(schedule.projectId, entry, result.taskPoints);

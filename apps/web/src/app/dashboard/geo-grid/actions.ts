@@ -36,6 +36,9 @@ export async function updateGridSchedule(formData: FormData) {
         spacing_km: entry.spacing_km,
         language: entry.language,
         queue_mode: queueMode === 'priority' || queueMode === 'standard' ? queueMode : 'standard',
+        // Scheduled runs repeat the device and depth of the run the monitor was opened from.
+        device: entry.device,
+        depth: entry.depth,
         frequency,
         weekday: frequency === 'weekly' || frequency === 'biweekly' ? Number(formData.get('weekday')) : null,
         month_day: frequency === 'monthly' ? Number(formData.get('month_day')) : null,

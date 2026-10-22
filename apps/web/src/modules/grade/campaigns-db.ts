@@ -8,6 +8,8 @@ import {
   type GridScheduleFrequency,
 } from '@/lib/db';
 import { clampMonthDay } from './cadence';
+import { revokeShareTokens } from '@/modules/relatorio/share-tokens';
+import { normalizeGridConfig } from './grid-config';
 import {
   CAMPAIGN_GRID_SIZES, MAX_CAMPAIGN_KEYWORDS, normalizeKeywords, normalizeTags, parseCenter,
   type GridCampaign, type GridCampaignInput,
@@ -49,7 +51,10 @@ function db(): Database.Database {
         updated_at INTEGER NOT NULL
       );
     `);
-    for (const column of [`tags TEXT NOT NULL DEFAULT '[]'`, `owner TEXT NOT NULL DEFAULT ''`]) {
+    for (const column of [
+      `tags TEXT NOT NULL DEFAULT '[]'`, `owner TEXT NOT NULL DEFAULT ''`,
+      `device TEXT NOT NULL DEFAULT 'desktop'`, 'depth INTEGER NOT NULL DEFAULT 20',
+    ]) {
       try {
         handle.exec(`ALTER TABLE grade_campaigns ADD COLUMN ${column}`);
       } catch (error) {
@@ -61,8 +66,9 @@ function db(): Database.Database {
   return handle;
 }
 
-type CampaignRow = Omit<GridCampaign, 'keywords' | 'active' | 'queue_mode' | 'frequency' | 'tags' | 'owner'> & {
+type CampaignRow = Omit<GridCampaign, 'keywords' | 'active' | 'queue_mode' | 'frequency' | 'tags' | 'owner' | 'device' | 'depth'> & {
   keywords: string; active: number; queue_mode: string; frequency: string; tags: string | null; owner: string | null;
+  device: string | null; depth: number | null;
 };
 
 function fromRow(row: CampaignRow): GridCampaign {
@@ -74,6 +80,7 @@ function fromRow(row: CampaignRow): GridCampaign {
     active: row.active === 1,
     tags: row.tags ? JSON.parse(row.tags) as string[] : [],
     owner: row.owner ?? '',
+    ...normalizeGridConfig(row),
   };
 }
 
@@ -102,14 +109,18 @@ export function validateCampaign(input: GridCampaignInput): { campaign: GridCamp
       language: input.language.trim() || 'Portuguese',
       tags: normalizeTags(input.tags),
       owner: (input.owner ?? '').trim().slice(0, 80),
+      ...normalizeGridConfig(input),
       weekday: usesWeekday ? (input.weekday != null && input.weekday >= 0 && input.weekday <= 6 ? input.weekday : 1) : null,
       month_day: input.frequency === 'monthly' ? clampMonthDay(input.month_day) : null,
     },
   };
 }
 
-export function campaignSeriesId(campaign: Pick<GridCampaignInput, 'center' | 'grid_size' | 'spacing_km' | 'target' | 'language'>, keyword: string): string {
-  return gridSeriesId(keyword, campaign.center, campaign.grid_size, campaign.spacing_km, campaign.target, campaign.language);
+/** Device and depth are part of the series: a mobile or deeper scan is a different monitor. */
+export function campaignSeriesId(
+  campaign: Pick<GridCampaignInput, 'center' | 'grid_size' | 'spacing_km' | 'target' | 'language' | 'device' | 'depth'>, keyword: string,
+): string {
+  return gridSeriesId(keyword, campaign.center, campaign.grid_size, campaign.spacing_km, campaign.target, campaign.language, campaign);
 }
 
 export function listCampaigns(): GridCampaign[] {
@@ -133,19 +144,22 @@ function scheduledSeries(campaignId: string): string[] {
 export function saveCampaign(input: GridCampaignInput, id?: string): GridCampaign {
   const now = Date.now();
   const existing = id ? getCampaign(id) : null;
-  const campaign: GridCampaign = { ...input, id: existing?.id ?? randomUUID(), created_at: existing?.created_at ?? now, updated_at: now };
+  const campaign: GridCampaign = {
+    ...input, ...normalizeGridConfig(input), id: existing?.id ?? randomUUID(), created_at: existing?.created_at ?? now, updated_at: now,
+  };
   const handle = db();
 
   handle.transaction(() => {
     handle.prepare(`INSERT INTO grade_campaigns
-      (id, name, target, center, grid_size, spacing_km, language, queue_mode, frequency, weekday, month_day, time_of_day, time_zone, keywords, active, tags, owner, created_at, updated_at)
-      VALUES (@id, @name, @target, @center, @grid_size, @spacing_km, @language, @queue_mode, @frequency, @weekday, @month_day, @time_of_day, @time_zone, @keywords, @active, @tags, @owner, @created_at, @updated_at)
+      (id, name, target, center, grid_size, spacing_km, language, queue_mode, frequency, weekday, month_day, time_of_day, time_zone, keywords, active, tags, owner, device, depth, created_at, updated_at)
+      VALUES (@id, @name, @target, @center, @grid_size, @spacing_km, @language, @queue_mode, @frequency, @weekday, @month_day, @time_of_day, @time_zone, @keywords, @active, @tags, @owner, @device, @depth, @created_at, @updated_at)
       ON CONFLICT(id) DO UPDATE SET
         name = excluded.name, target = excluded.target, center = excluded.center, grid_size = excluded.grid_size,
         spacing_km = excluded.spacing_km, language = excluded.language, queue_mode = excluded.queue_mode,
         frequency = excluded.frequency, weekday = excluded.weekday, month_day = excluded.month_day,
         time_of_day = excluded.time_of_day, time_zone = excluded.time_zone, keywords = excluded.keywords,
-        active = excluded.active, tags = excluded.tags, owner = excluded.owner, updated_at = excluded.updated_at`)
+        active = excluded.active, tags = excluded.tags, owner = excluded.owner, device = excluded.device, depth = excluded.depth,
+        updated_at = excluded.updated_at`)
       .run({
         ...campaign, keywords: JSON.stringify(campaign.keywords), active: campaign.active ? 1 : 0,
         tags: JSON.stringify(normalizeTags(campaign.tags)), owner: campaign.owner ?? '',
@@ -162,6 +176,7 @@ export function saveCampaign(input: GridCampaignInput, id?: string): GridCampaig
         grid_size: campaign.grid_size, spacing_km: campaign.spacing_km, language: campaign.language,
         queue_mode: campaign.queue_mode, frequency: campaign.frequency, weekday: campaign.weekday, month_day: campaign.month_day,
         campaign_id: campaign.id, time_of_day: campaign.time_of_day, time_zone: campaign.time_zone,
+        device: campaign.device, depth: campaign.depth,
       });
     }
   })();
@@ -175,6 +190,8 @@ export function deleteCampaign(id: string): void {
     for (const seriesId of scheduledSeries(id)) deleteGridSchedule(seriesId);
     handle.prepare('DELETE FROM grade_campaigns WHERE id = ?').run(id);
   })();
+  // Shared report links of a deleted campaign already 404; this just cleans them up.
+  revokeShareTokens(id);
 }
 
 /** Makes every keyword due now; the worker posts them on its next pass (about a minute). */
@@ -197,11 +214,15 @@ export function getCampaignKeywordStatus(campaign: GridCampaign): CampaignKeywor
   });
 }
 
-/** DataForSEO cost reported for the campaign's runs since `since`, in USD. */
+/**
+ * DataForSEO cost reported for the campaign's runs since `since`, in USD: every run the campaign
+ * started (also on grids it no longer uses, since edits start new series) plus manual runs of its
+ * current keywords from the Geo-grid page.
+ */
 export function getCampaignSpend(campaign: GridCampaign, since: number): number {
   const seriesIds = campaign.keywords.map((keyword) => campaignSeriesId(campaign, keyword));
-  if (seriesIds.length === 0) return 0;
+  const series = seriesIds.length > 0 ? ` OR series_id IN (${seriesIds.map(() => '?').join(', ')})` : '';
   const row = db().prepare(`SELECT COALESCE(SUM(cost), 0) AS total FROM grid_searches
-    WHERE ts >= ? AND series_id IN (${seriesIds.map(() => '?').join(', ')})`).get(since, ...seriesIds) as { total: number };
+    WHERE ts >= ? AND (campaign_id = ?${series})`).get(since, campaign.id, ...seriesIds) as { total: number };
   return row.total;
 }
