@@ -52,7 +52,7 @@ describe('backup', () => {
     const result = await runBackup('2026-10-22');
     expect(result.ok).toBe(true);
     const files = fs.readdirSync(path.join(tmpDir, 'backups', '2026-10-22'));
-    expect(files).toContain('projects.db');
+    expect(files).toContain('test.db.projects');
   });
 
   it('keeps the last N days', () => {

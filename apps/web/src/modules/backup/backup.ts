@@ -39,7 +39,8 @@ export async function runBackup(today: string): Promise<JobResult> {
 
   let bytes = 0;
   for (const file of files) {
-    const destination = path.join(target, `${file.label}.db`);
+    // Same file name as the original, so restoring is a plain copy back into the data folder.
+    const destination = path.join(target, path.basename(file.path));
     const source = new Database(file.path, { readonly: true, fileMustExist: true });
     try {
       await source.backup(destination);

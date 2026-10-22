@@ -1,0 +1,93 @@
+# Nexo in production on one server (VPS). Builds the image from this repository, so the
+# server runs exactly this code — not the upstream SEO Playground image.
+#
+#   cp .env.example .env        # fill in the Nexo section
+#   docker compose -f docker-compose.nexo.yml up -d --build
+#   docker compose -f docker-compose.nexo.yml --profile https up -d --build   # with HTTPS (Caddy)
+#
+# See docs/DEPLOY-NEXO.md at the repository root.
+services:
+  init:
+    image: busybox:1.36
+    volumes:
+      - nexo-data:/data
+    command: >
+      sh -c 'if [ ! -s /data/.geo-grid-worker-secret ]; then
+      umask 077 && head -c 48 /dev/urandom | base64 > /data/.geo-grid-worker-secret;
+      fi && mkdir -p /data/backups && chown -R 1001:1001 /data && chmod 600 /data/.geo-grid-worker-secret'
+    restart: "no"
+
+  app:
+    build:
+      context: .
+      args:
+        APP_VERSION: ${NEXO_VERSION:-dev}
+    image: nexo-web:${NEXO_VERSION:-dev}
+    # Loopback only: reach it through the https profile below or your own reverse proxy.
+    ports:
+      - "${NEXO_BIND:-127.0.0.1}:${NEXO_PORT:-3000}:3000"
+    volumes:
+      - nexo-data:/data
+    environment:
+      DB_PATH: /data/seo-playground.db
+      CRON_SECRET: ${CRON_SECRET:-}
+      CRON_SECRET_FILE: /data/.geo-grid-worker-secret
+      # Login is ON by default here: the dashboard spends DataForSEO credit.
+      AUTH_ENABLED: ${AUTH_ENABLED:-true}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-}
+      NEXO_PUBLIC_URL: ${NEXO_PUBLIC_URL:-}
+      NEXO_TIME_ZONE: ${NEXO_TIME_ZONE:-America/Sao_Paulo}
+      BACKUP_DIR: ${BACKUP_DIR:-/data/backups}
+      BACKUP_KEEP_DAYS: ${BACKUP_KEEP_DAYS:-14}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+      UPDATE_CHECK_REPO: ${UPDATE_CHECK_REPO:-}
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+  worker:
+    image: nexo-web:${NEXO_VERSION:-dev}
+    command: ["node", "scripts/geo-grid-worker.mjs"]
+    volumes:
+      - nexo-data:/data:ro
+    environment:
+      CRON_SECRET: ${CRON_SECRET:-}
+      CRON_SECRET_FILE: /data/.geo-grid-worker-secret
+      GEO_GRID_WORKER_URL: http://app:3000
+      GEO_GRID_WORKER_INTERVAL_MS: ${GEO_GRID_WORKER_INTERVAL_MS:-60000}
+    depends_on:
+      init:
+        condition: service_completed_successfully
+      app:
+        condition: service_started
+    restart: unless-stopped
+
+  # Optional HTTPS with automatic Let's Encrypt certificates. Point NEXO_DOMAIN's DNS to the server first.
+  caddy:
+    profiles: ["https"]
+    image: caddy:2.8.4-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      NEXO_DOMAIN: ${NEXO_DOMAIN:-}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      app:
+        condition: service_started
+    restart: unless-stopped
+
+volumes:
+  nexo-data:
+  caddy-data:
+  caddy-config:
