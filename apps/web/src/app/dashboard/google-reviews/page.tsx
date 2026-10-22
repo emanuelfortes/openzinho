@@ -16,6 +16,8 @@ import CopyMarkdownButton from '@/components/CopyMarkdownButton';
 import ExportExcelButton from '@/components/ExportExcelButton';
 import ReportPdfExportButton from '@/components/ReportPdfExportButton';
 import { CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import ReviewFiltersForm from '@/modules/avaliacoes/ReviewFilters';
+import { filterReviews, parseReviewFilters } from '@/modules/avaliacoes/filter';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -63,6 +65,10 @@ interface BusinessMeta {
 
 interface SearchParams {
   id?: string;
+  nota?: string;
+  resposta?: string;
+  periodo?: string;
+  q?: string;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -614,6 +620,9 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
   const reviews: Review[] = activeTask?.status === 'ready' ? (getReviewsTaskResult<Review>(activeTask.id) ?? []) : [];
   const meta: BusinessMeta | null = activeTask?.status === 'ready' ? getReviewsTaskMeta<BusinessMeta>(activeTask.id) : null;
 
+  const reviewFilters = parseReviewFilters({ ...params });
+  const filteredReviews = filterReviews(reviews, reviewFilters);
+
   const ratings = reviews.map((r) => r.rating?.value ?? 0).filter((v) => v > 0);
   const avgRating = ratings.length > 0 ? ratings.reduce((a, b) => a + b, 0) / ratings.length : null;
   const fiveStarPct = ratings.length > 0 ? ((ratings.filter((v) => v >= 4.5).length / ratings.length) * 100).toFixed(0) : null;
@@ -897,8 +906,12 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
                 />
               </div>
             </div>
+            <ReviewFiltersForm taskId={activeTask.id} filters={reviewFilters} shown={filteredReviews.length} total={reviews.length} />
             <div className="divide-y divide-nexo-border">
-              {reviews.slice(0, 100).map((r, i) => (
+              {filteredReviews.length === 0 && (
+                <div className="px-6 py-8 text-center text-sm text-nexo-faint">Nenhuma avaliação com estes filtros.</div>
+              )}
+              {filteredReviews.slice(0, 100).map((r, i) => (
                 <div key={i} className="px-6 py-4 space-y-1.5">
                   <div className="flex items-center gap-2 flex-wrap">
                     {r.rating?.value !== undefined && <StarRow value={r.rating.value} />}
@@ -930,9 +943,9 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
                   )}
                 </div>
               ))}
-              {reviews.length > 100 && (
+              {filteredReviews.length > 100 && (
                 <div className="px-6 py-4 text-center text-xs text-nexo-faint">
-                  {reviews.length - 100} avaliações a mais não exibidas.
+                  {filteredReviews.length - 100} avaliações a mais não exibidas. Use os filtros para encontrar as outras.
                 </div>
               )}
             </div>
