@@ -9,5 +9,8 @@ export default defineConfig({
   },
   test: {
     environment: 'node',
+    // Opening a project database seeds the DataForSEO location tables (a few seconds each); with
+    // several DB test files in parallel on a slow disk the 5 s default times out.
+    testTimeout: 20_000,
   },
 });

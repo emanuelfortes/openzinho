@@ -12,6 +12,7 @@ import { getCampaign, getCampaignKeywordStatus, getCampaignSpend, listCampaigns,
 import { estimateCampaign } from '@/modules/grade/estimate';
 import { computeGradeMetrics } from '@/modules/grade/metrics';
 import { formatBrl, getBudgetStatus, type BudgetStatus } from '@/modules/custos/budget';
+import { getInactivePoints, gridPointsHref } from '@/modules/grade/inactive-points-db';
 import { runCampaignNowAction } from './actions';
 
 interface SearchParams {
@@ -46,7 +47,11 @@ function CampaignCard({ campaign, queued, distanceUnit, budget }: { campaign: Gr
   const keywords = getCampaignKeywordStatus(campaign);
   const nextRuns = keywords.map((keyword) => keyword.next_run_at).filter((value): value is number => value !== null);
   const nextRun = nextRuns.length > 0 ? Math.min(...nextRuns) : null;
-  const estimate = estimateCampaign({ gridSize: campaign.grid_size, keywordCount: campaign.keywords.length, frequency: campaign.frequency, queueMode: campaign.queue_mode });
+  const inactive = getInactivePoints(campaign);
+  const estimate = estimateCampaign({
+    gridSize: campaign.grid_size, keywordCount: campaign.keywords.length, frequency: campaign.frequency,
+    queueMode: campaign.queue_mode, inactivePoints: inactive.size,
+  });
   const spent = getCampaignSpend(campaign, monthStart());
 
   return (
@@ -76,6 +81,9 @@ function CampaignCard({ campaign, queued, distanceUnit, budget }: { campaign: Gr
               </button>
             </form>
           )}
+          <Link href={gridPointsHref(campaign, `/dashboard/campaigns#campaign-${campaign.id}`)} className="nexo-section hover:text-white">
+            Pontos{inactive.size > 0 ? ` · ${inactive.size} desligados` : ''}
+          </Link>
           <Link href={`/dashboard/campaigns?edit=${campaign.id}`} className="nexo-section hover:text-white">Editar</Link>
           <DeleteCampaignButton id={campaign.id} />
         </div>
@@ -101,7 +109,7 @@ function CampaignCard({ campaign, queued, distanceUnit, budget }: { campaign: Gr
           <tbody>
             {keywords.map((keyword) => {
               const results = keyword.latestDoneRunId ? getGridResults(keyword.latestDoneRunId) : null;
-              const metrics = results ? computeGradeMetrics(results) : null;
+              const metrics = results ? computeGradeMetrics(results, inactive) : null;
               return (
                 <tr key={keyword.series_id} className="border-b border-nexo-border last:border-0">
                   <td className="py-2 pr-3 font-medium text-nexo-text">
@@ -168,7 +176,11 @@ async function CampaignsPage({ searchParams }: { searchParams: Promise<SearchPar
       {showForm && (
         <section className="rounded-nexo-lg border border-nexo-border bg-nexo-surface p-5 sm:p-6">
           <h2 className="mb-4 text-sm font-medium text-nexo-text">{editing ? `Editar “${editing.name}”` : 'Nova campanha'}</h2>
-          <CampaignForm key={editing?.id ?? 'new'} campaign={editing} defaults={defaults} distanceUnit={distanceUnit} budget={{ brlPerUsd: budget.brlPerUsd, clientCapBrl: budget.clientCapBrl, clientSpentBrl: budget.clientSpentBrl }} />
+          <CampaignForm
+            key={editing?.id ?? 'new'} campaign={editing} defaults={defaults} distanceUnit={distanceUnit}
+            budget={{ brlPerUsd: budget.brlPerUsd, clientCapBrl: budget.clientCapBrl, clientSpentBrl: budget.clientSpentBrl }}
+            inactivePoints={editing ? [...getInactivePoints(editing)] : []}
+          />
         </section>
       )}
 

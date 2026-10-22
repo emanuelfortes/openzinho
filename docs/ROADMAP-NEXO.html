@@ -284,7 +284,7 @@ const ROADMAP = [
     { t:'Em dólar', s:'ok' },
     { t:'Em real, com a cotação configurável (padrão R$ 5,60)', s:'ok', onde:'modules/custos/budget.ts' },
     { t:'Aviso quando a campanha sozinha passa do teto do cliente', s:'ok' },
-    { t:'Descontando pontos inativos', s:'falta' }
+    { t:'Descontando pontos inativos', s:'ok' }
   ]},
   { t:'Custo real registrado por cliente', s:'ok', onde:'grid_searches.cost · /dashboard/spending' },
   { t:'Gasto do mês por campanha, em R$', s:'parcial', nota:'mostrado no cartão da campanha; não soma grades antigas da mesma campanha' },
@@ -326,7 +326,7 @@ const ROADMAP = [
 /* ===================== P2 ===================== */
 { fase:'p2', n:10, tag:'A', nome:'Grade de ranking', itens:[
   { ref:6, t:'Comparativo com até 3 concorrentes', s:'parcial', onde:'GridResults.tsx — "Ver no mapa"', nota:'troca o mapa para um concorrente e lista os concorrentes; falta a visão lado a lado' },
-  { ref:7, t:'Desativar pontos da grade (mar, rio, parque)', s:'falta', nota:'foi feito e revertido em 17/10; o commit 3ced0da pode ser reaproveitado' },
+  { ref:7, t:'Desativar pontos da grade (mar, rio, parque)', s:'ok', onde:'/dashboard/grid-points · modules/grade/inactive-points-db.ts', nota:'não são consultados nem cobrados, saem das métricas e da estimativa; valem para todas as palavras da mesma grade' },
   { ref:8, t:'Painel de campanhas', s:'parcial', onde:'/dashboard/campaigns', micro:[
     { t:'Lista com posição média, SoV e top 3 por palavra', s:'ok' },
     { t:'Etiquetas e filtro por responsável', s:'falta' },

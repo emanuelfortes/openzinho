@@ -8,6 +8,7 @@ import type { GridScheduleFrequency } from '@/lib/db';
 import { CAMPAIGN_GRID_SIZES, MAX_CAMPAIGN_KEYWORDS, normalizeKeywords, type GridCampaign } from './campaigns-shared';
 import { estimateCampaign } from './estimate';
 import { formatBrl } from '@/modules/custos/budget-shared';
+import { gridGeometryKey } from './inactive-points';
 
 const MapPicker = lazy(() => import('@/app/dashboard/local-finder/MapPicker'));
 
@@ -19,12 +20,14 @@ type Props = {
   distanceUnit: DistanceUnit;
   /** Exchange rate and the client's monthly cap, to show the estimate in reais. */
   budget: { brlPerUsd: number; clientCapBrl: number | null; clientSpentBrl: number };
+  /** Inactive points of the campaign's saved grid. */
+  inactivePoints: string[];
 };
 
 const field = 'nexo-input min-w-0 w-full px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky';
 const label = 'nexo-label mb-1.5 block';
 
-export default function CampaignForm({ campaign, defaults, distanceUnit, budget }: Props) {
+export default function CampaignForm({ campaign, defaults, distanceUnit, budget, inactivePoints }: Props) {
   const [state, formAction, pending] = useActionState(saveCampaignAction, undefined);
   const [center, setCenter] = useState(campaign?.center ?? defaults.center);
   const [target, setTarget] = useState(campaign?.target ?? defaults.target);
@@ -41,9 +44,13 @@ export default function CampaignForm({ campaign, defaults, distanceUnit, budget 
   }, [campaign]);
 
   const keywordCount = normalizeKeywords(keywords.split(/\r?\n/)).length;
+  // Inactive points belong to a grid; they stop applying once the center, size or spacing changes.
+  const sameGrid = campaign !== null
+    && gridGeometryKey({ center, grid_size: gridSize, spacing_km: spacingKm }) === gridGeometryKey(campaign);
+  const inactiveCount = sameGrid ? inactivePoints.length : 0;
   const estimate = useMemo(
-    () => estimateCampaign({ gridSize, keywordCount, frequency, queueMode }),
-    [gridSize, keywordCount, frequency, queueMode],
+    () => estimateCampaign({ gridSize, keywordCount, frequency, queueMode, inactivePoints: inactiveCount }),
+    [gridSize, keywordCount, frequency, queueMode, inactiveCount],
   );
   const usesWeekday = frequency === 'weekly' || frequency === 'biweekly';
   const perMonthBrl = estimate.perMonthUsd * budget.brlPerUsd;
@@ -163,7 +170,11 @@ export default function CampaignForm({ campaign, defaults, distanceUnit, budget 
               : `Teto mensal do cliente: ${formatBrl(budget.clientCapBrl)}, com ${formatBrl(budget.clientSpentBrl)} já gastos neste mês.`}
           </p>
         )}
-        <p className="mt-1 text-[10px] text-nexo-faint">Estimativa indicativa pelo preço de tabela, com o dólar a {formatBrl(budget.brlPerUsd)}; o DataForSEO cobra o que ele informa, e cada execução registra seu custo real. Fuso horário: {timeZone.replace(/_/g, ' ')}.</p>
+        <p className="mt-1 text-[10px] text-nexo-faint">
+          {inactiveCount > 0 && <>{inactiveCount} {inactiveCount === 1 ? 'ponto desligado nesta grade não entra' : 'pontos desligados nesta grade não entram'} na conta. </>}
+          {campaign ? 'Desligue pontos sobre mar, rio ou parque pelo link “Pontos” no cartão da campanha. ' : 'Depois de criar a campanha, você pode desligar pontos sobre mar, rio ou parque. '}
+          Estimativa indicativa pelo preço de tabela, com o dólar a {formatBrl(budget.brlPerUsd)}; o DataForSEO cobra o que ele informa, e cada execução registra seu custo real. Fuso horário: {timeZone.replace(/_/g, ' ')}.
+        </p>
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3">

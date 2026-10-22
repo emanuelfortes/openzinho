@@ -5,7 +5,7 @@ import { getGridPreferences } from '@/lib/grid-preferences-server';
 import { formatDistance, unitToKm } from '@/lib/grid-preferences';
 import {
   getCurrentProject, getCredentials, getSetting, getGridHistory, getGridEntry, saveGridSearch,
-  saveGridSearchPending, getGridResults, getGridSeriesHistory, getGridSchedule, gridSeriesId, type GridSearchEntry, type GridPoint, type GridQueueMode,
+  saveGridSearchPending, getGridProgress, getGridResults, getGridSeriesHistory, getGridSchedule, gridSeriesId, type GridSearchEntry, type GridPoint, type GridQueueMode,
 } from '@/lib/db';
 import LocalFinderForm from '../local-finder/LocalFinderForm';
 import GridPending from '../local-finder/GridPending';
@@ -17,6 +17,7 @@ import HistorySidebar from '@/components/HistorySidebar';
 import DeleteMonitorButton from '../local-finder/DeleteMonitorButton';
 import { fetchGridSearch, postGridTasksQueue, stableGridId } from '../local-finder/grid-api';
 import { getBudgetStatus } from '@/modules/custos/budget';
+import { getInactivePoints } from '@/modules/grade/inactive-points-db';
 
 interface SearchParams {
   keyword?: string;
@@ -76,7 +77,10 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
       gridError = 'Monitor não encontrado.';
     } else if (entry.status === 'pending') {
       gridEntry = entry;
-      gridPending = { id: entry.id, totalPoints: entry.grid_size ** 2, queueMode: entry.queue_mode };
+      // Counts the points actually posted: inactive grid points are skipped.
+      const progress = getGridProgress(entry.id);
+      const posted = progress ? progress.results.length + progress.pendingTasks.length : 0;
+      gridPending = { id: entry.id, totalPoints: posted || entry.grid_size ** 2, queueMode: entry.queue_mode };
     } else {
       gridResults = getGridResults(gridHistoryId);
       gridEntry = entry;
@@ -117,11 +121,12 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
           queue_mode: queueMode,
         };
 
+        const inactivePoints = getInactivePoints({ center: params.location_coordinate, grid_size: gridSize, spacing_km: spacingKm });
         if (queueMode === 'live') {
           const result = await fetchGridSearch(
             params.keyword, params.location_coordinate,
             gridSize, spacingKm, params.language ?? defaultLanguage,
-            params.grid_target, creds.login, creds.pass,
+            params.grid_target, creds.login, creds.pass, inactivePoints,
           );
           if (result.error) {
             gridError = result.error;
@@ -132,7 +137,7 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
           const result = await postGridTasksQueue(
             params.keyword, params.location_coordinate,
             gridSize, spacingKm, params.language ?? defaultLanguage,
-            creds.login, creds.pass, queueMode,
+            creds.login, creds.pass, queueMode, inactivePoints,
           );
           if (result.error) gridError = result.error;
           // A failure after some chunks were posted still leaves billed tasks to collect.
@@ -178,7 +183,8 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
       if (run.status !== 'done') return [];
       const points = getGridResults(run.id);
       if (!points) return [];
-      const total = run.grid_size ** 2;
+      // Scanned points, not grid_size², so inactive points do not count as misses.
+      const total = points.length;
       return [{
         id: run.id,
         ts: run.ts,
@@ -340,6 +346,7 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
                   brandStyle={brand}
                   trend={trend}
                   distanceUnit={distanceUnit}
+                  inactivePoints={[...getInactivePoints(gridEntry)]}
                 />
               </>
             )}
