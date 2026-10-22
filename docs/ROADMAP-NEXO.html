@@ -149,7 +149,7 @@
     <span class="brand"><i></i>NEXO</span>
     <div>
       <h1>Roadmap do Nexo</h1>
-      <p class="sub">Módulo de Google Meu Negócio + rank checker em grade · status conferido no código em 22/10/2026 (commit <code>b5fc4d8</code>)</p>
+      <p class="sub">Módulo de Google Meu Negócio + rank checker em grade · status conferido no código em 22/10/2026 (commit <code>2eb78a8</code>)</p>
     </div>
     <div class="kpis">
       <div class="kpi"><span class="label">Projeto completo</span><span class="v big" id="pctGeral">—</span><span class="d" id="lblGeral">calculando…</span></div>
@@ -177,7 +177,7 @@
     </div>
     <div class="use parcial">
       <h3>Agência atendendo clientes <span class="pill s-parcial">Parcial</span></h3>
-      <p>Falta colocar no ar num servidor, login para mais de uma pessoa, teto de gasto por cliente, estimativa em R$, relatório mensal automático e o portal do cliente.</p>
+      <p>Já tem teto de gasto e estimativa em R$, relatório mensal com envio por e-mail e link para o cliente, monitor e kit de avaliações, sugestão de palavras-chave e backup diário. Falta contratar o servidor e publicar (o deploy está pronto em <code>docs/DEPLOY-NEXO.md</code>) e login para mais de uma pessoa.</p>
     </div>
     <div class="use falta">
       <h3>Substituir o Semrush Local <span class="pill s-falta">Falta</span></h3>
@@ -190,7 +190,7 @@
     Cada item foi conferido no código, não estimado. A base é a especificação do módulo de Google Meu Negócio (36 funções do Semrush Local, com prioridade P1, P2 e P3) e o rebranding de <code>docs/PROMPT-CLAUDE-CODE.md</code>. O número entre colchetes, como <span class="ref">[13]</span>, é a linha do mapa de funções da especificação.
     <strong>Feito por outro caminho</strong> marca o que a especificação pedia de um jeito e foi resolvido de outro; por exemplo, o agendamento consulta a DataForSEO a cada minuto em vez de receber postback.
     <br><br>
-    A saúde do código hoje: checagem de tipos, lint e os <strong>305 testes</strong> do <code>apps/web</code> passam (rode com <code>--testTimeout=30000</code> em disco lento ou OneDrive). Segundo o commit <code>5156ca4</code>, os <strong>271 testes Python</strong> passam no Python 3.12; nesta máquina eles não rodaram, porque não há Python instalado.
+    A saúde do código hoje: checagem de tipos, lint, build e os <strong>466 testes</strong> do <code>apps/web</code> passam (rode com <code>--testTimeout=30000</code> em disco lento ou OneDrive), e os <strong>271 testes Python</strong> passam no Python 3.12 (ambiente <code>.venv</code> na raiz).
   </div>
 
   <div class="tabs" id="tabs" role="tablist"></div>
@@ -200,10 +200,9 @@
     <h3>Caminho mais curto até usar com clientes</h3>
     <ol>
       <li><strong>Pedir hoje o acesso à API do Google Business Profile.</strong> A análise leva de 1 a 4 semanas e trava os módulos de agente, avaliações e otimização.</li>
-      <li>Estimativa em R$ e teto de gasto por cliente, com pausa automática.</li>
-      <li>Pontos inativos na grade (mar, rio, parque). Já foi feito uma vez e revertido.</li>
-      <li>PDF mensal com o mapa do mês anterior ao lado e envio automático.</li>
-      <li>Colocar no ar num servidor com login ligado (<code>AUTH_ENABLED=true</code>) e backup do banco.</li>
+      <li>Contratar um servidor e um domínio e publicar seguindo <code>docs/DEPLOY-NEXO.md</code> (login, HTTPS e backup já vêm ligados).</li>
+      <li>Configurar o SMTP para os alertas de avaliação e o relatório mensal saírem por e-mail.</li>
+      <li>Escolher o modelo de IA para os rascunhos de resposta e os posts.</li>
       <li>Migrar para PostgreSQL e criar papéis de equipe antes de ter mais de um usuário.</li>
     </ol>
   </div>
@@ -226,16 +225,18 @@ const ROADMAP = [
   { t:'Ferramentas Python de grade (legends-geogrid) na raiz', s:'ok', onde:'tools/ · tests/' },
   { t:'Build de produção, checagem de tipos e lint passando', s:'ok', onde:'apps/web — next build, tsc, eslint' },
   { t:'Testes automáticos', s:'ok', micro:[
-    { t:'305 testes do apps/web passando', s:'ok', nota:'em disco lento, rodar com --testTimeout=30000' },
-    { t:'271 testes Python passando', s:'ok', nota:'conferido no commit 5156ca4, com Python 3.12' },
+    { t:'466 testes do apps/web passando', s:'ok', nota:'em disco lento, rodar com --testTimeout=30000' },
+    { t:'271 testes Python passando', s:'ok', nota:'conferido no commit 2eb78a8, com Python 3.12 (.venv na raiz)' },
     { t:'Testes deixam de sujar a pasta temporária no Windows', s:'ok', onde:'closeAllDatabases() · commit b5fc4d8' }
   ]},
   { t:'Clientes como projetos, cada um com seu banco', s:'ok', onde:'apps/web/src/lib/db.ts — projects + troca de projeto' },
   { t:'Worker que roda as tarefas agendadas', s:'ok', onde:'scripts/geo-grid-worker.mjs → /api/cron/geo-grid' },
   { t:'Login com e-mail e senha', s:'parcial', onde:'lib/auth.ts (better-auth)', nota:'desligado por padrão; liga com AUTH_ENABLED=true; só uma conta' },
   { t:'Imagem Docker e docker-compose', s:'ok', onde:'apps/web/Dockerfile · docker-compose*.yml' },
-  { t:'App no ar num servidor', s:'falta', nota:'hoje roda só localmente; não há deploy configurado' },
-  { t:'Backup automático do banco', s:'falta' }
+  { t:'App no ar num servidor', s:'parcial', onde:'apps/web/docker-compose.nexo.yml · docs/DEPLOY-NEXO.md', nota:'deploy pronto (imagem do próprio Nexo, login ligado, HTTPS com Caddy); falta contratar o servidor e o domínio' },
+  { t:'Backup automático do banco', s:'ok', onde:'modules/backup · Configurações → Avisos e tarefas automáticas', nota:'todo dia às 03h, mantém 14 dias; copiar a pasta para fora do servidor' },
+  { t:'Tarefas diárias do worker', s:'ok', onde:'modules/jobs · /api/cron/jobs', nota:'backup, avaliações e relatório mensal, no fuso de São Paulo' },
+  { t:'Atualizações de segurança', s:'ok', nota:'Next.js 15.5.28 (corrige execução remota de código na otimização de imagens) e nodemailer 10' }
 ]},
 { fase:'fund', n:2, tag:'marca', nome:'Rebranding Nexo', itens:[
   { t:'1. Marca: nome Nexo, logo, favicon, cor #1f6bff', s:'ok', onde:'commit 5c47e5c' },
@@ -246,10 +247,11 @@ const ROADMAP = [
   { t:'6. Interface em português do Brasil', s:'ok', onde:'docs/GLOSSARIO-PTBR.md · commits 915cd46, 7ef420a' },
   { t:'7. Studio', s:'outro', onde:'/dashboard/studio · commit e23c7be', nota:'virou uma tela do painel em Next.js em vez da página Vite da raiz' },
   { t:'Pendências do rebranding', s:'parcial', micro:[
-    { t:'Cores fixas em gráficos SVG (Avaliações, Rank Tracker, Backlinks, Historical Rank, Review Velocity)', s:'falta' },
-    { t:'Barra lateral no celular cobre o conteúdo', s:'falta', nota:'vem do layout original e vale para todas as páginas' },
-    { t:'Mensagens que vêm cruas da DataForSEO seguem em inglês', s:'falta' },
-    { t:'Banner PNG dos relatórios Python ainda é o do legends', s:'falta' },
+    { t:'Cores fixas em gráficos SVG (Avaliações, Rank Tracker, Backlinks, Historical Rank, Review Velocity)', s:'ok' },
+    { t:'Barra lateral no celular cobre o conteúdo', s:'ok', onde:'components/MobileNav.tsx', nota:'vira gaveta abaixo de 1024 px' },
+    { t:'Mensagens que vêm cruas da DataForSEO seguem em inglês', s:'ok', onde:'lib/dataforseo.ts · dataForSeoStatusMessage', nota:'códigos desconhecidos mostram o código e a mensagem original' },
+    { t:'Banner PNG dos relatórios Python ainda é o do legends', s:'ok', onde:'assets/banner.png' },
+    { t:'Páginas do relatório Python ainda no tema preto e vermelho do legends', s:'falta', onde:'tools/report_design.py' },
     { t:'Atribuição MIT aos projetos de origem mantida', s:'ok' }
   ]}
 ]},
@@ -266,35 +268,35 @@ const ROADMAP = [
   { ref:3, t:'Posição média, Share of Voice e distribuição', s:'ok', onde:'modules/grade/metrics.ts · GradeMetricsPanel.tsx', nota:'21 para quem está fora do top 20; pesos 1 / 0,6 / 0,4 / 0,1 / 0,02; variação contra a varredura anterior' },
   { ref:4, t:'Clicar num ponto e ver os 20 primeiros', s:'ok', onde:'local-finder/GridMap.tsx — popup com o cliente destacado' },
   { ref:5, t:'Histórico das varreduras com miniaturas', s:'ok', onde:'GridSnapshotMapPanel.tsx · modules/grade/GridThumbnail.tsx', nota:'mini grade de cada data na linha do tempo, mais o gráfico de tendência' },
-  { ref:9, t:'Exportar PDF e CSV', s:'parcial', micro:[
+  { ref:9, t:'Exportar PDF e CSV', s:'ok', micro:[
     { t:'PDF da grade com logo e cores da agência', s:'ok', onde:'GridPdfExportButton.tsx' },
     { t:'CSV dos resultados da grade', s:'ok', onde:'modules/grade/grid-csv.ts' },
-    { t:'PDF mensal com o mapa do mês anterior ao lado', s:'falta' }
+    { t:'PDF mensal com o mapa do mês anterior ao lado', s:'ok', onde:'modules/relatorio · /dashboard/campaigns/<id>/relatorio' }
   ]},
-  { t:'Configuração da campanha', s:'parcial', micro:[
+  { t:'Configuração da campanha', s:'ok', micro:[
     { t:'Palavras, centro, tamanho, distância, frequência', s:'ok' },
     { t:'Fila Standard ou Priority', s:'ok' },
-    { t:'Dispositivo desktop ou mobile', s:'falta', nota:'a grade usa sempre desktop' },
-    { t:'Profundidade de 20 a 100', s:'falta', nota:'fixa em 20' },
+    { t:'Dispositivo desktop ou mobile', s:'ok', onde:'modules/grade/grid-config.ts' },
+    { t:'Profundidade de 20 a 100', s:'ok', nota:'enviada em toda tarefa e gravada em cada varredura; métricas seguem contando acima de 20 como fora' },
     { t:'Cada varredura guarda a configuração usada', s:'ok' }
   ]}
 ]},
 { fase:'p1', n:4, tag:'$', nome:'Custo e controle de gasto', itens:[
-  { t:'Estimativa antes de salvar a campanha', s:'parcial', onde:'modules/grade/estimate.ts · CampaignForm.tsx', micro:[
+  { t:'Estimativa antes de salvar a campanha', s:'ok', onde:'modules/grade/estimate.ts · CampaignForm.tsx', micro:[
     { t:'Em dólar', s:'ok' },
     { t:'Em real, com a cotação configurável (padrão R$ 5,60)', s:'ok', onde:'modules/custos/budget.ts' },
     { t:'Aviso quando a campanha sozinha passa do teto do cliente', s:'ok' },
     { t:'Descontando pontos inativos', s:'ok' }
   ]},
   { t:'Custo real registrado por cliente', s:'ok', onde:'grid_searches.cost · /dashboard/spending' },
-  { t:'Gasto do mês por campanha, em R$', s:'parcial', nota:'mostrado no cartão da campanha; não soma grades antigas da mesma campanha' },
+  { t:'Gasto do mês por campanha, em R$', s:'ok', nota:'cada varredura grava a campanha; soma também grades antigas que ainda estão agendadas' },
   { t:'Teto de gasto mensal por cliente, em R$', s:'ok', onde:'Configurações → Custos e limites' },
   { t:'Teto global para todos os clientes', s:'ok' },
   { t:'Pausar e avisar ao atingir o teto', s:'ok', onde:'api/cron/geo-grid · modules/custos/BudgetBanner.tsx', nota:'grade, Rank Tracker e Prompt Tracker agendados param até o mês seguinte; a grade manual é recusada; aviso no topo a partir de 80%' }
 ]},
 { fase:'p1', n:5, tag:'⇄', nome:'Ponte com as ferramentas Python', itens:[
-  { t:'Sugestão de palavras-chave a partir do site e do perfil', s:'falta', onde:'tools/study.py (existe, mas não está ligado ao painel)' },
-  { t:'Relatório estratégico em PDF dentro do painel', s:'falta', onde:'tools/strategy_report.py (existe, roda pela linha de comando)' },
+  { t:'Sugestão de palavras-chave a partir do site e do perfil', s:'ok', onde:'/dashboard/sugestao-de-palavras · modules/palavras', nota:'porta em TypeScript do study.py: 3 a 5 temas com evidências, estimativa antes de pagar' },
+  { t:'Relatório estratégico em PDF dentro do painel', s:'outro', onde:'modules/relatorio', nota:'feito no relatório da campanha: fatos medidos, dados ausentes, hipóteses e recomendações, sem o motor Python' },
   { t:'Planejador em lote leva a "Criar campanha"', s:'ok', onde:'modules/studio · commit e23c7be' }
 ]},
 { fase:'p1', n:6, tag:'G', nome:'Acesso ao Google e serviços externos', itens:[
@@ -302,7 +304,7 @@ const ROADMAP = [
   { t:'Login do cliente com Google (OAuth, escopo business.manage)', s:'falta', g:true },
   { t:'Importar contas e perfis do cliente', s:'falta', g:true },
   { t:'Modelo de IA para posts, respostas e descrições', s:'falta' },
-  { t:'Envio de e-mail (alertas e relatórios)', s:'falta' },
+  { t:'Envio de e-mail (alertas e relatórios)', s:'ok', onde:'modules/email', nota:'qualquer SMTP, configurado no ambiente do servidor' },
   { t:'WhatsApp Business (API oficial da Meta)', s:'falta' }
 ]},
 { fase:'p1', n:7, tag:'B', nome:'Agente de IA do perfil', itens:[
@@ -313,10 +315,10 @@ const ROADMAP = [
   { ref:18, t:'Painel de desempenho: visualizações, ligações, rotas, cliques', s:'falta', g:true }
 ]},
 { fase:'p1', n:8, tag:'C', nome:'Avaliações', itens:[
-  { ref:20, t:'Atualização automática das avaliações', s:'parcial', onde:'/dashboard/google-reviews', nota:'leitura sob demanda pela DataForSEO; falta a sincronia periódica e o aviso em tempo real do Google' },
+  { ref:20, t:'Atualização automática das avaliações', s:'ok', onde:'/dashboard/monitor-de-avaliacoes', nota:'diária ou semanal pela DataForSEO; aviso em tempo real depende da API do Google' },
   { ref:21, t:'Filtro de positivas e negativas', s:'ok', onde:'modules/avaliacoes/filter.ts', nota:'também por estrelas, respondidas ou não, período e texto; os filtros ficam na URL' },
   { ref:22, t:'Rascunho de resposta com IA, um clique', s:'falta' },
-  { ref:23, t:'Alerta diário de avaliações com até 3 estrelas', s:'falta' },
+  { ref:23, t:'Alerta diário de avaliações com até 3 estrelas', s:'ok', onde:'modules/avaliacoes/job.ts', nota:'por e-mail; sem SMTP ficam pendentes na tela' },
   { t:'Exportar avaliações (PDF, Excel, CSV)', s:'ok', onde:'google-reviews/page.tsx' }
 ]},
 { fase:'p1', n:9, tag:'D', nome:'Otimização do perfil', itens:[
@@ -341,8 +343,8 @@ const ROADMAP = [
   { ref:19, t:'Histórico das 100 últimas ações do agente', s:'falta' }
 ]},
 { fase:'p2', n:12, tag:'C', nome:'Avaliações', itens:[
-  { ref:24, t:'Métricas de respostas e tempo economizado', s:'parcial', nota:'% de respostas do proprietário já aparece; falta o que o agente respondeu e o tempo economizado' },
-  { ref:25, t:'Campanhas de pedido de avaliação (link, QR code, WhatsApp, e-mail)', s:'falta' },
+  { ref:24, t:'Métricas de respostas e tempo economizado', s:'parcial', nota:'taxa e tempo de resposta, negativas sem resposta e tempo economizado estimado; falta o que o agente respondeu' },
+  { ref:25, t:'Campanhas de pedido de avaliação (link, QR code, WhatsApp, e-mail)', s:'ok', onde:'/dashboard/pedido-de-avaliacao', nota:'o Nexo monta o kit; o envio é feito pela agência' },
   { ref:26, t:'Análise das avaliações de concorrentes', s:'parcial', onde:'/dashboard/review-velocity', nota:'ritmo de avaliações contra concorrentes, com PDF; falta o resumo de pontos fortes e fracos com IA' }
 ]},
 { fase:'p2', n:13, tag:'D', nome:'Otimização do perfil', itens:[
@@ -354,7 +356,7 @@ const ROADMAP = [
   { ref:33, t:'Papéis Administrador, Editor e Visualizador', s:'falta' },
   { t:'Mais de um usuário', s:'falta', nota:'o login aceita só a primeira conta criada' },
   { t:'Grupos e etiquetas de clientes', s:'parcial', nota:'etiquetas e responsável nas campanhas, com filtro no Painel de clientes; grupos com permissão dependem dos papéis' },
-  { t:'Portal do cliente (somente leitura)', s:'falta' },
+  { t:'Portal do cliente (somente leitura)', s:'parcial', nota:'link secreto do relatório de cada campanha; ainda sem login próprio do cliente' },
   { t:'Planos da agência (Básico, Intermediário, Completo) limitando funções', s:'falta' }
 ]},
 { fase:'p2', n:15, tag:'⚙', nome:'Arquitetura e relatórios', itens:[
@@ -363,8 +365,8 @@ const ROADMAP = [
   { t:'Camada única de acesso à DataForSEO', s:'parcial', onde:'lib/dataforseo.ts', nota:'a grade ainda faz as chamadas direto em grid-api.ts' },
   { t:'Tokens do Google criptografados no banco', s:'falta', g:true },
   { t:'LGPD: consentimento e descadastro dos contatos', s:'falta' },
-  { t:'Relatório mensal enviado sozinho por e-mail ou WhatsApp', s:'falta' },
-  { t:'Link de visualização online com token secreto', s:'falta' }
+  { t:'Relatório mensal enviado sozinho por e-mail ou WhatsApp', s:'ok', onde:'modules/relatorio/monthly-job.ts', nota:'por e-mail no dia 1 às 8h; WhatsApp depende da API da Meta' },
+  { t:'Link de visualização online com token secreto', s:'ok', onde:'/r/<token>', nota:'só o hash fica no banco; dá para revogar' }
 ]},
 
 /* ===================== P3 ===================== */

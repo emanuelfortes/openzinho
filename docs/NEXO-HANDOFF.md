@@ -131,3 +131,17 @@ Plano da Fase 1, sem a API do Google:
 7. PDF mensal com comparação ao mês anterior.
 
 Código novo vai em `apps/web/src/modules/`, mexendo o mínimo no código do seo-playground. SQLite segue na Fase 1; migrar para PostgreSQL antes de liberar equipe e vários usuários. Pedir o acesso à API do Google Business Profile, que demora de 1 a 4 semanas.
+
+## Rodada de 22/10/2026 (estado atual no roadmap)
+
+O acompanhamento item a item agora fica em [docs/ROADMAP-NEXO.html](ROADMAP-NEXO.html). Nesta rodada entraram:
+- tarefas diárias do worker (`/api/cron/jobs`): backup às 03h, monitor de avaliações às 07h e relatório mensal às 08h do dia 1;
+- e-mail por SMTP configurado no ambiente e lista de destinatários em Configurações;
+- deploy pronto: `apps/web/docker-compose.nexo.yml` e [docs/DEPLOY-NEXO.md](DEPLOY-NEXO.md);
+- campanhas com dispositivo e profundidade, gasto do mês em R$ e relatório mensal com PDF e link secreto (`/r/<token>`);
+- kit de pedido de avaliação, monitor com alerta de 1 a 3 estrelas e métricas de resposta;
+- sugestão de palavras-chave a partir do site e do perfil;
+- menu em gaveta no celular, gráficos na paleta Nexo, erros da DataForSEO em português, banner Nexo nos relatórios Python;
+- Next.js 15.5.28 (correção de segurança) e nodemailer 10.
+
+Testes: `npx vitest run --testTimeout=30000` em `apps/web` e `.venv\Scripts\python.exe -m unittest discover -s tests` na raiz (Python 3.12 criado com `uv` no disco F).
