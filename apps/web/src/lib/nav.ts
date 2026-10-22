@@ -4,7 +4,7 @@ import {
   TrendingUp, Link2, Users, BarChart2, Activity, GitMerge, Clock, FolderKanban, Anchor,
   Gauge, Lightbulb, BrainCircuit, Star, Flame, Cpu, ShieldCheck, Grid3X3,
   Sparkles, Target, Layers, Network, LineChart, Tag, ScanText,
-  History, Copy, BarChart3, BookOpen, Server, Bot, Radar, Eye, Waypoints, Megaphone, Wallet, CalendarCheck, Unlink, Trophy, Telescope,
+  History, Copy, BarChart3, BookOpen, Server, Bot, Radar, Eye, Waypoints, Megaphone, Wallet, CalendarCheck, Unlink, Trophy, Telescope, BellRing, QrCode, WandSparkles,
 } from 'lucide-react';
 
 // Single source of truth for the tool list: the Sidebar and the Dashboard home both render from it.
@@ -43,6 +43,7 @@ export const NAV_SECTIONS: NavSection[] = [
     label: 'Palavras-chave',
     color: 'indigo',
     items: [
+      { name: 'Sugestão de palavras', href: '/dashboard/sugestao-de-palavras', icon: WandSparkles, desc: 'Temas e consultas sugeridos a partir do site e do perfil no Google' },
       { name: 'Visão geral', href: '/dashboard/keyword-overview', icon: BarChart2, desc: 'Volume e métricas por palavra-chave' },
       { name: 'Ideias', href: '/dashboard/keyword-ideas', icon: Sparkles, desc: 'Ideias de palavras-chave a partir de um termo-semente, com intenção' },
       { name: 'Relacionadas', href: '/dashboard/related-keywords', icon: Lightbulb, desc: 'Sugestões de palavras-chave relacionadas' },
@@ -119,6 +120,8 @@ export const NAV_SECTIONS: NavSection[] = [
     items: [
       { name: 'Avaliações do Google', href: '/dashboard/google-reviews', icon: Star, desc: 'Avaliações do Google e metas de nota' },
       { name: 'Ritmo de avaliações', href: '/dashboard/review-velocity', icon: Trophy, desc: 'Compare concorrentes locais pelo ritmo de avaliações e respostas' },
+      { name: 'Monitor de avaliações', href: '/dashboard/monitor-de-avaliacoes', icon: BellRing, desc: 'Atualização automática e alerta de avaliações de 1 a 3 estrelas' },
+      { name: 'Pedido de avaliação', href: '/dashboard/pedido-de-avaliacao', icon: QrCode, desc: 'Link, QR code, WhatsApp, e-mail e cartão para pedir avaliações' },
       { name: 'Menções na web', href: '/dashboard/web-mentions', icon: Megaphone, desc: 'Menções à marca e sentimento na web' },
     ],
   },
