@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { GridPoint } from '@/lib/db';
 import GridMap from './GridMap';
 import GridPositionTrend, { type GridPositionTrendPoint } from './GridPositionTrend';
+import GridThumbnail from '@/modules/grade/GridThumbnail';
 
 export type GridMapSnapshot = {
   id: string;
@@ -80,11 +81,14 @@ export default function GridSnapshotMapPanel({ snapshots, selectedId, gridSize, 
                 role="tab"
                 aria-selected={active}
                 onClick={() => { setActiveId(snapshot.id); onSelectedIdChange?.(snapshot.id); }}
-                className={`min-w-[126px] border-l-2 px-3 py-1.5 text-left transition-colors ${active ? 'border-nexo-sky bg-nexo-surface text-nexo-sky' : 'border-nexo-border-strong text-nexo-dim hover:border-nexo-border-strong hover:bg-white/[0.06]'}`}
+                className={`flex min-w-[190px] items-center gap-2.5 border-l-2 px-3 py-1.5 text-left transition-colors ${active ? 'border-nexo-sky bg-nexo-surface text-nexo-sky' : 'border-nexo-border-strong text-nexo-dim hover:border-nexo-border-strong hover:bg-white/[0.06]'}`}
               >
-                <span className="nexo-label block">{active ? 'Exibindo' : 'Varredura'}</span>
-                <span className="mt-0.5 block whitespace-nowrap text-xs font-medium tabular-nums">{formatSnapshotDate(snapshot.ts)}</span>
-                <span className="mt-0.5 block text-[10px] tabular-nums">{snapshot.visibility === null ? (STATUS_LABEL[snapshot.status] ?? snapshot.status) : `${snapshot.visibility}% de visibilidade`}</span>
+                <GridThumbnail results={snapshot.results} gridSize={gridSize} />
+                <span>
+                  <span className="nexo-label block">{active ? 'Exibindo' : 'Varredura'}</span>
+                  <span className="mt-0.5 block whitespace-nowrap text-xs font-medium tabular-nums">{formatSnapshotDate(snapshot.ts)}</span>
+                  <span className="mt-0.5 block text-[10px] tabular-nums">{snapshot.visibility === null ? (STATUS_LABEL[snapshot.status] ?? snapshot.status) : `${snapshot.visibility}% de visibilidade`}</span>
+                </span>
               </button>
             );
           })}
