@@ -7,6 +7,7 @@ import { spacingOptions, type DistanceUnit } from '@/lib/grid-preferences';
 import type { GridScheduleFrequency } from '@/lib/db';
 import { CAMPAIGN_GRID_SIZES, MAX_CAMPAIGN_KEYWORDS, normalizeKeywords, type GridCampaign } from './campaigns-shared';
 import { estimateCampaign } from './estimate';
+import { formatBrl } from '@/modules/custos/budget-shared';
 
 const MapPicker = lazy(() => import('@/app/dashboard/local-finder/MapPicker'));
 
@@ -16,12 +17,14 @@ type Props = {
   campaign: GridCampaign | null;
   defaults: { center: string; language: string; target: string };
   distanceUnit: DistanceUnit;
+  /** Exchange rate and the client's monthly cap, to show the estimate in reais. */
+  budget: { brlPerUsd: number; clientCapBrl: number | null; clientSpentBrl: number };
 };
 
 const field = 'nexo-input min-w-0 w-full px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky';
 const label = 'nexo-label mb-1.5 block';
 
-export default function CampaignForm({ campaign, defaults, distanceUnit }: Props) {
+export default function CampaignForm({ campaign, defaults, distanceUnit, budget }: Props) {
   const [state, formAction, pending] = useActionState(saveCampaignAction, undefined);
   const [center, setCenter] = useState(campaign?.center ?? defaults.center);
   const [target, setTarget] = useState(campaign?.target ?? defaults.target);
@@ -43,6 +46,8 @@ export default function CampaignForm({ campaign, defaults, distanceUnit }: Props
     [gridSize, keywordCount, frequency, queueMode],
   );
   const usesWeekday = frequency === 'weekly' || frequency === 'biweekly';
+  const perMonthBrl = estimate.perMonthUsd * budget.brlPerUsd;
+  const overCap = budget.clientCapBrl !== null && perMonthBrl > budget.clientCapBrl;
 
   return (
     <form action={formAction} className="space-y-5">
@@ -148,10 +153,17 @@ export default function CampaignForm({ campaign, defaults, distanceUnit }: Props
         <p className="nexo-section">Custo estimado no DataForSEO</p>
         <p className="mt-1">
           <b className="tabular-nums">{estimate.pointsPerRun.toLocaleString('pt-BR')}</b> pontos por execução × <b className="tabular-nums">{estimate.runsPerMonth.toFixed(1).replace('.', ',')}</b> execuções por mês ≈{' '}
-          <b className="tabular-nums text-nexo-text">US$ {estimate.perMonthUsd.toFixed(2).replace('.', ',')}/mês</b>
-          <span className="text-nexo-faint"> (US$ {estimate.perRunUsd.toFixed(3).replace('.', ',')} por execução)</span>
+          <b className="tabular-nums text-nexo-text">{formatBrl(perMonthBrl)}/mês</b>
+          <span className="text-nexo-faint"> (US$ {estimate.perMonthUsd.toFixed(2).replace('.', ',')} · {formatBrl(estimate.perRunUsd * budget.brlPerUsd)} por execução)</span>
         </p>
-        <p className="mt-1 text-[10px] text-nexo-faint">Estimativa indicativa pelo preço de tabela; o DataForSEO cobra o que ele informa, e cada execução registra seu custo real. Fuso horário: {timeZone.replace(/_/g, ' ')}.</p>
+        {budget.clientCapBrl !== null && (
+          <p className={`mt-1 ${overCap ? 'text-nexo-warn-text' : 'text-nexo-faint'}`}>
+            {overCap
+              ? `Sozinha, esta campanha passa do teto mensal do cliente (${formatBrl(budget.clientCapBrl)}); ela vai pausar antes do fim do mês.`
+              : `Teto mensal do cliente: ${formatBrl(budget.clientCapBrl)}, com ${formatBrl(budget.clientSpentBrl)} já gastos neste mês.`}
+          </p>
+        )}
+        <p className="mt-1 text-[10px] text-nexo-faint">Estimativa indicativa pelo preço de tabela, com o dólar a {formatBrl(budget.brlPerUsd)}; o DataForSEO cobra o que ele informa, e cada execução registra seu custo real. Fuso horário: {timeZone.replace(/_/g, ' ')}.</p>
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3">

@@ -280,16 +280,17 @@ const ROADMAP = [
   ]}
 ]},
 { fase:'p1', n:4, tag:'$', nome:'Custo e controle de gasto', itens:[
-  { t:'Estimativa antes de salvar a campanha', s:'parcial', onde:'modules/grade/estimate.ts', micro:[
+  { t:'Estimativa antes de salvar a campanha', s:'parcial', onde:'modules/grade/estimate.ts · CampaignForm.tsx', micro:[
     { t:'Em dólar', s:'ok' },
-    { t:'Em real, com a cotação', s:'falta' },
+    { t:'Em real, com a cotação configurável (padrão R$ 5,60)', s:'ok', onde:'modules/custos/budget.ts' },
+    { t:'Aviso quando a campanha sozinha passa do teto do cliente', s:'ok' },
     { t:'Descontando pontos inativos', s:'falta' }
   ]},
   { t:'Custo real registrado por cliente', s:'ok', onde:'grid_searches.cost · /dashboard/spending' },
-  { t:'Gasto do mês por campanha', s:'parcial', nota:'mostrado no cartão da campanha; não soma grades antigas da mesma campanha' },
-  { t:'Teto de gasto mensal por cliente', s:'falta' },
-  { t:'Teto global', s:'falta' },
-  { t:'Pausar a campanha e avisar ao atingir o teto', s:'falta' }
+  { t:'Gasto do mês por campanha, em R$', s:'parcial', nota:'mostrado no cartão da campanha; não soma grades antigas da mesma campanha' },
+  { t:'Teto de gasto mensal por cliente, em R$', s:'ok', onde:'Configurações → Custos e limites' },
+  { t:'Teto global para todos os clientes', s:'ok' },
+  { t:'Pausar e avisar ao atingir o teto', s:'ok', onde:'api/cron/geo-grid · modules/custos/BudgetBanner.tsx', nota:'grade, Rank Tracker e Prompt Tracker agendados param até o mês seguinte; a grade manual é recusada; aviso no topo a partir de 80%' }
 ]},
 { fase:'p1', n:5, tag:'⇄', nome:'Ponte com as ferramentas Python', itens:[
   { t:'Sugestão de palavras-chave a partir do site e do perfil', s:'falta', onde:'tools/study.py (existe, mas não está ligado ao painel)' },

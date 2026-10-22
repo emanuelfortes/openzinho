@@ -2,7 +2,8 @@
 
 import { runWithCurrentProject } from '@/lib/db';
 
-import { saveCredentials, clearCredentials, setSetting } from '@/lib/db';
+import { saveCredentials, clearCredentials, getCurrentProject, setSetting } from '@/lib/db';
+import { parseMoney, saveBudgetSettings, saveClientCapBrl } from '@/modules/custos/budget';
 import { BRAND_SETTING_KEYS } from '@/lib/brand-server';
 import { cleanBrandFooter, cleanBrandName, normalizeHeaderStyle, normalizeHexColor, validateLogoUpload } from '@/lib/brand';
 import { GRID_PREFERENCE_KEYS, normalizeDistanceUnit, normalizePinStyle } from '@/lib/grid-preferences';
@@ -42,6 +43,13 @@ export async function updateSettings(formData: FormData) {
       // An uploaded logo replaces any remote URL configured before uploads existed.
       setSetting(BRAND_SETTING_KEYS.logoUrl, '');
     }
+
+    // Blank cap fields remove the cap; a blank rate goes back to R$ 5,60.
+    saveBudgetSettings({
+      brlPerUsd: parseMoney(formData.get('budget_brl_per_usd') as string | null),
+      globalCapBrl: parseMoney(formData.get('budget_global_cap') as string | null),
+    });
+    saveClientCapBrl(getCurrentProject().id, parseMoney(formData.get('budget_client_cap') as string | null));
 
     setSetting(GRID_PREFERENCE_KEYS.distanceUnit, normalizeDistanceUnit(formData.get('grid_distance_unit') as string | null));
     setSetting(GRID_PREFERENCE_KEYS.pinStyle, normalizePinStyle(formData.get('grid_pin_style') as string | null));

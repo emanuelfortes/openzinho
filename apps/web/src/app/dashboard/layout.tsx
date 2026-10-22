@@ -10,6 +10,7 @@ import AccountMenu from '@/components/AccountMenu';
 import { getSession } from '@/lib/auth';
 import { authEnabled } from '@/lib/auth-config';
 import { getActiveProject, getProjects } from '@/lib/db';
+import BudgetBanner from '@/modules/custos/BudgetBanner';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   // The middleware already rejects anonymous requests; this is the authoritative check and gives us the email.
@@ -37,6 +38,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <BalanceBadge />
           {accountEmail && <AccountMenu email={accountEmail} />}
         </header>
+        <BudgetBanner projectId={activeProject.id} />
 
         <div className="flex-1 overflow-hidden">
           <main className="h-full overflow-y-auto p-8">

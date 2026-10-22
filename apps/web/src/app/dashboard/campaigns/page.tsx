@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 
 import Link from 'next/link';
 import { CalendarClock } from 'lucide-react';
-import { getGridResults, getSetting } from '@/lib/db';
+import { getCurrentProject, getGridResults, getSetting } from '@/lib/db';
 import { getGridPreferences } from '@/lib/grid-preferences-server';
 import { formatDistance } from '@/lib/grid-preferences';
 import CampaignForm from '@/modules/grade/CampaignForm';
@@ -11,6 +11,7 @@ import DeleteCampaignButton from '@/modules/grade/DeleteCampaignButton';
 import { getCampaign, getCampaignKeywordStatus, getCampaignSpend, listCampaigns, type GridCampaign } from '@/modules/grade/campaigns-db';
 import { estimateCampaign } from '@/modules/grade/estimate';
 import { computeGradeMetrics } from '@/modules/grade/metrics';
+import { formatBrl, getBudgetStatus, type BudgetStatus } from '@/modules/custos/budget';
 import { runCampaignNowAction } from './actions';
 
 interface SearchParams {
@@ -41,7 +42,7 @@ function monthStart(): number {
   return new Date(now.getFullYear(), now.getMonth(), 1).getTime();
 }
 
-function CampaignCard({ campaign, queued, distanceUnit }: { campaign: GridCampaign; queued: boolean; distanceUnit: ReturnType<typeof getGridPreferences>['distanceUnit'] }) {
+function CampaignCard({ campaign, queued, distanceUnit, budget }: { campaign: GridCampaign; queued: boolean; distanceUnit: ReturnType<typeof getGridPreferences>['distanceUnit']; budget: BudgetStatus }) {
   const keywords = getCampaignKeywordStatus(campaign);
   const nextRuns = keywords.map((keyword) => keyword.next_run_at).filter((value): value is number => value !== null);
   const nextRun = nextRuns.length > 0 ? Math.min(...nextRuns) : null;
@@ -54,8 +55,8 @@ function CampaignCard({ campaign, queued, distanceUnit }: { campaign: GridCampai
         <div className="min-w-0">
           <div className="flex items-center gap-2">
             <h2 className="truncate text-base font-medium text-nexo-text">{campaign.name}</h2>
-            <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider ${campaign.active ? 'bg-nexo-ice/10 text-nexo-ice' : 'bg-nexo-surface-2 text-nexo-dim'}`}>
-              {campaign.active ? 'Ativa' : 'Pausada'}
+            <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider ${campaign.active && budget.blocked ? 'bg-nexo-danger/10 text-nexo-danger-text' : campaign.active ? 'bg-nexo-ice/10 text-nexo-ice' : 'bg-nexo-surface-2 text-nexo-dim'}`}>
+              {campaign.active && budget.blocked ? 'Pausada pelo teto' : campaign.active ? 'Ativa' : 'Pausada'}
             </span>
           </div>
           <p className="mt-0.5 truncate text-xs text-nexo-dim">
@@ -124,7 +125,7 @@ function CampaignCard({ campaign, queued, distanceUnit }: { campaign: GridCampai
       </div>
 
       <p className="mt-3 text-[11px] text-nexo-faint">
-        Gasto neste mês: <b className="tabular-nums text-nexo-dim">US$ {spent.toFixed(3).replace('.', ',')}</b> · estimativa de US$ {estimate.perMonthUsd.toFixed(2).replace('.', ',')}/mês
+        Gasto neste mês: <b className="tabular-nums text-nexo-dim">{formatBrl(spent * budget.brlPerUsd)}</b> (US$ {spent.toFixed(3).replace('.', ',')}) · estimativa de {formatBrl(estimate.perMonthUsd * budget.brlPerUsd)}/mês
       </p>
     </section>
   );
@@ -136,6 +137,7 @@ async function CampaignsPage({ searchParams }: { searchParams: Promise<SearchPar
   const editing = params.edit ? getCampaign(params.edit) : null;
   const showForm = Boolean(editing) || params.new === '1' || campaigns.length === 0;
   const { distanceUnit } = getGridPreferences();
+  const budget = getBudgetStatus(getCurrentProject().id);
   const defaults = {
     center: getSetting('default_coordinates') ?? '',
     language: getSetting('default_language') ?? 'Portuguese',
@@ -166,12 +168,12 @@ async function CampaignsPage({ searchParams }: { searchParams: Promise<SearchPar
       {showForm && (
         <section className="rounded-nexo-lg border border-nexo-border bg-nexo-surface p-5 sm:p-6">
           <h2 className="mb-4 text-sm font-medium text-nexo-text">{editing ? `Editar “${editing.name}”` : 'Nova campanha'}</h2>
-          <CampaignForm key={editing?.id ?? 'new'} campaign={editing} defaults={defaults} distanceUnit={distanceUnit} />
+          <CampaignForm key={editing?.id ?? 'new'} campaign={editing} defaults={defaults} distanceUnit={distanceUnit} budget={{ brlPerUsd: budget.brlPerUsd, clientCapBrl: budget.clientCapBrl, clientSpentBrl: budget.clientSpentBrl }} />
         </section>
       )}
 
       {campaigns.map((campaign) => (
-        <CampaignCard key={campaign.id} campaign={campaign} queued={params.queued === campaign.id} distanceUnit={distanceUnit} />
+        <CampaignCard key={campaign.id} campaign={campaign} queued={params.queued === campaign.id} distanceUnit={distanceUnit} budget={budget} />
       ))}
 
       <p className="text-[11px] text-nexo-faint">As execuções agendadas são enviadas pelo worker do Geo-Grid, que <code>npm run dev</code> e <code>npm start</code> iniciam junto com o app.</p>

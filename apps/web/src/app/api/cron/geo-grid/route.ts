@@ -10,6 +10,7 @@ import { postGridTasksQueue } from '@/app/dashboard/local-finder/grid-api';
 import { collectGridProgress } from '@/lib/grid-progress';
 import { collectRankProgress } from '@/lib/rank-progress';
 import { queueStandardRankChecksForProject } from '@/lib/rank-queue';
+import { BudgetTracker, recordSkippedRun } from '@/modules/custos/budget';
 
 export const dynamic = 'force-dynamic';
 
@@ -65,7 +66,15 @@ async function runPass(credentials: { login: string; pass: string }) {
   const failed: Array<{ seriesId: string; error: string }> = [];
 
   let gridRetries = 0;
+  // A client over its monthly cap (or everyone, over the global cap) skips its runs until next month.
+  const budget = due.length > 0 || dueRankSchedules.length > 0 ? new BudgetTracker() : null;
+  let budgetSkipped = 0;
   for (const schedule of due) {
+    if (budget?.status(schedule.projectId).blocked) {
+      recordSkippedRun(schedule.projectId);
+      budgetSkipped += 1;
+      continue;
+    }
     try {
       const result = await postGridTasksQueue(
         schedule.keyword, schedule.center, schedule.grid_size, schedule.spacing_km, schedule.language,
@@ -93,6 +102,7 @@ async function runPass(credentials: { login: string; pass: string }) {
         cost: result.cost,
       };
       saveGridSearchPendingForProject(schedule.projectId, entry, result.taskPoints);
+      budget?.add(schedule.projectId, result.cost);
       started.push(entry.id);
     } catch (error) {
       // postGridTasksQueue reports API failures itself, so this is a local failure after
@@ -104,6 +114,11 @@ async function runPass(credentials: { login: string; pass: string }) {
   let rankScheduled = 0;
   let rankScheduleRetries = 0;
   for (const schedule of dueRankSchedules) {
+    if (budget?.status(schedule.projectId).blocked) {
+      recordSkippedRun(schedule.projectId);
+      budgetSkipped += 1;
+      continue;
+    }
     try {
       const result = await queueStandardRankChecksForProject(
         schedule.projectId,
@@ -153,7 +168,13 @@ async function runPass(credentials: { login: string; pass: string }) {
   const duePromptSchedules = claimDuePromptTrackerSchedules();
   let promptRuns = 0;
   let promptRunsFailed = 0;
+  const promptBudget = budget ?? (duePromptSchedules.length > 0 ? new BudgetTracker() : null);
   for (const schedule of duePromptSchedules) {
+    if (promptBudget?.status(schedule.projectId).blocked) {
+      recordSkippedRun(schedule.projectId);
+      budgetSkipped += 1;
+      continue;
+    }
     try {
       const summary = await runPromptChecks(getTrackedPrompts(schedule.projectId), credentials, schedule.projectId);
       promptRuns += summary.ran;
@@ -164,7 +185,7 @@ async function runPass(credentials: { login: string; pass: string }) {
   }
 
   return {
-    due: due.length, started, failed, gridRetries, pendingChecked, completed,
+    due: due.length, started, failed, gridRetries, budgetSkipped, pendingChecked, completed,
     rankSchedulesDue: dueRankSchedules.length, rankScheduled, rankScheduleRetries, rankPendingChecked, rankCompleted, rankFailed,
     promptSchedulesDue: duePromptSchedules.length, promptRuns, promptRunsFailed,
   };

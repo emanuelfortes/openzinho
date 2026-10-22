@@ -1,7 +1,9 @@
 import { withProjectScope } from '@/lib/db';
 export const dynamic = 'force-dynamic';
 
-import { getCredentials, getSetting } from '@/lib/db';
+import { getCredentials, getCurrentProject, getSetting } from '@/lib/db';
+import BudgetFields from '@/modules/custos/BudgetFields';
+import { getBudgetStatus } from '@/modules/custos/budget';
 import { getBrandSettings } from '@/lib/brand-server';
 import { DEFAULT_BRAND_COLOR, normalizeHexColor } from '@/lib/brand';
 import { updateSettings, deleteCredentials } from './actions';
@@ -125,6 +127,15 @@ async function SettingsPage() {
                 initialStyle={brandStyle}
                 currentLogo={brandLogo}
               />
+            </div>
+
+            <div className="border-t border-nexo-border" />
+
+            {/* Monthly spending caps */}
+            <div>
+              <p className="nexo-label mb-1">Custos e limites</p>
+              <p className="text-xs text-nexo-faint mb-6">Valores em reais, com teto mensal por cliente e para todos os clientes juntos.</p>
+              <BudgetFields projectName={getCurrentProject().name} status={getBudgetStatus(getCurrentProject().id)} />
             </div>
 
             <div className="border-t border-nexo-border" />

@@ -16,6 +16,7 @@ import type { GridMapSnapshot } from '../local-finder/GridSnapshotMapPanel';
 import HistorySidebar from '@/components/HistorySidebar';
 import DeleteMonitorButton from '../local-finder/DeleteMonitorButton';
 import { fetchGridSearch, postGridTasksQueue, stableGridId } from '../local-finder/grid-api';
+import { getBudgetStatus } from '@/modules/custos/budget';
 
 interface SearchParams {
   keyword?: string;
@@ -99,7 +100,10 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
         params.keyword, params.location_coordinate, gridSize, spacingKm, params.grid_target, queueMode,
       );
 
-      if (!getGridEntry(id)) {
+      const budget = getGridEntry(id) ? null : getBudgetStatus(getCurrentProject().id);
+      if (budget?.blocked) {
+        gridError = `${budget.reason} Aumente o teto em Configurações para rodar agora.`;
+      } else if (!getGridEntry(id)) {
         const baseEntry: GridSearchEntry = {
           id, ts: Date.now(),
           series_id: seriesId,
