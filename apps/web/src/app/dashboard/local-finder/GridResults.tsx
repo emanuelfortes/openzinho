@@ -7,6 +7,7 @@ import type { GridPoint } from '@/lib/db';
 import { computeCompetitors, computeGridSummary, computeRingStats, type CompetitorSummary } from './grid-insights';
 import GridPdfExportButton from './GridPdfExportButton';
 import ExportCSVButton from '@/components/ExportCSVButton';
+import CompetitorComparison from '@/modules/grade/CompetitorComparison';
 import { GRID_CSV_COLUMNS, gridCsvFilename, gridCsvRows } from '@/modules/grade/grid-csv';
 import { formatDistance } from '@/lib/grid-preferences';
 import { RANK_TIER_ORDER, RANK_TIERS, rankStyle } from '@/lib/rank-scale';
@@ -48,6 +49,7 @@ export default function GridResults({ results, gridSize, spacingKm, keyword, tar
 
   const competitors = useMemo(() => computeCompetitors(results), [results]);
   const topCompetitors = competitors.slice(0, 5);
+  const comparisonCandidates = useMemo(() => competitors.slice(0, 10).map((c) => ({ key: c.key, name: c.name })), [competitors]);
   const ringStats = useMemo(() => computeRingStats(results, gridSize, spacingKm), [results, gridSize, spacingKm]);
 
   const legend = RANK_TIER_ORDER.map((tier) => ({ tier, ...RANK_TIERS[tier] }));
@@ -140,6 +142,8 @@ export default function GridResults({ results, gridSize, spacingKm, keyword, tar
           </div>
         </div>
       )}
+
+      <CompetitorComparison results={results} gridSize={gridSize} target={target} competitors={comparisonCandidates} />
 
       {/* Map card */}
       <div className="bg-nexo-surface border border-nexo-border rounded-nexo-lg p-5">
