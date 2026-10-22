@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roadmap Nexo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+  /* Painel de acompanhamento no visual Nexo: só escuro, paleta azul monocromática.
+     Status: gelo = pronto, céu = outro caminho, âmbar = parcial, cinza = falta. */
+  :root {
+    --bg: #030508;
+    --surface: rgba(255,255,255,0.03);
+    --surface-2: #06090f;
+    --line: rgba(77,162,255,0.2);
+    --line-strong: rgba(77,162,255,0.35);
+    --line-soft: rgba(77,162,255,0.1);
+    --fg: #eaf2ff;
+    --fg-mid: rgba(234,242,255,0.6);
+    --fg-dim: rgba(234,242,255,0.45);
+    --blue: #1f6bff; --sky: #4da2ff; --ice: #c2e0ff; --navy: #1246b8;
+
+    --ok: #c2e0ff;      --ok-bg: rgba(194,224,255,0.12);
+    --outro: #4da2ff;   --outro-bg: rgba(77,162,255,0.14);
+    --parcial: #fcd38d; --parcial-bg: rgba(245,165,36,0.14);
+    --falta: rgba(234,242,255,0.5); --falta-bg: rgba(255,255,255,0.05);
+
+    --sans: 'Geist', ui-sans-serif, system-ui, sans-serif;
+    --mono: 'Geist Mono', ui-monospace, Consolas, monospace;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--sans); font-weight: 400; font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  .wrap { position: relative; max-width: 980px; margin: 0 auto; padding-inline: 16px; padding-block: 0 72px; }
+  h1,h2,h3 { margin: 0; font-weight: 400; letter-spacing: -0.02em; text-wrap: balance; }
+  p { margin: 0; }
+  a { color: var(--sky); }
+
+  /* feixes de luz do topo */
+  .beams { position: absolute; inset: 0 0 auto 0; height: 380px; pointer-events: none;
+    background: repeating-linear-gradient(90deg, rgba(31,107,255,0) 0, rgba(31,107,255,0) 9px, rgba(77,162,255,.35) 10px, rgba(31,107,255,0) 13px,
+      rgba(31,107,255,0) 31px, rgba(31,107,255,.5) 32px, rgba(31,107,255,0) 36px, rgba(31,107,255,0) 58px, rgba(194,224,255,.3) 59px, rgba(31,107,255,0) 61px);
+    -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,.7), transparent); mask-image: linear-gradient(180deg, rgba(0,0,0,.7), transparent); }
+  .beams::after { content: ""; position: absolute; inset: 0;
+    background: linear-gradient(90deg, rgba(3,5,8,.95) 0%, rgba(3,5,8,.3) 30%, rgba(3,5,8,.9) 55%, rgba(3,5,8,.3) 80%, rgba(3,5,8,.95) 100%); }
+
+  /* cabeçalho */
+  .head { position: relative; border-bottom: 1px solid var(--line); padding-block: 28px 24px; margin-bottom: 26px; overflow: hidden; }
+  .head .wrap { padding-block: 0; display: flex; flex-direction: column; gap: 18px; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 500; letter-spacing: .1em; font-size: 14px; }
+  .brand i { width: 8px; height: 20px; border-radius: 2px; background: linear-gradient(180deg, #c2e0ff, #1f6bff); display: inline-block; }
+  .head h1 { font-size: clamp(1.8rem, 6vw, 2.6rem); font-weight: 300; letter-spacing: -0.03em; text-shadow: 0 0 40px rgba(77,162,255,.4); }
+  .head .sub { color: var(--fg-mid); font-size: 0.92rem; margin-top: 4px; }
+
+  .label { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--fg-dim); }
+  .section { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--sky); }
+
+  /* números do topo */
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+  .kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; backdrop-filter: blur(12px); display: flex; flex-direction: column; gap: 6px; }
+  .kpi .v { font-family: var(--mono); font-weight: 400; font-size: 2rem; line-height: 1; color: var(--ice); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  .kpi .v.big { font-size: 2.6rem; text-shadow: 0 0 30px rgba(194,224,255,.35); }
+  .kpi .d { font-size: 0.8rem; color: var(--fg-mid); }
+
+  .bar { height: 8px; border-radius: 999px; background: var(--surface-2); overflow: hidden; display: flex; border: 1px solid var(--line); }
+  .bar span { display: block; height: 100%; }
+  .b-ok { background: var(--ok); } .b-outro { background: var(--outro); } .b-parcial { background: #f5a524; }
+
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 0.8rem; color: var(--fg-mid); }
+  .legend i { font-style: normal; display: inline-flex; align-items: center; gap: 6px; }
+  .dot { width: 9px; height: 9px; border-radius: 2px; display: inline-block; flex: none; }
+
+  /* veredito de uso */
+  .verdict { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px; margin-bottom: 26px; }
+  .use { background: var(--surface); border: 1px solid var(--line); border-left-width: 3px; border-radius: 0 6px 6px 0; padding: 13px 15px; display: flex; flex-direction: column; gap: 6px; }
+  .use.ok { border-left-color: var(--ice); } .use.parcial { border-left-color: #f5a524; } .use.falta { border-left-color: rgba(234,242,255,.35); }
+  .use h3 { font-size: 0.98rem; font-weight: 500; display: flex; gap: 8px; align-items: baseline; justify-content: space-between; }
+  .use p { font-size: 0.86rem; color: var(--fg-mid); }
+
+  /* abas de fase */
+  .tabs { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line-strong); border-radius: 4px; overflow: hidden; margin-bottom: 18px; }
+  .tab { font: inherit; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; padding: 8px 14px; cursor: pointer; background: transparent; color: rgba(234,242,255,.7); border: 0; border-left: 1px solid var(--line-strong); }
+  .tab:first-child { border-left: 0; }
+  .tab:hover { color: #fff; background: rgba(255,255,255,.04); }
+  .tab:focus-visible { outline: 2px solid var(--sky); outline-offset: -2px; }
+  .tab[aria-selected="true"] { background: var(--blue); color: #fff; }
+
+  /* fase */
+  .phase { margin-bottom: 34px; }
+  .phase-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 13px 16px; border-radius: 0 6px 6px 0; border: 1px solid var(--line); border-left-width: 3px; background: var(--surface); margin-bottom: 10px; }
+  .phase-head h2 { font-size: 1.15rem; font-weight: 400; }
+  .phase-head .ph-sub { font-size: 0.84rem; color: var(--fg-dim); width: 100%; }
+  .phase-head .ph-stat { margin-left: auto; font-family: var(--mono); font-size: 0.82rem; color: var(--ice); white-space: nowrap; }
+
+  /* módulo */
+  .mods { display: flex; flex-direction: column; gap: 6px; }
+  .mod { border: 1px solid var(--line); border-radius: 6px; background: var(--surface); overflow: hidden; }
+  .mod-head { display: flex; align-items: center; gap: 10px; padding: 11px 14px; cursor: pointer; user-select: none; list-style: none; }
+  .mod-head::-webkit-details-marker { display: none; }
+  .mod-head:hover { background: rgba(255,255,255,.03); }
+  .mod-head:focus-visible { outline: 2px solid var(--sky); outline-offset: -2px; }
+  .mod-num { font-family: var(--mono); font-size: 0.76rem; color: var(--fg-dim); flex: none; }
+  .mod-tag { font-family: var(--mono); font-size: 0.68rem; color: var(--sky); border: 1px solid var(--line-strong); border-radius: 3px; padding: 0 5px; flex: none; }
+  .mod-name { font-weight: 500; font-size: 0.96rem; flex: 1; min-width: 0; }
+  .mod-mini { width: 60px; height: 6px; border-radius: 999px; background: var(--surface-2); overflow: hidden; display: flex; flex: none; border: 1px solid var(--line); }
+  .mod-mini span { height: 100%; display: block; }
+  .mod-frac { font-family: var(--mono); font-size: 0.76rem; color: var(--ice); flex: none; min-width: 38px; text-align: right; }
+  .chev { color: var(--fg-dim); flex: none; font-size: 0.66rem; transition: transform .15s; }
+  .mod[open] .chev { transform: rotate(90deg); }
+  .mod-body { padding: 2px 14px 14px; border-top: 1px solid var(--line-soft); }
+
+  .item { padding: 9px 0; border-bottom: 1px solid var(--line-soft); }
+  .item:last-child { border-bottom: 0; }
+  .item-top { display: flex; gap: 10px; align-items: baseline; }
+  .item-t { flex: 1; min-width: 0; font-size: 0.92rem; }
+  .ref { font-family: var(--mono); font-size: 0.72rem; color: var(--fg-dim); margin-right: 6px; }
+  .pill { font-size: 10px; letter-spacing: .06em; text-transform: uppercase; padding: 2px 7px; border-radius: 3px; white-space: nowrap; flex: none; }
+  .s-ok { background: var(--ok-bg); color: var(--ok); }
+  .s-outro { background: var(--outro-bg); color: var(--outro); }
+  .s-parcial { background: var(--parcial-bg); color: var(--parcial); }
+  .s-falta { background: var(--falta-bg); color: var(--falta); }
+  .onde { font-family: var(--mono); font-size: 0.74rem; color: var(--fg-dim); margin-top: 3px; overflow-wrap: anywhere; }
+  .onde::before { content: "↳ "; }
+  .nota { font-size: 0.82rem; color: var(--fg-mid); margin-top: 4px; }
+  .micro { list-style: none; margin: 8px 0 0; padding: 0 0 0 14px; border-left: 1px solid var(--line-strong); display: flex; flex-direction: column; gap: 6px; }
+  .micro li { display: flex; gap: 8px; align-items: baseline; font-size: 0.86rem; color: var(--fg-mid); }
+  .micro .mt { flex: 1; min-width: 0; }
+  .micro .nota { margin-top: 2px; font-size: 0.78rem; }
+
+  .box { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--sky); padding: 13px 15px; border-radius: 0 6px 6px 0; font-size: 0.9rem; color: var(--fg-mid); margin-bottom: 18px; }
+  .box.warn { border-left-color: #f5a524; }
+  .box strong { color: var(--fg); font-weight: 500; }
+  .box h3 { font-size: 1rem; font-weight: 500; margin-bottom: 6px; color: var(--fg); }
+  .box ol, .box ul { margin: 8px 0 0; padding-left: 1.2em; }
+  .box li { margin-bottom: 5px; }
+  code { font-family: var(--mono); font-size: 0.84em; background: var(--surface-2); border: 1px solid var(--line-soft); padding: 0 5px; border-radius: 3px; overflow-wrap: anywhere; }
+  .foot { border-top: 1px solid var(--line); padding-top: 18px; margin-top: 26px; font-size: 0.83rem; color: var(--fg-dim); }
+
+  @media (max-width: 560px) { .mod-mini, .mod-tag { display: none; } .mod-name { font-size: 0.9rem; } }
+  @media (prefers-reduced-motion: reduce) { * { transition-duration: .01ms !important; } }
+</style>
+</head>
+<body>
+
+<header class="head">
+  <div class="beams"></div>
+  <div class="wrap">
+    <span class="brand"><i></i>NEXO</span>
+    <div>
+      <h1>Roadmap do Nexo</h1>
+      <p class="sub">Módulo de Google Meu Negócio + rank checker em grade · status conferido no código em 22/10/2026 (commit <code>b5fc4d8</code>)</p>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><span class="label">Projeto completo</span><span class="v big" id="pctGeral">—</span><span class="d" id="lblGeral">calculando…</span></div>
+      <div class="kpi"><span class="label">Fundação + rebranding</span><span class="v" id="pctFund">—</span><span class="d">base técnica e identidade Nexo</span></div>
+      <div class="kpi"><span class="label">Primeira entrega (P1)</span><span class="v" id="pctP1">—</span><span class="d">o que a especificação pede para lançar</span></div>
+      <div class="kpi"><span class="label">P1 sem a API do Google</span><span class="v" id="pctP1sem">—</span><span class="d">só o que não depende de aprovação do Google</span></div>
+    </div>
+    <div class="bar" id="barGeral"></div>
+    <div class="legend">
+      <i><span class="dot" style="background:var(--ok)"></span> Pronto</i>
+      <i><span class="dot" style="background:var(--outro)"></span> Feito por outro caminho</i>
+      <i><span class="dot" style="background:#f5a524"></span> Parcial</i>
+      <i><span class="dot" style="background:rgba(234,242,255,.3)"></span> Falta</i>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <p class="section" style="margin-bottom:10px">Está 100% pronto para uso?</p>
+  <div class="verdict">
+    <div class="use ok">
+      <h3>Rank checker e painel de SEO, uso próprio <span class="pill s-ok">Pronto</span></h3>
+      <p>Rodando no seu computador com a sua conta DataForSEO: grade geográfica, campanhas agendadas, métricas, PDF com a sua marca, avaliações, rank tracker, palavras-chave, backlinks e auditoria, tudo em português.</p>
+    </div>
+    <div class="use parcial">
+      <h3>Agência atendendo clientes <span class="pill s-parcial">Parcial</span></h3>
+      <p>Falta colocar no ar num servidor, login para mais de uma pessoa, teto de gasto por cliente, estimativa em R$, relatório mensal automático e o portal do cliente.</p>
+    </div>
+    <div class="use falta">
+      <h3>Substituir o Semrush Local <span class="pill s-falta">Falta</span></h3>
+      <p>Tudo o que age no perfil do Google (posts, respostas, fotos, descrição, desempenho) depende da aprovação da API do Google Business Profile, e nada disso começou.</p>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3>Como ler este arquivo</h3>
+    Cada item foi conferido no código, não estimado. A base é a especificação do módulo de Google Meu Negócio (36 funções do Semrush Local, com prioridade P1, P2 e P3) e o rebranding de <code>docs/PROMPT-CLAUDE-CODE.md</code>. O número entre colchetes, como <span class="ref">[13]</span>, é a linha do mapa de funções da especificação.
+    <strong>Feito por outro caminho</strong> marca o que a especificação pedia de um jeito e foi resolvido de outro; por exemplo, o agendamento consulta a DataForSEO a cada minuto em vez de receber postback.
+    <br><br>
+    A saúde do código hoje: checagem de tipos, lint e os <strong>305 testes</strong> do <code>apps/web</code> passam (rode com <code>--testTimeout=30000</code> em disco lento ou OneDrive). Segundo o commit <code>5156ca4</code>, os <strong>271 testes Python</strong> passam no Python 3.12; nesta máquina eles não rodaram, porque não há Python instalado.
+  </div>
+
+  <div class="tabs" id="tabs" role="tablist"></div>
+  <div id="conteudo"></div>
+
+  <div class="box warn">
+    <h3>Caminho mais curto até usar com clientes</h3>
+    <ol>
+      <li><strong>Pedir hoje o acesso à API do Google Business Profile.</strong> A análise leva de 1 a 4 semanas e trava os módulos de agente, avaliações e otimização.</li>
+      <li>Estimativa em R$ e teto de gasto por cliente, com pausa automática.</li>
+      <li>Pontos inativos na grade (mar, rio, parque). Já foi feito uma vez e revertido.</li>
+      <li>PDF mensal com o mapa do mês anterior ao lado e envio automático.</li>
+      <li>Colocar no ar num servidor com login ligado (<code>AUTH_ENABLED=true</code>) e backup do banco.</li>
+      <li>Migrar para PostgreSQL e criar papéis de equipe antes de ter mais de um usuário.</li>
+    </ol>
+  </div>
+
+  <div class="box">
+    <h3>Fora do escopo, por decisão</h3>
+    <span class="ref">[34]</span> Distribuição em 70+ diretórios, <span class="ref">[35]</span> supressão de duplicados nos diretórios e <span class="ref">[36]</span> diretórios médicos dos EUA. Eles não entram na conta. A especificação sugere vender isso como serviço de implantação manual (Apple Business Connect, Bing Places, Facebook, Waze), com um checklist no sistema; esse checklist aparece no módulo 16.
+  </div>
+
+  <p class="foot">
+    Para marcar algo como pronto, mude o <code>s:</code> do item no bloco <code>ROADMAP</code> no fim deste arquivo. Os valores são <code>ok</code>, <code>parcial</code>, <code>outro</code> e <code>falta</code>. Itens com <code>g:true</code> dependem da API do Google. Os percentuais se recalculam sozinhos: pronto e outro caminho contam 1, parcial conta 0,5 e, quando um item tem micro-tarefas, são elas que contam.
+  </p>
+</div>
+
+<script>
+const ROADMAP = [
+/* ===================== FUNDAÇÃO ===================== */
+{ fase:'fund', n:1, tag:'base', nome:'Base do projeto', itens:[
+  { t:'SEO Playground dentro do repositório (apps/web, git subtree)', s:'ok', onde:'apps/web · commit 59b9854', nota:'atualizações do original entram com git subtree pull' },
+  { t:'Ferramentas Python de grade (legends-geogrid) na raiz', s:'ok', onde:'tools/ · tests/' },
+  { t:'Build de produção, checagem de tipos e lint passando', s:'ok', onde:'apps/web — next build, tsc, eslint' },
+  { t:'Testes automáticos', s:'ok', micro:[
+    { t:'305 testes do apps/web passando', s:'ok', nota:'em disco lento, rodar com --testTimeout=30000' },
+    { t:'271 testes Python passando', s:'ok', nota:'conferido no commit 5156ca4, com Python 3.12' },
+    { t:'Testes deixam de sujar a pasta temporária no Windows', s:'ok', onde:'closeAllDatabases() · commit b5fc4d8' }
+  ]},
+  { t:'Clientes como projetos, cada um com seu banco', s:'ok', onde:'apps/web/src/lib/db.ts — projects + troca de projeto' },
+  { t:'Worker que roda as tarefas agendadas', s:'ok', onde:'scripts/geo-grid-worker.mjs → /api/cron/geo-grid' },
+  { t:'Login com e-mail e senha', s:'parcial', onde:'lib/auth.ts (better-auth)', nota:'desligado por padrão; liga com AUTH_ENABLED=true; só uma conta' },
+  { t:'Imagem Docker e docker-compose', s:'ok', onde:'apps/web/Dockerfile · docker-compose*.yml' },
+  { t:'App no ar num servidor', s:'falta', nota:'hoje roda só localmente; não há deploy configurado' },
+  { t:'Backup automático do banco', s:'falta' }
+]},
+{ fase:'fund', n:2, tag:'marca', nome:'Rebranding Nexo', itens:[
+  { t:'1. Marca: nome Nexo, logo, favicon, cor #1f6bff', s:'ok', onde:'commit 5c47e5c' },
+  { t:'2. Tokens globais em Tailwind v4', s:'ok', onde:'apps/web/src/app/globals.css · commit 10d8bb8' },
+  { t:'3. Shell: layout, barra lateral, cabeçalho e login', s:'ok', onde:'commit 4d95a8f' },
+  { t:'4. Páginas no visual Nexo', s:'ok', onde:'scripts/nexo-codemod.mjs · commit a623517' },
+  { t:'5. Pins do Geo-grid na escala azul', s:'ok', onde:'lib/rank-scale.ts · commit 334aec7' },
+  { t:'6. Interface em português do Brasil', s:'ok', onde:'docs/GLOSSARIO-PTBR.md · commits 915cd46, 7ef420a' },
+  { t:'7. Studio', s:'outro', onde:'/dashboard/studio · commit e23c7be', nota:'virou uma tela do painel em Next.js em vez da página Vite da raiz' },
+  { t:'Pendências do rebranding', s:'parcial', micro:[
+    { t:'Cores fixas em gráficos SVG (Avaliações, Rank Tracker, Backlinks, Historical Rank, Review Velocity)', s:'falta' },
+    { t:'Barra lateral no celular cobre o conteúdo', s:'falta', nota:'vem do layout original e vale para todas as páginas' },
+    { t:'Mensagens que vêm cruas da DataForSEO seguem em inglês', s:'falta' },
+    { t:'Banner PNG dos relatórios Python ainda é o do legends', s:'falta' },
+    { t:'Atribuição MIT aos projetos de origem mantida', s:'ok' }
+  ]}
+]},
+
+/* ===================== P1 ===================== */
+{ fase:'p1', n:3, tag:'A', nome:'Grade de ranking', itens:[
+  { ref:1, t:'Mapa de calor em grade, várias palavras por campanha', s:'ok', onde:'/dashboard/geo-grid · /dashboard/campaigns', nota:'até 20 palavras por campanha, de 3×3 a 11×11' },
+  { ref:2, t:'Agendamento com dia e hora', s:'ok', onde:'modules/grade/cadence.ts · grid_schedules', micro:[
+    { t:'Diário e semanal', s:'ok' },
+    { t:'Quinzenal e mensal', s:'ok', onde:'modules/grade/cadence.ts' },
+    { t:'Rodar agora (manual)', s:'ok' },
+    { t:'Resultados por postback', s:'outro', nota:'o worker consulta a DataForSEO a cada minuto; dispensa servidor público' }
+  ]},
+  { ref:3, t:'Posição média, Share of Voice e distribuição', s:'ok', onde:'modules/grade/metrics.ts · GradeMetricsPanel.tsx', nota:'21 para quem está fora do top 20; pesos 1 / 0,6 / 0,4 / 0,1 / 0,02; variação contra a varredura anterior' },
+  { ref:4, t:'Clicar num ponto e ver os 20 primeiros', s:'ok', onde:'local-finder/GridMap.tsx — popup com o cliente destacado' },
+  { ref:5, t:'Histórico das varreduras', s:'parcial', onde:'GridSnapshotMapPanel.tsx · GridPositionTrend.tsx', nota:'escolher a data no mapa e gráfico de tendência; faltam as miniaturas dos mapas' },
+  { ref:9, t:'Exportar PDF e CSV', s:'parcial', micro:[
+    { t:'PDF da grade com logo e cores da agência', s:'ok', onde:'GridPdfExportButton.tsx' },
+    { t:'CSV dos resultados da grade', s:'falta', nota:'existe CSV em outras ferramentas, não na grade' },
+    { t:'PDF mensal com o mapa do mês anterior ao lado', s:'falta' }
+  ]},
+  { t:'Configuração da campanha', s:'parcial', micro:[
+    { t:'Palavras, centro, tamanho, distância, frequência', s:'ok' },
+    { t:'Fila Standard ou Priority', s:'ok' },
+    { t:'Dispositivo desktop ou mobile', s:'falta', nota:'a grade usa sempre desktop' },
+    { t:'Profundidade de 20 a 100', s:'falta', nota:'fixa em 20' },
+    { t:'Cada varredura guarda a configuração usada', s:'ok' }
+  ]}
+]},
+{ fase:'p1', n:4, tag:'$', nome:'Custo e controle de gasto', itens:[
+  { t:'Estimativa antes de salvar a campanha', s:'parcial', onde:'modules/grade/estimate.ts', micro:[
+    { t:'Em dólar', s:'ok' },
+    { t:'Em real, com a cotação', s:'falta' },
+    { t:'Descontando pontos inativos', s:'falta' }
+  ]},
+  { t:'Custo real registrado por cliente', s:'ok', onde:'grid_searches.cost · /dashboard/spending' },
+  { t:'Gasto do mês por campanha', s:'parcial', nota:'mostrado no cartão da campanha; não soma grades antigas da mesma campanha' },
+  { t:'Teto de gasto mensal por cliente', s:'falta' },
+  { t:'Teto global', s:'falta' },
+  { t:'Pausar a campanha e avisar ao atingir o teto', s:'falta' }
+]},
+{ fase:'p1', n:5, tag:'⇄', nome:'Ponte com as ferramentas Python', itens:[
+  { t:'Sugestão de palavras-chave a partir do site e do perfil', s:'falta', onde:'tools/study.py (existe, mas não está ligado ao painel)' },
+  { t:'Relatório estratégico em PDF dentro do painel', s:'falta', onde:'tools/strategy_report.py (existe, roda pela linha de comando)' },
+  { t:'Planejador em lote leva a "Criar campanha"', s:'ok', onde:'modules/studio · commit e23c7be' }
+]},
+{ fase:'p1', n:6, tag:'G', nome:'Acesso ao Google e serviços externos', itens:[
+  { t:'Pedido de acesso à API do Google Business Profile', s:'falta', g:true, nota:'tarefa sua: projeto no Google Cloud + formulário "Application for Basic API Access"; cota 300/min = aprovado' },
+  { t:'Login do cliente com Google (OAuth, escopo business.manage)', s:'falta', g:true },
+  { t:'Importar contas e perfis do cliente', s:'falta', g:true },
+  { t:'Modelo de IA para posts, respostas e descrições', s:'falta' },
+  { t:'Envio de e-mail (alertas e relatórios)', s:'falta' },
+  { t:'WhatsApp Business (API oficial da Meta)', s:'falta' }
+]},
+{ fase:'p1', n:7, tag:'B', nome:'Agente de IA do perfil', itens:[
+  { ref:13, t:'Post automático a cada 7 dias, com foto, botão e link', s:'falta', g:true },
+  { ref:14, t:'Instruções de estilo, palavras-alvo e revisão antes de publicar', s:'falta' },
+  { ref:15, t:'Calendário dos próximos 14 dias', s:'falta' },
+  { ref:17, t:'Resposta automática a avaliações (1 a 3 estrelas sempre com aprovação humana)', s:'falta', g:true },
+  { ref:18, t:'Painel de desempenho: visualizações, ligações, rotas, cliques', s:'falta', g:true }
+]},
+{ fase:'p1', n:8, tag:'C', nome:'Avaliações', itens:[
+  { ref:20, t:'Atualização automática das avaliações', s:'parcial', onde:'/dashboard/google-reviews', nota:'leitura sob demanda pela DataForSEO; falta a sincronia periódica e o aviso em tempo real do Google' },
+  { ref:21, t:'Filtro de positivas e negativas', s:'parcial', nota:'mostra % de positivas e a distribuição das notas; não há filtro da lista' },
+  { ref:22, t:'Rascunho de resposta com IA, um clique', s:'falta' },
+  { ref:23, t:'Alerta diário de avaliações com até 3 estrelas', s:'falta' },
+  { t:'Exportar avaliações (PDF, Excel, CSV)', s:'ok', onde:'google-reviews/page.tsx' }
+]},
+{ fase:'p1', n:9, tag:'D', nome:'Otimização do perfil', itens:[
+  { ref:30, t:'Posts com IA agendados com semanas de antecedência', s:'falta', g:true, nota:'mesmo motor do item [13]' }
+]},
+
+/* ===================== P2 ===================== */
+{ fase:'p2', n:10, tag:'A', nome:'Grade de ranking', itens:[
+  { ref:6, t:'Comparativo com até 3 concorrentes', s:'parcial', onde:'GridResults.tsx — "Ver no mapa"', nota:'troca o mapa para um concorrente e lista os concorrentes; falta a visão lado a lado' },
+  { ref:7, t:'Desativar pontos da grade (mar, rio, parque)', s:'falta', nota:'foi feito e revertido em 17/10; o commit 3ced0da pode ser reaproveitado' },
+  { ref:8, t:'Painel de campanhas', s:'parcial', onde:'/dashboard/campaigns', micro:[
+    { t:'Lista com posição média, SoV e top 3 por palavra', s:'ok' },
+    { t:'Etiquetas e filtro por responsável', s:'falta' },
+    { t:'Visão em mapa de todos os clientes', s:'falta' },
+    { t:'Ordenar por posição, SoV e variação', s:'falta' }
+  ]}
+]},
+{ fase:'p2', n:11, tag:'B', nome:'Agente de IA do perfil', itens:[
+  { ref:11, t:'Auditoria do perfil com nota de 0 a 100 e plano de melhorias', s:'falta', g:true },
+  { ref:12, t:'Descrição otimizada (até 750 caracteres, com aprovação)', s:'falta', g:true },
+  { ref:16, t:'Foto nova a cada 10 dias', s:'falta', g:true },
+  { ref:19, t:'Histórico das 100 últimas ações do agente', s:'falta' }
+]},
+{ fase:'p2', n:12, tag:'C', nome:'Avaliações', itens:[
+  { ref:24, t:'Métricas de respostas e tempo economizado', s:'parcial', nota:'% de respostas do proprietário já aparece; falta o que o agente respondeu e o tempo economizado' },
+  { ref:25, t:'Campanhas de pedido de avaliação (link, QR code, WhatsApp, e-mail)', s:'falta' },
+  { ref:26, t:'Análise das avaliações de concorrentes', s:'parcial', onde:'/dashboard/review-velocity', nota:'ritmo de avaliações contra concorrentes, com PDF; falta o resumo de pontos fortes e fracos com IA' }
+]},
+{ fase:'p2', n:13, tag:'D', nome:'Otimização do perfil', itens:[
+  { ref:28, t:'Editar nome, endereço, horário e contato de vários perfis', s:'falta', g:true },
+  { ref:29, t:'Histórico de desempenho de 24 meses', s:'falta', g:true },
+  { ref:32, t:'Conectar todos os perfis de uma conta Google de uma vez', s:'falta', g:true }
+]},
+{ fase:'p2', n:14, tag:'F', nome:'Equipe, clientes e planos', itens:[
+  { ref:33, t:'Papéis Administrador, Editor e Visualizador', s:'falta' },
+  { t:'Mais de um usuário', s:'falta', nota:'o login aceita só a primeira conta criada' },
+  { t:'Grupos e etiquetas de clientes', s:'falta' },
+  { t:'Portal do cliente (somente leitura)', s:'falta' },
+  { t:'Planos da agência (Básico, Intermediário, Completo) limitando funções', s:'falta' }
+]},
+{ fase:'p2', n:15, tag:'⚙', nome:'Arquitetura e relatórios', itens:[
+  { t:'Fila de jobs para tudo o que roda sozinho', s:'outro', onde:'geo-grid-worker + claimDueGridSchedules', nota:'worker com reserva no SQLite no lugar de BullMQ/pg-boss; cobre só grade e rank tracker' },
+  { t:'Banco PostgreSQL', s:'falta', nota:'SQLite por projeto; migrar antes de ter equipe' },
+  { t:'Camada única de acesso à DataForSEO', s:'parcial', onde:'lib/dataforseo.ts', nota:'a grade ainda faz as chamadas direto em grid-api.ts' },
+  { t:'Tokens do Google criptografados no banco', s:'falta', g:true },
+  { t:'LGPD: consentimento e descadastro dos contatos', s:'falta' },
+  { t:'Relatório mensal enviado sozinho por e-mail ou WhatsApp', s:'falta' },
+  { t:'Link de visualização online com token secreto', s:'falta' }
+]},
+
+/* ===================== P3 ===================== */
+{ fase:'p3', n:16, tag:'+', nome:'Depois', itens:[
+  { ref:10, t:'API de relatórios', s:'falta' },
+  { ref:27, t:'Avaliações de outros sites (Tripadvisor etc.)', s:'falta' },
+  { ref:31, t:'Monitorar edições de terceiros no perfil e desfazer', s:'falta', g:true },
+  { t:'Checklist de diretórios (Apple, Bing, Facebook, Waze) como serviço', s:'falta' }
+]}
+];
+
+const FASES = {
+  fund: { nome:'Fundação e rebranding', sub:'Base técnica do projeto e identidade Nexo', cor:'var(--ice)' },
+  p1:   { nome:'P1 — Primeira entrega', sub:'Grade agendada, PDF e o mínimo do perfil do Google', cor:'var(--sky)' },
+  p2:   { nome:'P2 — Segunda entrega', sub:'Escala para agência: equipe, comparativos, auditoria e campanhas de avaliação', cor:'var(--blue)' },
+  p3:   { nome:'P3 — Depois', sub:'Integrações externas e extras', cor:'var(--navy)' }
+};
+const ROTULO = { ok:'Pronto', parcial:'Parcial', outro:'Outro caminho', falta:'Falta' };
+const PESO = { ok:1, outro:1, parcial:0.5, falta:0 };
+
+/* Conta itens e micro-tarefas; quando há micro, elas definem o peso do item. */
+function contar(itens, filtro) {
+  let feito = 0, total = 0;
+  const por = { ok:0, parcial:0, outro:0, falta:0 };
+  itens.forEach(function (it) {
+    if (filtro && !filtro(it)) return;
+    if (it.micro && it.micro.length) {
+      it.micro.forEach(function (m) { feito += PESO[m.s]; total += 1; por[m.s]++; });
+    } else {
+      feito += PESO[it.s]; total += 1; por[it.s]++;
+    }
+  });
+  return { feito: feito, total: total, pct: total ? Math.round(feito / total * 100) : 0, por: por };
+}
+function somar(mods, filtro) {
+  let f = 0, t = 0;
+  const por = { ok:0, parcial:0, outro:0, falta:0 };
+  mods.forEach(function (m) {
+    const c = contar(m.itens, filtro);
+    f += c.feito; t += c.total;
+    Object.keys(por).forEach(function (k) { por[k] += c.por[k]; });
+  });
+  return { feito: f, total: t, pct: t ? Math.round(f / t * 100) : 0, por: por };
+}
+function barraHTML(por, total) {
+  if (!total) return '';
+  const p = function (n) { return (n / total * 100).toFixed(2) + '%'; };
+  return '<span class="b-ok" style="width:' + p(por.ok) + '"></span>' +
+         '<span class="b-outro" style="width:' + p(por.outro) + '"></span>' +
+         '<span class="b-parcial" style="width:' + p(por.parcial * 0.5) + '"></span>';
+}
+function pill(s) { return '<span class="pill s-' + s + '">' + ROTULO[s] + '</span>'; }
+
+function itemHTML(it) {
+  let h = '<div class="item"><div class="item-top"><span class="item-t">' +
+          (it.ref ? '<span class="ref">[' + it.ref + ']</span>' : '') + it.t +
+          (it.g ? ' <span class="ref" title="Depende da API do Google Business Profile">· Google</span>' : '') +
+          '</span>' + pill(it.s) + '</div>';
+  if (it.onde) h += '<div class="onde">' + it.onde + '</div>';
+  if (it.nota) h += '<div class="nota">' + it.nota + '</div>';
+  if (it.micro && it.micro.length) {
+    h += '<ul class="micro">';
+    it.micro.forEach(function (m) {
+      h += '<li><span class="mt">' + m.t + (m.onde ? '<div class="onde">' + m.onde + '</div>' : '') +
+           (m.nota ? '<div class="nota">' + m.nota + '</div>' : '') + '</span>' + pill(m.s) + '</li>';
+    });
+    h += '</ul>';
+  }
+  return h + '</div>';
+}
+
+function render(filtro) {
+  let html = '';
+  Object.keys(FASES).forEach(function (f) {
+    if (filtro !== 'all' && filtro !== f) return;
+    const mods = ROADMAP.filter(function (m) { return m.fase === f; });
+    if (!mods.length) return;
+    const c = somar(mods);
+    html += '<section class="phase"><div class="phase-head" style="border-left-color:' + FASES[f].cor + '">' +
+            '<h2>' + FASES[f].nome + '</h2><span class="ph-stat">' + c.pct + '% · ' + mods.length + (mods.length === 1 ? ' módulo' : ' módulos') + '</span>' +
+            '<span class="ph-sub">' + FASES[f].sub + '</span></div><div class="mods">';
+    mods.forEach(function (m) {
+      const mc = contar(m.itens);
+      html += '<details class="mod"><summary class="mod-head">' +
+              '<span class="mod-num">' + String(m.n).padStart(2, '0') + '</span>' +
+              '<span class="mod-tag">' + m.tag + '</span>' +
+              '<span class="mod-name">' + m.nome + '</span>' +
+              '<span class="mod-mini">' + barraHTML(mc.por, mc.total) + '</span>' +
+              '<span class="mod-frac">' + mc.pct + '%</span>' +
+              '<span class="chev">▶</span></summary><div class="mod-body">';
+      m.itens.forEach(function (it) { html += itemHTML(it); });
+      html += '</div></details>';
+    });
+    html += '</div></section>';
+  });
+  document.getElementById('conteudo').innerHTML = html;
+}
+
+/* números do topo */
+(function () {
+  const g = somar(ROADMAP);
+  document.getElementById('pctGeral').textContent = g.pct + '%';
+  document.getElementById('lblGeral').textContent =
+    g.por.ok + ' prontos, ' + g.por.outro + ' por outro caminho, ' + g.por.parcial + ' parciais e ' + g.por.falta + ' a fazer, de ' + g.total + ' tarefas';
+  document.getElementById('barGeral').innerHTML = barraHTML(g.por, g.total);
+  const de = function (f) { return ROADMAP.filter(function (m) { return m.fase === f; }); };
+  document.getElementById('pctFund').textContent = somar(de('fund')).pct + '%';
+  document.getElementById('pctP1').textContent = somar(de('p1')).pct + '%';
+  document.getElementById('pctP1sem').textContent = somar(de('p1'), function (it) { return !it.g; }).pct + '%';
+})();
+
+/* abas */
+const ABAS = [['all','Todas'],['fund','Fundação'],['p1','P1'],['p2','P2'],['p3','P3']];
+const tabsEl = document.getElementById('tabs');
+ABAS.forEach(function (a, i) {
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'tab'; b.textContent = a[1];
+  b.setAttribute('role', 'tab');
+  b.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+  b.addEventListener('click', function () {
+    Array.prototype.forEach.call(tabsEl.children, function (x) { x.setAttribute('aria-selected', 'false'); });
+    b.setAttribute('aria-selected', 'true');
+    render(a[0]);
+  });
+  tabsEl.appendChild(b);
+});
+render('all');
+</script>
+</body>
+</html>
