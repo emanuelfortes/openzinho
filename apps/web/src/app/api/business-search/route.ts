@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCredentials } from '@/lib/db';
 import { LANGUAGES } from '@/lib/geo-options';
+import { dataForSeoStatusMessage } from '@/lib/dataforseo';
 
 export const dynamic = 'force-dynamic';
 
@@ -76,7 +77,7 @@ export async function POST(request: NextRequest) {
     const data = await response.json() as { tasks?: Array<{ status_code?: number; status_message?: string; result?: Array<{ items?: MapsItem[] }> }> };
     const task = data.tasks?.[0];
     if (!task || task.status_code !== 20000) {
-      return NextResponse.json({ results: [], error: task?.status_message ?? 'Sem resposta da DataForSEO.' }, { status: 502 });
+      return NextResponse.json({ results: [], error: task ? dataForSeoStatusMessage(task.status_code, task.status_message) : 'Sem resposta da DataForSEO.' }, { status: 502 });
     }
     const results = (task.result?.[0]?.items ?? [])
       .filter((item) => item.type === 'maps_search' && item.cid && item.latitude != null && item.longitude != null)

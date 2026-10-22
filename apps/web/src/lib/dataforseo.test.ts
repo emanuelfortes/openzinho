@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { callDataForSeo, callDataForSeoFirst } from './dataforseo';
+import { callDataForSeo, callDataForSeoFirst, dataForSeoStatusMessage } from './dataforseo';
 
 const creds = { login: 'user', pass: 'pass' };
 
@@ -52,7 +52,7 @@ describe('callDataForSeo', () => {
     }), { status: 200 }));
 
     const res = await callDataForSeo('some/endpoint/live', {}, creds);
-    expect(res.error).toBe('DataForSEO: Invalid Field: location_name.');
+    expect(res.error).toBe('A DataForSEO recusou um campo inválido na requisição: location_name.');
     expect(res.result).toBeUndefined();
   });
 
@@ -127,7 +127,7 @@ describe('callDataForSeo', () => {
     }), { status: 200 }));
 
     const res = await callDataForSeo('some/endpoint/live', {}, creds);
-    expect(res.error).toBe('DataForSEO: This function temporarily unavailable. Please contact support for more information.');
+    expect(res.error).toBe('Esta função da DataForSEO está temporariamente indisponível. Tente novamente mais tarde.');
   });
 });
 
@@ -151,7 +151,39 @@ describe('callDataForSeoFirst', () => {
     }), { status: 200 }));
 
     const res = await callDataForSeoFirst('some/endpoint/live', {}, creds);
-    expect(res.error).toBe('DataForSEO: Not Found.');
+    expect(res.error).toBe('A DataForSEO não encontrou o recurso solicitado.');
     expect(res.result).toBeUndefined();
+  });
+});
+
+describe('dataForSeoStatusMessage', () => {
+  it.each([
+    [40100, 'You are not authorized to access this resource.', /não autorizou o acesso/],
+    [40101, 'Authentication failed.', /Falha na autenticação/],
+    [40200, 'Payment Required.', /Saldo insuficiente/],
+    [40202, 'Rate limit per minute exceeded.', /Limite de requisições por minuto/],
+    [40400, 'Not Found.', /não encontrou o recurso/],
+    [40601, 'Task Handed.', /recebida pela DataForSEO/],
+    [40602, 'Task In Queue.', /na fila da DataForSEO/],
+    [50000, 'Internal Error.', /Erro interno da DataForSEO/],
+  ])('translates code %i to Portuguese', (code, message, expected) => {
+    const text = dataForSeoStatusMessage(code, message);
+    expect(text).toMatch(expected);
+    expect(text).not.toContain(message);
+  });
+
+  it('keeps the field name of an invalid-field error', () => {
+    expect(dataForSeoStatusMessage(40501, "Invalid Field: 'location_name'.")).toBe('A DataForSEO recusou um campo inválido na requisição: location_name.');
+    expect(dataForSeoStatusMessage(40501, 'Invalid Field.')).toBe('A DataForSEO recusou um campo inválido na requisição.');
+  });
+
+  it('falls back to the code and the original message for unknown statuses', () => {
+    expect(dataForSeoStatusMessage(40999, 'Something unusual.')).toBe('Erro da DataForSEO (código 40999): Something unusual.');
+    expect(dataForSeoStatusMessage(40999)).toBe('Erro da DataForSEO (código 40999).');
+  });
+
+  it('handles a missing code', () => {
+    expect(dataForSeoStatusMessage(undefined, 'Oops')).toBe('Erro da DataForSEO: Oops');
+    expect(dataForSeoStatusMessage(undefined)).toBe('Erro da DataForSEO.');
   });
 });

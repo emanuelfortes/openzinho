@@ -3,6 +3,7 @@ import {
   type PendingRankTask,
 } from '@/lib/db';
 import { matchRankSerp, type RankSerpItem, type RankSerpMatch } from '@/lib/rank-serp';
+import { dataForSeoStatusMessage } from '@/lib/dataforseo';
 
 interface TaskGetResponse {
   tasks?: Array<{
@@ -76,7 +77,7 @@ async function collectOne(task: PendingRankTask, auth: string): Promise<
     const result = data.tasks?.[0];
     const status = result?.status_code ?? 0;
     if (!result || stillProcessing.has(status)) return { kind: 'pending' };
-    if (status !== 20000) return { kind: 'failed', message: result.status_message ?? `DataForSEO status ${status}` };
+    if (status !== 20000) return { kind: 'failed', message: dataForSeoStatusMessage(status, result.status_message) };
 
     // The Advanced view of the same task adds the AI Overview at no extra charge.
     return { kind: 'ready', cost: result.cost ?? null, ...matchRankSerp(result.result?.[0]?.items ?? [], task.domain) };

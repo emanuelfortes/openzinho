@@ -51,7 +51,7 @@ function ColorField({ id, name, label, value, fallback, onChange }: { id: string
         <input type="color" aria-label={label} value={value} onChange={(e) => { setDraft(e.target.value); onChange(e.target.value); }} className="h-[52px] w-14 shrink-0 cursor-pointer rounded-nexo-lg border border-nexo-border bg-nexo-surface p-1" />
         <input id={id} name={name} type="text" value={draft} onChange={(e) => onTyped(e.target.value)} maxLength={7} placeholder={fallback} className={inputCls} />
       </div>
-      {!valid && <p className="text-[10px] font-medium text-nexo-danger-text ml-1">Use uma cor hexadecimal, como #0f172a.</p>}
+      {!valid && <p className="text-[10px] font-medium text-nexo-danger-text ml-1">Use uma cor hexadecimal, como #1f6bff.</p>}
     </div>
   );
 }

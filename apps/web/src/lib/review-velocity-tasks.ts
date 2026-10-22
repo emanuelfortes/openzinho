@@ -8,6 +8,7 @@ import {
 import {
   INITIAL_DEPTH, MAX_DEPTH, isCovered, mergeCoverage, parseLatLng, parseReviewTimestamp, refreshDepth, relaunchDepth, windowCutoff,
 } from './review-velocity';
+import { dataForSeoStatusMessage } from './dataforseo';
 
 const API = 'https://api.dataforseo.com/v3/business_data/google/reviews';
 
@@ -110,7 +111,9 @@ export async function postReviewTasks(projectId: string, credentials: Credential
     if (task?.id && task.status_code === 20100) {
       if (confirmTask(reservationId, task.id, typeof task.cost === 'number' ? task.cost : null, projectId)) posted++;
     } else {
-      const message = task?.status_message ?? data.status_message ?? 'A tarefa não foi aceita.';
+      const message = task && (task.status_code || task.status_message)
+        ? dataForSeoStatusMessage(task.status_code, task.status_message)
+        : data.status_message ? dataForSeoStatusMessage(data.status_code, data.status_message) : 'A tarefa não foi aceita.';
       failTask(reservationId, message, projectId);
       errors.push(`${request.listing.title}: ${message}`);
     }
@@ -209,7 +212,7 @@ export async function collectReviewTasks(projectId: string, credentials: Credent
     const listing = getListing(task.listingId, projectId);
     const benchmark = getBenchmark(task.benchmarkId, projectId);
     if (!listing || !benchmark) { failTask(task.taskId, 'O perfil não existe mais', projectId); outcome.failed++; continue; }
-    if (code !== 20000 && code !== NO_RESULTS) { failTask(task.taskId, apiTask.status_message ?? `DataForSEO status ${code}`, projectId); outcome.failed++; continue; }
+    if (code !== 20000 && code !== NO_RESULTS) { failTask(task.taskId, dataForSeoStatusMessage(code, apiTask.status_message), projectId); outcome.failed++; continue; }
 
     const result = code === 20000 ? apiTask.result?.[0] ?? null : null;
     const items = result?.items ?? [];

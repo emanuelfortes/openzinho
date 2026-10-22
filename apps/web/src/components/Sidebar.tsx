@@ -9,6 +9,7 @@ import { NAV_SECTIONS as sections, NAV_FOOTER as footerItems, type NavItem, type
 import type { Project } from '@/lib/db';
 import ProjectSwitcher from './ProjectSwitcher';
 import NexoLogo from './NexoLogo';
+import { SIDEBAR_ID, useMobileNav } from './MobileNav';
 
 const itemsByHref = new Map(sections.flatMap((s) => s.items).map((i) => [i.href, i]));
 
@@ -76,6 +77,8 @@ export default function Sidebar({ initialCollapsed = [], initialFavorites = [], 
   const [favorites, setFavorites] = useState(() => initialFavorites.filter((h) => itemsByHref.has(h)));
   const [dragging, setDragging] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const panelRef = useRef<HTMLElement>(null);
+  const { open: drawerOpen, setOpen: setDrawerOpen, buttonRef } = useMobileNav();
   const activeHref = findActiveHref(pathname);
   const favoriteSet = new Set(favorites);
 
@@ -121,6 +124,63 @@ export default function Sidebar({ initialCollapsed = [], initialFavorites = [], 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeHref]);
 
+  // Mobile drawer: close on navigation (also covers the filter's Enter shortcut).
+  useEffect(() => {
+    setDrawerOpen(false);
+  }, [pathname, setDrawerOpen]);
+
+  // Growing the window to `lg` shows the sidebar inline, so a drawer left open there is just closed.
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px)');
+    const onChange = () => { if (mq.matches) setDrawerOpen(false); };
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, [setDrawerOpen]);
+
+  // While the drawer is open: focus moves into it, Escape closes it, Tab stays inside it,
+  // and on close focus goes back to the header button.
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const panel = panelRef.current;
+    const opener = buttonRef.current;
+    const focusables = () => Array.from(panel?.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    ) ?? []).filter((el) => el.offsetParent !== null && !el.closest('[inert]'));
+    // Wait for the visibility transition to start so the element is focusable.
+    const raf = requestAnimationFrame(() => focusables()[0]?.focus());
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        // The filter's own Escape (clearing a typed query) takes precedence.
+        if (e.defaultPrevented) return;
+        e.preventDefault();
+        setDrawerOpen(false);
+        return;
+      }
+      if (e.key !== 'Tab') return;
+      const list = focusables();
+      if (list.length === 0) return;
+      const first = list[0];
+      const last = list[list.length - 1];
+      const current = document.activeElement;
+      if (e.shiftKey && (current === first || !panel?.contains(current))) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && (current === last || !panel?.contains(current))) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      cancelAnimationFrame(raf);
+      document.removeEventListener('keydown', onKeyDown);
+      // Only take focus back if it was inside the drawer (not when a link moved it elsewhere on purpose).
+      if (opener && (!document.activeElement || document.activeElement === document.body || panel?.contains(document.activeElement))) {
+        opener.focus();
+      }
+    };
+  }, [drawerOpen, setDrawerOpen, buttonRef]);
+
   // "/" focuses the filter from anywhere, unless the user is already typing somewhere
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -155,12 +215,33 @@ export default function Sidebar({ initialCollapsed = [], initialFavorites = [], 
   const allCollapsed = sections.every((s) => collapsed.has(s.key));
 
   return (
-    <div className="relative flex h-full w-60 flex-col border-r border-nexo-border bg-[rgba(3,5,8,.6)] backdrop-blur-xl select-none shrink-0">
+    <>
+    {/* Backdrop for the mobile drawer; below `lg` only */}
+    <div
+      aria-hidden="true"
+      onClick={() => setDrawerOpen(false)}
+      className={`fixed inset-0 z-40 bg-[rgba(3,5,8,.7)] backdrop-blur-sm transition-opacity duration-200 lg:hidden ${drawerOpen ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
+    />
+    <aside
+      id={SIDEBAR_ID}
+      ref={panelRef}
+      aria-label="Navegação principal"
+      // Below `lg` it's an off-canvas drawer (invisible = out of the tab order while closed); `lg` and up, always shown inline.
+      className={`fixed inset-y-0 left-0 z-50 flex h-full w-72 max-w-[85vw] flex-col border-r border-nexo-border bg-[rgba(3,5,8,.96)] backdrop-blur-xl select-none shrink-0 transition-[translate,visibility] duration-200 ease-out lg:relative lg:z-auto lg:w-60 lg:max-w-none lg:translate-x-0 lg:visible lg:bg-[rgba(3,5,8,.6)] ${drawerOpen ? 'translate-x-0 visible' : '-translate-x-full invisible'}`}
+    >
       {/* Logo */}
-      <div className="flex h-14 items-center px-5 border-b border-nexo-border shrink-0">
+      <div className="flex h-14 items-center justify-between px-5 border-b border-nexo-border shrink-0">
         <Link href="/dashboard" aria-label="Nexo" className="flex items-center">
           <NexoLogo />
         </Link>
+        <button
+          type="button"
+          onClick={() => setDrawerOpen(false)}
+          aria-label="Fechar menu de navegação"
+          className="-mr-2 grid h-9 w-9 place-items-center rounded-nexo text-nexo-faint transition-colors hover:bg-white/[0.04] hover:text-white lg:hidden"
+        >
+          <X className="h-4 w-4" aria-hidden="true" />
+        </button>
       </div>
 
       <ProjectSwitcher projects={projects} activeProject={activeProject} />
@@ -176,6 +257,7 @@ export default function Sidebar({ initialCollapsed = [], initialFavorites = [], 
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === 'Escape') {
+                if (query) e.preventDefault();
                 setQuery('');
                 e.currentTarget.blur();
               } else if (e.key === 'Enter' && filtered[0]?.items[0]) {
@@ -294,6 +376,7 @@ export default function Sidebar({ initialCollapsed = [], initialFavorites = [], 
           <NavLink key={item.href} item={item} active={item.href === activeHref} />
         ))}
       </div>
-    </div>
+    </aside>
+    </>
   );
 }

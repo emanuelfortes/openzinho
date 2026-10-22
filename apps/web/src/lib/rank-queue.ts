@@ -3,6 +3,7 @@ import {
   type RankTaskReservation, type TrackedKeyword,
 } from '@/lib/db';
 import { stopCrawlOnMatch } from '@/lib/rank-serp';
+import { dataForSeoStatusMessage } from '@/lib/dataforseo';
 
 interface TaskPostResponse {
   status_code?: number;
@@ -47,7 +48,7 @@ export async function queueStandardRankChecksForProject(
       }
       const data = await response.json() as TaskPostResponse;
       if (data.status_code && data.status_code !== 20000) {
-        markReservationsFailed(projectId, batch, data.status_message ?? `DataForSEO status ${data.status_code}`);
+        markReservationsFailed(projectId, batch, dataForSeoStatusMessage(data.status_code, data.status_message));
         failed = true;
         continue;
       }
@@ -62,7 +63,7 @@ export async function queueStandardRankChecksForProject(
         if (task?.status_code === 20100 && task.id) {
           if (confirmRankTaskReservationForProject(projectId, reservation.reservationId, task.id, task.cost ?? null)) queued += 1;
         } else {
-          failRankTaskReservationForProject(projectId, reservation.reservationId, task?.status_message ?? `DataForSEO status ${task?.status_code ?? 'missing task'}`);
+          failRankTaskReservationForProject(projectId, reservation.reservationId, task ? dataForSeoStatusMessage(task.status_code, task.status_message) : 'A DataForSEO não devolveu esta tarefa.');
           failed = true;
         }
       });

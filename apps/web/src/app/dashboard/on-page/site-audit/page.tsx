@@ -17,6 +17,7 @@ import LinksTable from './LinksTable';
 import ResourcesTable from './ResourcesTable';
 import NonIndexableTable from './NonIndexableTable';
 import AutoRefresh from '@/components/AutoRefresh';
+import { dataForSeoStatusMessage } from '@/lib/dataforseo';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -216,7 +217,7 @@ async function createAuditTask(
   const data = await res.json() as { tasks?: Array<{ id?: string; status_code?: number; status_message?: string; cost?: number }> };
   const task = data?.tasks?.[0];
   if (!task) return { taskId: '', error: 'Resposta vazia da API.' };
-  if (task.status_code !== 20100 && task.status_code !== 20000) return { taskId: '', error: `DataForSEO: ${task.status_message}` };
+  if (task.status_code !== 20100 && task.status_code !== 20000) return { taskId: '', error: dataForSeoStatusMessage(task.status_code, task.status_message) };
   return { taskId: task.id ?? '', cost: task.cost };
 }
 
@@ -228,7 +229,7 @@ async function fetchSummary(taskId: string, login: string, pass: string): Promis
   if (!res.ok) return { error: `HTTP ${res.status}` };
   const data = await res.json() as { tasks?: Array<{ status_code?: number; status_message?: string; result?: SummaryResult[] }> };
   const task = data?.tasks?.[0];
-  if (!task || (task.status_code && task.status_code !== 20000)) return { error: `DataForSEO: ${task?.status_message}` };
+  if (!task || (task.status_code && task.status_code !== 20000)) return { error: dataForSeoStatusMessage(task?.status_code, task?.status_message) };
   return { summary: task.result?.[0] };
 }
 
@@ -246,7 +247,7 @@ async function fetchPages(taskId: string, login: string, pass: string): Promise<
   if (!res.ok) return { error: `HTTP ${res.status}` };
   const data = await res.json() as { tasks?: Array<{ status_code?: number; status_message?: string; result?: Array<{ items?: AuditPage[] }> }> };
   const task = data?.tasks?.[0];
-  if (!task || (task.status_code && task.status_code !== 20000)) return { error: `DataForSEO: ${task?.status_message}` };
+  if (!task || (task.status_code && task.status_code !== 20000)) return { error: dataForSeoStatusMessage(task?.status_code, task?.status_message) };
   return { pages: task.result?.[0]?.items ?? [] };
 }
 
@@ -260,7 +261,7 @@ async function fetchKeywordDensity(taskId: string, keywordLength: number, login:
   if (!res.ok) return { error: `HTTP ${res.status}` };
   const data = await res.json() as { tasks?: Array<{ status_code?: number; status_message?: string; result?: Array<{ items?: KwDensityItem[] }> }> };
   const task = data?.tasks?.[0];
-  if (!task || (task.status_code && task.status_code !== 20000)) return { error: `DataForSEO: ${task?.status_message}` };
+  if (!task || (task.status_code && task.status_code !== 20000)) return { error: dataForSeoStatusMessage(task?.status_code, task?.status_message) };
   return { items: task.result?.[0]?.items ?? [] };
 }
 
@@ -274,7 +275,7 @@ async function fetchLinks(taskId: string, login: string, pass: string): Promise<
   if (!res.ok) return { error: `HTTP ${res.status}` };
   const data = await res.json() as { tasks?: Array<{ status_code?: number; status_message?: string; result?: Array<{ items?: LinkItem[] }> }> };
   const task = data?.tasks?.[0];
-  if (!task || (task.status_code && task.status_code !== 20000)) return { error: `DataForSEO: ${task?.status_message}` };
+  if (!task || (task.status_code && task.status_code !== 20000)) return { error: dataForSeoStatusMessage(task?.status_code, task?.status_message) };
   return { items: task.result?.[0]?.items ?? [] };
 }
 
@@ -288,7 +289,7 @@ async function fetchResources(taskId: string, login: string, pass: string): Prom
   if (!res.ok) return { error: `HTTP ${res.status}` };
   const data = await res.json() as { tasks?: Array<{ status_code?: number; status_message?: string; result?: Array<{ items?: ResourceItem[] }> }> };
   const task = data?.tasks?.[0];
-  if (!task || (task.status_code && task.status_code !== 20000)) return { error: `DataForSEO: ${task?.status_message}` };
+  if (!task || (task.status_code && task.status_code !== 20000)) return { error: dataForSeoStatusMessage(task?.status_code, task?.status_message) };
   return { items: task.result?.[0]?.items ?? [] };
 }
 
@@ -307,7 +308,7 @@ async function fetchDuplicateTags(taskId: string, login: string, pass: string): 
     if (!res.ok) return { error: `HTTP ${res.status}` };
     const data = await res.json() as { tasks?: Array<{ status_code?: number; status_message?: string; result?: Array<{ items?: DuplicateTagGroup[] | null }> }> };
     const task = data?.tasks?.[0];
-    if (!task || (task.status_code && task.status_code !== 20000)) return { error: `DataForSEO: ${task?.status_message}` };
+    if (!task || (task.status_code && task.status_code !== 20000)) return { error: dataForSeoStatusMessage(task?.status_code, task?.status_message) };
     return {
       items: (task.result?.[0]?.items ?? []).map((group): DuplicateTagItem => ({
         type, tag: group.accumulator, pages: group.pages ?? [], pages_count: group.total_count,
@@ -329,7 +330,7 @@ async function fetchNonIndexable(taskId: string, login: string, pass: string): P
   if (!res.ok) return { error: `HTTP ${res.status}` };
   const data = await res.json() as { tasks?: Array<{ status_code?: number; status_message?: string; result?: Array<{ items?: NonIndexableItem[] | null }> }> };
   const task = data?.tasks?.[0];
-  if (!task || (task.status_code && task.status_code !== 20000)) return { error: `DataForSEO: ${task?.status_message}` };
+  if (!task || (task.status_code && task.status_code !== 20000)) return { error: dataForSeoStatusMessage(task?.status_code, task?.status_message) };
   return { items: task.result?.[0]?.items ?? [] };
 }
 

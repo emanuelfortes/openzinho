@@ -30,8 +30,8 @@ function parseCenter(value: string): [number, number] | null {
 }
 
 function markerHtml(label: string, state: 'selected' | 'self' | 'idle' | 'outside') {
-  const colors = { selected: '#2563eb', self: '#f59e0b', idle: '#0f172a', outside: '#94a3b8' }[state];
-  return `<div style="width:24px;height:24px;border-radius:9999px;background:${colors};color:#fff;font:700 11px/24px system-ui;text-align:center;box-shadow:0 0 0 2px #fff,0 1px 4px rgba(15,23,42,.35)">${label}</div>`;
+  const [background, color] = ({ selected: ['#c2e0ff', '#030508'], self: ['#f5a524', '#030508'], idle: ['#1246b8', '#eaf2ff'], outside: ['#1a2433', 'rgba(234,242,255,.6)'] } as const)[state];
+  return `<div style="width:24px;height:24px;border-radius:9999px;background:${background};color:${color};font:500 11px/24px system-ui;text-align:center;box-shadow:0 0 0 2px #030508,0 0 0 3px rgba(194,224,255,.7),0 1px 4px rgba(3,5,8,.5)">${label}</div>`;
 }
 
 export default function BenchmarkBuilder({ defaultCenter, defaultLanguage, hasCredentials }: Props) {
@@ -104,9 +104,9 @@ export default function BenchmarkBuilder({ defaultCenter, defaultLanguage, hasCr
       const map = mapRef.current;
       if (!map) return;
       if (centerMarkerRef.current) centerMarkerRef.current.setLatLng(point);
-      else centerMarkerRef.current = L.circleMarker(point, { radius: 5, color: '#1d4ed8', weight: 2, fillColor: '#3b82f6', fillOpacity: 1 }).addTo(map);
+      else centerMarkerRef.current = L.circleMarker(point, { radius: 5, color: '#c2e0ff', weight: 2, fillColor: '#1f6bff', fillOpacity: 1 }).addTo(map);
       if (circleRef.current) { circleRef.current.setLatLng(point); circleRef.current.setRadius(radiusKm * 1000); }
-      else circleRef.current = L.circle(point, { radius: radiusKm * 1000, color: '#2563eb', weight: 1.5, fillColor: '#3b82f6', fillOpacity: 0.07, interactive: false }).addTo(map);
+      else circleRef.current = L.circle(point, { radius: radiusKm * 1000, color: '#1f6bff', weight: 1.5, fillColor: '#4da2ff', fillOpacity: 0.07, interactive: false }).addTo(map);
       map.fitBounds(circleRef.current.getBounds(), { padding: [24, 24] });
     });
   }, [center, radiusKm]);

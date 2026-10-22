@@ -1,6 +1,7 @@
 // Finds the Google Maps listings competing on a keyword inside a circle (DataForSEO Maps SERP, live).
 import { distanceKm, zoomForRadius } from './review-velocity';
 import type { Credentials } from './review-velocity-tasks';
+import { dataForSeoStatusMessage } from './dataforseo';
 
 export interface DiscoveredListing {
   cid: string;
@@ -57,7 +58,7 @@ export async function discoverListings(
     const data = await response.json() as { cost?: number; tasks?: Array<{ status_code?: number; status_message?: string; cost?: number; result?: Array<{ items?: MapsItem[] | null }> | null }> };
     const task = data.tasks?.[0];
     const cost = task?.cost ?? data.cost ?? null;
-    if (!task || task.status_code !== 20000) return { results: [], cost, error: task?.status_message ?? 'Sem resposta da DataForSEO.' };
+    if (!task || task.status_code !== 20000) return { results: [], cost, error: task ? dataForSeoStatusMessage(task.status_code, task.status_message) : 'Sem resposta da DataForSEO.' };
 
     const seen = new Set<string>();
     const results: DiscoveredListing[] = [];

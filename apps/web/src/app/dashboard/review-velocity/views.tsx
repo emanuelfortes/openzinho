@@ -140,8 +140,8 @@ export function OverviewView({ report, series }: { report: ComparisonReport; ser
                     <td key={completeWeeks[i].key} title={`${l.title} · semana de ${completeWeeks[i].label}: ${v ?? 'sem dados'}`}
                       className="w-9 h-8 rounded-md text-center text-[11px] font-medium tabular-nums"
                       style={v === null
-                        ? { background: 'repeating-linear-gradient(45deg, rgb(241 245 249), rgb(241 245 249) 3px, rgb(226 232 240) 3px, rgb(226 232 240) 6px)' }
-                        : { background: `rgba(37, 99, 235, ${v === 0 ? 0.04 : 0.15 + 0.85 * (v / heatMax)})`, color: v / heatMax > 0.5 ? 'white' : 'rgb(30 41 59)' }}>
+                        ? { background: 'repeating-linear-gradient(45deg, rgba(77,162,255,.04), rgba(77,162,255,.04) 3px, rgba(77,162,255,.12) 3px, rgba(77,162,255,.12) 6px)' }
+                        : { background: `rgba(31, 107, 255, ${v === 0 ? 0.06 : 0.15 + 0.85 * (v / heatMax)})`, color: v / heatMax > 0.5 ? '#ffffff' : '#c2e0ff' }}>
                       {v ?? ''}
                     </td>
                   ))}

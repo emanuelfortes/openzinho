@@ -71,7 +71,7 @@ function TrendSparkline({ monthly }: { monthly?: MonthlySearch[] }) {
   }).join(' ');
   return (
     <svg width={w} height={h} className="inline-block align-middle">
-      <polyline points={pts} fill="none" stroke="#6366f1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <polyline points={pts} fill="none" stroke="#4da2ff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }

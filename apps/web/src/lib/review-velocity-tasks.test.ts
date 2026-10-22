@@ -143,7 +143,7 @@ describe('review task lifecycle', () => {
     vi.stubGlobal('fetch', vi.fn(async () => json({ tasks: [{ status_code: 40501, status_message: 'Invalid Field' }] })));
     const outcome = await postReviewTasks(projectId, credentials, benchmark, backfillRequests(listings));
     expect(outcome.posted).toBe(0);
-    expect(outcome.errors[0]).toMatch(/Invalid Field/);
+    expect(outcome.errors[0]).toMatch(/campo inválido/);
     expect(getPendingTasks(benchmark.id, projectId)).toHaveLength(0);
     expect(reserveTask({ benchmarkId: benchmark.id, listingId: listings[0].id, kind: 'backfill', depth: 100 }, projectId)).not.toBeNull();
   });

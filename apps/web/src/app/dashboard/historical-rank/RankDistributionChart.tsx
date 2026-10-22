@@ -110,7 +110,7 @@ export default function RankDistributionChart({ points }: { points: Point[] }) {
               const upper = lower + values[0][bandIndex];
               return <rect key={band.key} x={x(0) - 34} y={y(upper)} width="68" height={y(lower) - y(upper)} fill={band.color}><title>{`${band.label}: ${displayPercent(values[0][bandIndex])}`}</title></rect>;
             })
-            : bands.map((band, index) => <path key={band.key} d={areaPath(index)} fill={band.color} fillOpacity="0.88" stroke="white" strokeOpacity="0.45" strokeWidth="1"><title>{band.label}</title></path>)}
+            : bands.map((band, index) => <path key={band.key} d={areaPath(index)} fill={band.color} fillOpacity="0.88" stroke="#030508" strokeOpacity="0.6" strokeWidth="1"><title>{band.label}</title></path>)}
           {totals.length > 1 && <path d={volumePath} fill="none" stroke="#4da2ff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />}
           {points.map((point, index) => {
             const step = points.length > 1 ? plotWidth / (points.length - 1) : 68;

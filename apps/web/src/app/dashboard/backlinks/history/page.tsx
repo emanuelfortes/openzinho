@@ -157,26 +157,26 @@ async function BacklinksHistoryPage({ searchParams }: { searchParams: Promise<Se
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-5">
               <p className="nexo-label mb-3">Backlinks ao longo do tempo</p>
-              <SparkChart points={sorted} key1="backlinks" color1="#3b82f6" />
+              <SparkChart points={sorted} key1="backlinks" color1="#4da2ff" />
               <div className="flex gap-4 mt-3 text-[10px] text-nexo-faint">
-                <span className="flex items-center gap-1"><span className="inline-block w-3 h-0.5 bg-nexo-blue rounded" /> Total</span>
+                <span className="flex items-center gap-1"><span className="inline-block w-3 h-0.5 bg-nexo-sky rounded" /> Total</span>
               </div>
             </div>
             <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-5">
               <p className="nexo-label mb-3">Domínios de referência ao longo do tempo</p>
-              <SparkChart points={sorted} key1="referring_domains" color1="#10b981" />
+              <SparkChart points={sorted} key1="referring_domains" color1="#c2e0ff" />
             </div>
             <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-5">
               <p className="nexo-label mb-3">Backlinks novos vs. perdidos</p>
-              <SparkChart points={sorted} key1="new_backlinks" key2="lost_backlinks" color1="#10b981" color2="#ef4444" />
+              <SparkChart points={sorted} key1="new_backlinks" key2="lost_backlinks" color1="#c2e0ff" color2="#fca5a5" />
               <div className="flex gap-4 mt-3 text-[10px] text-nexo-faint">
                 <span className="flex items-center gap-1"><span className="inline-block w-3 h-0.5 bg-nexo-ice rounded" /> Novos</span>
-                <span className="flex items-center gap-1"><span className="inline-block w-3 h-0.5 bg-nexo-danger rounded border-dashed" /> Perdidos</span>
+                <span className="flex items-center gap-1"><span className="inline-block w-3 h-0.5 bg-nexo-danger-text rounded border-dashed" /> Perdidos</span>
               </div>
             </div>
             <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border p-5">
               <p className="nexo-label mb-3">Domínios de referência novos vs. perdidos</p>
-              <SparkChart points={sorted} key1="new_referring_domains" key2="lost_referring_domains" color1="#10b981" color2="#ef4444" />
+              <SparkChart points={sorted} key1="new_referring_domains" key2="lost_referring_domains" color1="#c2e0ff" color2="#fca5a5" />
             </div>
           </div>
 

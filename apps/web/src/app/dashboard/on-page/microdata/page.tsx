@@ -2,6 +2,7 @@ import { withProjectScope } from '@/lib/db';
 import { getCredentials, getOnpageTasks, upsertOnpageTask, getOnpageResult, saveOnpageResult, type OnpageTask } from '@/lib/db';
 import { redirect } from 'next/navigation';
 import SearchForm from '@/components/SearchForm';
+import { dataForSeoStatusMessage } from '@/lib/dataforseo';
 
 interface TestResult {
   level: 'fatal' | 'error' | 'warning' | 'info';
@@ -53,7 +54,7 @@ async function createTask(url: string, login: string, pass: string): Promise<{ t
   const data = await res.json() as { tasks?: Array<{ id?: string; status_code?: number; status_message?: string; cost?: number }> };
   const task = data?.tasks?.[0];
   if (!task) return { taskId: '', error: 'Resposta vazia da API.' };
-  if (task.status_code !== 20100 && task.status_code !== 20000) return { taskId: '', error: `DataForSEO: ${task.status_message}` };
+  if (task.status_code !== 20100 && task.status_code !== 20000) return { taskId: '', error: dataForSeoStatusMessage(task.status_code, task.status_message) };
   return { taskId: task.id ?? '', cost: task.cost };
 }
 
@@ -90,7 +91,7 @@ async function fetchMicrodata(taskId: string, url: string, login: string, pass: 
   const data = await res.json() as { tasks?: Array<{ status_code?: number; status_message?: string; result?: MicrodataResult[] }> };
   const task = data?.tasks?.[0];
   if (!task) return { error: 'Resposta vazia da API.' };
-  if (task.status_code && task.status_code !== 20000) return { error: `DataForSEO: ${task.status_message}` };
+  if (task.status_code && task.status_code !== 20000) return { error: dataForSeoStatusMessage(task.status_code, task.status_message) };
   return { result: task.result };
 }
 

@@ -65,7 +65,7 @@ function Sparkline({ history }: { history: RankCheck[] }) {
 
   const pathD = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ');
   const latest = positions[positions.length - 1];
-  const stroke = latest !== null && latest <= 10 ? '#3b82f6' : '#94a3b8';
+  const stroke = latest !== null && latest <= 10 ? '#4da2ff' : 'rgba(234,242,255,.5)';
 
   return (
     <svg width={W} height={H} className="overflow-visible">
@@ -147,7 +147,7 @@ function HistoryChart({ history, keywordId, topDates, selectedDate, onSelect }: 
     : '';
 
   const latestPos = positions[positions.length - 1];
-  const stroke = latestPos === undefined || latestPos <= 10 ? '#3b82f6' : '#6366f1';
+  const stroke = latestPos === undefined || latestPos <= 10 ? '#4da2ff' : '#c2e0ff';
   const gradId = `kw-grad-${keywordId}`;
 
   // Y-axis labels
@@ -180,14 +180,14 @@ function HistoryChart({ history, keywordId, topDates, selectedDate, onSelect }: 
 
         {/* Grid lines */}
         {yLabels.map(({ y }, i) => (
-          <line key={i} x1={PAD.l} y1={y} x2={W - PAD.r} y2={y} stroke="#f1f5f9" strokeWidth="1" />
+          <line key={i} x1={PAD.l} y1={y} x2={W - PAD.r} y2={y} stroke="rgba(77,162,255,.14)" strokeWidth="1" />
         ))}
 
         {/* Page-1 boundary */}
         {showBoundary && (
           <>
-            <line x1={PAD.l} y1={y10} x2={W - PAD.r} y2={y10} stroke="#bfdbfe" strokeWidth="1" strokeDasharray="4 3" />
-            <text x={W - PAD.r + 2} y={y10 + 4} fontSize="8" fill="#93c5fd">10</text>
+            <line x1={PAD.l} y1={y10} x2={W - PAD.r} y2={y10} stroke="rgba(194,224,255,.45)" strokeWidth="1" strokeDasharray="4 3" />
+            <text x={W - PAD.r + 2} y={y10 + 4} fontSize="8" fill="#c2e0ff">10</text>
           </>
         )}
 
@@ -199,21 +199,21 @@ function HistoryChart({ history, keywordId, topDates, selectedDate, onSelect }: 
 
         {/* Y-axis labels */}
         {yLabels.map(({ pos, y }) => (
-          <text key={pos} x={PAD.l - 6} y={y + 4} textAnchor="end" fontSize="9" fill="#94a3b8" fontWeight="600">
+          <text key={pos} x={PAD.l - 6} y={y + 4} textAnchor="end" fontSize="9" fill="rgba(234,242,255,.5)" fontWeight="500">
             #{pos}
           </text>
         ))}
 
         {/* X-axis labels */}
         {xLabels.map(({ x, label }, i) => (
-          <text key={i} x={x} y={H - 6} textAnchor="middle" fontSize="9" fill="#94a3b8">{label}</text>
+          <text key={i} x={x} y={H - 6} textAnchor="middle" fontSize="9" fill="rgba(234,242,255,.5)">{label}</text>
         ))}
 
         {/* Bottom axis */}
-        <line x1={PAD.l} y1={PAD.t + chartH} x2={W - PAD.r} y2={PAD.t + chartH} stroke="#e2e8f0" strokeWidth="1" />
+        <line x1={PAD.l} y1={PAD.t + chartH} x2={W - PAD.r} y2={PAD.t + chartH} stroke="rgba(77,162,255,.2)" strokeWidth="1" />
 
         {positions.length === 0 && (
-          <text x={W / 2} y={PAD.t + chartH / 2} textAnchor="middle" fontSize="10" fill="#94a3b8">
+          <text x={W / 2} y={PAD.t + chartH / 2} textAnchor="middle" fontSize="10" fill="rgba(234,242,255,.5)">
             Domínio não encontrado nestas verificações — clique em um dia para ver quem ranqueia
           </text>
         )}
@@ -228,8 +228,8 @@ function HistoryChart({ history, keywordId, topDates, selectedDate, onSelect }: 
               cx={x}
               cy={y}
               r={isSelected ? 5 : 3.5}
-              fill={isSelected ? '#94a3b8' : 'white'}
-              stroke="#94a3b8"
+              fill={isSelected ? 'rgba(234,242,255,.6)' : '#030508'}
+              stroke="rgba(234,242,255,.6)"
               strokeWidth="2"
               style={{ cursor: 'pointer' }}
               onMouseEnter={() => setTooltip({ x, y, date: entry.date, position: null, url: null, hasTop: true })}
@@ -251,7 +251,7 @@ function HistoryChart({ history, keywordId, topDates, selectedDate, onSelect }: 
                 cx={x}
                 cy={y}
                 r={isHovered || isSelected ? 5 : 3.5}
-                fill={isHovered || isSelected ? stroke : 'white'}
+                fill={isHovered || isSelected ? stroke : '#030508'}
                 stroke={stroke}
                 strokeWidth="2"
                 style={{ cursor: hasTop ? 'pointer' : 'crosshair' }}
@@ -272,19 +272,19 @@ function HistoryChart({ history, keywordId, topDates, selectedDate, onSelect }: 
           const tipY = Math.max(PAD.t, tooltip.y - tipH - 12);
           return (
             <g style={{ pointerEvents: 'none' }}>
-              <rect x={tipX} y={tipY} width={tipW} height={tipH} rx="6" fill="white" stroke="#e2e8f0" strokeWidth="1"
-                style={{ filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.08))' }} />
-              <text x={tipX + 10} y={tipY + 15} fontSize="9" fill="#64748b" fontWeight="600">{tooltip.date}</text>
+              <rect x={tipX} y={tipY} width={tipW} height={tipH} rx="6" fill="#06090f" stroke="rgba(77,162,255,.35)" strokeWidth="1"
+                style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.5))' }} />
+              <text x={tipX + 10} y={tipY + 15} fontSize="9" fill="rgba(234,242,255,.6)" fontWeight="500">{tooltip.date}</text>
               <text x={tipX + 10} y={tipY + 30} fontSize="12" fill={stroke} fontWeight="800">
                 {tooltip.position !== null ? `#${tooltip.position}` : 'Sem posição'}
               </text>
               {hasUrl && (
-                <text x={tipX + 10} y={tipY + 46} fontSize="8.5" fill="#94a3b8">
+                <text x={tipX + 10} y={tipY + 46} fontSize="8.5" fill="rgba(234,242,255,.5)">
                   {(tooltip.url!.replace(/^https?:\/\//, '')).slice(0, 30) + (tooltip.url!.length > 35 ? '…' : '')}
                 </text>
               )}
               {hint && (
-                <text x={tipX + 10} y={tipY + (hasUrl ? 60 : 44)} fontSize="8.5" fill={tooltip.hasTop ? stroke : '#94a3b8'} fontWeight="600">
+                <text x={tipX + 10} y={tipY + (hasUrl ? 60 : 44)} fontSize="8.5" fill={tooltip.hasTop ? stroke : 'rgba(234,242,255,.5)'} fontWeight="600">
                   {hint}
                 </text>
               )}

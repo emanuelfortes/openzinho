@@ -7,6 +7,7 @@ import UpdateBanner from '@/components/UpdateBanner';
 import GridTaskCenter from '@/components/GridTaskCenter';
 import ProjectSync from '@/components/ProjectSync';
 import AccountMenu from '@/components/AccountMenu';
+import { MobileNavButton, MobileNavProvider } from '@/components/MobileNav';
 import { getSession } from '@/lib/auth';
 import { authEnabled } from '@/lib/auth-config';
 import { getActiveProject, getProjects } from '@/lib/db';
@@ -27,13 +28,16 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const projects = getProjects();
 
   return (
+    <MobileNavProvider>
     <div className="relative flex h-dvh overflow-hidden bg-[var(--nexo-bg)] text-[var(--nexo-text)] font-sans">
       <div className="nexo-beams" />
       <Sidebar initialCollapsed={collapsed} initialFavorites={favorites} projects={projects} activeProject={activeProject} />
       <ProjectSync projectId={activeProject.id} projectName={activeProject.name} />
-      <div className="relative flex-1 flex flex-col min-w-0 overflow-hidden">
+      {/* isolate: keeps maps (Leaflet panes use z-index 400+) and popovers below the mobile drawer */}
+      <div className="relative isolate flex-1 flex flex-col min-w-0 overflow-hidden">
         <UpdateBanner />
-        <header className="h-14 border-b border-[var(--nexo-border)] bg-[rgba(3,5,8,.5)] backdrop-blur-xl flex items-center justify-end px-6 shrink-0 gap-3">
+        <header className="h-14 border-b border-[var(--nexo-border)] bg-[rgba(3,5,8,.5)] backdrop-blur-xl flex items-center justify-end px-4 sm:px-6 shrink-0 gap-2 sm:gap-3">
+          <MobileNavButton />
           <GridTaskCenter />
           <BalanceBadge />
           {accountEmail && <AccountMenu email={accountEmail} />}
@@ -41,7 +45,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         <BudgetBanner projectId={activeProject.id} />
 
         <div className="flex-1 overflow-hidden">
-          <main className="h-full overflow-y-auto p-8">
+          <main className="h-full overflow-y-auto p-4 sm:p-6 lg:p-8">
             <div className="max-w-6xl mx-auto">
               {children}
             </div>
@@ -49,5 +53,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
         </div>
       </div>
     </div>
+    </MobileNavProvider>
   );
 }

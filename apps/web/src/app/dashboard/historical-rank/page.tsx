@@ -85,8 +85,8 @@ function Bar({ value, max, color }: { value: number; max: number; color: string 
 async function HistoricalRankPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const creds = getCredentials();
   const history = getHistRankHistory();
-  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'Brazil');
-  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
+  const defaultLocation = toLabsCountry(getSetting('default_location') || 'Brazil');
+  const defaultLanguage = getSetting('default_language') || 'Portuguese';
   const defaultDomain = getSetting('default_domain') ?? '';
 
   const params = await searchParams;
@@ -195,9 +195,9 @@ async function HistoricalRankPage({ searchParams }: { searchParams: Promise<Sear
                 <div className="flex items-end gap-6">
                   <svg width={W} height={H} className="overflow-visible">
                     {sparkData.length > 1 && (
-                      <path d={sparkPath + ` L ${((sparkData.length - 1) * xStep).toFixed(1)} ${H} L 0 ${H} Z`} fill="#3b82f6" fillOpacity="0.12" />
+                      <path d={sparkPath + ` L ${((sparkData.length - 1) * xStep).toFixed(1)} ${H} L 0 ${H} Z`} fill="#4da2ff" fillOpacity="0.12" />
                     )}
-                    {sparkData.length > 1 && <path d={sparkPath} fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />}
+                    {sparkData.length > 1 && <path d={sparkPath} fill="none" stroke="#4da2ff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />}
                   </svg>
                   <div>
                     <div className="text-3xl font-medium text-nexo-text">{(sorted[sorted.length - 1]?.metrics.organic?.count ?? 0).toLocaleString('pt-BR')}</div>
