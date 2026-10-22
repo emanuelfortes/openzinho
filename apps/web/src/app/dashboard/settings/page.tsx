@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 
 import { getCredentials, getCurrentProject, getSetting } from '@/lib/db';
 import BudgetFields from '@/modules/custos/BudgetFields';
+import AutomationFields from '@/modules/jobs/AutomationFields';
 import { getBudgetStatus } from '@/modules/custos/budget';
 import { getBrandSettings } from '@/lib/brand-server';
 import { DEFAULT_BRAND_COLOR, normalizeHexColor } from '@/lib/brand';
@@ -136,6 +137,15 @@ async function SettingsPage() {
               <p className="nexo-label mb-1">Custos e limites</p>
               <p className="text-xs text-nexo-faint mb-6">Valores em reais, com teto mensal por cliente e para todos os clientes juntos.</p>
               <BudgetFields projectName={getCurrentProject().name} status={getBudgetStatus(getCurrentProject().id)} />
+            </div>
+
+            <div className="border-t border-nexo-border" />
+
+            {/* Alerts, e-mail and daily jobs */}
+            <div>
+              <p className="nexo-label mb-1">Avisos e tarefas automáticas</p>
+              <p className="text-xs text-nexo-faint mb-6">Quem recebe alertas e relatórios, e o que o worker faz todos os dias.</p>
+              <AutomationFields />
             </div>
 
             <div className="border-t border-nexo-border" />

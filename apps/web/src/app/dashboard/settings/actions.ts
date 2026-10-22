@@ -4,6 +4,7 @@ import { runWithCurrentProject } from '@/lib/db';
 
 import { saveCredentials, clearCredentials, getCurrentProject, setSetting } from '@/lib/db';
 import { parseMoney, saveBudgetSettings, saveClientCapBrl } from '@/modules/custos/budget';
+import { saveAlertRecipients } from '@/modules/email/recipients';
 import { BRAND_SETTING_KEYS } from '@/lib/brand-server';
 import { cleanBrandFooter, cleanBrandName, normalizeHeaderStyle, normalizeHexColor, validateLogoUpload } from '@/lib/brand';
 import { GRID_PREFERENCE_KEYS, normalizeDistanceUnit, normalizePinStyle } from '@/lib/grid-preferences';
@@ -50,6 +51,7 @@ export async function updateSettings(formData: FormData) {
       globalCapBrl: parseMoney(formData.get('budget_global_cap') as string | null),
     });
     saveClientCapBrl(getCurrentProject().id, parseMoney(formData.get('budget_client_cap') as string | null));
+    saveAlertRecipients(formData.get('alert_emails') as string | null);
 
     setSetting(GRID_PREFERENCE_KEYS.distanceUnit, normalizeDistanceUnit(formData.get('grid_distance_unit') as string | null));
     setSetting(GRID_PREFERENCE_KEYS.pinStyle, normalizePinStyle(formData.get('grid_pin_style') as string | null));

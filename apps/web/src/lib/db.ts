@@ -274,6 +274,16 @@ function getDb(): Database.Database {
   return getDbForProject(getCurrentProject().id);
 }
 
+/** Every SQLite file of this install (control, login and one per project), for backups. */
+export function databaseFiles(): Array<{ label: string; path: string }> {
+  const files = [
+    { label: 'projects', path: controlDbPath() },
+    { label: 'auth', path: authDbPath() },
+  ];
+  for (const project of getProjects()) files.push({ label: `project-${project.id}`, path: dataDbPath(project.id) });
+  return files.filter((file) => fs.existsSync(file.path));
+}
+
 /**
  * Closes every cached SQLite handle; the next call reopens them. Tests call it before removing
  * their temp folder, since Windows refuses to delete files that are still open.

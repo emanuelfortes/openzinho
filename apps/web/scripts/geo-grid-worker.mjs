@@ -3,6 +3,8 @@ import { readFile } from 'node:fs/promises';
 const interval = Math.max(Number.parseInt(process.env.GEO_GRID_WORKER_INTERVAL_MS ?? '60000', 10) || 60000, 10_000);
 const appUrl = (process.env.GEO_GRID_WORKER_URL ?? `http://127.0.0.1:${process.env.PORT ?? '3000'}`).replace(/\/$/, '');
 const endpoint = `${appUrl}/api/cron/geo-grid`;
+// Daily Nexo jobs (database backup, review alerts, monthly reports); each one decides if it is due.
+const jobsEndpoint = `${appUrl}/api/cron/jobs`;
 
 async function getSecret() {
   if (process.env.CRON_SECRET?.trim()) return process.env.CRON_SECRET.trim();
@@ -49,7 +51,28 @@ async function run() {
     const message = error instanceof Error ? error.message : 'Unknown error';
     console.error(`[geo-grid-worker] ${message}`);
   } finally {
+    await runJobs();
     running = false;
+  }
+}
+
+async function runJobs() {
+  try {
+    const secret = await getSecret();
+    if (!secret) return;
+    const response = await fetch(jobsEndpoint, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${secret}` },
+      signal: AbortSignal.timeout(10 * 60_000),
+    });
+    if (!response.ok) {
+      console.error(`[geo-grid-worker] ${response.status} while running daily jobs.`);
+      return;
+    }
+    const result = await response.json();
+    for (const job of result.ran ?? []) console.info(`[geo-grid-worker] job ${job.id}: ${job.ok ? 'ok' : 'failed'} - ${job.message}`);
+  } catch (error) {
+    console.error(`[geo-grid-worker] jobs: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 
