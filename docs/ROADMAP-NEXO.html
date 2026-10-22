@@ -265,10 +265,10 @@ const ROADMAP = [
   ]},
   { ref:3, t:'Posição média, Share of Voice e distribuição', s:'ok', onde:'modules/grade/metrics.ts · GradeMetricsPanel.tsx', nota:'21 para quem está fora do top 20; pesos 1 / 0,6 / 0,4 / 0,1 / 0,02; variação contra a varredura anterior' },
   { ref:4, t:'Clicar num ponto e ver os 20 primeiros', s:'ok', onde:'local-finder/GridMap.tsx — popup com o cliente destacado' },
-  { ref:5, t:'Histórico das varreduras', s:'parcial', onde:'GridSnapshotMapPanel.tsx · GridPositionTrend.tsx', nota:'escolher a data no mapa e gráfico de tendência; faltam as miniaturas dos mapas' },
+  { ref:5, t:'Histórico das varreduras com miniaturas', s:'ok', onde:'GridSnapshotMapPanel.tsx · modules/grade/GridThumbnail.tsx', nota:'mini grade de cada data na linha do tempo, mais o gráfico de tendência' },
   { ref:9, t:'Exportar PDF e CSV', s:'parcial', micro:[
     { t:'PDF da grade com logo e cores da agência', s:'ok', onde:'GridPdfExportButton.tsx' },
-    { t:'CSV dos resultados da grade', s:'falta', nota:'existe CSV em outras ferramentas, não na grade' },
+    { t:'CSV dos resultados da grade', s:'ok', onde:'modules/grade/grid-csv.ts' },
     { t:'PDF mensal com o mapa do mês anterior ao lado', s:'falta' }
   ]},
   { t:'Configuração da campanha', s:'parcial', micro:[
@@ -314,7 +314,7 @@ const ROADMAP = [
 ]},
 { fase:'p1', n:8, tag:'C', nome:'Avaliações', itens:[
   { ref:20, t:'Atualização automática das avaliações', s:'parcial', onde:'/dashboard/google-reviews', nota:'leitura sob demanda pela DataForSEO; falta a sincronia periódica e o aviso em tempo real do Google' },
-  { ref:21, t:'Filtro de positivas e negativas', s:'parcial', nota:'mostra % de positivas e a distribuição das notas; não há filtro da lista' },
+  { ref:21, t:'Filtro de positivas e negativas', s:'ok', onde:'modules/avaliacoes/filter.ts', nota:'também por estrelas, respondidas ou não, período e texto; os filtros ficam na URL' },
   { ref:22, t:'Rascunho de resposta com IA, um clique', s:'falta' },
   { ref:23, t:'Alerta diário de avaliações com até 3 estrelas', s:'falta' },
   { t:'Exportar avaliações (PDF, Excel, CSV)', s:'ok', onde:'google-reviews/page.tsx' }
@@ -325,13 +325,13 @@ const ROADMAP = [
 
 /* ===================== P2 ===================== */
 { fase:'p2', n:10, tag:'A', nome:'Grade de ranking', itens:[
-  { ref:6, t:'Comparativo com até 3 concorrentes', s:'parcial', onde:'GridResults.tsx — "Ver no mapa"', nota:'troca o mapa para um concorrente e lista os concorrentes; falta a visão lado a lado' },
+  { ref:6, t:'Comparativo com até 3 concorrentes', s:'ok', onde:'modules/grade/CompetitorComparison.tsx', nota:'grades lado a lado com posição média e SoV, da mesma varredura' },
   { ref:7, t:'Desativar pontos da grade (mar, rio, parque)', s:'ok', onde:'/dashboard/grid-points · modules/grade/inactive-points-db.ts', nota:'não são consultados nem cobrados, saem das métricas e da estimativa; valem para todas as palavras da mesma grade' },
-  { ref:8, t:'Painel de campanhas', s:'parcial', onde:'/dashboard/campaigns', micro:[
+  { ref:8, t:'Painel de campanhas', s:'ok', onde:'/dashboard/clientes · /dashboard/campaigns', micro:[
     { t:'Lista com posição média, SoV e top 3 por palavra', s:'ok' },
-    { t:'Etiquetas e filtro por responsável', s:'falta' },
-    { t:'Visão em mapa de todos os clientes', s:'falta' },
-    { t:'Ordenar por posição, SoV e variação', s:'falta' }
+    { t:'Etiquetas e filtro por responsável', s:'ok' },
+    { t:'Visão em mapa de todos os clientes', s:'ok' },
+    { t:'Ordenar por posição, SoV e variação', s:'ok' }
   ]}
 ]},
 { fase:'p2', n:11, tag:'B', nome:'Agente de IA do perfil', itens:[
@@ -353,7 +353,7 @@ const ROADMAP = [
 { fase:'p2', n:14, tag:'F', nome:'Equipe, clientes e planos', itens:[
   { ref:33, t:'Papéis Administrador, Editor e Visualizador', s:'falta' },
   { t:'Mais de um usuário', s:'falta', nota:'o login aceita só a primeira conta criada' },
-  { t:'Grupos e etiquetas de clientes', s:'falta' },
+  { t:'Grupos e etiquetas de clientes', s:'parcial', nota:'etiquetas e responsável nas campanhas, com filtro no Painel de clientes; grupos com permissão dependem dos papéis' },
   { t:'Portal do cliente (somente leitura)', s:'falta' },
   { t:'Planos da agência (Básico, Intermediário, Completo) limitando funções', s:'falta' }
 ]},

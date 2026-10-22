@@ -67,6 +67,14 @@ function CampaignCard({ campaign, queued, distanceUnit, budget }: { campaign: Gr
           <p className="mt-0.5 truncate text-xs text-nexo-dim">
             {campaign.target} · {campaign.grid_size}×{campaign.grid_size} · espaçamento de {formatDistance(campaign.spacing_km, distanceUnit)} · fila {campaign.queue_mode === 'priority' ? 'prioritária' : 'padrão'}
           </p>
+          {(campaign.owner || (campaign.tags?.length ?? 0) > 0) && (
+            <p className="mt-1 flex flex-wrap items-center gap-1.5 text-[11px] text-nexo-dim">
+              {campaign.owner && <span>Responsável: {campaign.owner}</span>}
+              {campaign.tags?.map((tag) => (
+                <Link key={tag} href={`/dashboard/clientes?etiqueta=${encodeURIComponent(tag)}`} className="rounded-[3px] border border-nexo-border-strong px-1.5 text-[10px] text-nexo-sky hover:text-white">{tag}</Link>
+              ))}
+            </p>
+          )}
           <p className="mt-0.5 text-xs text-nexo-dim">
             {describeSchedule(campaign)} ({campaign.time_zone.replace(/_/g, ' ')})
             {campaign.active && nextRun !== null && <> · próxima: {formatWhen(nextRun, campaign.time_zone)}</>}

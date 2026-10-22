@@ -19,6 +19,10 @@ export interface GridCampaignInput {
   time_zone: string;
   keywords: string[];
   active: boolean;
+  /** Free labels to group clients (neighbourhood, segment, plan…). */
+  tags?: string[];
+  /** Person in charge of the client at the agency. */
+  owner?: string;
 }
 
 export interface GridCampaign extends GridCampaignInput {
@@ -39,6 +43,14 @@ export function normalizeKeywords(raw: string[]): string[] {
     keywords.push(keyword);
   }
   return keywords;
+}
+
+export const MAX_CAMPAIGN_TAGS = 10;
+
+/** "Aldeota, odonto ,Aldeota" -> ["Aldeota", "odonto"]. */
+export function normalizeTags(raw: string | string[] | undefined): string[] {
+  const parts = Array.isArray(raw) ? raw : (raw ?? '').split(',');
+  return normalizeKeywords(parts.map((part) => part.slice(0, 40))).slice(0, MAX_CAMPAIGN_TAGS);
 }
 
 export function parseCenter(center: string): { lat: number; lng: number } | null {

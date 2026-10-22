@@ -96,6 +96,7 @@ export const NAV_SECTIONS: NavSection[] = [
       { name: 'Local Finder', href: '/dashboard/local-finder', icon: MapPin, desc: 'Resultados do pacote local em qualquer local' },
       { name: 'Ranking Geo-Grid', href: '/dashboard/geo-grid', icon: Grid3X3, desc: 'Mapa de calor do ranking em uma grade de pontos' },
       { name: 'Campanhas de grade', href: '/dashboard/campaigns', icon: CalendarCheck, desc: 'Várias palavras-chave em uma grade agendada' },
+      { name: 'Painel de clientes', href: '/dashboard/clientes', icon: Users, desc: 'Todas as campanhas de todos os clientes, em lista e mapa' },
     ],
   },
   {

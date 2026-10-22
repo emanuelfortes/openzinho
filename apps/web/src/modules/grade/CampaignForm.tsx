@@ -108,6 +108,17 @@ export default function CampaignForm({ campaign, defaults, distanceUnit, budget,
         </div>
       </div>
 
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label className={label} htmlFor="campaign-tags">Etiquetas · separadas por vírgula</label>
+          <input id="campaign-tags" name="tags" defaultValue={campaign?.tags?.join(', ') ?? ''} placeholder="Aldeota, odontologia, plano completo" className={field} />
+        </div>
+        <div>
+          <label className={label} htmlFor="campaign-owner">Responsável</label>
+          <input id="campaign-owner" name="owner" defaultValue={campaign?.owner ?? ''} placeholder="Quem cuida deste cliente" className={field} />
+        </div>
+      </div>
+
       <div>
         <label className={label} htmlFor="campaign-keywords">Palavras-chave · uma por linha, até {MAX_CAMPAIGN_KEYWORDS}</label>
         <textarea id="campaign-keywords" name="keywords" rows={4} value={keywords} onChange={(event) => setKeywords(event.target.value)} placeholder={'dentista\nclareamento dental\nimplante dentário'} className={field} />

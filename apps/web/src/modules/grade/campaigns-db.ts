@@ -9,7 +9,7 @@ import {
 } from '@/lib/db';
 import { clampMonthDay } from './cadence';
 import {
-  CAMPAIGN_GRID_SIZES, MAX_CAMPAIGN_KEYWORDS, normalizeKeywords, parseCenter,
+  CAMPAIGN_GRID_SIZES, MAX_CAMPAIGN_KEYWORDS, normalizeKeywords, normalizeTags, parseCenter,
   type GridCampaign, type GridCampaignInput,
 } from './campaigns-shared';
 
@@ -49,13 +49,20 @@ function db(): Database.Database {
         updated_at INTEGER NOT NULL
       );
     `);
+    for (const column of [`tags TEXT NOT NULL DEFAULT '[]'`, `owner TEXT NOT NULL DEFAULT ''`]) {
+      try {
+        handle.exec(`ALTER TABLE grade_campaigns ADD COLUMN ${column}`);
+      } catch (error) {
+        if (!(error instanceof Error && /duplicate column name/i.test(error.message))) throw error;
+      }
+    }
     initialised.add(handle);
   }
   return handle;
 }
 
-type CampaignRow = Omit<GridCampaign, 'keywords' | 'active' | 'queue_mode' | 'frequency'> & {
-  keywords: string; active: number; queue_mode: string; frequency: string;
+type CampaignRow = Omit<GridCampaign, 'keywords' | 'active' | 'queue_mode' | 'frequency' | 'tags' | 'owner'> & {
+  keywords: string; active: number; queue_mode: string; frequency: string; tags: string | null; owner: string | null;
 };
 
 function fromRow(row: CampaignRow): GridCampaign {
@@ -65,6 +72,8 @@ function fromRow(row: CampaignRow): GridCampaign {
     frequency: row.frequency as GridScheduleFrequency,
     keywords: JSON.parse(row.keywords) as string[],
     active: row.active === 1,
+    tags: row.tags ? JSON.parse(row.tags) as string[] : [],
+    owner: row.owner ?? '',
   };
 }
 
@@ -91,6 +100,8 @@ export function validateCampaign(input: GridCampaignInput): { campaign: GridCamp
       keywords,
       center: `${center.lat},${center.lng}`,
       language: input.language.trim() || 'Portuguese',
+      tags: normalizeTags(input.tags),
+      owner: (input.owner ?? '').trim().slice(0, 80),
       weekday: usesWeekday ? (input.weekday != null && input.weekday >= 0 && input.weekday <= 6 ? input.weekday : 1) : null,
       month_day: input.frequency === 'monthly' ? clampMonthDay(input.month_day) : null,
     },
@@ -127,15 +138,18 @@ export function saveCampaign(input: GridCampaignInput, id?: string): GridCampaig
 
   handle.transaction(() => {
     handle.prepare(`INSERT INTO grade_campaigns
-      (id, name, target, center, grid_size, spacing_km, language, queue_mode, frequency, weekday, month_day, time_of_day, time_zone, keywords, active, created_at, updated_at)
-      VALUES (@id, @name, @target, @center, @grid_size, @spacing_km, @language, @queue_mode, @frequency, @weekday, @month_day, @time_of_day, @time_zone, @keywords, @active, @created_at, @updated_at)
+      (id, name, target, center, grid_size, spacing_km, language, queue_mode, frequency, weekday, month_day, time_of_day, time_zone, keywords, active, tags, owner, created_at, updated_at)
+      VALUES (@id, @name, @target, @center, @grid_size, @spacing_km, @language, @queue_mode, @frequency, @weekday, @month_day, @time_of_day, @time_zone, @keywords, @active, @tags, @owner, @created_at, @updated_at)
       ON CONFLICT(id) DO UPDATE SET
         name = excluded.name, target = excluded.target, center = excluded.center, grid_size = excluded.grid_size,
         spacing_km = excluded.spacing_km, language = excluded.language, queue_mode = excluded.queue_mode,
         frequency = excluded.frequency, weekday = excluded.weekday, month_day = excluded.month_day,
         time_of_day = excluded.time_of_day, time_zone = excluded.time_zone, keywords = excluded.keywords,
-        active = excluded.active, updated_at = excluded.updated_at`)
-      .run({ ...campaign, keywords: JSON.stringify(campaign.keywords), active: campaign.active ? 1 : 0 });
+        active = excluded.active, tags = excluded.tags, owner = excluded.owner, updated_at = excluded.updated_at`)
+      .run({
+        ...campaign, keywords: JSON.stringify(campaign.keywords), active: campaign.active ? 1 : 0,
+        tags: JSON.stringify(normalizeTags(campaign.tags)), owner: campaign.owner ?? '',
+      });
 
     const wanted = new Map(campaign.keywords.map((keyword) => [campaignSeriesId(campaign, keyword), keyword]));
     for (const seriesId of scheduledSeries(campaign.id)) {

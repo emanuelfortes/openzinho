@@ -36,6 +36,8 @@ function campaignFromForm(formData: FormData): GridCampaignInput {
     keywords: text(formData, 'keywords').split(/\r?\n/),
     // An unchecked checkbox is absent from the form data.
     active: formData.get('active') === 'on',
+    tags: text(formData, 'tags').split(','),
+    owner: text(formData, 'owner'),
   };
 }
 
