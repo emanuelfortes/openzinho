@@ -18,6 +18,11 @@ import ReportPdfExportButton from '@/components/ReportPdfExportButton';
 import { CheckCircle, Clock, AlertCircle } from 'lucide-react';
 import ReviewFiltersForm from '@/modules/avaliacoes/ReviewFilters';
 import { filterReviews, parseReviewFilters } from '@/modules/avaliacoes/filter';
+import { formatDuration, formatReplyDelay, MINUTES_PER_REPLY, replyMetrics } from '@/modules/avaliacoes/metrics';
+import { estimateMonthlyUsd, defaultDepth, FREQUENCIES } from '@/modules/avaliacoes/monitor';
+import { findMonitoredByKey, listingKey } from '@/modules/avaliacoes/monitor-db';
+import { parseCid, parsePlaceId } from '@/modules/avaliacoes/request-kit';
+import { monitorFromTaskAction } from '../monitor-de-avaliacoes/actions';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -40,6 +45,9 @@ interface Review {
   reviews_count?: number;
   owner_answer?: string;
   owner_time_ago?: string;
+  owner_timestamp?: string;
+  review_id?: string;
+  review_url?: string;
 }
 
 interface PopularHour {
@@ -49,6 +57,7 @@ interface PopularHour {
 
 interface BusinessMeta {
   place_id?: string;
+  cid?: string;
   title?: string;
   category?: string;
   additional_categories?: string[];
@@ -168,8 +177,8 @@ function MonthlyChart({ reviews }: { reviews: Review[] }) {
         const y = PAD.top + chartH * (1 - f);
         return (
           <g key={f}>
-            <line x1={PAD.left} y1={y} x2={W - PAD.right} y2={y} stroke="#f1f5f9" strokeWidth="1" />
-            <text x={PAD.left - 4} y={y + 4} textAnchor="end" fontSize="9" fill="#94a3b8">{Math.round(maxVal * f)}</text>
+            <line x1={PAD.left} y1={y} x2={W - PAD.right} y2={y} stroke="rgba(77,162,255,.14)" strokeWidth="1" />
+            <text x={PAD.left - 4} y={y + 4} textAnchor="end" fontSize="9" fill="rgba(234,242,255,.5)">{Math.round(maxVal * f)}</text>
           </g>
         );
       })}
@@ -190,16 +199,16 @@ function MonthlyChart({ reviews }: { reviews: Review[] }) {
             <rect x={PAD.left + i * step} y={PAD.top} width={step} height={chartH} fill="transparent">
               <title>{`${label}: ${count} ${count !== 1 ? 'avaliações' : 'avaliação'}`}</title>
             </rect>
-            <rect x={x} y={y} width={barW} height={barH} rx="3" fill="#3b82f6" opacity="0.8">
+            <rect x={x} y={y} width={barW} height={barH} rx="3" fill="#1f6bff" opacity="0.9">
               <title>{`${label}: ${count} ${count !== 1 ? 'avaliações' : 'avaliação'}`}</title>
             </rect>
             {barH > 16 && (
-              <text x={cx} y={y + barH - 4} textAnchor="middle" fontSize="8" fill="white" fontWeight="700">
+              <text x={cx} y={y + barH - 4} textAnchor="middle" fontSize="8" fill="#eaf2ff" fontWeight="500">
                 {count}
               </text>
             )}
             {/* Month initial under every bar */}
-            <text x={cx} y={H - PAD.bottom + 13} textAnchor="middle" fontSize="9" fill="#94a3b8">
+            <text x={cx} y={H - PAD.bottom + 13} textAnchor="middle" fontSize="9" fill="rgba(234,242,255,.5)">
               {MONTHS[monthIdx][0]}
             </text>
           </g>
@@ -207,7 +216,7 @@ function MonthlyChart({ reviews }: { reviews: Review[] }) {
       })}
 
       {/* Axis line */}
-      <line x1={PAD.left} y1={PAD.top + chartH} x2={W - PAD.right} y2={PAD.top + chartH} stroke="#e2e8f0" strokeWidth="1" />
+      <line x1={PAD.left} y1={PAD.top + chartH} x2={W - PAD.right} y2={PAD.top + chartH} stroke="rgba(77,162,255,.2)" strokeWidth="1" />
     </svg>
   );
 }
@@ -232,14 +241,14 @@ function RatingGauge({ avg, total }: { avg: number; total: number }) {
     return `M ${s.x.toFixed(2)} ${s.y.toFixed(2)} A ${r} ${r} 0 ${large} 1 ${e.x.toFixed(2)} ${e.y.toFixed(2)}`;
   }
 
-  const strokeColor = avg >= 4.5 ? '#10b981' : avg >= 4 ? '#3b82f6' : avg >= 3 ? '#f59e0b' : '#ef4444';
+  const strokeColor = avg >= 4.5 ? '#c2e0ff' : avg >= 4 ? '#4da2ff' : avg >= 3 ? '#f5a524' : '#e5484d';
 
   // Number + labels are rendered as HTML (not SVG <text>) so they always paint
   // reliably regardless of web-font weight loading quirks in some browsers.
   return (
     <div className="relative w-36 shrink-0">
       <svg viewBox="0 0 140 104" className="w-full h-auto">
-        <path d={arc(R, startAngle, endAngle)} fill="none" stroke="#f1f5f9" strokeWidth="10" strokeLinecap="round" />
+        <path d={arc(R, startAngle, endAngle)} fill="none" stroke="rgba(77,162,255,.15)" strokeWidth="10" strokeLinecap="round" />
         <path d={arc(R, startAngle, fillAngle)} fill="none" stroke={strokeColor} strokeWidth="10" strokeLinecap="round" />
       </svg>
       <div
@@ -457,15 +466,15 @@ function PopularTimesDay({ dayKey, hours }: { dayKey: string; hours: PopularHour
             <g key={h.hour}>
               <rect {...({ x: PAD.left + i * step, y: PAD.top, width: step, height: chartH, fill: 'transparent', title: `${h.hour}h: ${h.value}%` } as React.SVGProps<SVGRectElement>)} />
               <rect x={x} y={y} width={barW} height={barH} rx="2"
-                fill={isPeak ? '#3b82f6' : h.value > 60 ? '#60a5fa' : '#bfdbfe'}
+                fill={isPeak ? '#c2e0ff' : h.value > 60 ? '#4da2ff' : '#1246b8'}
               />
               {isEvery3 && (
-                <text x={cx} y={H - PAD.bottom + 12} textAnchor="middle" fontSize="8" fill="#94a3b8">{h.hour}</text>
+                <text x={cx} y={H - PAD.bottom + 12} textAnchor="middle" fontSize="8" fill="rgba(234,242,255,.5)">{h.hour}</text>
               )}
             </g>
           );
         })}
-        <line x1={PAD.left} y1={PAD.top + chartH} x2={W - PAD.right} y2={PAD.top + chartH} stroke="#e2e8f0" strokeWidth="1" />
+        <line x1={PAD.left} y1={PAD.top + chartH} x2={W - PAD.right} y2={PAD.top + chartH} stroke="rgba(77,162,255,.2)" strokeWidth="1" />
       </svg>
     </div>
   );
@@ -527,8 +536,8 @@ function StatCard({ label, value, sub }: { label: string; value: string; sub?: s
 async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const creds = getCredentials();
   const params = await searchParams;
-  const defaultLocation = getSetting('default_location') ?? 'Brazil';
-  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
+  const defaultLocation = getSetting('default_location') || 'Brazil';
+  const defaultLanguage = getSetting('default_language') || 'Portuguese';
   const brand = getBrandSettings();
   const brandName = brand.name;
   const brandLogoUrl = brand.logo ?? undefined;
@@ -568,6 +577,7 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
                 items_count?: number;
                 total_count?: number;
                 place_id?: string;
+                cid?: string;
                 title?: string;
                 category?: string;
                 additional_categories?: string[];
@@ -594,6 +604,7 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
 
           const meta: BusinessMeta = {
             place_id: resultData?.place_id,
+            cid: resultData?.cid,
             title: resultData?.title,
             category: resultData?.category,
             additional_categories: resultData?.additional_categories,
@@ -659,6 +670,12 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
   });
 
   const pendingCount = tasks.filter((t) => t.status === 'pending').length;
+
+  const replies = replyMetrics(reviews);
+  const metaPlaceId = parsePlaceId(meta?.place_id);
+  const metaCid = parseCid(meta?.cid);
+  const activeListingKey = activeTask ? listingKey({ placeId: metaPlaceId, cid: metaCid, keyword: activeTask.business, location: activeTask.location }) : null;
+  const monitored = activeListingKey ? findMonitoredByKey(activeListingKey) : null;
 
   const historyItems = tasks.map((t) => {
     const isActive = t.id === activeId;
@@ -841,6 +858,53 @@ async function GoogleReviewsPage({ searchParams }: { searchParams: Promise<Searc
                 )}
               </div>
             </div>
+          </div>
+
+          {/* Owner replies */}
+          <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border overflow-hidden">
+            <div className="px-6 py-4 border-b border-nexo-border">
+              <h2 className="nexo-label">Respostas do proprietário</h2>
+              <p className="text-[11px] text-nexo-faint mt-0.5">Calculado sobre as {reviews.length} avaliações coletadas nesta busca.</p>
+            </div>
+            <div className="px-6 py-5 grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <StatCard label="Taxa de resposta" value={replies.replyRate !== null ? `${replies.replyRate.toLocaleString('pt-BR')}%` : '—'} sub={`${replies.answered} de ${replies.total}`} />
+              <StatCard label="Tempo mediano até responder" value={formatReplyDelay(replies.medianReplyHours)} sub={replies.timedReplies ? `${replies.timedReplies} ${replies.timedReplies === 1 ? 'resposta com data' : 'respostas com data'}` : 'sem datas de resposta'} />
+              <StatCard label="Negativas sem resposta" value={String(replies.unansweredNegatives)} sub={`de ${replies.negatives} com 1 a 3 estrelas${replies.negativeReplyRate !== null ? ` · ${replies.negativeReplyRate.toLocaleString('pt-BR')}% respondidas` : ''}`} />
+              <StatCard label="Tempo para zerar as pendentes" value={formatDuration(replies.backlogMinutes)} sub={`estimativa: ${MINUTES_PER_REPLY} min por resposta`} />
+            </div>
+            {replies.unansweredNegatives > 0 && (
+              <div className="px-6 pb-5">
+                <a href={`/dashboard/google-reviews?id=${activeTask.id}&nota=negativas&resposta=sem-resposta`} className="nexo-section hover:text-white">Ver as negativas sem resposta</a>
+              </div>
+            )}
+          </div>
+
+          {/* Monitoring and review requests */}
+          <div className="bg-nexo-surface rounded-nexo-lg border border-nexo-border px-6 py-5 flex flex-col lg:flex-row gap-5 lg:items-end justify-between">
+            {monitored ? (
+              <p className="text-sm text-nexo-dim">
+                Perfil monitorado ({monitored.frequency === 'diaria' ? 'diariamente' : 'semanalmente'}).{' '}
+                <a href="/dashboard/monitor-de-avaliacoes" className="nexo-section hover:text-white">Abrir o monitor</a>
+              </p>
+            ) : (
+              <form action={monitorFromTaskAction} className="flex flex-wrap items-end gap-3">
+                <input type="hidden" name="task_id" value={activeTask.id} />
+                <label className="block">
+                  <span className="nexo-label block mb-1.5">Monitorar este perfil</span>
+                  <select name="frequency" defaultValue="semanal" className="nexo-input px-3 py-2 text-sm">
+                    {FREQUENCIES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
+                  </select>
+                </label>
+                <PendingButton type="submit" className="nexo-btn-ghost px-3 py-2.5" pendingChildren="Salvando…">Monitorar</PendingButton>
+                <p className="text-[11px] text-nexo-faint w-full">
+                  Atualização automática com alerta por e-mail para avaliações novas de até 3 estrelas. Estimativa: {estimateMonthlyUsd('semanal', defaultDepth('semanal')).toLocaleString('pt-BR', { style: 'currency', currency: 'USD', minimumFractionDigits: 4 })} por mês (semanal) ou {estimateMonthlyUsd('diaria', defaultDepth('diaria')).toLocaleString('pt-BR', { style: 'currency', currency: 'USD', minimumFractionDigits: 4 })} (diária), respeitando o teto mensal. As avaliações desta busca viram a base, sem custo.
+                  {!metaPlaceId && !metaCid && ' Sem place ID nem CID, a atualização busca pelo nome da empresa.'}
+                </p>
+              </form>
+            )}
+            {(metaPlaceId || metaCid) && (
+              <a href={`/dashboard/pedido-de-avaliacao?tarefa=${activeTask.id}`} className="nexo-btn-accent px-3 py-2 shrink-0 text-center">Kit de pedido de avaliação</a>
+            )}
           </div>
 
           {/* Business info */}
