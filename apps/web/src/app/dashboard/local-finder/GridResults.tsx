@@ -6,6 +6,8 @@ import { lazy, Suspense, useEffect, useMemo, useState } from 'react';
 import type { GridPoint } from '@/lib/db';
 import { computeCompetitors, computeGridSummary, computeRingStats, type CompetitorSummary } from './grid-insights';
 import GridPdfExportButton from './GridPdfExportButton';
+import ExportCSVButton from '@/components/ExportCSVButton';
+import { GRID_CSV_COLUMNS, gridCsvFilename, gridCsvRows } from '@/modules/grade/grid-csv';
 import { formatDistance } from '@/lib/grid-preferences';
 import { RANK_TIER_ORDER, RANK_TIERS, rankStyle } from '@/lib/rank-scale';
 import { useGridPreferences } from './GridPreferences';
@@ -170,6 +172,7 @@ export default function GridResults({ results, gridSize, spacingKm, keyword, tar
               brandColor={brandColor}
               brandFooter={brandFooter} brandStyle={brandStyle}
             />
+            <ExportCSVButton data={gridCsvRows(results)} columns={GRID_CSV_COLUMNS} filename={gridCsvFilename(keyword, searchedAt)} />
             {cost !== undefined && (
               <span className="text-[10px] font-mono text-nexo-faint">custo: US$ {cost.toFixed(4).replace('.', ',')}</span>
             )}
