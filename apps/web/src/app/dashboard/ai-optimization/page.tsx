@@ -143,8 +143,8 @@ async function AiOptimizationPage({ searchParams }: { searchParams: Promise<Sear
   const params = await searchParams;
   const historyId = params.history_id;
 
-  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'Brazil');
-  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
+  const defaultLocation = toLabsCountry(getSetting('default_location') || 'Brazil');
+  const defaultLanguage = getSetting('default_language') || 'Portuguese';
 
   const targetValue = (params.target ?? '').trim();
   const targetType = (params.target_type === 'domain' ? 'domain' : 'keyword') as 'keyword' | 'domain';

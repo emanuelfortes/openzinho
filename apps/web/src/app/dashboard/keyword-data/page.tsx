@@ -141,8 +141,8 @@ async function KeywordDataPage({ searchParams }: { searchParams: Promise<SearchP
   const formDefaults = {
     se: sourceParams.se ?? 'google_ads', seType: sourceParams.se_type ?? 'search_volume',
     keywords: sourceParams.keywords ?? '', target: sourceParams.target ?? '',
-    targetType: sourceParams.target_type ?? 'site', location: sourceParams.location ?? getSetting('default_location') ?? 'Brazil',
-    language: sourceParams.language ?? getSetting('default_language') ?? 'Portuguese', searchPartners: sourceParams.search_partners ?? 'false',
+    targetType: sourceParams.target_type ?? 'site', location: sourceParams.location ?? (getSetting('default_location') || 'Brazil'),
+    language: sourceParams.language ?? (getSetting('default_language') || 'Portuguese'), searchPartners: sourceParams.search_partners ?? 'false',
     includeAdult: sourceParams.include_adult_keywords ?? 'false', device: sourceParams.device ?? 'all',
     dateFrom: sourceParams.date_from ?? '', dateTo: sourceParams.date_to ?? '',
     sortBy: sourceParams.sort_by ?? 'relevance',

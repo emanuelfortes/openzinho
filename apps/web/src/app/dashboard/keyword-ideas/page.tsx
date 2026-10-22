@@ -34,8 +34,8 @@ function formatDate(ts: number) { return new Date(ts).toLocaleDateString('pt-BR'
 async function KeywordIdeasPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const creds = getCredentials();
   const params = await searchParams;
-  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'Brazil');
-  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
+  const defaultLocation = toLabsCountry(getSetting('default_location') || 'Brazil');
+  const defaultLanguage = getSetting('default_language') || 'Portuguese';
 
   const keyword = params.keyword?.trim() ?? '';
   const location = params.location ?? defaultLocation;

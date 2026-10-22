@@ -60,8 +60,8 @@ async function SerpPage({ searchParams }: { searchParams: Promise<SearchParams> 
   const params = await searchParams;
   const historyId = params.history_id;
   const keyword = params.keyword?.trim() ?? '';
-  const location = params.location ?? getSetting('default_location') ?? 'Brazil';
-  const language = params.language ?? getSetting('default_language') ?? 'Portuguese';
+  const location = params.location ?? (getSetting('default_location') || 'Brazil');
+  const language = params.language ?? (getSetting('default_language') || 'Portuguese');
   const device = params.device ?? 'desktop';
   const depth = Math.min(parseInt(params.depth ?? '10', 10) || 10, 100);
 

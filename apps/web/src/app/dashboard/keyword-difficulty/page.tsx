@@ -61,8 +61,8 @@ async function KeywordDifficultyPage({ searchParams }: { searchParams: Promise<S
   const params = await searchParams;
   const historyId = params.history_id;
 
-  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'Brazil');
-  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
+  const defaultLocation = toLabsCountry(getSetting('default_location') || 'Brazil');
+  const defaultLanguage = getSetting('default_language') || 'Portuguese';
 
   const keywords = params.keywords?.trim() ?? '';
   const location = params.location ?? defaultLocation;

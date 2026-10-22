@@ -82,8 +82,8 @@ async function CompetitorsPage({ searchParams }: { searchParams: Promise<SearchP
   const historyId = params.history_id;
 
   const target = params.target?.trim() ?? '';
-  const location = params.location ?? toLabsCountry(getSetting('default_location') ?? 'Brazil');
-  const language = params.language ?? getSetting('default_language') ?? 'Portuguese';
+  const location = params.location ?? toLabsCountry(getSetting('default_location') || 'Brazil');
+  const language = params.language ?? (getSetting('default_language') || 'Portuguese');
   const limit = Math.min(parseInt(params.limit ?? '20', 10) || 20, 100);
 
   let items: CompetitorItem[] = [];

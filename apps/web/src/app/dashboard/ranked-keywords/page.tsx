@@ -118,8 +118,8 @@ async function RankedKeywordsPage({ searchParams }: { searchParams: Promise<Sear
   const historyId = params.history_id;
 
   const target = params.target?.trim() ?? '';
-  const location = params.location ?? toLabsCountry(getSetting('default_location') ?? 'Brazil');
-  const language = params.language ?? getSetting('default_language') ?? 'Portuguese';
+  const location = params.location ?? toLabsCountry(getSetting('default_location') || 'Brazil');
+  const language = params.language ?? (getSetting('default_language') || 'Portuguese');
   const limit = Math.min(parseInt(params.limit ?? '100', 10) || 100, 1000);
   const orderBy = params.order_by ?? 'ranked_serp_element.serp_item.rank_group,asc';
   const maxPosition = params.max_position ? parseInt(params.max_position, 10) : null;

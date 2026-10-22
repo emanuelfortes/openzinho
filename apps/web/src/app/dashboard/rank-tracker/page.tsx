@@ -29,8 +29,8 @@ async function RankTrackerPage({ searchParams }: { searchParams: Promise<SearchP
   const params = await searchParams;
 
   const creds = getCredentials();
-  const defaultLocation = getSetting('default_location') ?? 'Brazil';
-  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
+  const defaultLocation = getSetting('default_location') || 'Brazil';
+  const defaultLanguage = getSetting('default_language') || 'Portuguese';
   const rankDepth = getSetting('rank_tracker_depth') ?? '20';
 
   // Merge target_domains table with unique domains from tracked keywords

@@ -65,8 +65,8 @@ async function RelatedKeywordsPage({ searchParams }: { searchParams: Promise<Sea
   const params = await searchParams;
   const historyId = params.history_id;
 
-  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'Brazil');
-  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
+  const defaultLocation = toLabsCountry(getSetting('default_location') || 'Brazil');
+  const defaultLanguage = getSetting('default_language') || 'Portuguese';
 
   const keyword = params.keyword?.trim() ?? '';
   const location = params.location ?? defaultLocation;

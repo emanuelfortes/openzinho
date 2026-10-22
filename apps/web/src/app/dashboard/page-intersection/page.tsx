@@ -33,8 +33,8 @@ function formatDate(ts: number) { return new Date(ts).toLocaleDateString('pt-BR'
 async function PageIntersectionPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const creds = getCredentials();
   const params = await searchParams;
-  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'Brazil');
-  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
+  const defaultLocation = toLabsCountry(getSetting('default_location') || 'Brazil');
+  const defaultLanguage = getSetting('default_language') || 'Portuguese';
 
   const rawPages = params.pages?.trim() ?? '';
   const location = params.location ?? defaultLocation;

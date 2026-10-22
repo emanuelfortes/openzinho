@@ -94,8 +94,8 @@ async function KeywordOverviewPage({ searchParams }: { searchParams: Promise<Sea
   const historyId = params.history_id;
 
   const rawKeywords = params.keywords ?? '';
-  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'Brazil');
-  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
+  const defaultLocation = toLabsCountry(getSetting('default_location') || 'Brazil');
+  const defaultLanguage = getSetting('default_language') || 'Portuguese';
   const location = params.location ?? defaultLocation;
   const language = params.language ?? defaultLanguage;
 

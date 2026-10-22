@@ -76,8 +76,8 @@ async function LocalFinderPage({ searchParams }: { searchParams: Promise<SearchP
   const params = await searchParams;
   const historyId = params.history_id;
 
-  const defaultLocation = getSetting('default_location') ?? 'Brazil';
-  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
+  const defaultLocation = getSetting('default_location') || 'Brazil';
+  const defaultLanguage = getSetting('default_language') || 'Portuguese';
   const defaultCoordinates = getSetting('default_coordinates') ?? '';
 
   let items: LocalPackItem[] = [];

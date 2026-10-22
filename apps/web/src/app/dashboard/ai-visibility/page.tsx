@@ -282,8 +282,8 @@ async function AiVisibilityPage({ searchParams }: { searchParams: Promise<Search
   const targetType = (params.target_type === 'domain' ? 'domain' : 'keyword') as 'keyword' | 'domain';
   const platform = ['google', 'chat_gpt'].includes(params.platform ?? '') ? params.platform! : 'chat_gpt';
   const limit = Math.min(Math.max(parseInt(params.limit ?? '10', 10) || 10, 1), 50);
-  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'Brazil');
-  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
+  const defaultLocation = toLabsCountry(getSetting('default_location') || 'Brazil');
+  const defaultLanguage = getSetting('default_language') || 'Portuguese';
   const brand = getBrandSettings();
   const brandName = brand.name;
   const brandLogoUrl = brand.logo ?? undefined;

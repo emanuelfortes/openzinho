@@ -97,7 +97,7 @@ async function ReviewVelocityPage({ searchParams }: { searchParams: Promise<Sear
           <div className="flex-1 min-w-0">
             <BenchmarkBuilder
               defaultCenter={getSetting('default_coordinates') ?? ''}
-              defaultLanguage={getSetting('default_language') ?? 'Portuguese'}
+              defaultLanguage={getSetting('default_language') || 'Portuguese'}
               hasCredentials={Boolean(credentials)}
             />
           </div>

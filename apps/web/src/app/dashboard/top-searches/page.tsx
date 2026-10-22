@@ -82,8 +82,8 @@ async function TopSearchesPage({ searchParams }: { searchParams: Promise<SearchP
   const params = await searchParams;
   const historyId = params.history_id;
 
-  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'Brazil');
-  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
+  const defaultLocation = toLabsCountry(getSetting('default_location') || 'Brazil');
+  const defaultLanguage = getSetting('default_language') || 'Portuguese';
 
   const location = params.location ?? defaultLocation;
   const language = params.language ?? defaultLanguage;

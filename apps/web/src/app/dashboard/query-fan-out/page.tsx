@@ -185,8 +185,8 @@ async function QueryFanOutPage({ searchParams }: { searchParams: Promise<SearchP
   const params = await searchParams;
   const historyId = params.history_id;
 
-  const defaultLocation = toLabsCountry(getSetting('default_location') ?? 'Brazil');
-  const defaultLanguage = getSetting('default_language') ?? 'Portuguese';
+  const defaultLocation = toLabsCountry(getSetting('default_location') || 'Brazil');
+  const defaultLanguage = getSetting('default_language') || 'Portuguese';
 
   const seedsRaw = params.seeds?.trim() ?? '';
   const platform = ['google', 'chat_gpt'].includes(params.platform ?? '') ? params.platform! : 'google';
