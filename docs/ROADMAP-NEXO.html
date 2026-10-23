@@ -196,7 +196,7 @@
     Cada item foi conferido no código, não estimado. A base é a especificação do módulo de Google Meu Negócio (36 funções do Semrush Local, com prioridade P1, P2 e P3) e o rebranding de <code>docs/PROMPT-CLAUDE-CODE.md</code>. O número entre colchetes, como <span class="ref">[13]</span>, é a linha do mapa de funções da especificação.
     <strong>Feito por outro caminho</strong> marca o que a especificação pedia de um jeito e foi resolvido de outro; por exemplo, o agendamento consulta a DataForSEO a cada minuto em vez de receber postback.
     <br><br>
-    A saúde do código hoje: checagem de tipos, lint, build e os <strong>466 testes</strong> do <code>apps/web</code> passam (rode com <code>--testTimeout=30000</code> em disco lento ou OneDrive), e os <strong>271 testes Python</strong> passam no Python 3.12 (ambiente <code>.venv</code> na raiz).
+    A saúde do código hoje: checagem de tipos, lint, build e os <strong>524 testes</strong> do <code>apps/web</code> passam (rode com <code>--testTimeout=30000</code> em disco lento ou OneDrive), e os <strong>271 testes Python</strong> passam no Python 3.12 (ambiente <code>.venv</code> na raiz).
   </div>
 
   <div class="tabs" id="tabs" role="tablist"></div>
@@ -208,7 +208,7 @@
       <li><strong>Pedir hoje o acesso à API do Google Business Profile.</strong> A análise leva de 1 a 4 semanas e trava os módulos de agente, avaliações e otimização.</li>
       <li>Contas isoladas: cada cliente com login próprio vendo só o próprio negócio, e o papel de administrador para a equipe do Nexo.</li>
       <li>Passar o token de teste do Mercado Pago e testar a cobrança no ambiente de teste (o código já está pronto).</li>
-      <li>Painel simples do dono do negócio, com as ferramentas avançadas só para administradores.</li>
+      <li><s>Painel simples do dono do negócio, com as ferramentas avançadas só para administradores.</s> Feito.</li>
       <li>Contratar servidor e domínio e publicar seguindo <code>docs/DEPLOY-NEXO.md</code>, com o SMTP configurado.</li>
       <li>Escolher o modelo de IA para os rascunhos de resposta e os posts.</li>
     </ol>
@@ -232,7 +232,7 @@ const ROADMAP = [
   { t:'Ferramentas Python de grade (legends-geogrid) na raiz', s:'ok', onde:'tools/ · tests/' },
   { t:'Build de produção, checagem de tipos e lint passando', s:'ok', onde:'apps/web — next build, tsc, eslint' },
   { t:'Testes automáticos', s:'ok', micro:[
-    { t:'466 testes do apps/web passando', s:'ok', nota:'em disco lento, rodar com --testTimeout=30000' },
+    { t:'524 testes do apps/web passando', s:'ok', nota:'em disco lento, rodar com --testTimeout=30000' },
     { t:'271 testes Python passando', s:'ok', nota:'conferido no commit 2eb78a8, com Python 3.12 (.venv na raiz)' },
     { t:'Testes deixam de sujar a pasta temporária no Windows', s:'ok', onde:'closeAllDatabases() · commit b5fc4d8' }
   ]},
@@ -387,8 +387,8 @@ const ROADMAP = [
   { t:'Cadastro público com período de teste', s:'falta' }
 ]},
 { fase:'saas', n:18, tag:'S', nome:'Experiência do dono do negócio', itens:[
-  { t:'Painel inicial simples: mapa, avaliações, relatório e o que melhorar', s:'falta' },
-  { t:'Primeiros passos guiados (cadastrar o negócio e a primeira campanha)', s:'falta' },
+  { t:'Painel inicial simples: mapa, avaliações, relatório e o que melhorar', s:'ok', onde:'modules/painel · /dashboard', nota:'o cliente vê os números do próprio negócio e até 4 recomendações por regra; o administrador continua com a lista de ferramentas' },
+  { t:'Primeiros passos guiados (cadastrar o negócio e a primeira campanha)', s:'ok', onde:'modules/painel/advice.ts', nota:'lista de 4 passos que some quando tudo está pronto; o negócio é cadastrado pela equipe' },
   { t:'Portal do cliente com login próprio', s:'ok', nota:'o dono entra com a própria conta e vê só o negócio dele; o link secreto do relatório continua' },
   { t:'Banco PostgreSQL', s:'falta', nota:'cada cliente já tem um banco SQLite separado; migrar quando houver mais de um servidor ou relatórios de todos os assinantes' }
 ]},

@@ -1,4 +1,4 @@
-import { withProjectScope } from '@/lib/db';
+import { getCurrentProject, withProjectScope } from '@/lib/db';
 export const dynamic = 'force-dynamic';
 
 import { getCredentials } from '@/lib/db';
@@ -7,6 +7,8 @@ import Link from 'next/link';
 import { navForRole, type NavColor } from '@/lib/nav';
 import { requireUser } from '@/lib/access';
 import type { PlatformRole } from '@/lib/access-policy';
+import OwnerHome from '@/modules/painel/OwnerHome';
+import { ownerHomeData } from '@/modules/painel/summary';
 
 // Same list as the sidebar, minus the Dashboard link itself; Spending and Settings close the page
 function sectionsFor(role: PlatformRole) {
@@ -41,6 +43,12 @@ async function DashboardPage() {
         <p className="text-sm text-nexo-dim">A equipe do Nexo ainda está terminando de configurar a plataforma. Volte em alguns minutos ou fale com o suporte.</p>
       </div>
     );
+  }
+
+  // The business owner lands on their own numbers; the team keeps the tool list.
+  if (user.role === 'cliente') {
+    const project = getCurrentProject();
+    return <OwnerHome businessName={project.name} data={ownerHomeData(project)} />;
   }
 
   if (!creds) {
