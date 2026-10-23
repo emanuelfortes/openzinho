@@ -1,6 +1,45 @@
 # Nexo: estado do trabalho e próximos passos
 
-Documento de passagem para continuar o rebranding em outra máquina. Atualizado em 19/10/2026 (passos 4 a 7 concluídos).
+Documento de passagem entre máquinas. Atualizado em 23/10/2026 (painel do dono do negócio, commit `5df46c9`).
+
+## Nosso fluxo de trabalho
+
+Vale para qualquer máquina e para o Claude Code.
+
+1. **Ao começar:** `git pull origin main`, depois ler este arquivo (a parte "Onde paramos" logo abaixo) e o [ROADMAP-NEXO.html](ROADMAP-NEXO.html).
+2. **Pedido ao Claude Code:** "leia docs/NEXO-HANDOFF.md e o roadmap e siga do próximo passo". Ele confere o código antes de assumir que algo está feito.
+3. **Uma etapa por vez:** o Claude propõe o próximo passo, você diz "siga", ele faz, testa e mostra o resultado.
+4. **Conferência antes de subir:** em `apps/web`, rodar `npx tsc --noEmit`, `npx eslint` nos arquivos mexidos, `npx vitest run` e `npx next build`. Mudança de tela também é testada no app rodando, com login ligado e um banco descartável (`AUTH_ENABLED=true DB_PATH=<pasta temporária>/smoke.db npx next dev -p 31xx`), nunca no banco de verdade.
+5. **Subir:** commit e push direto na `main` depois de cada etapa conferida (só você trabalha no repositório).
+6. **Registrar:** a cada etapa, marcar o item no bloco `ROADMAP` do roadmap (`s:'ok'`). Ao trocar de máquina, atualizar "Onde paramos" aqui.
+7. **Segredos:** tokens e senhas (Mercado Pago, DataForSEO, SMTP, Google) ficam só no `.env` de cada máquina ou servidor, nunca no chat nem no git. O `.env` não vai no push: em máquina nova, copie `apps/web/.env.example` e preencha. O banco SQLite também não vai; cada máquina tem os próprios dados.
+8. **Interface:** tudo em Next.js, em português do Brasil, tema escuro e paleta Nexo (classes `nexo-*` do Tailwind). Código novo vai em `apps/web/src/modules/`.
+
+## Onde paramos (23/10/2026)
+
+O modelo é **assinatura self-service**: o dono do negócio tem a própria conta, paga a mensalidade e usa sozinho. A equipe Nexo é administradora e pode cadastrar o perfil do cliente.
+
+Feito nesta rodada:
+- contas isoladas: administrador e cliente, com cada cliente vendo só o próprio negócio (`lib/access.ts`, `/dashboard/usuarios`);
+- planos por negócio (Básico R$ 45, Intermediário R$ 59, Completo R$ 79), com limites de grade, palavras, frequência e teto de gasto; uma assinatura suspensa pausa as varreduras (`/dashboard/assinaturas`);
+- alertas e relatório mensal enviados ao cliente de cada negócio;
+- cobrança recorrente pelo Mercado Pago, pronta e **desligada** até configurar o token (veja [COBRANCA-MERCADOPAGO.md](COBRANCA-MERCADOPAGO.md));
+- painel do dono do negócio: ao entrar, o cliente vê o mapa, as avaliações, os primeiros passos e "o que melhorar agora" (`modules/painel`). O administrador continua com a lista de ferramentas.
+
+Testes: 524 passando no `apps/web`.
+
+Próximos passos:
+- **Dependem de você:**
+  - pôr o token de teste do Mercado Pago no `.env`, para testar a cobrança;
+  - pedir acesso à API do Google Business Profile (leva de 1 a 4 semanas);
+  - escolher o provedor de IA para os rascunhos de resposta e de posts;
+  - contratar servidor e domínio para publicar.
+- **Dá para fazer sem nada externo:** convite e recuperação de senha por e-mail.
+- **Mais adiante:** PostgreSQL, quando houver mais de um servidor.
+
+## Histórico
+
+Daqui para baixo fica o registro das rodadas anteriores (rebranding e 22/10).
 
 ## Como começar na máquina nova
 

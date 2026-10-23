@@ -5,6 +5,12 @@ Nexo is an open-source google maps rank checker plus the SEO dashboard in
 300/400/500, interface in Brazilian Portuguese). Keep the MIT attribution to
 legends-geogrid and SEO Playground in LICENSE and THIRD_PARTY_NOTICES.md.
 
+## Continuing the work
+
+Before starting, `git pull` and read `docs/NEXO-HANDOFF.md` (workflow and where we
+stopped) and `docs/ROADMAP-NEXO.html`. Commit and push to main after each verified
+step, then mark the roadmap item done.
+
 ## Setup and dependencies
 
 - Offline report: install `requirements-report.txt`, then run the README's
