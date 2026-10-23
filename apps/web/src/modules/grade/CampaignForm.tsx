@@ -27,22 +27,27 @@ type Props = {
   budget: { brlPerUsd: number; clientCapBrl: number | null; clientSpentBrl: number };
   /** Inactive points of the campaign's saved grid. */
   inactivePoints: string[];
+  /** A subscriber's plan (admins get none): biggest grid, keywords and frequencies; standard queue, desktop, depth 20. */
+  limits?: { planName: string; maxGridSize: number; maxKeywords: number; frequencies: GridScheduleFrequency[] };
 };
 
 const field = 'nexo-input min-w-0 w-full px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky';
 const label = 'nexo-label mb-1.5 block';
 
-export default function CampaignForm({ campaign, defaults, distanceUnit, budget, inactivePoints }: Props) {
+export default function CampaignForm({ campaign, defaults, distanceUnit, budget, inactivePoints, limits }: Props) {
+  const maxKeywords = limits?.maxKeywords ?? MAX_CAMPAIGN_KEYWORDS;
+  const offersFrequency = (value: GridScheduleFrequency) => !limits || limits.frequencies.includes(value);
+  const initialFrequency = campaign?.frequency ?? 'biweekly';
   const [state, formAction, pending] = useActionState(saveCampaignAction, undefined);
   const [center, setCenter] = useState(campaign?.center ?? defaults.center);
   const [target, setTarget] = useState(campaign?.target ?? defaults.target);
   const [language, setLanguage] = useState(campaign?.language ?? defaults.language);
-  const [gridSize, setGridSize] = useState(campaign?.grid_size ?? 7);
+  const [gridSize, setGridSize] = useState(Math.min(campaign?.grid_size ?? 7, limits?.maxGridSize ?? 11));
   const [spacingKm, setSpacingKm] = useState(campaign?.spacing_km ?? 0.5);
   const [keywords, setKeywords] = useState(campaign?.keywords.join('\n') ?? defaults.keywords?.join('\n') ?? '');
   const [device, setDevice] = useState<GridDevice>(campaign?.device ?? DEFAULT_GRID_DEVICE);
   const [depth, setDepth] = useState(campaign?.depth ?? DEFAULT_GRID_DEPTH);
-  const [frequency, setFrequency] = useState<GridScheduleFrequency>(campaign?.frequency ?? 'biweekly');
+  const [frequency, setFrequency] = useState<GridScheduleFrequency>(offersFrequency(initialFrequency) ? initialFrequency : limits!.frequencies[limits!.frequencies.length - 1]);
   const [queueMode, setQueueMode] = useState<'standard' | 'priority'>(campaign?.queue_mode ?? 'standard');
   const [timeZone, setTimeZone] = useState(campaign?.time_zone ?? 'UTC');
 
@@ -100,7 +105,7 @@ export default function CampaignForm({ campaign, defaults, distanceUnit, budget,
         <div>
           <label className={label} htmlFor="campaign-size">Tamanho da grade</label>
           <select id="campaign-size" name="grid_size" value={gridSize} onChange={(event) => setGridSize(Number(event.target.value))} className={field}>
-            {CAMPAIGN_GRID_SIZES.map((size) => <option key={size} value={size}>{size}×{size} ({size * size} pontos)</option>)}
+            {CAMPAIGN_GRID_SIZES.filter((size) => size <= (limits?.maxGridSize ?? 11)).map((size) => <option key={size} value={size}>{size}×{size} ({size * size} pontos)</option>)}
           </select>
         </div>
         <div>
@@ -119,6 +124,17 @@ export default function CampaignForm({ campaign, defaults, distanceUnit, budget,
         </div>
       </div>
 
+      {limits && (
+        <p className="rounded-nexo-lg border border-nexo-border bg-nexo-surface-2 px-3 py-2 text-xs text-nexo-dim">
+          Plano {limits.planName}: grade de até {limits.maxGridSize}×{limits.maxGridSize}, até {limits.maxKeywords} palavras-chave por campanha, fila padrão, desktop e 20 resultados por ponto.
+        </p>
+      )}
+      {limits ? (
+        <>
+          <input type="hidden" name="device" value="desktop" />
+          <input type="hidden" name="depth" value="20" />
+        </>
+      ) : (
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <span className={label} id="campaign-device-label">Dispositivo</span>
@@ -141,6 +157,7 @@ export default function CampaignForm({ campaign, defaults, distanceUnit, budget,
           <p className="mt-1 text-[11px] text-nexo-faint">Acima de 20, a empresa é encontrada mesmo em posições mais baixas. Mudar dispositivo ou profundidade inicia novas linhas do tempo.</p>
         </div>
       </div>
+      )}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
@@ -154,9 +171,9 @@ export default function CampaignForm({ campaign, defaults, distanceUnit, budget,
       </div>
 
       <div>
-        <label className={label} htmlFor="campaign-keywords">Palavras-chave · uma por linha, até {MAX_CAMPAIGN_KEYWORDS}</label>
+        <label className={label} htmlFor="campaign-keywords">Palavras-chave · uma por linha, até {maxKeywords}</label>
         <textarea id="campaign-keywords" name="keywords" rows={4} value={keywords} onChange={(event) => setKeywords(event.target.value)} placeholder={'dentista\nclareamento dental\nimplante dentário'} className={field} />
-        <p className={`mt-1 text-[11px] ${keywordCount > MAX_CAMPAIGN_KEYWORDS ? 'text-nexo-danger-text' : 'text-nexo-faint'}`}>
+        <p className={`mt-1 text-[11px] ${keywordCount > maxKeywords ? 'text-nexo-danger-text' : 'text-nexo-faint'}`}>
           {keywordCount} {keywordCount === 1 ? 'palavra-chave' : 'palavras-chave'}. Cada uma é um monitor próprio, com sua própria linha do tempo.
         </p>
       </div>
@@ -165,10 +182,10 @@ export default function CampaignForm({ campaign, defaults, distanceUnit, budget,
         <div>
           <label className={label} htmlFor="campaign-frequency">Frequência</label>
           <select id="campaign-frequency" name="frequency" value={frequency} onChange={(event) => setFrequency(event.target.value as GridScheduleFrequency)} className={field}>
-            <option value="daily">Diário</option>
-            <option value="weekly">Semanal</option>
-            <option value="biweekly">Quinzenal</option>
-            <option value="monthly">Mensal</option>
+            {offersFrequency('daily') && <option value="daily">Diário</option>}
+            {offersFrequency('weekly') && <option value="weekly">Semanal</option>}
+            {offersFrequency('biweekly') && <option value="biweekly">Quinzenal</option>}
+            {offersFrequency('monthly') && <option value="monthly">Mensal</option>}
           </select>
         </div>
         <div>
@@ -196,7 +213,7 @@ export default function CampaignForm({ campaign, defaults, distanceUnit, budget,
           <label className={label} htmlFor="campaign-queue">Fila</label>
           <select id="campaign-queue" name="queue_mode" value={queueMode} onChange={(event) => setQueueMode(event.target.value as 'standard' | 'priority')} className={field}>
             <option value="standard">Padrão</option>
-            <option value="priority">Prioritária</option>
+            {!limits && <option value="priority">Prioritária</option>}
           </select>
         </div>
       </div>

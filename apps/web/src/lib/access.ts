@@ -8,6 +8,7 @@ import { redirect } from 'next/navigation';
 import { authEnabled } from './auth-config';
 import { platformRole, type PlatformRole } from './access-policy';
 import { getActiveProject, getControlDataDb, getProjects, runInProjectScope, setActiveProject, type Project } from './db';
+import { isSuspended } from '@/modules/planos/plans-db';
 
 export interface AccessUser {
   id: string;
@@ -105,7 +106,13 @@ export async function requestProjectId(): Promise<string> {
   const user = await requireUser();
   const project = resolveProjectForUser(user);
   if (!project) redirect('/sem-acesso');
+  if (subscriberLockedOut(user, project.id)) redirect('/assinatura-suspensa');
   return project.id;
+}
+
+/** A subscriber on a suspended subscription only sees the notice page; admins are never locked out. */
+export function subscriberLockedOut(user: AccessUser, projectId: string): boolean {
+  return authEnabled() && user.role === 'cliente' && isSuspended(projectId);
 }
 
 /** For route handlers: runs `operation` inside this user's active business (pages use withProjectScope). */

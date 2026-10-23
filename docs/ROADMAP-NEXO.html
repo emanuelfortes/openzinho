@@ -371,10 +371,12 @@ const ROADMAP = [
   { t:'Etiquetas e responsável nos clientes', s:'ok', onde:'Painel de clientes · campanhas' }
 ]},
 { fase:'saas', n:17, tag:'S', nome:'Planos e cobrança', itens:[
-  { t:'Planos Básico, Intermediário e Completo com limites por conta', s:'falta', nota:'grade, palavras, frequência, número de negócios e IA' },
+  { t:'Planos Básico, Intermediário e Completo com limites por negócio', s:'ok', onde:'modules/planos · /dashboard/assinaturas', nota:'grade, palavras-chave e frequência na tela e no servidor; fila padrão, desktop e profundidade 20 para clientes; a IA fica registrada no plano para quando existir' },
+  { t:'Teto de gasto padrão por plano', s:'ok', nota:'R$ 15, 25 e 40 por mês; o teto manual de Configurações tem prioridade' },
+  { t:'Alertas e relatório mensal para o e-mail do próprio cliente', s:'ok', onde:'modules/email/recipients.ts' },
   { t:'Teto de gasto por cliente', s:'ok', onde:'modules/custos/budget.ts' },
   { t:'Cobrança recorrente (Asaas: Pix, boleto e cartão)', s:'falta' },
-  { t:'Suspender a conta quando o pagamento falha e reativar quando volta', s:'falta' },
+  { t:'Suspender e reativar a assinatura', s:'parcial', nota:'manual em Assinaturas: suspensa pausa as varreduras e mostra um aviso ao cliente; falta ligar ao pagamento' },
   { t:'Cadastro público com período de teste', s:'falta' }
 ]},
 { fase:'saas', n:18, tag:'S', nome:'Experiência do dono do negócio', itens:[

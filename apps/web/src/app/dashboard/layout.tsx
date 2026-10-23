@@ -9,7 +9,7 @@ import ProjectSync from '@/components/ProjectSync';
 import AccountMenu from '@/components/AccountMenu';
 import { MobileNavButton, MobileNavProvider } from '@/components/MobileNav';
 import { authEnabled } from '@/lib/auth-config';
-import { allowedProjects, requireUser, resolveProjectForUser } from '@/lib/access';
+import { allowedProjects, requireUser, resolveProjectForUser, subscriberLockedOut } from '@/lib/access';
 import BudgetBanner from '@/modules/custos/BudgetBanner';
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -22,6 +22,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   // Each user has their own active business; subscribers only see the ones linked to their account.
   const activeProject = resolveProjectForUser(user);
   if (!activeProject) redirect('/sem-acesso');
+  if (subscriberLockedOut(user, activeProject.id)) redirect('/assinatura-suspensa');
   const projects = allowedProjects(user);
 
   return (

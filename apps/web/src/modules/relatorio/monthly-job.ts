@@ -3,6 +3,7 @@
 import { getProjects, runInProjectScope } from '@/lib/db';
 import { listCampaigns } from '@/modules/grade/campaigns-db';
 import { recipientsForProject } from '@/modules/email/recipients';
+import { isSuspended } from '@/modules/planos/plans-db';
 import { emailConfigured, escapeHtml, sendEmail, type EmailMessage, type SendResult } from '@/modules/email/send';
 import { jobTimeZone, localDayAndHour, type DailyJob, type JobResult } from '@/modules/jobs/runner';
 import { reportSummaryLines } from './analysis';
@@ -35,7 +36,7 @@ export async function runMonthlyReports(now: Date, deps: MonthlyReportDeps = {})
   const failures: string[] = [];
   // Each business e-mails its own client accounts (or the global list when it has none).
   for (const { project, to } of targets) {
-    if (to.length === 0) continue;
+    if (to.length === 0 || isSuspended(project.id)) continue;
     const campaigns = runInProjectScope(project.id, () => listCampaigns().filter((campaign) => campaign.active));
     for (const campaign of campaigns) {
       const { report, token } = runInProjectScope(project.id, () => ({

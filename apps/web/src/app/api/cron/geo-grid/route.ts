@@ -12,6 +12,7 @@ import { collectGridProgress } from '@/lib/grid-progress';
 import { collectRankProgress } from '@/lib/rank-progress';
 import { queueStandardRankChecksForProject } from '@/lib/rank-queue';
 import { BudgetTracker, recordSkippedRun } from '@/modules/custos/budget';
+import { isSuspended } from '@/modules/planos/plans-db';
 
 export const dynamic = 'force-dynamic';
 
@@ -70,7 +71,13 @@ async function runPass(credentials: { login: string; pass: string }) {
   // A client over its monthly cap (or everyone, over the global cap) skips its runs until next month.
   const budget = due.length > 0 || dueRankSchedules.length > 0 ? new BudgetTracker() : null;
   let budgetSkipped = 0;
+  // A suspended subscription (usually a payment problem) pauses the business's scheduled runs.
+  let suspendedSkipped = 0;
   for (const schedule of due) {
+    if (isSuspended(schedule.projectId)) {
+      suspendedSkipped += 1;
+      continue;
+    }
     if (budget?.status(schedule.projectId).blocked) {
       recordSkippedRun(schedule.projectId);
       budgetSkipped += 1;
@@ -121,6 +128,10 @@ async function runPass(credentials: { login: string; pass: string }) {
   let rankScheduled = 0;
   let rankScheduleRetries = 0;
   for (const schedule of dueRankSchedules) {
+    if (isSuspended(schedule.projectId)) {
+      suspendedSkipped += 1;
+      continue;
+    }
     if (budget?.status(schedule.projectId).blocked) {
       recordSkippedRun(schedule.projectId);
       budgetSkipped += 1;
@@ -177,6 +188,10 @@ async function runPass(credentials: { login: string; pass: string }) {
   let promptRunsFailed = 0;
   const promptBudget = budget ?? (duePromptSchedules.length > 0 ? new BudgetTracker() : null);
   for (const schedule of duePromptSchedules) {
+    if (isSuspended(schedule.projectId)) {
+      suspendedSkipped += 1;
+      continue;
+    }
     if (promptBudget?.status(schedule.projectId).blocked) {
       recordSkippedRun(schedule.projectId);
       budgetSkipped += 1;
@@ -192,7 +207,7 @@ async function runPass(credentials: { login: string; pass: string }) {
   }
 
   return {
-    due: due.length, started, failed, gridRetries, budgetSkipped, pendingChecked, completed,
+    due: due.length, started, failed, gridRetries, budgetSkipped, suspendedSkipped, pendingChecked, completed,
     rankSchedulesDue: dueRankSchedules.length, rankScheduled, rankScheduleRetries, rankPendingChecked, rankCompleted, rankFailed,
     promptSchedulesDue: duePromptSchedules.length, promptRuns, promptRunsFailed,
   };

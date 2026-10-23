@@ -23,7 +23,9 @@ function Meter({ label, spent, cap }: { label: string; spent: number; cap: numbe
 }
 
 /** Exchange rate and monthly caps; part of the Settings form. */
-export default function BudgetFields({ projectName, status }: { projectName: string; status: BudgetStatus }) {
+export default function BudgetFields({ projectName, status, explicitClientCapBrl }: { projectName: string; status: BudgetStatus; explicitClientCapBrl: number | null }) {
+  // Without a cap set by hand, the plan default applies; show it as a hint, never save it as the field value.
+  const capHint = explicitClientCapBrl === null && status.clientCapBrl !== null ? `Padrão do plano: ${formatBrl(status.clientCapBrl)}` : 'Sem teto';
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-3">
@@ -33,7 +35,7 @@ export default function BudgetFields({ projectName, status }: { projectName: str
         </label>
         <label className="space-y-2">
           <span className="nexo-label block">Teto deste cliente (R$/mês)</span>
-          <input name="budget_client_cap" inputMode="decimal" defaultValue={money(status.clientCapBrl)} placeholder="Sem teto" className={fieldCls} />
+          <input name="budget_client_cap" inputMode="decimal" defaultValue={money(explicitClientCapBrl)} placeholder={capHint} className={fieldCls} />
         </label>
         <label className="space-y-2">
           <span className="nexo-label block">Teto de todos (R$/mês)</span>

@@ -7,6 +7,7 @@
 // Gastos page and the caps already count.
 import { getCredentials, getProjectDataDb, getProjects, runInProjectScope, saveReviewsTask, updateReviewsTask } from '@/lib/db';
 import { BudgetTracker, recordSkippedRun } from '@/modules/custos/budget';
+import { isSuspended } from '@/modules/planos/plans-db';
 import { recipientsForProject } from '@/modules/email/recipients';
 import { sendEmail, type EmailMessage, type SendResult } from '@/modules/email/send';
 import { jobTimeZone, type DailyJob, type JobResult } from '@/modules/jobs/runner';
@@ -167,6 +168,8 @@ export async function runReviewsRefresh(nowDate = new Date(), deps: ReviewsJobDe
   let budget: BudgetTracker | null = null;
 
   for (const project of getProjects()) {
+    // A suspended subscription stops new (billed) refreshes; tasks already posted are still collected below.
+    const suspended = isSuspended(project.id);
     const listings = listMonitored(project.id);
     if (listings.length === 0) continue;
     totals.profiles += listings.filter((listing) => listing.active).length;
@@ -180,6 +183,7 @@ export async function runReviewsRefresh(nowDate = new Date(), deps: ReviewsJobDe
       totals.dueWithoutCredentials += listMonitored(project.id).filter((listing) => isRefreshDue(listing, now)).length;
       continue;
     }
+    if (suspended) continue;
     budget ??= new BudgetTracker(nowDate);
     const posted = await postDueRefreshes(project.id, credentials, budget, deps.fetchImpl, now);
     totals.posted += posted.posted; totals.failed += posted.failed; totals.budgetSkipped += posted.budgetSkipped;

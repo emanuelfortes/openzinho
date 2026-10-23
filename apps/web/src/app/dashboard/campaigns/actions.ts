@@ -1,6 +1,8 @@
 'use server';
 
-import { runWithCurrentProject, type GridScheduleFrequency } from '@/lib/db';
+import { getCurrentProject, runWithCurrentProject, type GridScheduleFrequency } from '@/lib/db';
+import { requireUser } from '@/lib/access';
+import { planOf, planViolation } from '@/modules/planos/plans-db';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { deleteCampaign, runCampaignNow, saveCampaign, validateCampaign, type GridCampaignInput } from '@/modules/grade/campaigns-db';
@@ -48,6 +50,15 @@ export async function saveCampaignAction(_previous: { error?: string } | undefin
   return runWithCurrentProject(async () => {
     const result = validateCampaign(campaignFromForm(formData));
     if ('error' in result) return { error: result.error };
+    // Subscribers stay inside the plan of the business; admins are never limited.
+    if ((await requireUser()).role === 'cliente') {
+      const campaign = result.campaign;
+      const violation = planViolation(planOf(getCurrentProject().id), {
+        gridSize: campaign.grid_size, keywordCount: campaign.keywords.length, frequency: campaign.frequency,
+        queueMode: campaign.queue_mode, device: campaign.device, depth: campaign.depth,
+      });
+      if (violation) return { error: violation };
+    }
     const saved = saveCampaign(result.campaign, text(formData, 'id') || undefined);
     revalidatePath('/dashboard/campaigns');
     redirect(`/dashboard/campaigns#campaign-${saved.id}`);

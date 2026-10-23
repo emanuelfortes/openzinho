@@ -17,6 +17,8 @@ import HistorySidebar from '@/components/HistorySidebar';
 import DeleteMonitorButton from '../local-finder/DeleteMonitorButton';
 import { fetchGridSearch, postGridTasksQueue, stableGridId } from '../local-finder/grid-api';
 import { getBudgetStatus } from '@/modules/custos/budget';
+import { requireUser } from '@/lib/access';
+import { planOf, planViolation } from '@/modules/planos/plans-db';
 import { getInactivePoints } from '@/modules/grade/inactive-points-db';
 import { describeGridConfig, gridConfigKey, normalizeGridConfig } from '@/modules/grade/grid-config';
 
@@ -59,6 +61,8 @@ function gridRerunUrl(entry: { keyword: string; center: string; grid_size: numbe
 
 async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const creds = getCredentials();
+  // Subscribers work inside the plan of the business; admins are never limited.
+  const plan = (await requireUser()).role === 'cliente' ? planOf(getCurrentProject().id) : null;
   const params = await searchParams;
   const gridHistoryId = params.grid_history_id;
 
@@ -112,8 +116,13 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
         params.keyword, params.location_coordinate, gridSize, spacingKm, params.grid_target, queueMode, config,
       );
 
+      const planError = plan && !getGridEntry(id)
+        ? planViolation(plan, { gridSize, keywordCount: 1, queueMode, device: config.device, depth: config.depth })
+        : null;
       const budget = getGridEntry(id) ? null : getBudgetStatus(getCurrentProject().id);
-      if (budget?.blocked) {
+      if (planError) {
+        gridError = planError;
+      } else if (budget?.blocked) {
         gridError = `${budget.reason} Aumente o teto em Configurações para rodar agora.`;
       } else if (!getGridEntry(id)) {
         const baseEntry: GridSearchEntry = {
@@ -297,7 +306,7 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
                 <span className="grid h-8 w-8 shrink-0 place-items-center rounded-nexo bg-nexo-blue text-lg font-medium text-white transition-transform group-open:rotate-45">+</span>
               </div>
             </summary>
-            <div className="mt-5 border-t border-nexo-border-strong pt-5"><LocalFinderForm defaults={formDefaults} /></div>
+            <div className="mt-5 border-t border-nexo-border-strong pt-5"><LocalFinderForm defaults={formDefaults} limits={plan ? { maxGridSize: plan.maxGridSize, planName: plan.name } : undefined} /></div>
           </details>
 
           {!gridEntry && !gridError && latestBySeries.length > 0 && (
@@ -351,6 +360,7 @@ async function GeoGridPage({ searchParams }: { searchParams: Promise<SearchParam
                   previousResults={previousResults}
                   snapshots={mapSnapshots}
                   schedule={gridSchedule}
+                  allowedFrequencies={plan?.frequencies}
                   brandName={brandName}
                   brandLogoUrl={brandLogoUrl}
                   brandColor={brand.color}

@@ -14,6 +14,8 @@ import { estimateCampaign } from '@/modules/grade/estimate';
 import { computeGradeMetrics } from '@/modules/grade/metrics';
 import { formatBrl, getBudgetStatus, monthStart, type BudgetStatus } from '@/modules/custos/budget';
 import { getInactivePoints, gridPointsHref } from '@/modules/grade/inactive-points-db';
+import { requireUser } from '@/lib/access';
+import { planOf } from '@/modules/planos/plans-db';
 import { runCampaignNowAction } from './actions';
 
 interface SearchParams {
@@ -167,6 +169,8 @@ async function CampaignsPage({ searchParams }: { searchParams: Promise<SearchPar
   const showForm = Boolean(editing) || params.new === '1' || campaigns.length === 0;
   const { distanceUnit } = getGridPreferences();
   const budget = getBudgetStatus(getCurrentProject().id);
+  // Subscribers see only what the plan of the business allows; admins get every option.
+  const plan = (await requireUser()).role === 'cliente' ? planOf(getCurrentProject().id) : null;
   // A link such as ?new=1&keywords=a,b&target=…&center=lat,lng opens the form prefilled.
   const prefill = parseCampaignPrefill(params);
   const defaults = {
@@ -204,6 +208,7 @@ async function CampaignsPage({ searchParams }: { searchParams: Promise<SearchPar
             key={editing?.id ?? 'new'} campaign={editing} defaults={defaults} distanceUnit={distanceUnit}
             budget={{ brlPerUsd: budget.brlPerUsd, clientCapBrl: budget.clientCapBrl, clientSpentBrl: budget.clientSpentBrl }}
             inactivePoints={editing ? [...getInactivePoints(editing)] : []}
+            limits={plan ? { planName: plan.name, maxGridSize: plan.maxGridSize, maxKeywords: plan.maxKeywords, frequencies: plan.frequencies } : undefined}
           />
         </section>
       )}

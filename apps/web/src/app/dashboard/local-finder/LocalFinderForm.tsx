@@ -28,6 +28,8 @@ interface Props {
     gridTarget?: string;
     queueMode?: string;
   };
+  /** Plan limits of a subscriber (admins get none): biggest grid, standard queue only, desktop and depth 20. */
+  limits?: { maxGridSize: number; planName: string };
 }
 
 // DataForSEO Local Finder SERP API pricing (checked against their pricing page — they revise this periodically).
@@ -81,15 +83,16 @@ function GridPreview({ size, spacingKm, unit }: { size: number; spacingKm: numbe
   );
 }
 
-export default function LocalFinderForm({ defaults }: Props) {
+export default function LocalFinderForm({ defaults, limits }: Props) {
   const isGrid = defaults.forceGridMode === true;
+  const limited = Boolean(limits);
 
   const [device, setDevice] = useState(defaults.device || 'desktop');
   const [coordinate, setCoordinate] = useState(defaults.locationCoordinate || defaults.defaultCenter);
   const [isLoading, setIsLoading] = useState(false);
-  const [gridSize, setGridSize] = useState(parseInt(defaults.gridSize ?? '5', 10));
+  const [gridSize, setGridSize] = useState(Math.min(parseInt(defaults.gridSize ?? '5', 10), limits?.maxGridSize ?? 11));
   const [spacingKm, setSpacingKm] = useState(parseFloat(defaults.spacingKm ?? '1'));
-  const [queueMode, setQueueMode] = useState<QueueMode>((defaults.queueMode as QueueMode) || 'live');
+  const [queueMode, setQueueMode] = useState<QueueMode>(limited ? 'standard' : (defaults.queueMode as QueueMode) || 'live');
   const [language, setLanguage] = useState(defaults.language || 'Portuguese');
   const [gridTarget, setGridTarget] = useState(defaults.gridTarget ?? '');
   const { distanceUnit } = useGridPreferences();
@@ -209,11 +212,9 @@ export default function LocalFinderForm({ defaults }: Props) {
                 onChange={(e) => setGridSize(parseInt(e.target.value, 10))}
                 className="nexo-input min-w-0 w-full px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-nexo-sky"
               >
-                <option value="3">3×3 (9 pontos)</option>
-                <option value="5">5×5 (25 pontos)</option>
-                <option value="7">7×7 (49 pontos)</option>
-                <option value="9">9×9 (81 pontos)</option>
-                <option value="11">11×11 (121 pontos)</option>
+                {[3, 5, 7, 9, 11].filter((size) => size <= (limits?.maxGridSize ?? 11)).map((size) => (
+                  <option key={size} value={size}>{size}×{size} ({size * size} pontos)</option>
+                ))}
               </select>
             </div>
             <div>
@@ -230,7 +231,16 @@ export default function LocalFinderForm({ defaults }: Props) {
             </div>
           </div>
 
-          {/* Device + depth posted to Local Finder for every point */}
+          {limits && (
+            <p className="text-[11px] text-nexo-faint -mt-2">Plano {limits.planName}: grade de até {limits.maxGridSize}×{limits.maxGridSize}, fila padrão, desktop e 20 resultados por ponto.</p>
+          )}
+          {/* Device + depth posted to Local Finder for every point (extras are for admins) */}
+          {limited ? (
+            <>
+              <input type="hidden" name="device" value="desktop" />
+              <input type="hidden" name="depth" value="20" />
+            </>
+          ) : (<>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <span className="nexo-label block mb-1.5" id="grid-device-label">Dispositivo</span>
@@ -257,6 +267,7 @@ export default function LocalFinderForm({ defaults }: Props) {
             </div>
           </div>
           <p className="text-[11px] text-nexo-faint -mt-2">Cada combinação de dispositivo e profundidade é um monitor próprio. A estimativa abaixo usa o mesmo preço por ponto em qualquer profundidade; cada execução registra o custo real.</p>
+          </>)}
 
           {/* Grid preview */}
           <div className="bg-white/[0.02] rounded-nexo-lg border border-nexo-border p-4">
@@ -269,7 +280,7 @@ export default function LocalFinderForm({ defaults }: Props) {
             <label className="nexo-label block mb-2">Modo da API</label>
             <input type="hidden" name="queue_mode" value={queueMode} />
             <div className="grid grid-cols-3 gap-2">
-              {QUEUE_MODES.map((mode) => {
+              {QUEUE_MODES.filter((mode) => !limited || mode.value === 'standard').map((mode) => {
                 const active = queueMode === mode.value;
                 const totalPoints = gridSize * gridSize;
                 const estCost = formatCost(totalPoints * mode.costPerPoint);

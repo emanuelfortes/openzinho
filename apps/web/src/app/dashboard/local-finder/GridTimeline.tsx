@@ -1,5 +1,5 @@
 import type { BrandStyle } from '@/lib/brand';
-import type { GridPoint, GridSchedule, GridSearchEntry } from '@/lib/db';
+import type { GridPoint, GridSchedule, GridScheduleFrequency, GridSearchEntry } from '@/lib/db';
 import { formatDistance, type DistanceUnit } from '@/lib/grid-preferences';
 import { computeGridSummary } from './grid-insights';
 import { gridPointsHref } from '@/modules/grade/inactive-points';
@@ -25,6 +25,8 @@ type Props = {
   distanceUnit: DistanceUnit;
   /** `row:col` keys switched off for this grid. */
   inactivePoints?: string[];
+  /** Frequencies the subscriber's plan allows; all when omitted (admins). */
+  allowedFrequencies?: GridScheduleFrequency[];
 };
 
 function metricDelta(current: number | null, previous: number | null, inverse = false) {
@@ -36,7 +38,7 @@ function metricDelta(current: number | null, previous: number | null, inverse = 
   return `${value > 0 ? '+' : ''}${value.toLocaleString('pt-BR')}`;
 }
 
-export default function GridTimeline({ entry, results, previousResults, snapshots, schedule, brandName, brandLogoUrl, brandColor, brandFooter, brandStyle, trend, distanceUnit, inactivePoints = [] }: Props) {
+export default function GridTimeline({ entry, results, previousResults, snapshots, schedule, brandName, brandLogoUrl, brandColor, brandFooter, brandStyle, trend, distanceUnit, inactivePoints = [], allowedFrequencies }: Props) {
   const current = computeGridSummary(results);
   const previous = previousResults ? computeGridSummary(previousResults) : null;
   const mapId = `geo-grid-report-map-${entry.id}`;
@@ -81,7 +83,7 @@ export default function GridTimeline({ entry, results, previousResults, snapshot
         </div>
 
         <div className="mt-5 rounded-nexo-lg border border-nexo-border bg-white/[0.02] px-5">
-          <GridScheduleControl runId={entry.id} schedule={schedule} />
+          <GridScheduleControl runId={entry.id} schedule={schedule} allowed={allowedFrequencies} />
         </div>
 
         <div className="mt-6">

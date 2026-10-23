@@ -5,7 +5,7 @@ import {
   TrendingUp, Link2, Users, BarChart2, Activity, GitMerge, Clock, FolderKanban, Anchor,
   Gauge, Lightbulb, BrainCircuit, Star, Flame, Cpu, ShieldCheck, Grid3X3,
   Sparkles, Target, Layers, Network, LineChart, Tag, ScanText,
-  History, Copy, BarChart3, BookOpen, Server, Bot, Radar, Eye, Waypoints, Megaphone, Wallet, CalendarCheck, Unlink, Trophy, Telescope, BellRing, QrCode, WandSparkles, CircleUser,
+  History, Copy, BarChart3, BookOpen, Server, Bot, Radar, Eye, Waypoints, Megaphone, Wallet, CalendarCheck, Unlink, Trophy, Telescope, BellRing, QrCode, WandSparkles, CircleUser, CreditCard,
 } from 'lucide-react';
 
 // Single source of truth for the tool list: the Sidebar and the Dashboard home both render from it.
@@ -140,6 +140,7 @@ export const NAV_SECTIONS: NavSection[] = [
 // Pinned at the bottom of the sidebar, outside the filter
 export const NAV_FOOTER: NavItem[] = [
   { name: 'Gastos', href: '/dashboard/spending', icon: Wallet, desc: 'Quanto suas chamadas à DataForSEO custam, por ferramenta' },
+  { name: 'Assinaturas', href: '/dashboard/assinaturas', icon: CreditCard, desc: 'Plano e situação da assinatura de cada negócio' },
   { name: 'Usuários', href: '/dashboard/usuarios', icon: Users, desc: 'Contas dos clientes e da equipe, com os negócios de cada um' },
   { name: 'Configurações', href: '/dashboard/settings', icon: Settings, desc: 'Credenciais e identidade dos relatórios' },
   { name: 'Minha conta', href: '/dashboard/conta', icon: CircleUser, desc: 'Seus dados de acesso e sua senha' },

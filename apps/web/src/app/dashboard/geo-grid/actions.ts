@@ -1,6 +1,8 @@
 'use server';
 
-import { runWithCurrentProject } from '@/lib/db';
+import { getCurrentProject, runWithCurrentProject } from '@/lib/db';
+import { requireUser } from '@/lib/access';
+import { planOf, planViolation } from '@/modules/planos/plans-db';
 
 import { deleteGridSchedule, deleteGridSeries, getGridEntry, saveGridSchedule, GRID_SCHEDULE_FREQUENCIES, type GridQueueMode, type GridScheduleFrequency } from '@/lib/db';
 import { revalidatePath } from 'next/cache';
@@ -22,6 +24,14 @@ export async function updateGridSchedule(formData: FormData) {
     const frequency = formData.get('frequency') as GridScheduleFrequency | 'off';
     const entry = getGridEntry(runId);
     if (!entry) return;
+    // The schedule control only offers what the plan allows; anything else from a subscriber is ignored.
+    if (frequency !== 'off' && (await requireUser()).role === 'cliente') {
+      const violation = planViolation(planOf(getCurrentProject().id), {
+        gridSize: entry.grid_size, keywordCount: 1, frequency, queueMode: String(formData.get('queue_mode') ?? 'standard'),
+        device: entry.device, depth: entry.depth,
+      });
+      if (violation) redirect(`/dashboard/geo-grid?grid_history_id=${encodeURIComponent(runId)}#results`);
+    }
 
     if (frequency === 'off') {
       deleteGridSchedule(entry.series_id);

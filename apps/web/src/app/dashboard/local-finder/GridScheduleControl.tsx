@@ -9,7 +9,9 @@ const days = [
   ['Domingo', 0], ['Segunda-feira', 1], ['Terça-feira', 2], ['Quarta-feira', 3], ['Quinta-feira', 4], ['Sexta-feira', 5], ['Sábado', 6],
 ] as const;
 
-export default function GridScheduleControl({ runId, schedule }: { runId: string; schedule: GridSchedule | null }) {
+/** `allowed` limits the frequencies (a subscriber's plan); without it every option is offered. */
+export default function GridScheduleControl({ runId, schedule, allowed }: { runId: string; schedule: GridSchedule | null; allowed?: GridScheduleFrequency[] }) {
+  const offers = (value: GridScheduleFrequency) => !allowed || allowed.includes(value);
   const [frequency, setFrequency] = useState<'off' | GridScheduleFrequency>(schedule?.frequency ?? 'off');
   const usesWeekday = frequency === 'weekly' || frequency === 'biweekly';
   const [timeZone, setTimeZone] = useState(schedule?.time_zone ?? 'UTC');
@@ -42,10 +44,10 @@ export default function GridScheduleControl({ runId, schedule }: { runId: string
       <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
         <select name="frequency" value={frequency} onChange={(event) => setFrequency(event.target.value as 'off' | GridScheduleFrequency)} className="nexo-input min-w-0 w-full px-2.5 py-2 text-xs font-semibold outline-none">
           <option value="off">Sem agendamento</option>
-          <option value="daily">Diário</option>
-          <option value="weekly">Semanal</option>
-          <option value="biweekly">Quinzenal</option>
-          <option value="monthly">Mensal</option>
+          {offers('daily') && <option value="daily">Diário</option>}
+          {offers('weekly') && <option value="weekly">Semanal</option>}
+          {offers('biweekly') && <option value="biweekly">Quinzenal</option>}
+          {offers('monthly') && <option value="monthly">Mensal</option>}
         </select>
         <input name="time_of_day" type="time" defaultValue={schedule?.time_of_day ?? '08:00'} disabled={frequency === 'off'} className="nexo-input min-w-0 w-full px-2.5 py-2 text-xs font-semibold outline-none disabled:opacity-40" />
         {frequency === 'monthly' ? (
@@ -59,7 +61,7 @@ export default function GridScheduleControl({ runId, schedule }: { runId: string
         )}
         <select name="queue_mode" defaultValue={schedule?.queue_mode ?? 'standard'} disabled={frequency === 'off'} className="nexo-input min-w-0 w-full px-2.5 py-2 text-xs font-semibold outline-none disabled:opacity-40">
           <option value="standard">Fila padrão</option>
-          <option value="priority">Fila prioritária</option>
+          {!allowed && <option value="priority">Fila prioritária</option>}
         </select>
       </div>
       <div className="mt-2 flex items-center justify-between gap-3">

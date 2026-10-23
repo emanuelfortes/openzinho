@@ -3,6 +3,7 @@
 // stops Geo-grid runs (scheduled and manual) until the next month.
 import { deleteSetting, getProjects, getSetting, getSpendByTool, runInProjectScope, setSetting } from '@/lib/db';
 import { DEFAULT_BRL_PER_USD, evaluateBudget, type BudgetSettings, type BudgetStatus } from './budget-shared';
+import { getSubscription, PLANS } from '@/modules/planos/plans-db';
 
 export * from './budget-shared';
 
@@ -29,8 +30,17 @@ export function saveBudgetSettings(settings: { brlPerUsd: number | null; globalC
   if (settings.globalCapBrl) setSetting(KEYS.globalCap, String(settings.globalCapBrl)); else deleteSetting(KEYS.globalCap);
 }
 
-export function getClientCapBrl(projectId: string): number | null {
+/** The cap set by hand for this business, if any. */
+export function getExplicitClientCapBrl(projectId: string): number | null {
   return positive(getSetting(KEYS.clientCap(projectId)));
+}
+
+/** The cap in force: the one set by hand, else the default of the business's plan, else none. */
+export function getClientCapBrl(projectId: string): number | null {
+  const explicit = getExplicitClientCapBrl(projectId);
+  if (explicit !== null) return explicit;
+  const subscription = getSubscription(projectId);
+  return subscription ? PLANS[subscription.plan].capBrl : null;
 }
 
 export function saveClientCapBrl(projectId: string, capBrl: number | null): void {

@@ -4,6 +4,8 @@ export const dynamic = 'force-dynamic';
 import { allowedProjects, requireUser } from '@/lib/access';
 import { authEnabled } from '@/lib/auth-config';
 import { MIN_PASSWORD_LENGTH } from '@/lib/auth';
+import { describePlan, getSubscription, PLANS, STATUS_LABEL, DEFAULT_PLAN } from '@/modules/planos/plans-db';
+import { formatBrl } from '@/modules/custos/budget-shared';
 import { changePasswordAction } from './actions';
 
 const fieldCls = 'nexo-input min-w-0 w-full px-3 py-2.5 text-sm outline-none focus:border-nexo-sky';
@@ -26,6 +28,24 @@ async function ContaPage({ searchParams }: { searchParams: Promise<{ ok?: string
           <p className="mt-1 text-nexo-text">{businesses.map((project) => project.name).join(', ') || 'Nenhum'}</p>
         </div>
       </section>
+
+      {user.role === 'cliente' && businesses.length > 0 && (
+        <section className="nexo-panel p-5">
+          <p className="nexo-section">Assinatura</p>
+          <ul className="mt-3 grid gap-3 text-sm">
+            {businesses.map((project) => {
+              const subscription = getSubscription(project.id);
+              const plan = PLANS[subscription?.plan ?? DEFAULT_PLAN];
+              return (
+                <li key={project.id}>
+                  <p className="text-nexo-text">{project.name}: plano <b className="font-medium">{plan.name}</b> · {formatBrl(plan.priceBrl)}/mês · {subscription ? STATUS_LABEL[subscription.status] : 'Em configuração'}</p>
+                  <p className="text-xs text-nexo-faint">Inclui {describePlan(plan)}. Para mudar de plano, fale com o suporte do Nexo.</p>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
 
       {authEnabled() && (
         <section className="nexo-panel p-5">
