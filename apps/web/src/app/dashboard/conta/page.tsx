@@ -6,14 +6,18 @@ import { authEnabled } from '@/lib/auth-config';
 import { MIN_PASSWORD_LENGTH } from '@/lib/auth';
 import { describePlan, getSubscription, PLANS, STATUS_LABEL, DEFAULT_PLAN } from '@/modules/planos/plans-db';
 import { formatBrl } from '@/modules/custos/budget-shared';
+import { getBilling } from '@/modules/cobranca/billing';
+import { mercadoPagoConfigured, mercadoPagoTestMode, subscriptionStatusLabel } from '@/modules/cobranca/mercadopago';
+import { startCheckoutAction } from '@/modules/cobranca/actions';
 import { changePasswordAction } from './actions';
 
 const fieldCls = 'nexo-input min-w-0 w-full px-3 py-2.5 text-sm outline-none focus:border-nexo-sky';
 
-async function ContaPage({ searchParams }: { searchParams: Promise<{ ok?: string; erro?: string }> }) {
+async function ContaPage({ searchParams }: { searchParams: Promise<{ ok?: string; erro?: string; pagamento?: string }> }) {
   const user = await requireUser();
   const params = await searchParams;
   const businesses = allowedProjects(user);
+  const billingOn = mercadoPagoConfigured();
 
   return (
     <div className="max-w-2xl space-y-6">
@@ -40,10 +44,27 @@ async function ContaPage({ searchParams }: { searchParams: Promise<{ ok?: string
                 <li key={project.id}>
                   <p className="text-nexo-text">{project.name}: plano <b className="font-medium">{plan.name}</b> · {formatBrl(plan.priceBrl)}/mês · {subscription ? STATUS_LABEL[subscription.status] : 'Em configuração'}</p>
                   <p className="text-xs text-nexo-faint">Inclui {describePlan(plan)}. Para mudar de plano, fale com o suporte do Nexo.</p>
+                  {billingOn && (() => {
+                    const billing = getBilling(project.id);
+                    const paid = billing?.mpStatus === 'authorized';
+                    return (
+                      <div className="mt-2 flex flex-wrap items-center gap-3">
+                        <span className={`text-xs ${paid ? 'text-nexo-ice' : 'text-nexo-dim'}`}>{subscriptionStatusLabel(billing?.mpStatus)}</span>
+                        {!paid && (
+                          <form action={startCheckoutAction}>
+                            <input type="hidden" name="project_id" value={project.id} />
+                            <button type="submit" className="nexo-btn-accent px-3 py-2">{billing ? 'Concluir pagamento' : 'Assinar com Mercado Pago'}</button>
+                          </form>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </li>
               );
             })}
           </ul>
+          {params.pagamento === 'retorno' && <p role="status" className="mt-3 rounded-nexo-lg border border-nexo-ice/30 bg-nexo-ice/10 px-3 py-2 text-xs text-nexo-ice">Você voltou do Mercado Pago. A confirmação do pagamento chega em alguns instantes e a assinatura é atualizada sozinha.</p>}
+          {billingOn && <p className="mt-3 text-xs text-nexo-faint">O pagamento é feito na página do Mercado Pago, com cobrança automática todo mês no cartão. O Nexo não guarda os dados do seu cartão.{mercadoPagoTestMode() ? ' (Ambiente de teste: nada é cobrado.)' : ''}</p>}
         </section>
       )}
 

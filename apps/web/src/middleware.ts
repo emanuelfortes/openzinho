@@ -4,7 +4,8 @@ import { canAccess, platformRole, type PlatformRole } from '@/lib/access-policy'
 
 // Reachable without a session. /api/cron has its own bearer secret (used by the worker container).
 // /r/<token> is a read-only campaign report shared by secret link (modules/relatorio/share-tokens).
-const PUBLIC_PREFIXES = ['/login', '/setup', '/api/auth', '/api/cron', '/r'];
+// /api/webhooks receives payment notifications (Mercado Pago), which re-read the state from the provider.
+const PUBLIC_PREFIXES = ['/login', '/setup', '/api/auth', '/api/cron', '/api/webhooks', '/r'];
 
 function isPublic(pathname: string) {
   return PUBLIC_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));

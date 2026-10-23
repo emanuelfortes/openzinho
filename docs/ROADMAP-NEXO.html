@@ -207,7 +207,7 @@
     <ol>
       <li><strong>Pedir hoje o acesso à API do Google Business Profile.</strong> A análise leva de 1 a 4 semanas e trava os módulos de agente, avaliações e otimização.</li>
       <li>Contas isoladas: cada cliente com login próprio vendo só o próprio negócio, e o papel de administrador para a equipe do Nexo.</li>
-      <li>Planos com limites por conta (grade, palavras, frequência e teto de gasto) e cobrança recorrente.</li>
+      <li>Passar o token de teste do Mercado Pago e testar a cobrança no ambiente de teste (o código já está pronto).</li>
       <li>Painel simples do dono do negócio, com as ferramentas avançadas só para administradores.</li>
       <li>Contratar servidor e domínio e publicar seguindo <code>docs/DEPLOY-NEXO.md</code>, com o SMTP configurado.</li>
       <li>Escolher o modelo de IA para os rascunhos de resposta e os posts.</li>
@@ -375,8 +375,15 @@ const ROADMAP = [
   { t:'Teto de gasto padrão por plano', s:'ok', nota:'R$ 15, 25 e 40 por mês; o teto manual de Configurações tem prioridade' },
   { t:'Alertas e relatório mensal para o e-mail do próprio cliente', s:'ok', onde:'modules/email/recipients.ts' },
   { t:'Teto de gasto por cliente', s:'ok', onde:'modules/custos/budget.ts' },
-  { t:'Cobrança recorrente (Asaas: Pix, boleto e cartão)', s:'falta' },
-  { t:'Suspender e reativar a assinatura', s:'parcial', nota:'manual em Assinaturas: suspensa pausa as varreduras e mostra um aviso ao cliente; falta ligar ao pagamento' },
+  { t:'Cobrança recorrente pelo Mercado Pago', s:'parcial', onde:'modules/cobranca · docs/COBRANCA-MERCADOPAGO.md', micro:[
+    { t:'Assinatura mensal por negócio com link de pagamento do Mercado Pago', s:'ok' },
+    { t:'Avisos (webhook) com conferência da assinatura digital', s:'ok', onde:'/api/webhooks/mercadopago' },
+    { t:'Botões Assinar (cliente) e Gerar link (administrador)', s:'ok' },
+    { t:'Testado com respostas simuladas do Mercado Pago', s:'ok' },
+    { t:'Ligar com o token e testar no ambiente de teste do Mercado Pago', s:'falta', nota:'aguardando MERCADOPAGO_ACCESS_TOKEN (TEST-) e um endereço público para os avisos' },
+    { t:'Pix e boleto', s:'falta', nota:'a recorrência automática confirmada é no cartão; Pix e boleto pediriam cobrança avulsa mensal' }
+  ]},
+  { t:'Suspender e reativar a assinatura', s:'ok', nota:'manual em Assinaturas ou automática pelos avisos do Mercado Pago; suspensa pausa as varreduras e mostra o botão de regularizar' },
   { t:'Cadastro público com período de teste', s:'falta' }
 ]},
 { fase:'saas', n:18, tag:'S', nome:'Experiência do dono do negócio', itens:[

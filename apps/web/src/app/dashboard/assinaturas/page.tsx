@@ -7,6 +7,9 @@ import { listAccounts } from '@/lib/auth';
 import { formatBrl } from '@/modules/custos/budget-shared';
 import { describePlan, listSubscriptions, PLAN_ORDER, PLANS, STATUS_LABEL, type PlanStatus } from '@/modules/planos/plans-db';
 import { removeSubscriptionAction, saveSubscriptionAction } from './actions';
+import { listBilling, listBillingEvents } from '@/modules/cobranca/billing';
+import { mercadoPagoConfigured, mercadoPagoTestMode, subscriptionStatusLabel } from '@/modules/cobranca/mercadopago';
+import { adminPaymentLinkAction } from '@/modules/cobranca/actions';
 
 const fieldCls = 'nexo-input min-w-0 w-full px-2.5 py-1.5 text-xs outline-none focus:border-nexo-sky';
 
@@ -16,11 +19,13 @@ const STATUS_TONE: Record<PlanStatus, string> = {
   suspenso: 'text-nexo-danger-text',
 };
 
-async function AssinaturasPage({ searchParams }: { searchParams: Promise<{ ok?: string; erro?: string }> }) {
+async function AssinaturasPage({ searchParams }: { searchParams: Promise<{ ok?: string; erro?: string; link?: string }> }) {
   await requireAdmin();
   const params = await searchParams;
   const projects = getProjects();
   const subscriptions = listSubscriptions();
+  const billingOn = mercadoPagoConfigured();
+  const billing = listBilling();
   const members = membersByProject();
   const emailById = new Map(authEnabled() ? (await listAccounts()).map((account) => [account.id, account.email]) : []);
 
@@ -39,6 +44,19 @@ async function AssinaturasPage({ searchParams }: { searchParams: Promise<{ ok?: 
       </div>
 
       {params.ok && <p role="status" className="rounded-nexo-lg border border-nexo-ice/30 bg-nexo-ice/10 px-4 py-3 text-sm text-nexo-ice">{params.ok}</p>}
+      {params.link && (
+        <div className="nexo-panel p-4 text-sm">
+          <p className="nexo-section">Link de pagamento</p>
+          <p className="mt-2 break-all font-mono text-xs text-nexo-ice">{params.link}</p>
+          <p className="mt-2 text-xs text-nexo-faint">Envie ao cliente por e-mail ou WhatsApp. Quando ele pagar, a assinatura fica ativa sozinha.</p>
+        </div>
+      )}
+      {!billingOn && (
+        <p className="rounded-nexo-lg border border-nexo-border bg-nexo-surface-2 px-4 py-3 text-xs text-nexo-dim">
+          Cobrança pelo Mercado Pago desligada. Para ligar, coloque <code>MERCADOPAGO_ACCESS_TOKEN</code> (e <code>MERCADOPAGO_WEBHOOK_SECRET</code>) no <code>.env</code> e cadastre o endereço <code>/api/webhooks/mercadopago</code> nas notificações do Mercado Pago. Veja <code>docs/COBRANCA-MERCADOPAGO.md</code>.
+        </p>
+      )}
+      {billingOn && mercadoPagoTestMode() && <p className="text-xs text-nexo-warn-text">Mercado Pago em ambiente de teste (token TEST-): nenhum pagamento é cobrado de verdade.</p>}
       {params.erro && <p role="alert" className="rounded-nexo-lg border border-nexo-danger/40 bg-nexo-danger/10 px-4 py-3 text-sm text-nexo-danger-text">{params.erro}</p>}
 
       <div className="grid gap-3 grid-cols-[repeat(auto-fit,minmax(170px,1fr))]">
@@ -65,6 +83,7 @@ async function AssinaturasPage({ searchParams }: { searchParams: Promise<{ ok?: 
               <th className="py-2 pr-3">Negócio</th>
               <th className="py-2 pr-3">Clientes</th>
               <th className="py-2 pr-3">Plano · situação · nota</th>
+              {billingOn && <th className="py-2 pr-3">Pagamento</th>}
               <th className="py-2" />
             </tr>
           </thead>
@@ -95,6 +114,32 @@ async function AssinaturasPage({ searchParams }: { searchParams: Promise<{ ok?: 
                       <button type="submit" className="nexo-section justify-self-start hover:text-white">Salvar</button>
                     </form>
                   </td>
+                  {billingOn && (
+                    <td className="py-3 pr-3">
+                      {(() => {
+                        const current = billing.get(project.id);
+                        const events = listBillingEvents(project.id, 3);
+                        return (
+                          <div className="grid gap-2">
+                            <p className={current?.mpStatus === 'authorized' ? 'text-nexo-ice' : 'text-nexo-dim'}>{subscriptionStatusLabel(current?.mpStatus)}</p>
+                            {current?.payerEmail && <p className="text-nexo-faint">{current.payerEmail}</p>}
+                            {current?.mpStatus !== 'authorized' && (
+                              <form action={adminPaymentLinkAction} className="flex gap-2">
+                                <input type="hidden" name="project_id" value={project.id} />
+                                <input name="payer_email" type="email" required defaultValue={current?.payerEmail || clients[0] || ''} placeholder="E-mail de quem paga" className={`${fieldCls} max-w-48`} />
+                                <button type="submit" className="nexo-section shrink-0 hover:text-white">Gerar link</button>
+                              </form>
+                            )}
+                            {events.map((event) => (
+                              <p key={`${event.at}-${event.kind}`} className="text-[11px] text-nexo-faint">
+                                {new Date(event.at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}: {event.detail}
+                              </p>
+                            ))}
+                          </div>
+                        );
+                      })()}
+                    </td>
+                  )}
                   <td className="py-3 text-right">
                     {subscription && (
                       <form action={removeSubscriptionAction}>
@@ -109,7 +154,7 @@ async function AssinaturasPage({ searchParams }: { searchParams: Promise<{ ok?: 
           </tbody>
         </table>
       </section>
-      <p className="text-xs text-nexo-faint">A cobrança automática (Pix, boleto e cartão) entra numa próxima etapa; até lá, a situação de cada assinatura é atualizada aqui.</p>
+      <p className="text-xs text-nexo-faint">Com o Mercado Pago ligado, a situação muda sozinha: pagamento autorizado ativa a assinatura, e assinatura pausada, cancelada ou com cobrança recusada depois das novas tentativas suspende. Também dá para mudar à mão aqui.</p>
     </div>
   );
 }
