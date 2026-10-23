@@ -2,7 +2,7 @@
 // with the summary of the month that just ended and a fresh read-only link.
 import { getProjects, runInProjectScope } from '@/lib/db';
 import { listCampaigns } from '@/modules/grade/campaigns-db';
-import { getAlertRecipients } from '@/modules/email/recipients';
+import { recipientsForProject } from '@/modules/email/recipients';
 import { emailConfigured, escapeHtml, sendEmail, type EmailMessage, type SendResult } from '@/modules/email/send';
 import { jobTimeZone, localDayAndHour, type DailyJob, type JobResult } from '@/modules/jobs/runner';
 import { reportSummaryLines } from './analysis';
@@ -13,7 +13,8 @@ import { createShareToken, publicBaseUrl, revokeShareTokensOfKind, sharePath } f
 export interface MonthlyReportDeps {
   send?: (message: EmailMessage) => Promise<SendResult>;
   configured?: () => boolean;
-  recipients?: () => string[];
+  /** Who gets the reports of one business; defaults to its client accounts or the global list. */
+  recipients?: (projectId: string) => string[] | Promise<string[]>;
   baseUrl?: () => string | null;
 }
 
@@ -21,15 +22,20 @@ export async function runMonthlyReports(now: Date, deps: MonthlyReportDeps = {})
   const timeZone = jobTimeZone();
   if (!localDayAndHour(now, timeZone).day.endsWith('-01')) return { ok: true, message: 'Não é dia 1.' };
   if (!(deps.configured ?? emailConfigured)()) return { ok: false, message: 'E-mail não configurado (SMTP_HOST e SMTP_FROM).' };
-  const to = (deps.recipients ?? getAlertRecipients)();
-  if (to.length === 0) return { ok: false, message: 'Nenhum destinatário de alertas cadastrado em Configurações.' };
+  const recipients = deps.recipients ?? recipientsForProject;
+  const targets = await Promise.all(getProjects().map(async (project) => ({ project, to: await recipients(project.id) })));
+  if (targets.every((target) => target.to.length === 0)) {
+    return { ok: false, message: 'Nenhum destinatário: ligue o cliente ao negócio em Usuários ou cadastre e-mails em Configurações.' };
+  }
   const send = deps.send ?? ((message: EmailMessage) => sendEmail(message));
   const base = (deps.baseUrl ?? publicBaseUrl)();
   const month = lastCompleteMonthKey(now, timeZone);
 
   let sent = 0;
   const failures: string[] = [];
-  for (const project of getProjects()) {
+  // Each business e-mails its own client accounts (or the global list when it has none).
+  for (const { project, to } of targets) {
+    if (to.length === 0) continue;
     const campaigns = runInProjectScope(project.id, () => listCampaigns().filter((campaign) => campaign.active));
     for (const campaign of campaigns) {
       const { report, token } = runInProjectScope(project.id, () => ({

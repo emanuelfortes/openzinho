@@ -7,7 +7,7 @@
 // Gastos page and the caps already count.
 import { getCredentials, getProjectDataDb, getProjects, runInProjectScope, saveReviewsTask, updateReviewsTask } from '@/lib/db';
 import { BudgetTracker, recordSkippedRun } from '@/modules/custos/budget';
-import { getAlertRecipients } from '@/modules/email/recipients';
+import { recipientsForProject } from '@/modules/email/recipients';
 import { sendEmail, type EmailMessage, type SendResult } from '@/modules/email/send';
 import { jobTimeZone, type DailyJob, type JobResult } from '@/modules/jobs/runner';
 import { buildAlertEmail, type AlertEmailItem } from './alerts';
@@ -23,7 +23,8 @@ type FetchLike = (input: string, init?: RequestInit) => Promise<Response>;
 export interface ReviewsJobDeps {
   credentials: () => Credentials | null;
   fetchImpl: FetchLike;
-  recipients: () => string[];
+  /** Who gets the e-mails of one business. */
+  recipients: (projectId: string) => string[] | Promise<string[]>;
   send: (message: EmailMessage) => Promise<SendResult>;
   /** Base URL of the app for the link in the e-mail, if known. */
   appUrl: string | null;
@@ -32,7 +33,7 @@ export interface ReviewsJobDeps {
 const defaultDeps = (): ReviewsJobDeps => ({
   credentials: getCredentials,
   fetchImpl: fetch,
-  recipients: getAlertRecipients,
+  recipients: recipientsForProject,
   send: (message) => sendEmail(message),
   appUrl: (process.env.NEXO_PUBLIC_URL || process.env.BETTER_AUTH_URL)?.trim().replace(/\/+$/, '') || null,
 });
@@ -124,23 +125,38 @@ export async function postDueRefreshes(projectId: string, credentials: Credentia
   return outcome;
 }
 
-/** E-mails every "pendente" alert of every project once; without e-mail they stay pending for the UI. */
+/**
+ * E-mails every "pendente" alert once, one message per business to that business's recipients
+ * (its client accounts, or the global list), so a client never sees another client's reviews.
+ * Alerts that could not be sent stay pending for the next pass and the UI.
+ */
 export async function sendPendingAlerts(deps: Pick<ReviewsJobDeps, 'recipients' | 'send' | 'appUrl'>, now = Date.now()): Promise<{ alerts: number; sent: boolean; reason: string | null }> {
-  const perProject = getProjects().map((project) => ({ project, alerts: listAlerts(['pendente'], project.id) }));
-  const items: AlertEmailItem[] = perProject.flatMap(({ project, alerts }) => alerts.map((alert) => ({
-    projectName: project.name, listingTitle: alert.listingTitle, listingUrl: alert.listingUrl, rating: alert.rating,
-    author: alert.author, publishedAt: alert.publishedAt, text: alert.text, url: alert.url,
-  })));
-  if (items.length === 0) return { alerts: 0, sent: false, reason: null };
-  const to = deps.recipients();
-  if (to.length === 0) return { alerts: items.length, sent: false, reason: 'nenhum destinatário de alertas em Configurações' };
-  const email = buildAlertEmail(items, { dashboardUrl: deps.appUrl ? `${deps.appUrl}/dashboard/monitor-de-avaliacoes` : null, timeZone: jobTimeZone() });
-  const result = await deps.send({ to, ...email });
-  if (!result.sent) return { alerts: items.length, sent: false, reason: result.reason };
+  const perProject = getProjects().map((project) => ({ project, alerts: listAlerts(['pendente'], project.id) })).filter(({ alerts }) => alerts.length > 0);
+  const total = perProject.reduce((sum, { alerts }) => sum + alerts.length, 0);
+  if (total === 0) return { alerts: 0, sent: false, reason: null };
+
+  let sentAny = false;
+  const reasons: string[] = [];
   for (const { project, alerts } of perProject) {
-    if (alerts.length) markAlerts(alerts.map((alert) => ({ monitoredId: alert.monitoredId, reviewKey: alert.reviewKey })), 'enviado', project.id, now);
+    const to = await deps.recipients(project.id);
+    if (to.length === 0) {
+      reasons.push(`${project.name}: nenhum destinatário (ligue o cliente em Usuários ou cadastre e-mails em Configurações)`);
+      continue;
+    }
+    const items: AlertEmailItem[] = alerts.map((alert) => ({
+      projectName: project.name, listingTitle: alert.listingTitle, listingUrl: alert.listingUrl, rating: alert.rating,
+      author: alert.author, publishedAt: alert.publishedAt, text: alert.text, url: alert.url,
+    }));
+    const email = buildAlertEmail(items, { dashboardUrl: deps.appUrl ? `${deps.appUrl}/dashboard/monitor-de-avaliacoes` : null, timeZone: jobTimeZone() });
+    const result = await deps.send({ to, ...email });
+    if (!result.sent) {
+      reasons.push(`${project.name}: ${result.reason}`);
+      continue;
+    }
+    sentAny = true;
+    markAlerts(alerts.map((alert) => ({ monitoredId: alert.monitoredId, reviewKey: alert.reviewKey })), 'enviado', project.id, now);
   }
-  return { alerts: items.length, sent: true, reason: null };
+  return { alerts: total, sent: sentAny, reason: reasons.length ? reasons.join('; ') : null };
 }
 
 export async function runReviewsRefresh(nowDate = new Date(), deps: ReviewsJobDeps = defaultDeps()): Promise<JobResult> {
