@@ -149,11 +149,11 @@
     <span class="brand"><i></i>NEXO</span>
     <div>
       <h1>Roadmap do Nexo</h1>
-      <p class="sub">Módulo de Google Meu Negócio + rank checker em grade · status conferido no código em 22/10/2026 (commit <code>2eb78a8</code>)</p>
+      <p class="sub">Assinatura self-service de Google Meu Negócio + rank checker em grade · status conferido no código em 23/10/2026 (commit <code>92bf54c</code>)</p>
     </div>
     <div class="kpis">
       <div class="kpi"><span class="label">Projeto completo</span><span class="v big" id="pctGeral">—</span><span class="d" id="lblGeral">calculando…</span></div>
-      <div class="kpi"><span class="label">Fundação + rebranding</span><span class="v" id="pctFund">—</span><span class="d">base técnica e identidade Nexo</span></div>
+      <div class="kpi"><span class="label">Assinatura</span><span class="v" id="pctFund">—</span><span class="d">o que falta para vender aos donos de negócio</span></div>
       <div class="kpi"><span class="label">Primeira entrega (P1)</span><span class="v" id="pctP1">—</span><span class="d">o que a especificação pede para lançar</span></div>
       <div class="kpi"><span class="label">P1 sem a API do Google</span><span class="v" id="pctP1sem">—</span><span class="d">só o que não depende de aprovação do Google</span></div>
     </div>
@@ -175,14 +175,20 @@
       <h3>Rank checker e painel de SEO, uso próprio <span class="pill s-ok">Pronto</span></h3>
       <p>Rodando no seu computador com a sua conta DataForSEO: grade geográfica, campanhas agendadas, métricas, PDF com a sua marca, avaliações, rank tracker, palavras-chave, backlinks e auditoria, tudo em português.</p>
     </div>
-    <div class="use parcial">
-      <h3>Agência atendendo clientes <span class="pill s-parcial">Parcial</span></h3>
-      <p>Já tem teto de gasto e estimativa em R$, relatório mensal com envio por e-mail e link para o cliente, monitor e kit de avaliações, sugestão de palavras-chave e backup diário. Falta contratar o servidor e publicar (o deploy está pronto em <code>docs/DEPLOY-NEXO.md</code>) e login para mais de uma pessoa.</p>
+    <div class="use falta">
+      <h3>Assinatura para donos de negócio <span class="pill s-falta">Falta</span></h3>
+      <p>O motor está pronto (grade, campanhas, relatórios, avaliações, teto de gasto, backup e deploy). Falta a camada de assinatura: conta própria e isolada para cada cliente, planos com limites, cobrança recorrente e um painel simples para o dono do negócio.</p>
     </div>
     <div class="use falta">
       <h3>Substituir o Semrush Local <span class="pill s-falta">Falta</span></h3>
       <p>Tudo o que age no perfil do Google (posts, respostas, fotos, descrição, desempenho) depende da aprovação da API do Google Business Profile, e nada disso começou.</p>
     </div>
+  </div>
+
+  <div class="box warn">
+    <h3>Modelo do produto (decidido em 23/10/2026)</h3>
+    O Nexo é uma <strong>assinatura self-service</strong>: o dono do negócio tem a própria conta, paga a mensalidade e usa a ferramenta sozinho para melhorar o negócio. A equipe do Nexo administra a plataforma e pode cadastrar o perfil do cliente para facilitar o começo. A especificação original falava de uma agência cuidando dos clientes; as funções continuam as mesmas, mas quem usa passa a ser o dono do negócio, e a fase <strong>Assinatura</strong> reúne o que falta para vender.
+    A IA escreve rascunhos para o próprio dono (respostas, posts, descrição), com o custo embutido no plano. O PostgreSQL entra quando faltar escala (mais de um servidor ou relatórios de todos os assinantes); cada cliente já tem um banco separado.
   </div>
 
   <div class="box">
@@ -197,13 +203,14 @@
   <div id="conteudo"></div>
 
   <div class="box warn">
-    <h3>Caminho mais curto até usar com clientes</h3>
+    <h3>Caminho mais curto até vender a assinatura</h3>
     <ol>
       <li><strong>Pedir hoje o acesso à API do Google Business Profile.</strong> A análise leva de 1 a 4 semanas e trava os módulos de agente, avaliações e otimização.</li>
-      <li>Contratar um servidor e um domínio e publicar seguindo <code>docs/DEPLOY-NEXO.md</code> (login, HTTPS e backup já vêm ligados).</li>
-      <li>Configurar o SMTP para os alertas de avaliação e o relatório mensal saírem por e-mail.</li>
+      <li>Contas isoladas: cada cliente com login próprio vendo só o próprio negócio, e o papel de administrador para a equipe do Nexo.</li>
+      <li>Planos com limites por conta (grade, palavras, frequência e teto de gasto) e cobrança recorrente.</li>
+      <li>Painel simples do dono do negócio, com as ferramentas avançadas só para administradores.</li>
+      <li>Contratar servidor e domínio e publicar seguindo <code>docs/DEPLOY-NEXO.md</code>, com o SMTP configurado.</li>
       <li>Escolher o modelo de IA para os rascunhos de resposta e os posts.</li>
-      <li>Migrar para PostgreSQL e criar papéis de equipe antes de ter mais de um usuário.</li>
     </ol>
   </div>
 
@@ -352,16 +359,31 @@ const ROADMAP = [
   { ref:29, t:'Histórico de desempenho de 24 meses', s:'falta', g:true },
   { ref:32, t:'Conectar todos os perfis de uma conta Google de uma vez', s:'falta', g:true }
 ]},
-{ fase:'p2', n:14, tag:'F', nome:'Equipe, clientes e planos', itens:[
-  { ref:33, t:'Papéis Administrador, Editor e Visualizador', s:'falta' },
-  { t:'Mais de um usuário', s:'falta', nota:'o login aceita só a primeira conta criada' },
-  { t:'Grupos e etiquetas de clientes', s:'parcial', nota:'etiquetas e responsável nas campanhas, com filtro no Painel de clientes; grupos com permissão dependem dos papéis' },
-  { t:'Portal do cliente (somente leitura)', s:'parcial', nota:'link secreto do relatório de cada campanha; ainda sem login próprio do cliente' },
-  { t:'Planos da agência (Básico, Intermediário, Completo) limitando funções', s:'falta' }
+{ fase:'saas', n:14, tag:'S', nome:'Contas isoladas', itens:[
+  { t:'Login sempre ligado na versão publicada', s:'ok', onde:'docker-compose.nexo.yml (AUTH_ENABLED=true)' },
+  { ref:33, t:'Papéis: administrador da plataforma e cliente', s:'falta', nota:'a especificação falava em Editor e Visualizador de agência; no modelo de assinatura o papel principal é o dono do negócio' },
+  { t:'Mais de um usuário, criado pelo administrador', s:'falta', nota:'o login aceita só a primeira conta criada' },
+  { t:'Cada cliente vê só os próprios negócios', s:'falta', nota:'hoje o projeto ativo é um só para o servidor inteiro' },
+  { t:'Administrador cadastra o perfil do cliente e acompanha todos', s:'falta' },
+  { t:'Ferramentas avançadas só para administradores', s:'falta' },
+  { t:'O cliente troca a própria senha', s:'falta' },
+  { t:'Etiquetas e responsável nos clientes', s:'ok', onde:'Painel de clientes · campanhas' }
+]},
+{ fase:'saas', n:17, tag:'S', nome:'Planos e cobrança', itens:[
+  { t:'Planos Básico, Intermediário e Completo com limites por conta', s:'falta', nota:'grade, palavras, frequência, número de negócios e IA' },
+  { t:'Teto de gasto por cliente', s:'ok', onde:'modules/custos/budget.ts' },
+  { t:'Cobrança recorrente (Asaas: Pix, boleto e cartão)', s:'falta' },
+  { t:'Suspender a conta quando o pagamento falha e reativar quando volta', s:'falta' },
+  { t:'Cadastro público com período de teste', s:'falta' }
+]},
+{ fase:'saas', n:18, tag:'S', nome:'Experiência do dono do negócio', itens:[
+  { t:'Painel inicial simples: mapa, avaliações, relatório e o que melhorar', s:'falta' },
+  { t:'Primeiros passos guiados (cadastrar o negócio e a primeira campanha)', s:'falta' },
+  { t:'Portal só de leitura', s:'parcial', nota:'link secreto do relatório de cada campanha; o login próprio do cliente vem com as contas' },
+  { t:'Banco PostgreSQL', s:'falta', nota:'cada cliente já tem um banco SQLite separado; migrar quando houver mais de um servidor ou relatórios de todos os assinantes' }
 ]},
 { fase:'p2', n:15, tag:'⚙', nome:'Arquitetura e relatórios', itens:[
   { t:'Fila de jobs para tudo o que roda sozinho', s:'outro', onde:'geo-grid-worker + claimDueGridSchedules', nota:'worker com reserva no SQLite no lugar de BullMQ/pg-boss; cobre só grade e rank tracker' },
-  { t:'Banco PostgreSQL', s:'falta', nota:'SQLite por projeto; migrar antes de ter equipe' },
   { t:'Camada única de acesso à DataForSEO', s:'parcial', onde:'lib/dataforseo.ts', nota:'a grade ainda faz as chamadas direto em grid-api.ts' },
   { t:'Tokens do Google criptografados no banco', s:'falta', g:true },
   { t:'LGPD: consentimento e descadastro dos contatos', s:'falta' },
@@ -380,6 +402,7 @@ const ROADMAP = [
 
 const FASES = {
   fund: { nome:'Fundação e rebranding', sub:'Base técnica do projeto e identidade Nexo', cor:'var(--ice)' },
+  saas: { nome:'Assinatura — vender para donos de negócio', sub:'Contas isoladas, planos, cobrança e a experiência do dono do negócio', cor:'#f5a524' },
   p1:   { nome:'P1 — Primeira entrega', sub:'Grade agendada, PDF e o mínimo do perfil do Google', cor:'var(--sky)' },
   p2:   { nome:'P2 — Segunda entrega', sub:'Escala para agência: equipe, comparativos, auditoria e campanhas de avaliação', cor:'var(--blue)' },
   p3:   { nome:'P3 — Depois', sub:'Integrações externas e extras', cor:'var(--navy)' }
@@ -473,13 +496,13 @@ function render(filtro) {
     g.por.ok + ' prontos, ' + g.por.outro + ' por outro caminho, ' + g.por.parcial + ' parciais e ' + g.por.falta + ' a fazer, de ' + g.total + ' tarefas';
   document.getElementById('barGeral').innerHTML = barraHTML(g.por, g.total);
   const de = function (f) { return ROADMAP.filter(function (m) { return m.fase === f; }); };
-  document.getElementById('pctFund').textContent = somar(de('fund')).pct + '%';
+  document.getElementById('pctFund').textContent = somar(de('saas')).pct + '%';
   document.getElementById('pctP1').textContent = somar(de('p1')).pct + '%';
   document.getElementById('pctP1sem').textContent = somar(de('p1'), function (it) { return !it.g; }).pct + '%';
 })();
 
 /* abas */
-const ABAS = [['all','Todas'],['fund','Fundação'],['p1','P1'],['p2','P2'],['p3','P3']];
+const ABAS = [['all','Todas'],['fund','Fundação'],['saas','Assinatura'],['p1','P1'],['p2','P2'],['p3','P3']];
 const tabsEl = document.getElementById('tabs');
 ABAS.forEach(function (a, i) {
   const b = document.createElement('button');
