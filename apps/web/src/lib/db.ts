@@ -4,6 +4,7 @@ import fs from 'fs';
 import { randomUUID } from 'crypto';
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { reconcileGridPoints } from './grid-target';
+import { authEnabled } from './auth-config';
 import type { RankTopResult } from './rank-serp';
 import { clampMonthDay, nextCadenceRun } from '@/modules/grade/cadence';
 import { gridConfigKey, normalizeGridConfig, type GridDevice } from '@/modules/grade/grid-config';
@@ -159,7 +160,11 @@ export function getActiveProject(): Project {
 /** The global UI selection is intentionally separate from this operation's project. */
 export function getCurrentProject(): Project {
   const projectId = projectScope.getStore();
-  if (projectId === undefined) return getActiveProject();
+  if (projectId === undefined) {
+    // With accounts, a global selection would belong to whoever chose it last: never fall back to it.
+    if (authEnabled()) throw new Error('Sem projeto no escopo desta operação.');
+    return getActiveProject();
+  }
   const row = getControlDb().prepare('SELECT * FROM projects WHERE id = ?').get(projectId) as ProjectRow | undefined;
   if (!row) throw new Error('Projeto não encontrado.');
   return projectFromRow(row);
@@ -171,19 +176,38 @@ export function runInProjectScope<T>(projectId: string, operation: () => T): T {
   return projectScope.run(projectId, operation);
 }
 
-/** Capture synchronously, before authentication/searchParams/network awaits. Nested calls reuse the scope. */
+/**
+ * With login on, the project comes from the signed-in user: their saved choice if they may open it,
+ * otherwise their first business (lib/access.ts). Loaded lazily because access.ts imports this file.
+ */
+async function requestProjectId(): Promise<string> {
+  const { requestProjectId: resolve } = await import('./access');
+  return resolve();
+}
+
+/**
+ * Capture before the operation runs; nested calls reuse the scope. Without login the capture is
+ * synchronous (the single operator's selection). With login it awaits the user's session, so
+ * callers must pass an async operation, as every server action does.
+ */
 export function runWithCurrentProject<T>(operation: () => T): T {
-  return runInProjectScope(getCurrentProject().id, operation);
+  if (projectScope.getStore() !== undefined || !authEnabled()) return runInProjectScope(getCurrentProject().id, operation);
+  return requestProjectId().then((projectId) => runInProjectScope(projectId, operation)) as T;
 }
 
 /**
  * Wrap each server page, not its layout: React renders child components separately.
  * This covers the function's async work, not deferred child Server Components.
  * Server actions must remain exported async functions and call runWithCurrentProject inside.
- * This is identity routing, not authorization or per-user project selection.
+ * With login on this is also the authorization check: a user only gets a project they may open.
  */
 export function withProjectScope<Args extends unknown[], Result>(operation: (...args: Args) => Promise<Result>) {
   return async (...args: Args): Promise<Result> => runWithCurrentProject(() => operation(...args));
+}
+
+/** Control store (projects, app settings) for modules that keep their own tables, e.g. lib/access.ts. */
+export function getControlDataDb(): Database.Database {
+  return getControlDb();
 }
 
 export function createProject(input: Pick<Project, 'name' | 'domain' | 'defaultLocation' | 'defaultLanguage' | 'defaultCoordinates' | 'rankTrackerDepth'>): Project {

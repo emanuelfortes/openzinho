@@ -1,6 +1,6 @@
 // Reads every client's campaigns for the overview. Each project has its own database, so
 // the data is gathered one project at a time inside that project's scope.
-import { getGridResults, getProjectDataDb, getProjects, runInProjectScope } from '@/lib/db';
+import { getGridResults, getProjectDataDb, getProjects, runInProjectScope, type Project } from '@/lib/db';
 import { campaignSeriesId, listCampaigns, parseCenter } from './campaigns-db';
 import { getInactivePoints } from './inactive-points-db';
 import { computeGradeMetrics } from './metrics';
@@ -8,9 +8,10 @@ import { summarizeKeywords, type CampaignOverviewRow } from './overview-shared';
 
 export * from './overview-shared';
 
-export function listCampaignOverview(): CampaignOverviewRow[] {
+/** Campaigns of the given businesses (by default all); pass the user's allowed businesses. */
+export function listCampaignOverview(projects: Project[] = getProjects()): CampaignOverviewRow[] {
   const rows: CampaignOverviewRow[] = [];
-  for (const project of getProjects()) {
+  for (const project of projects) {
     runInProjectScope(project.id, () => {
       const lastRuns = getProjectDataDb().prepare(`SELECT id, ts FROM grid_searches WHERE series_id = ? AND status = 'done' ORDER BY ts DESC LIMIT 2`);
       for (const campaign of listCampaigns()) {

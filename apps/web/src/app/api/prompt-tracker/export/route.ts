@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import {
   getTrackedPrompt, getTrackedPrompts, getPromptChecks, getLatestPromptChecks, getPromptCheckTotals,
 } from '@/lib/db';
+import { inRequestProject } from '@/lib/access';
 import { promptMarkdown, overviewMarkdown, type OverviewItem } from '@/lib/prompt-report';
 
 export const dynamic = 'force-dynamic';
@@ -14,6 +15,11 @@ const HISTORY_LIMIT = 366;
  * GET /api/prompt-tracker/export                -> markdown overview of every prompt
  */
 export async function GET(request: NextRequest) {
+  // Prompts belong to the user's active business.
+  return inRequestProject(() => exportMarkdown(request));
+}
+
+async function exportMarkdown(request: NextRequest) {
   const generatedAt = Date.now();
   const rawId = request.nextUrl.searchParams.get('id');
   const stamp = new Date(generatedAt).toISOString().slice(0, 10);

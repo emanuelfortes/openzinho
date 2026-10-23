@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getActiveProject, getCredentials, getGridEntryForProject, projectExists } from '@/lib/db';
+import { getCredentials, getGridEntryForProject } from '@/lib/db';
+import { canOpenProject, requestUser, resolveProjectForUser } from '@/lib/access';
 import { collectGridProgress } from '@/lib/grid-progress';
 
 export async function GET(
@@ -9,8 +10,12 @@ export async function GET(
   const { id } = await params;
   // The pending panel names the run's project, so polling keeps working after the
   // active project is switched in another tab.
+  const user = await requestUser();
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   const requested = request.nextUrl.searchParams.get('project');
-  const projectId = requested && projectExists(requested) ? requested : getActiveProject().id;
+  // Only a business this user may open; otherwise their active one.
+  const projectId = requested && canOpenProject(user, requested) ? requested : resolveProjectForUser(user)?.id;
+  if (!projectId) return NextResponse.json({ error: 'Não encontrado' }, { status: 404 });
   const entry = getGridEntryForProject(projectId, id);
   if (!entry) return NextResponse.json({ error: 'Não encontrado' }, { status: 404 });
 

@@ -4,13 +4,18 @@ export const dynamic = 'force-dynamic';
 import { getCredentials } from '@/lib/db';
 import { saveCredentialsAction } from './actions';
 import Link from 'next/link';
-import { NAV_SECTIONS, NAV_FOOTER, type NavColor } from '@/lib/nav';
+import { navForRole, type NavColor } from '@/lib/nav';
+import { requireUser } from '@/lib/access';
+import type { PlatformRole } from '@/lib/access-policy';
 
 // Same list as the sidebar, minus the Dashboard link itself; Spending and Settings close the page
-const sections = [
-  ...NAV_SECTIONS.map((s) => ({ ...s, items: s.items.filter((i) => i.href !== '/dashboard') })),
-  { key: 'account', label: 'Conta', color: 'slate' as NavColor, items: NAV_FOOTER },
-].filter((s) => s.items.length > 0);
+function sectionsFor(role: PlatformRole) {
+  const nav = navForRole(role);
+  return [
+    ...nav.sections.map((s) => ({ ...s, items: s.items.filter((i) => i.href !== '/dashboard') })),
+    { key: 'account', label: 'Conta', color: 'slate' as NavColor, items: nav.footer },
+  ].filter((s) => s.items.length > 0);
+}
 
 const colorMap: Record<NavColor, { badge: string; icon: string; hover: string }> = {
   blue:    { badge: 'bg-nexo-blue/10 text-nexo-sky', icon: 'text-nexo-sky', hover: 'hover:border-nexo-border-strong' },
@@ -25,6 +30,18 @@ const colorMap: Record<NavColor, { badge: string; icon: string; hover: string }>
 
 async function DashboardPage() {
   const creds = getCredentials();
+  const user = await requireUser();
+  const sections = sectionsFor(user.role);
+
+  // The DataForSEO account belongs to the platform; a subscriber never sees this form.
+  if (!creds && user.role !== 'admin') {
+    return (
+      <div className="nexo-panel mx-auto mt-10 max-w-lg p-10">
+        <h2 className="mb-2 text-2xl font-medium tracking-tight text-nexo-text">Quase pronto</h2>
+        <p className="text-sm text-nexo-dim">A equipe do Nexo ainda está terminando de configurar a plataforma. Volte em alguns minutos ou fale com o suporte.</p>
+      </div>
+    );
+  }
 
   if (!creds) {
     return (

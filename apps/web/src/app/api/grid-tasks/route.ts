@@ -1,12 +1,15 @@
 import { NextResponse } from 'next/server';
-import { getActiveProject, getCredentials, getPendingGridEntriesForProject } from '@/lib/db';
+import { getCredentials, getPendingGridEntriesForProject } from '@/lib/db';
+import { requestUser, resolveProjectForUser } from '@/lib/access';
 import { collectGridProgress } from '@/lib/grid-progress';
 
 export const dynamic = 'force-dynamic';
 
 /** Dashboard-wide task feed. The top bar calls this so queue processing survives navigation away from Geo-grid. */
 export async function GET() {
-  const project = getActiveProject();
+  const user = await requestUser();
+  const project = user ? resolveProjectForUser(user) : null;
+  if (!project) return NextResponse.json({ tasks: [] });
   const pending = getPendingGridEntriesForProject(project.id);
   const credentials = getCredentials();
 

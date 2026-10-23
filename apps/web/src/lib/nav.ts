@@ -1,10 +1,11 @@
 import type { ComponentType } from 'react';
+import { canAccess, type PlatformRole } from './access-policy';
 import {
   LayoutDashboard, Search, Globe, Settings, MapPin, FileSearch2,
   TrendingUp, Link2, Users, BarChart2, Activity, GitMerge, Clock, FolderKanban, Anchor,
   Gauge, Lightbulb, BrainCircuit, Star, Flame, Cpu, ShieldCheck, Grid3X3,
   Sparkles, Target, Layers, Network, LineChart, Tag, ScanText,
-  History, Copy, BarChart3, BookOpen, Server, Bot, Radar, Eye, Waypoints, Megaphone, Wallet, CalendarCheck, Unlink, Trophy, Telescope, BellRing, QrCode, WandSparkles,
+  History, Copy, BarChart3, BookOpen, Server, Bot, Radar, Eye, Waypoints, Megaphone, Wallet, CalendarCheck, Unlink, Trophy, Telescope, BellRing, QrCode, WandSparkles, CircleUser,
 } from 'lucide-react';
 
 // Single source of truth for the tool list: the Sidebar and the Dashboard home both render from it.
@@ -139,5 +140,17 @@ export const NAV_SECTIONS: NavSection[] = [
 // Pinned at the bottom of the sidebar, outside the filter
 export const NAV_FOOTER: NavItem[] = [
   { name: 'Gastos', href: '/dashboard/spending', icon: Wallet, desc: 'Quanto suas chamadas à DataForSEO custam, por ferramenta' },
+  { name: 'Usuários', href: '/dashboard/usuarios', icon: Users, desc: 'Contas dos clientes e da equipe, com os negócios de cada um' },
   { name: 'Configurações', href: '/dashboard/settings', icon: Settings, desc: 'Credenciais e identidade dos relatórios' },
+  { name: 'Minha conta', href: '/dashboard/conta', icon: CircleUser, desc: 'Seus dados de acesso e sua senha' },
 ];
+
+/** The menu a role may open (lib/access-policy.ts); empty sections are dropped. */
+export function navForRole(role: PlatformRole): { sections: NavSection[]; footer: NavItem[] } {
+  if (role === 'admin') return { sections: NAV_SECTIONS, footer: NAV_FOOTER };
+  const allowed = (item: NavItem) => canAccess(role, item.href);
+  return {
+    sections: NAV_SECTIONS.map((section) => ({ ...section, items: section.items.filter(allowed) })).filter((section) => section.items.length > 0),
+    footer: NAV_FOOTER.filter(allowed),
+  };
+}

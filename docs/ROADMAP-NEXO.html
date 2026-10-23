@@ -361,12 +361,13 @@ const ROADMAP = [
 ]},
 { fase:'saas', n:14, tag:'S', nome:'Contas isoladas', itens:[
   { t:'Login sempre ligado na versão publicada', s:'ok', onde:'docker-compose.nexo.yml (AUTH_ENABLED=true)' },
-  { ref:33, t:'Papéis: administrador da plataforma e cliente', s:'falta', nota:'a especificação falava em Editor e Visualizador de agência; no modelo de assinatura o papel principal é o dono do negócio' },
-  { t:'Mais de um usuário, criado pelo administrador', s:'falta', nota:'o login aceita só a primeira conta criada' },
-  { t:'Cada cliente vê só os próprios negócios', s:'falta', nota:'hoje o projeto ativo é um só para o servidor inteiro' },
-  { t:'Administrador cadastra o perfil do cliente e acompanha todos', s:'falta' },
-  { t:'Ferramentas avançadas só para administradores', s:'falta' },
-  { t:'O cliente troca a própria senha', s:'falta' },
+  { ref:33, t:'Papéis: administrador da plataforma e cliente', s:'ok', onde:'lib/access-policy.ts · plugin admin do better-auth', nota:'a especificação falava em Editor e Visualizador de agência; no modelo de assinatura o papel principal é o dono do negócio' },
+  { t:'Mais de um usuário, criado pelo administrador', s:'ok', onde:'/dashboard/usuarios', nota:'o primeiro cadastro vira administrador; depois o cadastro público fica fechado' },
+  { t:'Cada cliente vê só os próprios negócios', s:'ok', onde:'lib/access.ts · middleware.ts', nota:'negócio ativo por usuário; páginas, ações e APIs conferem o acesso' },
+  { t:'Administrador cadastra o perfil do cliente e acompanha todos', s:'ok', nota:'cria a conta já com o negócio, liga e desliga negócios, redefine senha, bloqueia e exclui' },
+  { t:'Ferramentas avançadas só para administradores', s:'ok', nota:'o cliente vê grade, campanhas, avaliações, relatório e a própria conta' },
+  { t:'O cliente troca a própria senha', s:'ok', onde:'/dashboard/conta' },
+  { t:'Convite e recuperação de senha por e-mail', s:'falta', nota:'hoje a senha inicial é combinada com o cliente e o administrador redefine quando preciso' },
   { t:'Etiquetas e responsável nos clientes', s:'ok', onde:'Painel de clientes · campanhas' }
 ]},
 { fase:'saas', n:17, tag:'S', nome:'Planos e cobrança', itens:[
@@ -379,7 +380,7 @@ const ROADMAP = [
 { fase:'saas', n:18, tag:'S', nome:'Experiência do dono do negócio', itens:[
   { t:'Painel inicial simples: mapa, avaliações, relatório e o que melhorar', s:'falta' },
   { t:'Primeiros passos guiados (cadastrar o negócio e a primeira campanha)', s:'falta' },
-  { t:'Portal só de leitura', s:'parcial', nota:'link secreto do relatório de cada campanha; o login próprio do cliente vem com as contas' },
+  { t:'Portal do cliente com login próprio', s:'ok', nota:'o dono entra com a própria conta e vê só o negócio dele; o link secreto do relatório continua' },
   { t:'Banco PostgreSQL', s:'falta', nota:'cada cliente já tem um banco SQLite separado; migrar quando houver mais de um servidor ou relatórios de todos os assinantes' }
 ]},
 { fase:'p2', n:15, tag:'⚙', nome:'Arquitetura e relatórios', itens:[

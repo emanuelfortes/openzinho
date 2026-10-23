@@ -1,6 +1,7 @@
 'use server';
 
-import { createProject, deleteProject, setActiveProject, updateProject } from '@/lib/db';
+import { createProject, deleteProject, updateProject } from '@/lib/db';
+import { forgetProject, requireAdmin, requireUser, selectProjectForUser } from '@/lib/access';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
@@ -30,14 +31,19 @@ function returnPath(formData: FormData) {
   return /^\/dashboard(\/[a-z0-9-]+)*$/.test(path) ? path : '/dashboard';
 }
 
+// Creating, editing and deleting businesses is for platform admins; a subscriber only switches
+// between the businesses linked to their account.
+
 export async function createProjectAction(formData: FormData) {
+  const user = await requireAdmin();
   const project = createProject(projectInput(formData));
-  setActiveProject(project.id);
+  selectProjectForUser(user, project.id);
   refreshProjects();
   redirect('/dashboard');
 }
 
 export async function updateProjectAction(formData: FormData) {
+  await requireAdmin();
   const id = String(formData.get('id') ?? '');
   if (!id) throw new Error('Projeto não encontrado.');
   updateProject(id, projectInput(formData));
@@ -45,15 +51,18 @@ export async function updateProjectAction(formData: FormData) {
 }
 
 export async function selectProjectAction(formData: FormData) {
+  const user = await requireUser();
   const id = String(formData.get('id') ?? '');
-  setActiveProject(id);
+  selectProjectForUser(user, id);
   refreshProjects();
   redirect(returnPath(formData));
 }
 
 export async function deleteProjectAction(formData: FormData) {
+  await requireAdmin();
   const id = String(formData.get('id') ?? '');
   deleteProject(id);
+  forgetProject(id);
   refreshProjects();
   redirect('/dashboard/projects');
 }

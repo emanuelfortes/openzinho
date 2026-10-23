@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 
 import Link from 'next/link';
 import { selectProjectAction } from '../projects/actions';
+import { allowedProjects, requireUser } from '@/lib/access';
 import OverviewMap from '@/modules/grade/OverviewMap';
 import { distinctValues, filterOverview, listCampaignOverview, parseOverviewFilters, type CampaignOverviewRow } from '@/modules/grade/overview';
 
@@ -53,7 +54,8 @@ function Row({ row }: { row: CampaignOverviewRow }) {
 async function ClientesPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const params = await searchParams;
   const filters = parseOverviewFilters(params);
-  const all = listCampaignOverview();
+  // Subscribers only see their own businesses; admins see everyone.
+  const all = listCampaignOverview(allowedProjects(await requireUser()));
   const rows = filterOverview(all, filters);
   const tags = distinctValues(all, (row) => row.tags);
   const owners = distinctValues(all, (row) => [row.owner]);

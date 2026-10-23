@@ -1,10 +1,12 @@
 import { searchLocations, type LocationOption } from '@/lib/db';
+import { inRequestProject } from '@/lib/access';
 import { LOCATIONS } from '@/lib/geo-options';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
   const q = req.nextUrl.searchParams.get('q') ?? '';
-  const results = searchLocations(q, 20);
+  // The locations table lives in each business database.
+  const results = await inRequestProject(() => searchLocations(q, 20));
 
   // A handful of countries (e.g. Russia) aren't in DataForSEO's SERP locations
   // dataset — fall back to the static country list so they stay selectable.

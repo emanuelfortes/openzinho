@@ -5,7 +5,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { ChevronRight, Search, Star, X } from 'lucide-react';
 import { SIDEBAR_COLLAPSED_COOKIE, SIDEBAR_FAVORITES_COOKIE, FAVORITES_SECTION_KEY, serializeList } from '@/lib/sidebar';
-import { NAV_SECTIONS as sections, NAV_FOOTER as footerItems, type NavItem, type NavSection } from '@/lib/nav';
+import { NAV_SECTIONS as sections, NAV_FOOTER as footerItems, navForRole, type NavItem, type NavSection } from '@/lib/nav';
+import type { PlatformRole } from '@/lib/access-policy';
 import type { Project } from '@/lib/db';
 import ProjectSwitcher from './ProjectSwitcher';
 import NexoLogo from './NexoLogo';
@@ -63,12 +64,16 @@ function writeCookie(name: string, values: Iterable<string>) {
   document.cookie = `${name}=${serializeList(values)}; path=/; max-age=31536000; samesite=lax`;
 }
 
-export default function Sidebar({ initialCollapsed = [], initialFavorites = [], projects, activeProject }: {
+export default function Sidebar({ initialCollapsed = [], initialFavorites = [], projects, activeProject, role = 'admin' }: {
   initialCollapsed?: string[];
   initialFavorites?: string[];
   projects: Project[];
   activeProject: Project;
+  /** Subscribers only see the tools they may open (lib/access-policy.ts). */
+  role?: PlatformRole;
 }) {
+  const nav = navForRole(role);
+  const visibleSections = nav.sections;
   const pathname = usePathname();
   const router = useRouter();
   const [query, setQuery] = useState('');
@@ -110,7 +115,7 @@ export default function Sidebar({ initialCollapsed = [], initialFavorites = [], 
   // Opening a page inside a collapsed section (via the filter, a link, back button) expands that section,
   // unless the page is already visible in the open Favorites group.
   useEffect(() => {
-    const activeSection = sections.find((s) => s.items.some((i) => i.href === activeHref));
+    const activeSection = visibleSections.find((s) => s.items.some((i) => i.href === activeHref));
     if (!activeSection) return;
     setCollapsed((prev) => {
       if (!prev.has(activeSection.key)) return prev;
@@ -197,7 +202,7 @@ export default function Sidebar({ initialCollapsed = [], initialFavorites = [], 
   const q = query.trim().toLowerCase();
   // A section label match keeps the whole section (e.g. "backlinks"); otherwise match tool names
   const filtered = q
-    ? sections
+    ? visibleSections
         .map((section) => ({
           ...section,
           items: section.label.toLowerCase().includes(q)
@@ -205,14 +210,14 @@ export default function Sidebar({ initialCollapsed = [], initialFavorites = [], 
             : section.items.filter((item) => item.name.toLowerCase().includes(q)),
         }))
         .filter((section) => section.items.length > 0)
-    : sections;
+    : visibleSections;
 
   const favoritesSection: NavSection | null = !q && favorites.length > 0
     ? { key: FAVORITES_SECTION_KEY, label: 'Favoritos', color: 'yellow', items: favorites.map((h) => itemsByHref.get(h)!).filter(Boolean) }
     : null;
   const shown = favoritesSection ? [favoritesSection, ...filtered] : filtered;
   // "Collapse all" shrinks the tool groups but leaves Favorites alone: that's the point of starring.
-  const allCollapsed = sections.every((s) => collapsed.has(s.key));
+  const allCollapsed = visibleSections.every((s) => collapsed.has(s.key));
 
   return (
     <>
@@ -288,7 +293,7 @@ export default function Sidebar({ initialCollapsed = [], initialFavorites = [], 
             <button
               type="button"
               onClick={() => {
-                const next = new Set(allCollapsed ? [] : sections.map((s) => s.key));
+                const next = new Set(allCollapsed ? [] : visibleSections.map((s) => s.key));
                 if (collapsed.has(FAVORITES_SECTION_KEY)) next.add(FAVORITES_SECTION_KEY);
                 writeCookie(SIDEBAR_COLLAPSED_COOKIE, next);
                 setCollapsed(next);
@@ -372,7 +377,7 @@ export default function Sidebar({ initialCollapsed = [], initialFavorites = [], 
       </nav>
 
       <div className="shrink-0 border-t border-nexo-border px-3 py-3 space-y-px">
-        {footerItems.map((item) => (
+        {nav.footer.map((item) => (
           <NavLink key={item.href} item={item} active={item.href === activeHref} />
         ))}
       </div>
